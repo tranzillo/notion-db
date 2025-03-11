@@ -1,0 +1,32 @@
+h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-family-heading);
+    line-height: 1.2;
+    font-weight: 600;
+    color: var(--color-text);
+  }
+  
+  h1 {
+    font-size: var(--font-size-2xl);
+    margin-block-end: var(--spacing-xl);
+  }
+  
+  h2 {
+    font-size: var(--font-size-lg);
+    margin-block-end: var(--spacing-md);
+  }
+  
+  p {
+    margin-block-end: var(--spacing-md);
+  }
+  
+  time {
+    color: var(--color-text-light);
+    font-size: var(--font-size-sm);
+  }
+  
+  code {
+    font-family: var(--font-family-mono);
+    background-color: var(--color-tag);
+    padding: 0.2em 0.4em;
+    border-radius: 3px;
+  }

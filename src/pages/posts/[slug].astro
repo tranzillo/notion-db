@@ -1,0 +1,159 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { getPostBySlug, getAllPosts } from '../../lib/notion';
+import { renderNotionBlocks } from '../../lib/renderNotion';
+
+export async function getStaticPaths() {
+  const posts = await getAllPosts();
+  
+  return posts.map(post => ({
+    params: { slug: post.slug },
+  }));
+}
+
+const { slug } = Astro.params;
+const post = await getPostBySlug(slug);
+
+if (!post) {
+  return Astro.redirect('/404');
+}
+
+// Render blocks to HTML
+const htmlContent = renderNotionBlocks(post.content);
+
+---
+
+
+<Layout title={post.title}>
+  <article class="post">
+    <header>
+      <h1>{post.title}</h1>
+      <div class="post-meta">
+        <time datetime={post.publishedDate}>
+          {new Date(post.publishedDate).toLocaleDateString()}
+        </time>
+        <div class="tags">
+          {post.tags.map(tag => (
+            <span class="tag">{tag}</span>
+          ))}
+        </div>
+      </div>
+    </header>
+    
+    {post.featuredImage && (
+      <img 
+        src={post.featuredImage} 
+        alt={`Featured image for ${post.title}`}
+        class="featured-image"
+      />
+    )}
+    
+    <div class="content" set:html={htmlContent} />
+    
+    <footer>
+      <a href="/">&larr; Back to all posts</a>
+    </footer>
+  </article>
+</Layout>
+
+<style>
+  .post {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem;
+  }
+  header {
+    margin-bottom: 2rem;
+  }
+  .post-meta {
+    display: flex;
+    gap: 1rem;
+    font-size: 0.9rem;
+    color: #666;
+    margin-top: 0.5rem;
+  }
+  .tags {
+    display: flex;
+    gap: 0.5rem;
+  }
+  .tag {
+    background-color: #f0f0f0;
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.8rem;
+  }
+  .featured-image {
+    width: 100%;
+    height: auto;
+    margin-bottom: 2rem;
+    border-radius: 8px;
+  }
+  .content {
+    line-height: 1.6;
+  }
+  .content :global(h2) {
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+  }
+  .content :global(p) {
+    margin-bottom: 1rem;
+  }
+  .content :global(img) {
+    max-width: 100%;
+    height: auto;
+    border-radius: 4px;
+  }
+  .content :global(pre) {
+    background-color: #f6f8fa;
+    padding: 1rem;
+    border-radius: 4px;
+    overflow-x: auto;
+    margin-bottom: 1rem;
+  }
+  footer {
+    margin-top: 3rem;
+    padding-top: 1rem;
+    border-top: 1px solid #eee;
+  }
+  .content :global(h1),
+  .content :global(h2),
+  .content :global(h3),
+  .content :global(h4),
+  .content :global(h5),
+  .content :global(h6) {
+    margin-top: 1.5em;
+    margin-bottom: 0.5em;
+  }
+  
+  .content :global(p) {
+    margin-bottom: 1em;
+  }
+  
+  .content :global(ul),
+  .content :global(ol) {
+    margin-bottom: 1em;
+    padding-left: 2em;
+  }
+  
+  .content :global(blockquote) {
+    margin-left: 0;
+    padding-left: 1em;
+    border-left: 3px solid #ddd;
+    color: #555;
+  }
+  
+  .content :global(pre) {
+    background: #f5f5f5;
+    padding: 1em;
+    overflow-x: auto;
+    border-radius: 4px;
+  }
+  
+  .content :global(code) {
+    background: #f5f5f5;
+    padding: 0.2em 0.4em;
+    border-radius: 3px;
+    font-family: monospace;
+  }
+</style>
+

@@ -1,0 +1,42 @@
+// Import partials
+@import 'variables';
+@import 'reset';
+@import 'typography';
+@import 'layout';
+
+// Import component styles
+@import 'components/search';
+@import 'components/tag-filter';
+@import 'components/post-card';
+
+// Global styles
+body {
+  background-color: var(--color-background);
+  color: var(--color-text);
+  font-family: var(--font-family-base);
+  line-height: 1.6;
+  margin: 0;
+  padding: 0;
+}
+
+a {
+  color: var(--color-text);
+  text-decoration: none;
+  
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+section {
+  margin: 0 auto;
+  padding: 0 var(--spacing-xl);
+}
+
+main {
+  padding: var(--spacing-xl) 0;
+  width: 100%;
+}
+button {
+    color: var(--color-text-light);
+}

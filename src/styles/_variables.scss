@@ -1,0 +1,63 @@
+//Sass Variables
+// Media Queries
+$viewport-3xs: 256px;
+$viewport-2xs: 320px;
+$viewport-xs: 480px;
+$viewport-sm: 640px;
+$viewport-md: 768px;
+$viewport-lg: 1024px;
+$viewport-xl: 1280px;
+$viewport-2xl: 1536px;
+$viewport-3xl: 1920px;
+$viewport-4xl: 2560px;
+$viewport-5xl: 3840px;
+$viewport-6xl: 5120px;
+
+// Native CSS Variables
+:root {
+  // Colors
+    --color-primary: #375fcc;
+    --color-primary-light: #a7c5e7;
+    --color-primary-dark: #1d4ed8;
+    
+    --color-background-dark: #e8e6dc;
+    --color-background: #f3f2eb;
+    --color-background-light: #f7f7f2;
+    --color-text: #373741;
+    --color-text-light: #595963;
+    
+    --color-border: #d6d6d2;
+    --color-border-light: #eaebec;
+    
+    --color-tag: #f3f2eb;
+    --color-tag-highlight: #eeb8a6;
+    --color-tag-highlight-text: #333339;
+    
+    --color-search-highlight: rgba(254, 165, 138, 0.5);
+    
+    // Spacing
+    --spacing-xs: 0.25rem;
+    --spacing-sm: 0.5rem;
+    --spacing-md: 1rem;
+    --spacing-lg: 1.5rem;
+    --spacing-xl: 2rem;
+    --spacing-2xl: 3rem;
+    
+    // Typography
+    --font-family-base: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    --font-family-heading: var(--font-family-base);
+    --font-family-mono: monospace;
+    
+    --font-size-xs: 0.75rem;
+    --font-size-sm: 0.875rem;
+    --font-size-base: 1rem;
+    --font-size-lg: 1.125rem;
+    --font-size-xl: 1.25rem;
+    --font-size-2xl: 1.5rem;
+    
+    // Layout
+    --container-width: 160ch;
+    --border-radius: 0.5rem;
+
+
+  }
