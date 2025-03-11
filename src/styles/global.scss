@@ -40,3 +40,6 @@ main {
 button {
     color: var(--color-text-light);
 }
+::selection {
+  background-color: var(--color-selection);
+}

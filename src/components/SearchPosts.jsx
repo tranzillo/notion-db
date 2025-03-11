@@ -141,11 +141,11 @@ export default function SearchPosts({ initialPosts, onSearchResults, selectedTag
       <div className="search-box">
         <input
           type="text"
-          placeholder="Search posts..."
+          placeholder="Search..."
           value={searchQuery}
           onChange={handleSearch}
           className="search-input"
-          aria-label="Search posts"
+          aria-label="Search"
         />
         {searchQuery && (
           <button
