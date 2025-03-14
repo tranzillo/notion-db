@@ -1,0 +1,63 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import SolutionCard from "../../components/SolutionCard.astro";
+import { getAllData } from "../../lib/notion";
+
+export async function getStaticPaths() {
+  // Fetch all data
+  const { bottlenecks } = await getAllData();
+
+  // Generate paths for each bottleneck
+  return bottlenecks.map((bottleneck) => {
+    return {
+      params: { slug: bottleneck.slug },
+      props: { bottleneck },
+    };
+  });
+}
+
+// TypeScript type for the props
+interface Props {
+  bottleneck: any; // Type comes from getStaticPaths
+}
+
+// Get the bottleneck from props
+const { bottleneck } = Astro.props;
+
+// 404 handling (should not happen with static paths, but just in case)
+if (!bottleneck) {
+  return Astro.redirect("/404");
+}
+---
+
+<BaseLayout title={`${bottleneck.title} | Science Bottlenecks`}>
+  <a href="/" class="back-link">← Back to Dashboard</a>
+  <div class="bottleneck-detail">
+    <div class="bottleneck-detail__header">
+      {
+        bottleneck.discipline && bottleneck.discipline.title && (
+          <div class="bottleneck-detail__discipline">
+            {bottleneck.discipline.title}
+          </div>
+        )
+      }
+
+      <h1 class="bottleneck-detail__title">{bottleneck.title}</h1>
+    </div>
+
+    <div class="bottleneck-detail__content" set:html={bottleneck.content} />
+
+    {
+      bottleneck.solutions && bottleneck.solutions.length > 0 && (
+        <div class="bottleneck-detail__solutions">
+          <h3>Potential Solutions</h3>
+          <div class="bottleneck-detail__solutions-grid">
+            {bottleneck.solutions.map((solution) => (
+              <SolutionCard solution={solution} />
+            ))}
+          </div>
+        </div>
+      )
+    }
+  </div>
+</BaseLayout>

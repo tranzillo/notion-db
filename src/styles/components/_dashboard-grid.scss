@@ -1,0 +1,80 @@
+.bottleneck-grid {
+  display: grid;
+  grid-template-columns: repeat(1, 1fr);
+  gap: 1.5rem;
+
+  @media (min-width: $breakpoint-lg) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @media (min-width: $breakpoint-xl) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  &--list-view {
+    grid-template-columns: 1fr;
+  }
+  
+  &__empty-state {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 3rem 0;
+    background-color: var(--card-background);
+    border-radius: 8px;
+    transition:background-color 0.3s;
+  }
+}
+
+.dashboard-header {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+  margin-block: 0 $spacing-xxl;
+  h1, p {
+    max-width: 75ch;
+  }
+  p {
+    font-size: $font-size-md;
+    color: var(--light-text);
+  }
+}
+
+.dashboard-layout {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: $spacing-xl;
+
+  @media (min-width: $breakpoint-lg) {
+    display: grid;
+    grid-template-columns: auto 1fr;
+  }
+
+  &__sidebar {
+    width: 100%;
+
+    @media (min-width: 768px) {
+      
+    }
+  }
+
+  &__main {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-xl;
+  }
+}
+
+.dashboard-search {
+  position: sticky;
+  top: $spacing-xl;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  box-shadow: 0 $spacing-xl $spacing-lg 0 var(--background-color),
+              0 calc(($spacing-xl) * -1 ) 0 0 var(--background-color);
+}
+
+.dashboard-controls {
+  display: flex;
+  justify-content: flex-end;
+}

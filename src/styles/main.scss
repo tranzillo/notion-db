@@ -1,0 +1,19 @@
+// Import variables and mixins
+@import 'variables';
+
+// Import reset styles
+@import 'reset';
+@import 'typography';
+
+// Import component styles
+@import 'components/bottleneck-card';
+@import 'components/bottleneck-details';
+@import 'components/dashboard-grid';
+@import 'components/discipline-filter';
+@import 'components/search-bar';
+@import 'components/solution-card';
+@import 'components/view-toggle';
+
+// Import layout styles
+@import 'layouts/base-layout';
+

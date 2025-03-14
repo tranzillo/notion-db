@@ -1,21 +1,28 @@
 {
-  "name": "",
+  "name": "science-bottlenecks-dashboard",
   "type": "module",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "scripts": {
     "dev": "astro dev",
+    "start": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "test": "vitest run"
   },
   "dependencies": {
-    "@astrojs/react": "^4.2.1",
-    "@notionhq/client": "^2.2.16",
-    "astro": "^5.4.2",
-    "dotenv": "^16.4.7",
+    "@astrojs/react": "latest",
+    "@notionhq/client": "latest",
+    "@types/react": "latest",
+    "@types/react-dom": "latest",
+    "astro": "latest",
+    "dotenv": "latest",
     "fuse.js": "^7.1.0",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0",
-    "sass": "^1.85.1"
+    "notion-to-md": "^3.1.1",
+    "react": "latest",
+    "react-dom": "latest",
+    "sass": "latest"
+  },
+  "devDependencies": {
+    "vitest": "latest"
   }
 }

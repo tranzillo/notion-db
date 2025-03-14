@@ -1,0 +1,49 @@
+<!-- src/components/InjectHydrationData.astro -->
+<script is:inline>
+    // This script runs before anything else and before any content is painted
+    (function() {
+      try {
+        // Try to get previously saved theme preference first
+        let darkMode = false;
+        let isListView = false;
+        
+        // Get saved preferences
+        const savedPrefs = localStorage.getItem('userPreferences');
+        if (savedPrefs) {
+          const prefs = JSON.parse(savedPrefs);
+          if (typeof prefs.darkMode === 'boolean') darkMode = prefs.darkMode;
+          if (typeof prefs.isListView === 'boolean') isListView = prefs.isListView;
+        } else {
+          // Check system preference for dark mode if no saved preference
+          darkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+        }
+        
+        // Create a global preferences object
+        window.userPreferences = {
+          darkMode: darkMode,
+          isListView: isListView
+        };
+        
+        // Immediately apply theme BEFORE page renders to avoid flash
+        if (darkMode) {
+          document.documentElement.classList.add('dark-mode');
+        }
+        
+        // Add the class to html tag to make it available for CSS
+        if (isListView) {
+          document.documentElement.dataset.listView = 'true';
+        }
+        
+        // Create a style block to handle the list view before React loads
+        const style = document.createElement('style');
+        style.textContent = `
+          html[data-list-view="true"] .bottleneck-grid {
+            grid-template-columns: 1fr !important;
+          }
+        `;
+        document.head.appendChild(style);
+      } catch (e) {
+        console.error('Error initializing preferences:', e);
+      }
+    })();
+  </script>

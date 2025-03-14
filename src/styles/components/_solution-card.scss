@@ -1,0 +1,49 @@
+.solution-card {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-lg;
+  background-color: var(--background-color);
+  border-radius: 8px;
+  padding: $spacing-lg;
+  border: 1px solid var(--border-color);
+  transition:
+    background-color 0.3s,
+    border-color 0.3s;
+
+    &__title {
+      font-size: $font-size-lg;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    &__content {
+      max-width: 65ch;
+    }
+
+    &__references {
+      margin-block-start: auto;
+    }
+
+    &__references h4 {
+      font-size: $spacing-md;
+      margin-bottom: $spacing-sm;
+      color: #777;
+    }
+
+    &__reference-list {
+      list-style: disc;
+      padding-left: $spacing-lg;
+    }
+
+    &__reference-item {
+      margin-bottom: $spacing-xs;
+    }
+
+    &__reference-item a {
+      color: #3498db;
+      text-decoration: none;
+    }
+
+    &__reference-item a:hover {
+      text-decoration: underline;
+    }
+}

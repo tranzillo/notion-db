@@ -1,0 +1,62 @@
+.search-bar {
+  &__form {
+    position: relative;
+    width: 100%;
+  }
+  
+  &__input {
+    width: 100%;
+    padding: $spacing-md $spacing-md $spacing-md 2.5rem;
+    border: 1px solid var(--border-color);
+    border-radius: 8px 0 0 8px;
+    border-inline-end: none;
+    font-size: 1rem;
+    outline: none;
+    background-color: var(--card-background);
+    color: var(--text-color);
+    transition:
+      border-color 0.3s,
+      background-color 0.3s,
+      color 0.3s;
+  
+    &:focus {
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 3px rgba(var(--primary-color), 0.2);
+    }
+  
+    &::placeholder {
+      color: var(--light-text);
+    }
+  }
+  
+  &__icon {
+    position: absolute;
+    left: $spacing-md;
+    top: 52%;
+    transform: translateY(-50%);
+    color: var(--light-text);
+  }
+  
+  &__clear {
+    position: absolute;
+    right: $spacing-md;
+    top: 52%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: var(--light-text);
+    cursor: pointer;
+    padding: 0.25rem;
+  
+    &:hover {
+      color: var(--text-color);
+    }
+  }
+}
+
+
+.search-highlight {
+  background-color: var(--highlight-bg);
+  color: var(--highlight-color);
+  border-radius: 2px;
+}

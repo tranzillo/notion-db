@@ -1,64 +1,97 @@
-//Sass Variables
-// Media Queries
-$viewport-3xs: 256px;
-$viewport-2xs: 320px;
-$viewport-xs: 480px;
-$viewport-sm: 640px;
-$viewport-md: 768px;
-$viewport-lg: 1024px;
-$viewport-xl: 1280px;
-$viewport-2xl: 1536px;
-$viewport-3xl: 1920px;
-$viewport-4xl: 2560px;
-$viewport-5xl: 3840px;
-$viewport-6xl: 5120px;
-
-// Native CSS Variables
 :root {
-  // Colors
-    --color-primary: #375fcc;
-    --color-primary-light: #a7c5e7;
-    --color-primary-dark: #1d4ed8;
-    
-    --color-background-dark: #ecebe4;
-    --color-background-darker: #e9e8e2;
-    --color-background: #f3f2eb;
-    --color-background-light: #f7f7f2;
-    --color-text: #373741;
-    --color-text-light: #595963;
-    
-    --color-border: #d6d6d2;
-    --color-border-light: #eaebec;
-    
-    --color-tag: #f3f2eb;
-    --color-tag-highlight: #eeb8a6;
-    --color-tag-highlight-text: #333339;
-    
-    --color-selection: rgba(254, 165, 138, 0.5);
-    
-    // Spacing
-    --spacing-xs: 0.25rem;
-    --spacing-sm: 0.5rem;
-    --spacing-md: 1rem;
-    --spacing-lg: 1.5rem;
-    --spacing-xl: 2rem;
-    --spacing-2xl: 3rem;
-    
-    // Typography
-    --font-family-base: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    --font-family-heading: var(--font-family-base);
-    --font-family-mono: monospace;
-    
-    --font-size-xs: 0.75rem;
-    --font-size-sm: 0.875rem;
-    --font-size-base: 1rem;
-    --font-size-lg: 1.125rem;
-    --font-size-xl: 1.25rem;
-    --font-size-2xl: 1.5rem;
-    
-    // Layout
-    --container-width: 160ch;
-    --border-radius: 0.5rem;
+  /* Light mode variables */
+  --primary-color: #3498db;
+  --secondary-color: #2ecc71;
+  --text-color: #373741;
+  --light-text: #595963;
+  --border-color: #e0e0d5;
+  --background-color: #f3f2eb;
+  --background-color-dark: #e6e5dc;
+  --card-background: #ecebe4;
+  --header-background: #f3f2eb;
+  --footer-background: #f3f2eb;
+  --shadow-color: rgba(0, 0, 0, 0.1);
+  --highlight-bg: rgba(52, 152, 219, 0.2);
+  --highlight-color: #2980b9;
+}
+
+/* Dark mode variables */
+.dark-mode {
+  --primary-color: #4fa3e0;
+  --secondary-color: #44d581;
+  --text-color: #e0e0e0;
+  --light-text: #a0a0a0;
+  --border-color: #373741;
+  --background-color: #121212;
+  --background-color-dark: #1a1a1a;
+  --card-background: #1e1e1e;
+  --header-background: #1e1e1e;
+  --footer-background: #1e1e1e;
+  --shadow-color: rgba(0, 0, 0, 0.3);
+  --highlight-bg: rgba(79, 163, 224, 0.2);
+  --highlight-color: #4fa3e0;
+}
 
 
+// Spacing
+$spacing-xs: 0.25rem;
+$spacing-sm: 0.5rem;
+$spacing-md: 1rem;
+$spacing-lg: 1.5rem;
+$spacing-xl: 2rem;
+$spacing-xxl: 3rem;
+
+// Font sizes
+$font-size-xs: 0.75rem;
+$font-size-sm: 0.875rem;
+$font-size-base: 1rem;
+$font-size-md: 1.125rem;
+$font-size-lg: 1.25rem;
+$font-size-xl: 1.5rem;
+$font-size-xxl: 2rem;
+
+// Border radius
+$border-radius-sm: 4px;
+$border-radius-md: 8px;
+$border-radius-lg: 12px;
+
+// Breakpoints
+$breakpoint-sm: 576px;
+$breakpoint-md: 768px;
+$breakpoint-lg: 992px;
+$breakpoint-xl: 1200px;
+
+// Mixins
+@mixin flex($direction: row, $justify: flex-start, $align: stretch) {
+  display: flex;
+  flex-direction: $direction;
+  justify-content: $justify;
+  align-items: $align;
+}
+
+@mixin grid($columns: 1, $gap: $spacing-md) {
+  display: grid;
+  grid-template-columns: repeat($columns, 1fr);
+  gap: $gap;
+}
+
+@mixin responsive($breakpoint) {
+  @if $breakpoint == sm {
+    @media (min-width: $breakpoint-sm) { @content; }
+  } @else if $breakpoint == md {
+    @media (min-width: $breakpoint-md) { @content; }
+  } @else if $breakpoint == lg {
+    @media (min-width: $breakpoint-lg) { @content; }
+  } @else if $breakpoint == xl {
+    @media (min-width: $breakpoint-xl) { @content; }
   }
+}
+
+@mixin card-shadow {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: box-shadow 0.3s ease;
+  
+  &:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+}

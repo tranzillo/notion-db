@@ -1,0 +1,62 @@
+.bottleneck-detail {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-lg;
+  background-color: var(--card-background);
+  border-radius: 8px;
+  padding: $spacing-lg;
+
+  &__header {
+    display:flex;
+    flex-direction: column;
+    align-items: start;
+    gap: $spacing-md;
+    padding-bottom: $spacing-md;
+    border-bottom: 1px solid var(--border-color);
+  }
+
+  &__discipline {
+    display: inline-block;
+    background-color: #3498db;
+    color: white;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.875rem;
+  }
+
+  &__title {
+    font-size: $spacing-lg;
+    margin-bottom: 0.5rem;
+  }
+
+  &__content {
+    max-width: 90ch;
+  }
+
+  &__solutions {
+    margin-block-start: $spacing-md;
+    h3 {
+      padding-bottom: $spacing-lg;
+    }
+  }
+  &__solutions-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: $spacing-lg;
+    @media (min-width: $breakpoint-lg) {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+}
+
+.back-link {
+  display: inline-block;
+  margin-bottom: $spacing-md;
+  color: #777;
+  text-decoration: none;
+  &:hover {
+    color: #3498db;
+    text-decoration: underline;
+  }
+}

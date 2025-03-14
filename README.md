@@ -1,1 +1,0 @@
-This is a rapidly developed prototype for an Astro site powered by a Notion CMS.

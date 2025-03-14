@@ -1,0 +1,48 @@
+.view-toggle {
+  background-color: var(--card-background);
+  display: flex;
+  border: 1px solid var(--border-color);
+  border-radius: 0 4px 4px 0;
+  overflow: hidden;
+  transition: border-color 0.3s;
+}
+
+.view-toggle__button {
+  background-color: var(--card-background);
+  border: none;
+  padding: 0.5rem;
+  cursor: pointer;
+  color: var(--light-text);
+  transition:
+    background-color 0.3s,
+    color 0.3s;
+
+  &:first-child {
+    border-right: 1px solid var(--border-color);
+  }
+
+  &:hover {
+    background-color: var(--border-color);
+  }
+
+  &.active {
+    background-color: var(--primary-color);
+    color: white;
+  }
+}
+.theme-toggle {
+  background: none;
+  border: none;
+  color: var(--light-text);
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &:hover {
+    background-color: rgba(128, 128, 128, 0.1);
+    color: var(--primary-color);
+  }
+}

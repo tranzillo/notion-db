@@ -2,7 +2,17 @@ import { defineConfig } from 'astro/config';
 import react from '@astrojs/react';
 
 export default defineConfig({
-  output: 'static',
   integrations: [react()],
-  // Your other config options
+  // Enable SSR for dynamic routes
+  output: 'static',
+  // Use SCSS for styling
+  vite: {
+    css: {
+      preprocessorOptions: {
+        scss: {
+          additionalData: `@import "./src/styles/_variables.scss";`
+        }
+      }
+    }
+  }
 });

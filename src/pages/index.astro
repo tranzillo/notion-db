@@ -1,50 +1,58 @@
 ---
-// src/pages/index.astro
-import Layout from '../layouts/Layout.astro';
-import { getAllPosts } from '../lib/notion';
-import BlogLayout from '../components/BlogLayout.jsx';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Search from '../components/standalone/Search';
+import Filter from '../components/standalone/Filter';
+import BottleneckGrid from '../components/standalone/DashboardGrid';
+import ViewToggle from '../components/standalone/ViewToggle';
+import ThemeToggle from '../components/standalone/ThemeToggle';
+import { getAllData } from '../lib/notion';
+import { extractDisciplines, parseUrlParams } from '../lib/dataUtils';
 
-const posts = await getAllPosts();
+// Fetch all data from Notion at build time
+const { bottlenecks } = await getAllData();
+
+// Extract disciplines from bottlenecks
+const disciplines = extractDisciplines(bottlenecks);
+
+// Get URL parameters
+const { searchQuery, disciplineSlugs } = parseUrlParams(Astro.url.toString());
 ---
 
-<Layout title="Notion CMS Prototype">
-  <main>
-    <section>
-      <h1>This is a Prototype Powered by Notion</h1>
-      <!-- Use client:load for hydration while preserving SSR -->
-      <BlogLayout client:load initialPosts={posts} />
+<BaseLayout title="Bottleneckbase">
+  <ThemeToggle client:load slot="theme-toggle" />
+  
+  <div class="dashboard-header">
+    <h1>Discover Patterns among Problems</h1>
+    <p>
+      Survey the landscape of bottlenecks in scientific advancement and their potential solutions.
+      Use the search and filters to discover bottlenecks relevant to your interests.
+    </p>
+  </div>
+  
+  
+  <div class="dashboard-layout">
+    <aside class="dashboard-layout__sidebar">
+      <Filter 
+        client:load 
+        disciplines={disciplines} 
+        initialSelectedIds={disciplineSlugs}
+      />
+    </aside>
+    
+    <div class="dashboard-layout__main">
+      <div class="dashboard-search">
+        <Search client:load initialQuery={searchQuery} />
+        <div class="dashboard-controls">
+          <ViewToggle client:load />
+        </div>
+      </div>
       
-      <noscript>
-        <section class="posts">
-          {posts.map(post => (
-            <article class="post-card">
-              {post.featuredImage && (
-                <div class="post-image">
-                  <a href={`/posts/${post.slug}`}>
-                    <img src={post.featuredImage} alt={post.title} />
-                  </a>
-                </div>
-              )}
-              
-              <div class="post-content">
-                <h2><a href={`/posts/${post.slug}`}>{post.title}</a></h2>
-                {post.description && <p class="post-description">{post.description}</p>}
-                <div class="post-meta">
-                  <time datetime={post.publishedDate}>
-                    {new Date(post.publishedDate).toLocaleDateString('en-US')}
-                  </time>
-                  <div class="tags">
-                    {post.tags.map(tag => (
-                      <span class="tag">{tag}</span>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </article>
-          ))}
-        </section>
-      </noscript>
+      <BottleneckGrid 
+        client:load 
+        bottlenecks={bottlenecks}
+        initialSearchQuery={searchQuery}
+        initialSelectedDisciplineIds={disciplineSlugs}
+      />
     </div>
-    </section>
-  </main>
-</Layout>
+  </div>
+</BaseLayout>
