@@ -3,16 +3,19 @@
   flex-direction: column;
   gap: $spacing-lg;
   background-color: var(--background-color);
-  border-radius: 8px;
+  border-radius: $border-radius-lg;
   padding: $spacing-lg;
   border: 1px solid var(--border-color);
   transition:
     background-color 0.3s,
     border-color 0.3s;
-
+    h3 {
+      color: var(--text-color);
+    }
     &__title {
       font-size: $font-size-lg;
       border-bottom: 1px solid var(--border-color);
+
     }
 
     &__content {

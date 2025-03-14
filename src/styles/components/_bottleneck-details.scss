@@ -3,7 +3,7 @@
   flex-direction: column;
   gap: $spacing-lg;
   background-color: var(--card-background);
-  border-radius: 8px;
+  border-radius: $border-radius-lg;
   padding: $spacing-lg;
 
   &__header {
@@ -19,14 +19,14 @@
     display: inline-block;
     background-color: #3498db;
     color: white;
-    padding: 0.25rem 0.5rem;
-    border-radius: 4px;
-    font-size: 0.875rem;
+    padding: $spacing-xs $spacing-sm;
+    border-radius: $border-radius-md;
+    font-size: $font-size-sm;
   }
 
   &__title {
     font-size: $spacing-lg;
-    margin-bottom: 0.5rem;
+    margin-bottom: $spacing-sm;
   }
 
   &__content {
@@ -37,6 +37,7 @@
     margin-block-start: $spacing-md;
     h3 {
       padding-bottom: $spacing-lg;
+      color: var(--light-text);
     }
   }
   &__solutions-grid {
@@ -53,7 +54,7 @@
 .back-link {
   display: inline-block;
   margin-bottom: $spacing-md;
-  color: #777;
+  color: var(--lighter-text);
   text-decoration: none;
   &:hover {
     color: #3498db;

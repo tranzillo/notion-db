@@ -18,7 +18,7 @@
   &__empty-state {
     grid-column: 1 / -1;
     text-align: center;
-    padding: 3rem 0;
+    padding: $spacing-xxl 0;
     background-color: var(--card-background);
     border-radius: 8px;
     transition:background-color 0.3s;
@@ -52,7 +52,7 @@
   &__sidebar {
     width: 100%;
 
-    @media (min-width: 768px) {
+    @media (min-width: $breakpoint-md) {
       
     }
   }

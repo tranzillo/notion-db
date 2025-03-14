@@ -25,11 +25,11 @@
   &__controls {
     display: flex;
     align-items: center;
-    gap: 1rem;
+    gap: $spacing-md;
   }
   
   &__logo {
-    font-size: 1.5rem;
+    font-size: $font-size-xl;
     color: var(--text-color);
     text-decoration: none;
   
@@ -42,7 +42,7 @@
     display: flex;
   
     &-item {
-      margin-left: 1.5rem;
+      margin-left: $spacing-lg;
   
       a {
         color: var(--text-color);
@@ -62,7 +62,7 @@
   
   &__footer {
     background-color: var(--footer-background);
-    padding: 1.5rem 0;
+    padding: $spacing-lg 0;
     border-top: 1px solid var(--border-color);
     margin-top: auto;
     transition: background-color 0.3s, border-color 0.3s;
@@ -71,9 +71,9 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 1rem;
+      gap: $spacing-md;
   
-      @media (min-width: 768px) {
+      @media (min-width:  $breakpoint-md) {
         flex-direction: row;
         justify-content: space-between;
       }
@@ -82,16 +82,16 @@
   
   &__footer-text {
     color: var(--light-text);
-    font-size: 0.875rem;
+    font-size: $font-size-sm;
   }
   
   &__footer-links {
     display: flex;
-    gap: 1rem;
+    gap: $spacing-md;
   
     a {
       color: var(--text-color);
-      font-size: 0.875rem;
+      font-size: $font-size-sm;;
   
       &:hover {
         color: var(--primary-color);

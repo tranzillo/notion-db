@@ -3,7 +3,8 @@
   --primary-color: #3498db;
   --secondary-color: #2ecc71;
   --text-color: #373741;
-  --light-text: #595963;
+  --light-text: #616169;
+  --lighter-text: #7e7e85;
   --border-color: #e0e0d5;
   --background-color: #f3f2eb;
   --background-color-dark: #e6e5dc;
@@ -21,6 +22,7 @@
   --secondary-color: #44d581;
   --text-color: #e0e0e0;
   --light-text: #a0a0a0;
+  --lighter-text: #8d8686;
   --border-color: #373741;
   --background-color: #121212;
   --background-color-dark: #1a1a1a;
@@ -51,9 +53,9 @@ $font-size-xl: 1.5rem;
 $font-size-xxl: 2rem;
 
 // Border radius
-$border-radius-sm: 4px;
-$border-radius-md: 8px;
-$border-radius-lg: 12px;
+$border-radius-sm: 2px;
+$border-radius-md: 4px;
+$border-radius-lg: 8px;
 
 // Breakpoints
 $breakpoint-sm: 576px;

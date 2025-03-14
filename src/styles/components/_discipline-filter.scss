@@ -6,10 +6,15 @@
   gap: $spacing-md;
   background-color: var(--background-color-dark);
   border-radius: 8px;
-  padding: 1.5rem;
+  padding: $spacing-lg;
+  max-width: 280px;
   transition:
     background-color 0.3s,
     box-shadow 0.3s;
+
+  @media (max-width: $breakpoint-lg) {
+    max-width: unset;
+  }
 
   &__header {}
 
@@ -20,7 +25,7 @@
   &__checkbox {
     display: flex;
     align-items: center;
-    padding: 0.25rem;
+    padding: $spacing-xs;
     border-radius: 4px;
     transition: background-color 0.3s;
 
@@ -51,7 +56,7 @@
     cursor: pointer;
     background-color: var(--card-background);
     border: 1px solid var(--border-color);
-    padding: 0.25rem 0.5rem;
+    padding: $spacing-xs $spacing-sm;
     border-radius: 4px;
     transition: background-color 0.3s;
 

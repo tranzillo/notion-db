@@ -3,7 +3,7 @@
   flex-direction: column;
   gap: $spacing-md;
   background-color: var(--card-background);
-  border-radius: 8px;
+  border-radius: $border-radius-lg;
   padding: $spacing-lg $spacing-lg $spacing-md $spacing-lg;
   height: 100%;
   display: flex;
@@ -16,8 +16,8 @@
       display: inline-block;
       background-color: var(--background-color);
       color: var(--light-text);
-      padding: 0.25rem 0.5rem;
-      border-radius: 4px;
+      padding: $spacing-xs $spacing-sm;
+      border-radius: $border-radius-md;
       font-size: $font-size-sm;
       transition: background-color 0.3s, color 0.3s;
     
