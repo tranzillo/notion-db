@@ -6,8 +6,10 @@
   gap: $spacing-md;
   background-color: var(--background-color-dark);
   border-radius: $border-radius-lg;
-  padding: $spacing-lg;
+  padding: $spacing-lg $spacing-md;
   max-width: 18rem;
+  max-height: calc(100vh - (2 * $spacing-xl));
+  overflow: auto;
   transition:
     background-color $transition,
     box-shadow $transition;
@@ -17,7 +19,8 @@
   }
 
   &__header {
-    color: var(--light-text);
+    color: var(--text-color);
+    margin: 0 $spacing-sm;
 
     h3 {
       font-weight: 400;
@@ -25,14 +28,17 @@
     }
   }
 
-  &__list {}
+  &__list {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-xs;
+  }
 
   &__item {}
 
   &__checkbox {
     display: flex;
     align-items: center;
-    padding: $spacing-xs;
     border-radius: $border-radius-md;
 
     &.active {
@@ -40,17 +46,40 @@
     }
 
     input {
-      margin-right: $spacing-sm;
+      height: 0;
+      width: 0;
+
+      &:checked {
+        +label {
+          background-color: var(--highlight-bg);
+          color: var(--text-color);
+          border-color: var(--border-color);
+        }
+      }
+
+      &:focus {
+        +label {
+          border-color: var(--border-color);
+        }
+      }
     }
 
     label {
       cursor: pointer;
+      padding: $spacing-xs $spacing-sm;
+      color: var(--light-text);
+      border-radius: $border-radius-md;
+      border: 1px solid transparent;
+      transition: background-color $transition,
+        color $transition,
+        border-color $transition;
     }
   }
 
   &__actions {
     display: flex;
     justify-content: flex-start;
+    margin: 0 $spacing-sm;
     gap: $spacing-xs;
   }
 

@@ -128,6 +128,7 @@ export default function Filter({ disciplines = [], initialSelectedIds = [] }) {
                 value={discipline.id}
                 checked={selected.includes(discipline.id)}
                 onChange={() => handleDisciplineChange(discipline.id)}
+                tabindex="0"
               />
               <label htmlFor={`discipline-${discipline.id}`}>{discipline.title}</label>
             </div>

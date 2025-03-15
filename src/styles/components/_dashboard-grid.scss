@@ -1,7 +1,7 @@
 .bottleneck-grid {
   display: grid;
   grid-template-columns: repeat(1, 1fr);
-  gap: $spacing-lg;
+  gap: $spacing-md;
 
   @media (min-width: $breakpoint-lg) {
     grid-template-columns: repeat(2, 1fr);
@@ -32,7 +32,7 @@
 .dashboard-header {
   display: flex;
   flex-direction: column;
-  gap: $spacing-md;
+  gap: $spacing-lg;
   margin-block: 0 $spacing-xxl;
 
   h1,
@@ -43,6 +43,7 @@
   p {
     font-size: $font-size-md;
     color: var(--light-text);
+    line-height: 1.6;
   }
 }
 

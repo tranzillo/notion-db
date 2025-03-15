@@ -23,7 +23,7 @@
     
       &.active {
         background-color: var(--primary-color);
-        color: white;
+        color: var(--pure-white);
       }
     }
     
@@ -43,6 +43,7 @@
     &__content {
       color: var(--light-text);
       flex-grow: 1;
+      line-height: 1.5;
       line-clamp: 5;
       display: -webkit-box;
       -webkit-box-orient: vertical;

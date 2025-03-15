@@ -20,6 +20,7 @@ html[data-list-view="true"] .bottleneck-grid {
   --shadow-color: rgba(0, 0, 0, 0.1);
   --highlight-bg: rgba(52, 152, 219, 0.2);
   --highlight-color: #2980b9;
+  --pure-white: #f3f2eb;
 }
 
 /* Dark mode variables */
@@ -40,6 +41,7 @@ html[data-theme="dark"],
   --shadow-color: rgba(0, 0, 0, 0.3);
   --highlight-bg: rgba(89, 46, 109, 0.2);
   --highlight-color: #a08ad1;
+  --pure-white: #e0e0e0;
 }
 
 
