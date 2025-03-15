@@ -11,30 +11,48 @@
     border-color 0.3s;
     h3 {
       color: var(--text-color);
+      font-weight: 500;
     }
     &__title {
       font-size: $font-size-lg;
-      border-bottom: 1px solid var(--border-color);
+      border-bottom: 1px solid var(--border-dull);
 
     }
 
     &__content {
       max-width: 65ch;
+      color: var(--light-text);
     }
 
     &__references {
       margin-block-start: auto;
-    }
-
-    &__references h4 {
-      font-size: $spacing-md;
-      margin-bottom: $spacing-sm;
-      color: #777;
+      h4 {
+        font-size: $spacing-md;
+        font-weight: normal;
+        margin-bottom: $spacing-sm;
+        color: var(--lighter-text);
+        margin-block-end: $spacing-sm;
+      }
     }
 
     &__reference-list {
-      list-style: disc;
-      padding-left: $spacing-lg;
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: $spacing-sm;
+      align-items: flex-start;
+      padding: 0;
+      li {
+        font-size: $font-size-sm;
+        line-height: 1.25;
+        background-color: var(--card-background);
+        padding: $spacing-md;
+        border-radius: $border-radius-md;
+        a {
+          display: inline-block;
+          max-width: 65ch;
+        }
+      }
     }
 
     &__reference-item {
@@ -42,11 +60,9 @@
     }
 
     &__reference-item a {
-      color: #3498db;
       text-decoration: none;
-    }
-
-    &__reference-item a:hover {
-      text-decoration: underline;
+      &:hover {
+        text-decoration: underline;
+      }
     }
 }

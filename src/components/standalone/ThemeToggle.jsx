@@ -1,52 +1,92 @@
-// src/components/standalone/ThemeToggle.jsx
 import React, { useState, useEffect } from 'react';
+import { updateUserPreference } from '../../lib/userPreferences';
 
 export default function ThemeToggle() {
-  // Initialize state WITHOUT any window/localStorage checks
-  // This will render the same on server and client
+  // Initialize with a default that will be quickly updated
   const [isDarkMode, setIsDarkMode] = useState(false);
   
-  // After component mounts, load the real value
+  // Use effect to load the actual value after mount
   useEffect(() => {
-    try {
-      // Check for global preferences
-      if (typeof window !== 'undefined' && window.userPreferences) {
-        setIsDarkMode(window.userPreferences.darkMode);
+    const loadThemePreference = () => {
+      try {
+        // First check if the DOM already has the class (it might be set by InjectHydrationData)
+        const hasClassInDOM = document.documentElement.classList.contains('dark-mode');
+        
+        // Then check window.userPreferences which is set globally
+        const hasPreferenceInWindow = 
+          typeof window !== 'undefined' && 
+          window.userPreferences && 
+          window.userPreferences.darkMode;
+        
+        // Use DOM state first, then fallback to window preference, then localStorage
+        let prefersDark = hasClassInDOM || hasPreferenceInWindow;
+        
+        // If we couldn't get the preference from DOM or window, check localStorage
+        if (!hasClassInDOM && !hasPreferenceInWindow) {
+          const savedPrefs = localStorage.getItem('userPreferences');
+          if (savedPrefs) {
+            const prefs = JSON.parse(savedPrefs);
+            prefersDark = !!prefs.darkMode;
+          } else {
+            // Final fallback: check system preference
+            prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+          }
+        }
+        
+        setIsDarkMode(prefersDark);
+      } catch (e) {
+        console.error('Error loading theme preference:', e);
       }
-    } catch (e) {
-      console.error('Error loading theme preference:', e);
-    }
+    };
+    
+    // Load preference initially
+    loadThemePreference();
+    
+    // Also reload preference after navigation completes
+    const handlePageLoad = () => {
+      loadThemePreference();
+    };
+    
+    document.addEventListener('astro:page-load', handlePageLoad);
+    
+    return () => {
+      document.removeEventListener('astro:page-load', handlePageLoad);
+    };
   }, []);
   
   // Toggle theme
   const toggleTheme = () => {
     const newDarkMode = !isDarkMode;
     setIsDarkMode(newDarkMode);
-    savePreference(newDarkMode);
+    
+    // Update localStorage
+    updateUserPreference('darkMode', newDarkMode);
+    
+    // Update global variable for other components
+    if (typeof window !== 'undefined') {
+      window.userPreferences = window.userPreferences || {};
+      window.userPreferences.darkMode = newDarkMode;
+    }
+    
+    // Apply theme to document
+    applyTheme(newDarkMode);
+    
+    // Dispatch a custom event for other components
+    window.dispatchEvent(new CustomEvent('theme-changed', { 
+      detail: { isDarkMode: newDarkMode } 
+    }));
   };
   
-  // Save preference
-  const savePreference = (darkMode) => {
-    try {
-      // Update global preferences
-      if (typeof window !== 'undefined' && window.userPreferences) {
-        window.userPreferences.darkMode = darkMode;
-      }
-      
-      // Save to localStorage
-      const savedPrefs = localStorage.getItem('userPreferences');
-      const prefs = savedPrefs ? JSON.parse(savedPrefs) : {};
-      prefs.darkMode = darkMode;
-      localStorage.setItem('userPreferences', JSON.stringify(prefs));
-      
-      // Apply theme
-      if (darkMode) {
-        document.documentElement.classList.add('dark-mode');
-      } else {
-        document.documentElement.classList.remove('dark-mode');
-      }
-    } catch (e) {
-      console.error('Error saving theme preference:', e);
+  // Apply theme to document
+  const applyTheme = (darkMode) => {
+    // Update data attribute
+    document.documentElement.dataset.theme = darkMode ? 'dark' : 'light';
+    
+    // Update class
+    if (darkMode) {
+      document.documentElement.classList.add('dark-mode');
+    } else {
+      document.documentElement.classList.remove('dark-mode');
     }
   };
 

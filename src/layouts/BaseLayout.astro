@@ -1,8 +1,8 @@
 ---
-import "../styles/main.scss";
 import InjectHydrationData from "../components/InjectHydrationData.astro";
 import ThemeToggle from "../components/standalone/ThemeToggle";
-import { ClientRouter } from "astro:transitions";
+import "../styles/main.scss";
+
 interface Props {
   title: string;
   description?: string;
@@ -15,83 +15,106 @@ const {
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang="en" data-list-view="false">
   <head>
-    <html lang="en" data-list-view="false">
-      <head>
-        <!-- Astro components must be first in head -->
-        <InjectHydrationData />
-        <ClientRouter />
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <meta name="generator" content={Astro.generator} />
-        <meta name="description" content={description} />
-        <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-        <title>{title}</title>
-      </head>
-      <body>
-        <div class="base-layout">
-          <header class="base-layout__header">
-            <div class="container">
-              <a href="/" class="base-layout__logo">
-                <span>Bottleneckbase</span>
-              </a>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="generator" content={Astro.generator} />
+    <meta name="description" content={description} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <title>{title}</title>
+    
+    <!-- Inject hydration data early -->
+    <InjectHydrationData />
+    
+    <!-- Enable view transitions API -->
+    <meta name="view-transition" content="same-origin" />
+  </head>
+  <body>
+    <div class="base-layout">
+      <header class="base-layout__header">
+        <div class="container">
+          <a href="/" class="base-layout__logo">
+            <span>Bottleneckbase</span>
+          </a>
 
-              <div class="base-layout__controls">
-                <nav class="base-layout__nav">
-                  <div class="base-layout__nav-item">
-                    <a
-                      href="/"
-                      class={Astro.url.pathname === "/" ? "active" : ""}
-                    >
-                      Dashboard
-                    </a>
-                  </div>
-                  <div class="base-layout__nav-item">
-                    <a
-                      href="#"
-                      class={Astro.url.pathname === "/contribute"
-                        ? "active"
-                        : ""}
-                    >
-                      Contribute
-                    </a>
-                  </div>
-                </nav>
-
-                <!-- Always include ThemeToggle in the layout -->
-                <ThemeToggle client:load />
-              </div>
-            </div>
-          </header>
-
-          <main class="base-layout__main">
-            <div class="container">
-              <slot />
-            </div>
-          </main>
-
-          <footer class="base-layout__footer">
-            <div class="container">
-              <div class="base-layout__footer-text">
-                &copy; {new Date().getFullYear()} Convergent Research
-              </div>
-
-              <div class="base-layout__footer-links">
-                <a href="/" class={Astro.url.pathname === "/" ? "active" : ""}>
+          <div class="base-layout__controls">
+            <nav class="base-layout__nav">
+              <div class="base-layout__nav-item">
+                <a
+                  href="/"
+                  class={Astro.url.pathname === "/" ? "active" : ""}
+                >
                   Dashboard
                 </a>
+              </div>
+              <div class="base-layout__nav-item">
                 <a
                   href="#"
-                  class={Astro.url.pathname === "/contribute" ? "active" : ""}
+                  class={Astro.url.pathname === "/contribute"
+                    ? "active"
+                    : ""}
                 >
                   Contribute
                 </a>
               </div>
-            </div>
-          </footer>
+            </nav>
+
+            <!-- Include ThemeToggle -->
+            <ThemeToggle client:load />
+            
+            <!-- Keep the slot for backward compatibility or other controls -->
+            <slot name="theme-toggle" />
+          </div>
         </div>
-      </body>
-    </html></head
-  >
+      </header>
+
+      <main class="base-layout__main">
+        <div class="container">
+          <slot />
+        </div>
+      </main>
+
+      <footer class="base-layout__footer">
+        <div class="container">
+          <div class="base-layout__footer-text">
+            &copy; {new Date().getFullYear()} Convergent Research
+          </div>
+
+          <div class="base-layout__footer-links">
+            <a href="/" class={Astro.url.pathname === "/" ? "active" : ""}>
+              Dashboard
+            </a>
+            <a
+              href="#"
+              class={Astro.url.pathname === "/contribute" ? "active" : ""}
+            >
+              Contribute
+            </a>
+          </div>
+        </div>
+      </footer>
+    </div>
+
+    <!-- Script to properly handle Astro's view transitions -->
+    <script>
+      document.addEventListener('astro:page-load', () => {
+        // After each navigation, ensure all components are properly initialized
+        // Dispatch events that our React components listen for
+        const prefs = window.userPreferences || {};
+        
+        if (prefs.darkMode !== undefined) {
+          window.dispatchEvent(new CustomEvent('theme-changed', { 
+            detail: { isDarkMode: prefs.darkMode } 
+          }));
+        }
+        
+        if (prefs.isListView !== undefined) {
+          window.dispatchEvent(new CustomEvent('view-changed', {
+            detail: { isListView: prefs.isListView }
+          }));
+        }
+      });
+    </script>
+  </body>
 </html>

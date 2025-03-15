@@ -1,27 +1,31 @@
 .bottleneck-grid {
   display: grid;
   grid-template-columns: repeat(1, 1fr);
-  gap: 1.5rem;
+  gap: $spacing-lg;
 
   @media (min-width: $breakpoint-lg) {
     grid-template-columns: repeat(2, 1fr);
   }
-
   @media (min-width: $breakpoint-xl) {
     grid-template-columns: repeat(3, 1fr);
   }
-
+  @media (min-width: $breakpoint-xxxl) {
+    grid-template-columns: repeat(4, 1fr);
+  }
+  @media (min-width: $breakpoint-max) {
+    grid-template-columns: repeat(5, 1fr);
+  }
   &--list-view {
     grid-template-columns: 1fr;
   }
-  
+
   &__empty-state {
     grid-column: 1 / -1;
     text-align: center;
     padding: $spacing-xxl 0;
     background-color: var(--card-background);
-    border-radius: 8px;
-    transition:background-color 0.3s;
+    border-radius: $border-radius-lg;
+    transition: background-color 0.3s;
   }
 }
 
@@ -30,9 +34,12 @@
   flex-direction: column;
   gap: $spacing-md;
   margin-block: 0 $spacing-xxl;
-  h1, p {
+
+  h1,
+  p {
     max-width: 75ch;
   }
+
   p {
     font-size: $font-size-md;
     color: var(--light-text);
@@ -52,9 +59,7 @@
   &__sidebar {
     width: 100%;
 
-    @media (min-width: $breakpoint-md) {
-      
-    }
+    @media (min-width: $breakpoint-md) {}
   }
 
   &__main {
@@ -70,9 +75,17 @@
   top: $spacing-xl;
   display: grid;
   grid-template-columns: 1fr auto;
+  transition: box-shadow 0.3s;
   box-shadow: 0 $spacing-xl $spacing-lg 0 var(--background-color),
-              0 calc(($spacing-xl) * -1 ) 0 0 var(--background-color);
-}
+    0 calc(($spacing-xl) * -1) 0 0 var(--background-color);
+    @media (max-width: $breakpoint-sm) {
+      top: $spacing-md;
+      box-shadow: 0 $spacing-lg $spacing-md 0 var(--background-color),
+      0 calc(($spacing-md) * -1) 0 0 var(--background-color);
+    }
+  }
+
+
 
 .dashboard-controls {
   display: flex;

@@ -1,65 +1,104 @@
 // src/components/standalone/ViewToggle.jsx
 import React, { useState, useEffect } from 'react';
+import { updateUserPreference } from '../../lib/userPreferences';
 
 export default function ViewToggle() {
-  // Initialize state WITHOUT any window/localStorage checks
+  // Initialize state with a default that will be quickly updated
   const [isListView, setIsListView] = useState(false);
 
   // After component mounts, load the real value
   useEffect(() => {
-    try {
-      // Check for global preferences
-      if (typeof window !== 'undefined' && window.userPreferences) {
-        setIsListView(window.userPreferences.isListView);
+    const loadViewPreference = () => {
+      try {
+        // First check if the DOM already has the attribute (set by InjectHydrationData)
+        const hasAttributeInDOM = document.documentElement.dataset.listView === 'true';
+        
+        // Then check window.userPreferences which is set globally
+        const hasPreferenceInWindow = 
+          typeof window !== 'undefined' && 
+          window.userPreferences && 
+          window.userPreferences.isListView;
+        
+        // Use DOM state first, then fallback to window preference, then localStorage
+        let prefersList = hasAttributeInDOM || hasPreferenceInWindow;
+        
+        // If we couldn't get the preference from DOM or window, check localStorage
+        if (!hasAttributeInDOM && !hasPreferenceInWindow) {
+          const savedPrefs = localStorage.getItem('userPreferences');
+          if (savedPrefs) {
+            const prefs = JSON.parse(savedPrefs);
+            prefersList = !!prefs.isListView;
+          }
+        }
+        
+        setIsListView(prefersList);
+      } catch (e) {
+        console.error('Error loading view preference:', e);
       }
-    } catch (e) {
-      console.error('Error loading view preference:', e);
-    }
+    };
+    
+    // Load preference initially
+    loadViewPreference();
+    
+    // Also reload preference after navigation completes
+    const handlePageLoad = () => {
+      loadViewPreference();
+    };
+    
+    document.addEventListener('astro:page-load', handlePageLoad);
+    
+    return () => {
+      document.removeEventListener('astro:page-load', handlePageLoad);
+    };
   }, []);
 
   // Toggle to grid view
   const setGridView = () => {
     setIsListView(false);
     savePreference(false);
-
-    // Update the UI for all grid elements immediately
-    const grids = document.querySelectorAll('.bottleneck-grid');
-    grids.forEach(grid => grid.classList.remove('bottleneck-grid--list-view'));
   };
 
   // Toggle to list view
   const setListView = () => {
     setIsListView(true);
     savePreference(true);
-
-    // Update the UI for all grid elements immediately
-    const grids = document.querySelectorAll('.bottleneck-grid');
-    grids.forEach(grid => grid.classList.add('bottleneck-grid--list-view'));
   };
 
   // Save preference and notify other components
   const savePreference = (listView) => {
     try {
-      // Update global preferences
-      if (typeof window !== 'undefined' && window.userPreferences) {
+      // Update localStorage
+      updateUserPreference('isListView', listView);
+      
+      // Update global variable for other components
+      if (typeof window !== 'undefined') {
+        window.userPreferences = window.userPreferences || {};
         window.userPreferences.isListView = listView;
       }
-
-      // Save to localStorage
-      const savedPrefs = localStorage.getItem('userPreferences');
-      const prefs = savedPrefs ? JSON.parse(savedPrefs) : {};
-      prefs.isListView = listView;
-      localStorage.setItem('userPreferences', JSON.stringify(prefs));
-
+      
+      // Apply list view to document
+      applyView(listView);
+      
       // Dispatch event for other components
       window.dispatchEvent(new CustomEvent('view-changed', {
         detail: { isListView: listView }
       }));
-
-      // Also update the data attribute for potential SSR
-      document.documentElement.dataset.listView = listView ? 'true' : 'false';
     } catch (e) {
       console.error('Error saving view preference:', e);
+    }
+  };
+  
+  // Apply view to document
+  const applyView = (listView) => {
+    // Update data attribute
+    document.documentElement.dataset.listView = listView ? 'true' : 'false';
+    
+    // Update grid elements
+    const grids = document.querySelectorAll('.bottleneck-grid');
+    if (listView) {
+      grids.forEach(grid => grid.classList.add('bottleneck-grid--list-view'));
+    } else {
+      grids.forEach(grid => grid.classList.remove('bottleneck-grid--list-view'));
     }
   };
 
@@ -91,7 +130,6 @@ export default function ViewToggle() {
           <rect x="14" y="14" width="7" height="7"></rect>
         </svg>
       </button>
-
     </div>
   );
 }

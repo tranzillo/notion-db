@@ -1,49 +1,97 @@
-<!-- src/components/InjectHydrationData.astro -->
 <script is:inline>
-    // This script runs before anything else and before any content is painted
-    (function() {
+  // IMPORTANT: This script must run as early as possible to prevent flash
+  (function () {
+    // Check if we're in a view transition
+    const isViewTransition = document.startViewTransition !== undefined && 
+                             document.querySelector("html.astro-route-announcer");
+
+    // Function to load user preferences
+    function loadUserPreferences() {
+      let darkMode = false; // Default
+      let isListView = false; // Default
+      
       try {
-        // Try to get previously saved theme preference first
-        let darkMode = false;
-        let isListView = false;
-        
-        // Get saved preferences
-        const savedPrefs = localStorage.getItem('userPreferences');
+        // Try localStorage first
+        const savedPrefs = localStorage.getItem("userPreferences");
         if (savedPrefs) {
           const prefs = JSON.parse(savedPrefs);
-          if (typeof prefs.darkMode === 'boolean') darkMode = prefs.darkMode;
-          if (typeof prefs.isListView === 'boolean') isListView = prefs.isListView;
-        } else {
-          // Check system preference for dark mode if no saved preference
-          darkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-        }
-        
-        // Create a global preferences object
-        window.userPreferences = {
-          darkMode: darkMode,
-          isListView: isListView
-        };
-        
-        // Immediately apply theme BEFORE page renders to avoid flash
-        if (darkMode) {
-          document.documentElement.classList.add('dark-mode');
-        }
-        
-        // Add the class to html tag to make it available for CSS
-        if (isListView) {
-          document.documentElement.dataset.listView = 'true';
-        }
-        
-        // Create a style block to handle the list view before React loads
-        const style = document.createElement('style');
-        style.textContent = `
-          html[data-list-view="true"] .bottleneck-grid {
-            grid-template-columns: 1fr !important;
+          if (typeof prefs.darkMode === "boolean") {
+            darkMode = prefs.darkMode;
           }
-        `;
-        document.head.appendChild(style);
+          if (typeof prefs.isListView === "boolean") {
+            isListView = prefs.isListView;
+          }
+        } else if (window.matchMedia) {
+          // Fall back to system preference if no saved preference
+          darkMode = window.matchMedia("(prefers-color-scheme: dark)").matches;
+        }
+        
+        // Create a global preferences object for later use
+        window.userPreferences = window.userPreferences || {};
+        window.userPreferences.darkMode = darkMode;
+        window.userPreferences.isListView = isListView;
+        
+        // Expose for hydration
+        window.hydrationData = window.hydrationData || {};
+        window.hydrationData.darkMode = darkMode;
+        window.hydrationData.isListView = isListView;
+        
+        return { darkMode, isListView };
       } catch (e) {
-        console.error('Error initializing preferences:', e);
+        console.error("Error loading user preferences:", e);
+        return { darkMode: false, isListView: false };
       }
-    })();
-  </script>
+    }
+    
+    // Function to apply theme to document
+    function applyTheme(document, { darkMode, isListView }) {
+      // Set data attributes for CSS access
+      document.documentElement.dataset.theme = darkMode ? "dark" : "light";
+      document.documentElement.dataset.listView = isListView ? "true" : "false";
+      
+      // Apply theme classes
+      if (darkMode) {
+        document.documentElement.classList.add("dark-mode");
+      } else {
+        document.documentElement.classList.remove("dark-mode");
+      }
+      
+      // Apply list view to grid elements if needed
+      if (isListView) {
+        const grids = document.querySelectorAll('.bottleneck-grid');
+        grids.forEach(grid => grid.classList.add('bottleneck-grid--list-view'));
+      }
+    }
+    
+    // Don't reset the theme if we're in a view transition
+    if (!isViewTransition) {
+      const prefs = loadUserPreferences();
+      applyTheme(document, prefs);
+    }
+    
+    // ====== Handle Astro View Transitions ======
+    
+    // Before leaving the current page
+    document.addEventListener("astro:before-preparation", (e) => {
+      // Store current state in transition object
+      const darkMode = document.documentElement.classList.contains("dark-mode");
+      const isListView = document.documentElement.dataset.listView === "true";
+      e.state.themePrefs = { darkMode, isListView };
+    });
+    
+    // After the new page content is loaded but before it's shown
+    document.addEventListener("astro:after-preparation", (e) => {
+      if (e.state.themePrefs) {
+        // Apply stored theme to the new document
+        applyTheme(e.newDocument, e.state.themePrefs);
+      }
+    });
+    
+    // After navigation is complete
+    document.addEventListener("astro:page-load", () => {
+      // Ensure preferences are loaded and applied after each navigation
+      const prefs = loadUserPreferences();
+      applyTheme(document, prefs);
+    });
+  })();
+</script>

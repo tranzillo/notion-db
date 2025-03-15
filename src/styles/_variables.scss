@@ -1,3 +1,8 @@
+/* View layout styling based on data attribute */
+html[data-list-view="true"] .bottleneck-grid {
+  grid-template-columns: 1fr !important;
+}
+
 :root {
   /* Light mode variables */
   --primary-color: #3498db;
@@ -5,7 +10,8 @@
   --text-color: #373741;
   --light-text: #616169;
   --lighter-text: #7e7e85;
-  --border-color: #e0e0d5;
+  --border-color: #b8cedd;
+  --border-dull: #e0e0d5;
   --background-color: #f3f2eb;
   --background-color-dark: #e6e5dc;
   --card-background: #ecebe4;
@@ -17,18 +23,20 @@
 }
 
 /* Dark mode variables */
+html[data-theme="dark"],
 .dark-mode {
-  --primary-color: #4fa3e0;
+  --primary-color: #896dca;
   --secondary-color: #44d581;
   --text-color: #e0e0e0;
   --light-text: #a0a0a0;
-  --lighter-text: #8d8686;
-  --border-color: #373741;
-  --background-color: #121212;
-  --background-color-dark: #1a1a1a;
-  --card-background: #1e1e1e;
-  --header-background: #1e1e1e;
-  --footer-background: #1e1e1e;
+  --lighter-text: #7d8091;
+  --border-color: #5c468f;
+  --border-dull: #463564;
+  --background-color: #25293a;
+  --background-color-dark: #313850;
+  --card-background: #292d3e;
+  --header-background: #292d3e;
+  --footer-background: #292d3e;
   --shadow-color: rgba(0, 0, 0, 0.3);
   --highlight-bg: rgba(79, 163, 224, 0.2);
   --highlight-color: #4fa3e0;
@@ -58,42 +66,13 @@ $border-radius-md: 4px;
 $border-radius-lg: 8px;
 
 // Breakpoints
+$breakpoint-min: 250px;
+$breakpoint-xxs: 320px;
+$breakpoint-xs: 420px;
 $breakpoint-sm: 576px;
 $breakpoint-md: 768px;
 $breakpoint-lg: 992px;
-$breakpoint-xl: 1200px;
-
-// Mixins
-@mixin flex($direction: row, $justify: flex-start, $align: stretch) {
-  display: flex;
-  flex-direction: $direction;
-  justify-content: $justify;
-  align-items: $align;
-}
-
-@mixin grid($columns: 1, $gap: $spacing-md) {
-  display: grid;
-  grid-template-columns: repeat($columns, 1fr);
-  gap: $gap;
-}
-
-@mixin responsive($breakpoint) {
-  @if $breakpoint == sm {
-    @media (min-width: $breakpoint-sm) { @content; }
-  } @else if $breakpoint == md {
-    @media (min-width: $breakpoint-md) { @content; }
-  } @else if $breakpoint == lg {
-    @media (min-width: $breakpoint-lg) { @content; }
-  } @else if $breakpoint == xl {
-    @media (min-width: $breakpoint-xl) { @content; }
-  }
-}
-
-@mixin card-shadow {
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  transition: box-shadow 0.3s ease;
-  
-  &:hover {
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  }
-}
+$breakpoint-xl: 1280px;
+$breakpoint-xxl: 1440px;
+$breakpoint-xxxl: 2560px; 
+$breakpoint-max: 3840px;

@@ -5,9 +5,9 @@
   flex-direction: column;
   gap: $spacing-md;
   background-color: var(--background-color-dark);
-  border-radius: 8px;
+  border-radius: $border-radius-lg;
   padding: $spacing-lg;
-  max-width: 280px;
+  max-width: 18rem;
   transition:
     background-color 0.3s,
     box-shadow 0.3s;
@@ -26,15 +26,16 @@
     display: flex;
     align-items: center;
     padding: $spacing-xs;
-    border-radius: 4px;
-    transition: background-color 0.3s;
+    border-radius:$border-radius-md;
+    transition: background-color 0.3s,
+    border-color 0.3s;
 
     &.active {
       background-color: rgba(var(--primary-color), 0.1);
     }
 
     input {
-      margin-right: 0.5rem;
+      margin-right: $spacing-sm;
     }
 
     label {
@@ -57,7 +58,7 @@
     background-color: var(--card-background);
     border: 1px solid var(--border-color);
     padding: $spacing-xs $spacing-sm;
-    border-radius: 4px;
+    border-radius: $border-radius-md;
     transition: background-color 0.3s;
 
     &:hover {

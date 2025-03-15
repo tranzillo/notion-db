@@ -12,13 +12,13 @@
     align-items: start;
     gap: $spacing-md;
     padding-bottom: $spacing-md;
-    border-bottom: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--border-dull);
   }
 
   &__discipline {
     display: inline-block;
-    background-color: #3498db;
-    color: white;
+    background-color: var(--primary-color);
+    color: #e0e0e0;
     padding: $spacing-xs $spacing-sm;
     border-radius: $border-radius-md;
     font-size: $font-size-sm;
@@ -37,6 +37,7 @@
     margin-block-start: $spacing-md;
     h3 {
       padding-bottom: $spacing-lg;
+      font-weight: normal;
       color: var(--light-text);
     }
   }
@@ -46,6 +47,9 @@
     gap: $spacing-lg;
     @media (min-width: $breakpoint-lg) {
       grid-template-columns: 1fr 1fr;
+    }
+    @media (min-width: $breakpoint-xxl) {
+      grid-template-columns: 1fr 1fr 1fr;
     }
   }
 
@@ -57,7 +61,7 @@
   color: var(--lighter-text);
   text-decoration: none;
   &:hover {
-    color: #3498db;
+    color: var(--primary-color);
     text-decoration: underline;
   }
 }

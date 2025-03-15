@@ -2,6 +2,9 @@
   width: 100%;
   margin: 0 auto;
   padding: 0 $spacing-xl;
+  @media (max-width: $breakpoint-sm) {
+    padding: 0 $spacing-sm;
+  }
 }
 
 .base-layout {
@@ -12,7 +15,7 @@
     background-color: var(--header-background);
     padding: $spacing-xl 0;
     font-weight: 600;
-    border-bottom: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--border-dull);
     transition: background-color 0.3s, border-color 0.3s;
   
     .container {
@@ -40,6 +43,9 @@
   
   &__nav {
     display: flex;
+    @media (max-width: $breakpoint-sm) {
+      display: none;
+    }
   
     &-item {
       margin-left: $spacing-lg;
@@ -63,7 +69,7 @@
   &__footer {
     background-color: var(--footer-background);
     padding: $spacing-lg 0;
-    border-top: 1px solid var(--border-color);
+    border-top: 1px solid var(--border-dull);
     margin-top: auto;
     transition: background-color 0.3s, border-color 0.3s;
   
