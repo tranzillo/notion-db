@@ -35,19 +35,11 @@ const {
       <header class="base-layout__header">
         <div class="container">
           <a href="/" class="base-layout__logo">
-            <span>Bottleneckbase</span>
+            <span>BottleNexus</span>
           </a>
 
           <div class="base-layout__controls">
             <nav class="base-layout__nav">
-              <div class="base-layout__nav-item">
-                <a
-                  href="/"
-                  class={Astro.url.pathname === "/" ? "active" : ""}
-                >
-                  Dashboard
-                </a>
-              </div>
               <div class="base-layout__nav-item">
                 <a
                   href="#"
@@ -55,7 +47,7 @@ const {
                     ? "active"
                     : ""}
                 >
-                  Contribute
+                ＋Contribute
                 </a>
               </div>
             </nav>
@@ -83,13 +75,13 @@ const {
 
           <div class="base-layout__footer-links">
             <a href="/" class={Astro.url.pathname === "/" ? "active" : ""}>
-              Dashboard
+              Home
             </a>
             <a
               href="#"
               class={Astro.url.pathname === "/contribute" ? "active" : ""}
             >
-              Contribute
+            ＋Contribute
             </a>
           </div>
         </div>

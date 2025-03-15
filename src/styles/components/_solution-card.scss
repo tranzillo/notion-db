@@ -6,24 +6,20 @@
   border-radius: $border-radius-lg;
   padding: $spacing-lg;
   border: 1px solid var(--border-color);
-  transition:
-    background-color $transition,
-    border-color $transition;
+  transition: background-color $transition, border-color $transition;
     h3 {
       color: var(--text-color);
       font-weight: 500;
-      transition: color $transition;
     }
     &__title {
       font-size: $font-size-lg;
       border-bottom: 1px solid var(--border-dull);
-      transition: border-color $transition;
+      transition: color $transition, border-color $transition;
     }
 
     &__content {
       max-width: 65ch;
       color: var(--light-text);
-      transition: color $transition;
     }
 
     &__references {
@@ -34,7 +30,6 @@
         margin-bottom: $spacing-sm;
         color: var(--lighter-text);
         margin-block-end: $spacing-sm;
-        transition: color $transition;
       }
     }
 

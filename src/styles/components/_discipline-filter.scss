@@ -16,7 +16,14 @@
     max-width: unset;
   }
 
-  &__header {}
+  &__header {
+    color: var(--light-text);
+
+    h3 {
+      font-weight: 400;
+      font-size: $font-size-sm;
+    }
+  }
 
   &__list {}
 
@@ -26,9 +33,7 @@
     display: flex;
     align-items: center;
     padding: $spacing-xs;
-    border-radius:$border-radius-md;
-    transition: background-color $transition,
-    border-color $transition;
+    border-radius: $border-radius-md;
 
     &.active {
       background-color: rgba(var(--primary-color), 0.1);
@@ -47,7 +52,6 @@
     display: flex;
     justify-content: flex-start;
     gap: $spacing-xs;
-    transition: border-color $transition;
   }
 
   &__button {
@@ -59,10 +63,9 @@
     border: 1px solid var(--border-color);
     padding: $spacing-xs $spacing-sm;
     border-radius: $border-radius-md;
-    transition: 
-    background-color $transition,
-    border-color $transition,
-    color $transition;
+    transition: background-color $transition,
+      border-color $transition,
+      color $transition;
 
     &:hover {
       background-color: var(--border-color);

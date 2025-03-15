@@ -2,6 +2,7 @@
     box-sizing: border-box;
     margin: 0;
     padding: 0;
+
   }
   
   html, body {
@@ -15,5 +16,6 @@
   
   a {
     color: var(--primary-color);
+    transition: color $transition;
     text-decoration: none;
   }
