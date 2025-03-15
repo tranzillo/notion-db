@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { updateUrlParamsWithoutHistory } from '../../lib/dataUtils';
 
 export default function Filter({ disciplines = [], initialSelectedIds = [] }) {
   const [selected, setSelected] = useState(initialSelectedIds);
@@ -48,10 +49,9 @@ export default function Filter({ disciplines = [], initialSelectedIds = [] }) {
     // Wait until disciplines are loaded
     if (!disciplines.length) return;
     
-    const params = new URLSearchParams(window.location.search);
-    
+    // Convert IDs to slugs for URL
+    let disciplinesParam = '';
     if (selected.length > 0) {
-      // Convert IDs to slugs for URL
       const slugs = selected.map(id => {
         const discipline = disciplines.find(d => d.id === id);
         return discipline 
@@ -59,13 +59,13 @@ export default function Filter({ disciplines = [], initialSelectedIds = [] }) {
           : null;
       }).filter(Boolean);
       
-      params.set('disciplines', slugs.join(','));
-    } else {
-      params.delete('disciplines');
+      disciplinesParam = slugs.join(',');
     }
     
-    const newUrl = `${window.location.pathname}${params.toString() ? '?' + params.toString() : ''}`;
-    window.history.pushState({}, '', newUrl);
+    // Use the utility function to update the URL
+    updateUrlParamsWithoutHistory({
+      disciplines: disciplinesParam || null // Pass null to remove parameter if empty
+    });
     
     // Dispatch event to notify other components
     window.dispatchEvent(new CustomEvent('disciplines-changed', { 
@@ -99,7 +99,7 @@ export default function Filter({ disciplines = [], initialSelectedIds = [] }) {
       <div className="discipline-filter__header">
         <h3>Filter by Discipline</h3>
       </div>
-      
+
       {/* <div className="discipline-filter__actions">
         <button 
           type="button" 
@@ -128,7 +128,7 @@ export default function Filter({ disciplines = [], initialSelectedIds = [] }) {
                 value={discipline.id}
                 checked={selected.includes(discipline.id)}
                 onChange={() => handleDisciplineChange(discipline.id)}
-                tabindex="0"
+                tabIndex="0"
               />
               <label htmlFor={`discipline-${discipline.id}`}>{discipline.title}</label>
             </div>

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { updateUrlParamsWithoutHistory } from '../../lib/dataUtils';
 
 export default function Search({ initialQuery = '' }) {
   const [searchQuery, setSearchQuery] = useState(initialQuery);
@@ -22,16 +23,8 @@ export default function Search({ initialQuery = '' }) {
 
   // Update URL parameters
   const updateUrlParams = (query) => {
-    const params = new URLSearchParams(window.location.search);
-    
-    if (query) {
-      params.set('q', query);
-    } else {
-      params.delete('q');
-    }
-    
-    const newUrl = `${window.location.pathname}${params.toString() ? '?' + params.toString() : ''}`;
-    window.history.pushState({}, '', newUrl);
+    // Use the utility function to update the URL
+    updateUrlParamsWithoutHistory({ q: query });
     
     // Dispatch a custom event to notify other components
     window.dispatchEvent(new CustomEvent('search-changed', { detail: { query } }));

@@ -26,6 +26,11 @@
     background-color: var(--card-background);
     border-radius: $border-radius-lg;
     transition: background-color $transition;
+    p {
+      color: var(--light-text);
+      font-size: $font-size-sm;
+      margin-block-start: $spacing-xs;
+    }
   }
 }
 

@@ -1,7 +1,7 @@
 /**
  * Extract unique disciplines from bottlenecks
  * @param {Array} bottlenecks - Array of bottleneck objects
- * @returns {Array} Array of unique discipline objects
+ * @returns {Array} - Array of unique discipline objects
  */
 export function extractDisciplines(bottlenecks) {
   if (!bottlenecks || !Array.isArray(bottlenecks)) {
@@ -26,7 +26,7 @@ export function extractDisciplines(bottlenecks) {
  * Extract discipline IDs from URL parameters
  * @param {string} url - URL string or search params string
  * @param {Array} disciplines - Array of discipline objects
- * @returns {Array} Array of discipline IDs
+ * @returns {Array} - Array of discipline IDs
  */
 export function getDisciplineIdsFromUrl(url, disciplines) {
   if (!url || !disciplines || !disciplines.length) {
@@ -56,7 +56,7 @@ export function getDisciplineIdsFromUrl(url, disciplines) {
 /**
  * Parse query parameters from URL for server-side use
  * @param {AstroGlobal} Astro - Astro global object
- * @returns {Object} Object with searchQuery and disciplineSlugs
+ * @returns {Object} - Object with searchQuery and disciplineSlugs
  */
 export function parseUrlParams(url) {
   const params = new URLSearchParams(
@@ -71,4 +71,33 @@ export function parseUrlParams(url) {
     searchQuery,
     disciplineSlugs
   };
+}
+
+/**
+ * Update URL parameters without creating a browser history entry
+ * @param {Object} paramsObject - Key-value pairs of parameters to update
+ */
+export function updateUrlParamsWithoutHistory(paramsObject) {
+  if (typeof window === 'undefined') {
+    return;
+  }
+  
+  const params = new URLSearchParams(window.location.search);
+  
+  // Update params based on the provided object
+  Object.entries(paramsObject).forEach(([key, value]) => {
+    if (value === null || value === undefined || value === '') {
+      params.delete(key);
+    } else {
+      params.set(key, value);
+    }
+  });
+  
+  // Construct the new URL
+  const newUrl = `${window.location.pathname}${params.toString() ? '?' + params.toString() : ''}`;
+  
+  // Use replaceState to update URL without creating a history entry
+  window.history.replaceState({}, '', newUrl);
+  
+  return newUrl;
 }
