@@ -38,8 +38,8 @@ html[data-theme="dark"],
   --header-background: #292d3e;
   --footer-background: #292d3e;
   --shadow-color: rgba(0, 0, 0, 0.3);
-  --highlight-bg: rgba(79, 163, 224, 0.2);
-  --highlight-color: #4fa3e0;
+  --highlight-bg: rgba(89, 46, 109, 0.2);
+  --highlight-color: #a08ad1;
 }
 
 
@@ -76,3 +76,6 @@ $breakpoint-xl: 1280px;
 $breakpoint-xxl: 1440px;
 $breakpoint-xxxl: 2560px; 
 $breakpoint-max: 3840px;
+
+//Timing
+$transition: 0.3s;

@@ -16,7 +16,7 @@
     padding: $spacing-xl 0;
     font-weight: 600;
     border-bottom: 1px solid var(--border-dull);
-    transition: background-color 0.3s, border-color 0.3s;
+    transition: background-color $transition, border-color $transition;
   
     .container {
       display: flex;
@@ -71,7 +71,7 @@
     padding: $spacing-lg 0;
     border-top: 1px solid var(--border-dull);
     margin-top: auto;
-    transition: background-color 0.3s, border-color 0.3s;
+    transition: background-color $transition, border-color $transition;
   
     .container {
       display: flex;

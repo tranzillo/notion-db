@@ -4,7 +4,7 @@
   border: 1px solid var(--border-color);
   border-radius: 0 $border-radius-md $border-radius-md 0;
   overflow: hidden;
-  transition: border-color 0.3s;
+  transition: border-color $transition;
 }
 
 .view-toggle__button {
@@ -14,9 +14,9 @@
   cursor: pointer;
   color: var(--light-text);
   transition:
-    background-color 0.3s,
-    border 0.3s,
-    color 0.3s;
+    background-color $transition,
+    border $transition,
+    color $transition;
 
   &:first-child {
     border-right: 1px solid var(--border-color);

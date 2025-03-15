@@ -7,21 +7,23 @@
   padding: $spacing-lg;
   border: 1px solid var(--border-color);
   transition:
-    background-color 0.3s,
-    border-color 0.3s;
+    background-color $transition,
+    border-color $transition;
     h3 {
       color: var(--text-color);
       font-weight: 500;
+      transition: color $transition;
     }
     &__title {
       font-size: $font-size-lg;
       border-bottom: 1px solid var(--border-dull);
-
+      transition: border-color $transition;
     }
 
     &__content {
       max-width: 65ch;
       color: var(--light-text);
+      transition: color $transition;
     }
 
     &__references {
@@ -32,6 +34,7 @@
         margin-bottom: $spacing-sm;
         color: var(--lighter-text);
         margin-block-end: $spacing-sm;
+        transition: color $transition;
       }
     }
 
@@ -48,6 +51,7 @@
         background-color: var(--card-background);
         padding: $spacing-md;
         border-radius: $border-radius-md;
+        transition: background-color $transition;
         a {
           display: inline-block;
           max-width: 65ch;

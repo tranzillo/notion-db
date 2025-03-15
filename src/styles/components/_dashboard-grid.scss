@@ -25,7 +25,7 @@
     padding: $spacing-xxl 0;
     background-color: var(--card-background);
     border-radius: $border-radius-lg;
-    transition: background-color 0.3s;
+    transition: background-color $transition;
   }
 }
 
@@ -75,7 +75,7 @@
   top: $spacing-xl;
   display: grid;
   grid-template-columns: 1fr auto;
-  transition: box-shadow 0.3s;
+  transition: box-shadow $transition;
   box-shadow: 0 $spacing-xl $spacing-lg 0 var(--background-color),
     0 calc(($spacing-xl) * -1) 0 0 var(--background-color);
     @media (max-width: $breakpoint-sm) {

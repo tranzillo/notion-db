@@ -5,6 +5,9 @@
   background-color: var(--card-background);
   border-radius: $border-radius-lg;
   padding: $spacing-lg;
+  transition: background-color $transition,
+  border-color $transition,
+  color $transition;
 
   &__header {
     display:flex;
@@ -13,6 +16,7 @@
     gap: $spacing-md;
     padding-bottom: $spacing-md;
     border-bottom: 1px solid var(--border-dull);
+    transition: border-color $transition;
   }
 
   &__discipline {
@@ -22,11 +26,13 @@
     padding: $spacing-xs $spacing-sm;
     border-radius: $border-radius-md;
     font-size: $font-size-sm;
+    transition: background-color $transition;
   }
 
   &__title {
     font-size: $spacing-lg;
     margin-bottom: $spacing-sm;
+    transition: color $transition;
   }
 
   &__content {

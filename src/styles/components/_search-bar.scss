@@ -15,9 +15,9 @@
     background-color: var(--card-background);
     color: var(--text-color);
     transition:
-      border-color 0.3s,
-      background-color 0.3s,
-      color 0.3s;
+      border-color $transition,
+      background-color $transition,
+      color $transition;
   
     &:focus {
       border-color: var(--primary-color);
