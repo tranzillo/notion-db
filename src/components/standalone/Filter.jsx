@@ -100,7 +100,7 @@ export default function Filter({ disciplines = [], initialSelectedIds = [] }) {
         <h3>Filter by Discipline</h3>
       </div>
       
-      <div className="discipline-filter__actions">
+      {/* <div className="discipline-filter__actions">
         <button 
           type="button" 
           className="discipline-filter__button" 
@@ -115,7 +115,7 @@ export default function Filter({ disciplines = [], initialSelectedIds = [] }) {
         >
           None
         </button>
-      </div>
+      </div> */}
 
       <div className="discipline-filter__list">
         {disciplines.map((discipline) => (

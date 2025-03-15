@@ -6,7 +6,7 @@
   gap: $spacing-md;
   background-color: var(--background-color-dark);
   border-radius: $border-radius-lg;
-  padding: $spacing-lg $spacing-md;
+  padding: $spacing-lg 0 $spacing-md;
   max-width: 18rem;
   max-height: calc(100vh - (2 * $spacing-xl));
   overflow: auto;
@@ -19,8 +19,9 @@
   }
 
   &__header {
-    color: var(--text-color);
-    margin: 0 $spacing-sm;
+    color: var(--lighter-text);
+    margin: 0 $spacing-lg;
+    transition: color $transition;
 
     h3 {
       font-weight: 400;
@@ -31,6 +32,7 @@
   &__list {
     display: flex;
     flex-direction: column;
+    padding: 0 $spacing-md;
     gap: $spacing-xs;
   }
 
@@ -73,14 +75,19 @@
       transition: background-color $transition,
         color $transition,
         border-color $transition;
+        &:hover {
+          background-color: var(--highlight-bg);
+        }
     }
   }
 
   &__actions {
     display: flex;
     justify-content: flex-start;
-    margin: 0 $spacing-sm;
+    background-color: var(--card-background);
+    padding: $spacing-sm $spacing-lg;
     gap: $spacing-xs;
+    transition: background-color $transition;
   }
 
   &__button {
@@ -88,7 +95,7 @@
     border: none;
     color: var(--light-text);
     cursor: pointer;
-    background-color: var(--card-background);
+    background-color: var(--background-color);
     border: 1px solid var(--border-color);
     padding: $spacing-xs $spacing-sm;
     border-radius: $border-radius-md;
