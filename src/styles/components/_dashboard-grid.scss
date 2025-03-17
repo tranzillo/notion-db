@@ -40,10 +40,15 @@
   flex-direction: column;
   gap: $spacing-xl;
   margin-block: 0 $spacing-xxl;
-  margin-inline: calc($spacing-xl * (-1)) calc($spacing-xl * (-1));
-  padding: 0 $spacing-xl $spacing-xxl $spacing-xl;
+  margin-inline: calc($spacing-xxl * (-1));
+  padding: 0 $spacing-xxl $spacing-xxl $spacing-xxl;
   border-bottom: 1px solid var(--border-dull);
   transition: border $transition;
+  @media (max-width: $breakpoint-sm) {
+    margin-inline: calc($spacing-sm * (-1)) ;
+    padding-inline: $spacing-sm;
+  }
+
 
   h1,
   p {

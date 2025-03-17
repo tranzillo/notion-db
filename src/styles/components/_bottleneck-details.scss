@@ -10,9 +10,10 @@
 
   &__header {
     display:flex;
-    justify-content: space-between;
+    flex-direction: column;
     align-items: flex-start;
-    gap: $spacing-xxl;
+    gap: $spacing-md $spacing-xxl;
+    flex-wrap: wrap;
     border-radius: $border-radius-lg $border-radius-lg 0 0;
     padding: $spacing-xl;
     margin: calc($spacing-xl * (-1)) calc($spacing-xl * (-1)) 0 calc($spacing-xl * (-1));
@@ -22,7 +23,6 @@
   }
 
   &__discipline {
-    order: 1;
     display: block;
     margin-block-start: 0.42em;
     background-color: var(--primary-color);
