@@ -19,13 +19,14 @@
   }
 
   &__header {
-    color: var(--lighter-text);
+    color: var(--text-lighter);
     margin: 0 $spacing-lg;
     transition: color $transition;
 
     h3 {
       font-weight: 400;
       font-size: $font-size-sm;
+      letter-spacing: 0.04em;
     }
   }
 
@@ -69,7 +70,7 @@
     label {
       cursor: pointer;
       padding: $spacing-xs $spacing-sm;
-      color: var(--light-text);
+      color: var(--text-light);
       border-radius: $border-radius-md;
       border: 1px solid transparent;
       transition: background-color $transition,
@@ -93,7 +94,7 @@
   &__button {
     background: none;
     border: none;
-    color: var(--light-text);
+    color: var(--text-light);
     cursor: pointer;
     background-color: var(--background-color);
     border: 1px solid var(--border-color);

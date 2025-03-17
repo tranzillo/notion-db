@@ -27,8 +27,9 @@
     border-radius: $border-radius-lg;
     transition: background-color $transition;
     p {
-      color: var(--light-text);
+      color: var(--text-light);
       font-size: $font-size-sm;
+      letter-spacing: 0.04em;
       margin-block-start: $spacing-xs;
     }
   }
@@ -37,18 +38,21 @@
 .dashboard-header {
   display: flex;
   flex-direction: column;
-  gap: $spacing-lg;
+  gap: $spacing-xl;
   margin-block: 0 $spacing-xxl;
+  margin-inline: calc($spacing-xl * (-1)) calc($spacing-xl * (-1));
+  padding: 0 $spacing-xl $spacing-xxl $spacing-xl;
+  border-bottom: 1px solid var(--border-dull);
+  transition: border $transition;
 
   h1,
   p {
     max-width: 75ch;
   }
-
   p {
     font-size: $font-size-md;
-    color: var(--light-text);
-    line-height: 1.6;
+    color: var(--text-light);
+    line-height: 1.5;
   }
 }
 
@@ -86,7 +90,7 @@
     0 calc(($spacing-xl) * -1) 0 0 var(--background-color);
     @media (max-width: $breakpoint-sm) {
       top: $spacing-md;
-      box-shadow: 0 $spacing-lg $spacing-md 0 var(--background-color),
+      box-shadow: 0 $spacing-sm $spacing-sm 0 var(--background-color),
       0 calc(($spacing-md) * -1) 0 0 var(--background-color);
     }
   }

@@ -1,7 +1,7 @@
 .container {
   width: 100%;
   margin: 0 auto;
-  padding: 0 $spacing-xl;
+  padding: 0 $spacing-xxl;
   @media (max-width: $breakpoint-sm) {
     padding: 0 $spacing-sm;
   }
@@ -87,8 +87,9 @@
   }
   
   &__footer-text {
-    color: var(--light-text);
+    color: var(--text-light);
     font-size: $font-size-sm;
+    letter-spacing: 0.04em;
   }
   
   &__footer-links {
@@ -97,8 +98,8 @@
   
     a {
       color: var(--text-color);
-      font-size: $font-size-sm;;
-  
+      font-size: $font-size-sm;
+      letter-spacing: 0.04em;
       &:hover {
         color: var(--primary-color);
       }

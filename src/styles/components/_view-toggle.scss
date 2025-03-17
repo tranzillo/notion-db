@@ -2,6 +2,7 @@
   background-color: var(--card-background);
   display: flex;
   border: 1px solid var(--border-color);
+  border-left-color: var(--border-dull);
   border-radius: 0 $border-radius-lg $border-radius-lg 0;
   overflow: hidden;
   transition: border-color $transition;
@@ -12,29 +13,29 @@
   border: none;
   padding: $spacing-sm $spacing-md;
   cursor: pointer;
-  color: var(--light-text);
+  color: var(--text-lighter);
   transition:
     background-color $transition,
     border $transition,
     color $transition;
 
   &:first-child {
-    border-right: 1px solid var(--border-color);
+    border-right: 1px solid var(--border-dull);
   }
 
   &:hover {
-    background-color: var(--border-color);
+    background-color: var(--border-dull);
   }
 
   &.active {
-    background-color: var(--primary-color);
-    color: white;
+    background-color: var(--background-color-dark);
+    color: var(--text-color);
   }
 }
 .theme-toggle {
   background: none;
   border: none;
-  color: var(--light-text);
+  color: var(--text-light);
   cursor: pointer;
   padding: $spacing-sm;
   border-radius: 50%;

@@ -11,6 +11,7 @@
     background-color: var(--background-color);
     color: var(--text-color);
     line-height: 1.4;
+    letter-spacing: 0.02em;;
     transition: background-color $transition, color $transition;
   }
   

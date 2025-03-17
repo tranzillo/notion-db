@@ -24,7 +24,7 @@
     }
   
     &::placeholder {
-      color: var(--lighter-text);
+      color: var(--text-lighter);
     }
   }
   
@@ -33,7 +33,7 @@
     left: $spacing-md;
     top: 52%;
     transform: translateY(-50%);
-    color: var(--light-text);
+    color: var(--text-light);
   }
   
   &__clear {
@@ -43,7 +43,7 @@
     transform: translateY(-50%);
     background: none;
     border: none;
-    color: var(--light-text);
+    color: var(--text-light);
     cursor: pointer;
     padding: $spacing-xs;
   

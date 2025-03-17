@@ -1,54 +1,70 @@
 .bottleneck-detail {
   display: flex;
   flex-direction: column;
-  gap: $spacing-lg;
+  gap: $spacing-xxl;
   background-color: var(--card-background);
+  border: 1px solid var(--border-dull);
   border-radius: $border-radius-lg;
-  padding: $spacing-lg;
+  padding: $spacing-xl;
   transition: background-color $transition;
 
   &__header {
     display:flex;
-    flex-direction: column;
-    align-items: start;
-    gap: $spacing-md;
-    padding-bottom: $spacing-md;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: $spacing-xxl;
+    border-radius: $border-radius-lg $border-radius-lg 0 0;
+    padding: $spacing-xl;
+    margin: calc($spacing-xl * (-1)) calc($spacing-xl * (-1)) 0 calc($spacing-xl * (-1));
     border-bottom: 1px solid var(--border-dull);
-    transition: border-color $transition;
+    transition: background-color $transition,
+    border-color $transition;
   }
 
   &__discipline {
-    display: inline-block;
+    order: 1;
+    display: block;
+    margin-block-start: 0.42em;
     background-color: var(--primary-color);
-    color: #e0e0e0;
+    color: var(--pure-white);
     padding: $spacing-xs $spacing-sm;
     border-radius: $border-radius-md;
     font-size: $font-size-sm;
+    letter-spacing: 0.04em;
     transition: background-color $transition, color $transition;
   }
 
   &__title {
-    font-size: $spacing-lg;
-    margin-bottom: $spacing-sm;
   }
 
   &__content {
-    max-width: 90ch;
-    line-height: 1.6;
+    max-width: 80ch;
+    margin-top: calc($spacing-md * (-1));
+    font-size: $font-size-md;
+    color: var(--text-light);
+    line-height: 1.5;
   }
 
   &__solutions {
-    margin-block-start: $spacing-md;
+    padding: $spacing-xxl $spacing-xl $spacing-xl;
+    margin: 0 calc($spacing-xl * (-1)) calc($spacing-xl * (-1)) calc($spacing-xl * (-1));
+    background-color: var(--background-color);
+    border-top: 1px solid var(--border-dull);
+    border-radius: 0 0 $border-radius-lg $border-radius-lg;
+    transition: border $transition,
+    background-color $transition;
     h3 {
-      padding-bottom: $spacing-lg;
+      font-size: $font-size-md;
+      letter-spacing: 0.01em;;
       font-weight: normal;
-      color: var(--light-text);
+      color: var(--text-light);
     }
   }
   &__solutions-grid {
     display: grid;
     grid-template-columns: 1fr;
-    gap: $spacing-lg;
+    gap: $spacing-md;
+    margin-block-start: $spacing-lg;
     @media (min-width: $breakpoint-lg) {
       grid-template-columns: 1fr 1fr;
     }
@@ -62,7 +78,7 @@
 .back-link {
   display: inline-block;
   margin-bottom: $spacing-md;
-  color: var(--lighter-text);
+  color: var(--text-lighter);
   text-decoration: none;
   &:hover {
     color: var(--primary-color);
