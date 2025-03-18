@@ -1,4 +1,5 @@
 import React from 'react';
+import { saveScrollPosition } from '../../lib/scrollPositionUtils';
 
 export default function BottleneckCard({
   bottleneck,
@@ -44,14 +45,23 @@ export default function BottleneckCard({
   const displayContent = searchQuery
     ? highlightMatches(truncatedContent, searchQuery)
     : truncatedContent;
+  
+  // Handle click to save position information
+  const handleCardClick = () => {
+    saveScrollPosition(bottleneck.id, bottleneck.slug);
+  };
 
   return (
-    <div className="bottleneck-card">
+    <div 
+      className="bottleneck-card" 
+      id={`bottleneck-card-${bottleneck.id}`}
+    >
       <div className="bottleneck-card__header">
-
         <h2 className="bottleneck-card__title">
-          <a href={bottleneckUrl}
+          <a 
+            href={bottleneckUrl}
             dangerouslySetInnerHTML={{ __html: displayTitle }}
+            onClick={handleCardClick}
           />
         </h2>
       </div>

@@ -1,6 +1,7 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import SolutionCard from "../../components/SolutionCard.astro";
+import EnhancedBackButton from "../../components/standalone/EnhancedBackButton";
 import { getAllData } from "../../lib/notion";
 
 export async function getStaticPaths() {
@@ -31,7 +32,7 @@ if (!bottleneck) {
 ---
 
 <BaseLayout title={`${bottleneck.title} | Science Bottlenecks`}>
-  <a href="/" class="back-link">← Back</a>
+  <EnhancedBackButton client:load />
   <div class="bottleneck-detail">
     <div class="bottleneck-detail__header">
       {
@@ -61,3 +62,18 @@ if (!bottleneck) {
     }
   </div>
 </BaseLayout>
+
+<script define:vars={{ bottleneckId: bottleneck.id, bottleneckSlug: bottleneck.slug }}>
+  // Save the current bottleneck info for potential scroll restoration
+  import { saveScrollPosition } from '../lib/scrollPositionUtils';
+  
+  document.addEventListener('astro:page-load', () => {
+    // This runs when the page is fully loaded
+    // Save the current bottleneck ID for potential scroll restoration
+    if (bottleneckId) {
+      // Don't actually need to do anything here since we're tracking clicks in the BottleneckCard
+      // But we could manually save position for direct URL accesses
+      // saveScrollPosition(bottleneckId, bottleneckSlug);
+    }
+  });
+</script>

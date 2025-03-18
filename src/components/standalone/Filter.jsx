@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { updateUrlParamsWithoutHistory } from '../../lib/dataUtils';
+import { saveCurrentUrlState } from '../../lib/navigationUtils';
 
 export default function Filter({ disciplines = [], initialSelectedIds = [] }) {
   const [selected, setSelected] = useState(initialSelectedIds);
@@ -49,9 +49,10 @@ export default function Filter({ disciplines = [], initialSelectedIds = [] }) {
     // Wait until disciplines are loaded
     if (!disciplines.length) return;
     
-    // Convert IDs to slugs for URL
-    let disciplinesParam = '';
+    const params = new URLSearchParams(window.location.search);
+    
     if (selected.length > 0) {
+      // Convert IDs to slugs for URL
       const slugs = selected.map(id => {
         const discipline = disciplines.find(d => d.id === id);
         return discipline 
@@ -59,18 +60,25 @@ export default function Filter({ disciplines = [], initialSelectedIds = [] }) {
           : null;
       }).filter(Boolean);
       
-      disciplinesParam = slugs.join(',');
+      params.set('disciplines', slugs.join(','));
+    } else {
+      params.delete('disciplines');
     }
     
-    // Use the utility function to update the URL
-    updateUrlParamsWithoutHistory({
-      disciplines: disciplinesParam || null // Pass null to remove parameter if empty
-    });
+    const newUrl = `${window.location.pathname}${params.toString() ? '?' + params.toString() : ''}`;
+    window.history.pushState({}, '', newUrl);
     
     // Dispatch event to notify other components
     window.dispatchEvent(new CustomEvent('disciplines-changed', { 
       detail: { selectedDisciplines: selected } 
     }));
+    
+    // Save the current URL state, forcing empty state save if no selections
+    if (selected.length === 0) {
+      saveCurrentUrlState(true);
+    } else {
+      saveCurrentUrlState();
+    }
   }, [selected, disciplines]);
 
   // Handle discipline checkbox change
@@ -92,6 +100,9 @@ export default function Filter({ disciplines = [], initialSelectedIds = [] }) {
   // Handle clear all disciplines
   const handleClearAllDisciplines = () => {
     setSelected([]);
+    
+    // Force save empty state when clearing all disciplines
+    saveCurrentUrlState(true);
   };
 
   return (
@@ -99,7 +110,7 @@ export default function Filter({ disciplines = [], initialSelectedIds = [] }) {
       <div className="discipline-filter__header">
         <h3>Filter by Discipline</h3>
       </div>
-
+      
       {/* <div className="discipline-filter__actions">
         <button 
           type="button" 

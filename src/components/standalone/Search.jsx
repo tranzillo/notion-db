@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { updateUrlParamsWithoutHistory } from '../../lib/dataUtils';
+import { saveCurrentUrlState } from '../../lib/navigationUtils';
 
 export default function Search({ initialQuery = '' }) {
   const [searchQuery, setSearchQuery] = useState(initialQuery);
@@ -19,12 +19,24 @@ export default function Search({ initialQuery = '' }) {
   const handleClearSearch = () => {
     setSearchQuery('');
     updateUrlParams('');
+    
+    // Force save an empty state to session storage
+    // This is critical when clearing the search
+    saveCurrentUrlState(true);
   };
 
   // Update URL parameters
   const updateUrlParams = (query) => {
-    // Use the utility function to update the URL
-    updateUrlParamsWithoutHistory({ q: query });
+    const params = new URLSearchParams(window.location.search);
+    
+    if (query) {
+      params.set('q', query);
+    } else {
+      params.delete('q');
+    }
+    
+    const newUrl = `${window.location.pathname}${params.toString() ? '?' + params.toString() : ''}`;
+    window.history.pushState({}, '', newUrl);
     
     // Dispatch a custom event to notify other components
     window.dispatchEvent(new CustomEvent('search-changed', { detail: { query } }));
@@ -48,6 +60,14 @@ export default function Search({ initialQuery = '' }) {
   useEffect(() => {
     const timer = setTimeout(() => {
       updateUrlParams(searchQuery);
+      
+      // If search is empty or has been cleared, force save empty state
+      // Otherwise just save current state
+      if (!searchQuery) {
+        saveCurrentUrlState(true);
+      } else {
+        saveCurrentUrlState();
+      }
     }, 300);
     
     return () => clearTimeout(timer);

@@ -22,17 +22,11 @@ const {
     <meta name="generator" content={Astro.generator} />
     <meta name="description" content={description} />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-
-    <!-- Font Imports -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@500&display=swap" rel="stylesheet">
-
     <title>{title}</title>
-    
+
     <!-- Inject hydration data early -->
     <InjectHydrationData />
-    
+
     <!-- Enable view transitions API -->
     <meta name="view-transition" content="same-origin" />
   </head>
@@ -49,18 +43,16 @@ const {
               <div class="base-layout__nav-item">
                 <a
                   href="#"
-                  class={Astro.url.pathname === "/contribute"
-                    ? "active"
-                    : ""}
+                  class={Astro.url.pathname === "/contribute" ? "active" : ""}
                 >
-                ＋Contribute
+                  ＋Contribute
                 </a>
               </div>
             </nav>
 
             <!-- Include ThemeToggle -->
             <ThemeToggle client:load />
-            
+
             <!-- Keep the slot for backward compatibility or other controls -->
             <slot name="theme-toggle" />
           </div>
@@ -87,30 +79,80 @@ const {
               href="#"
               class={Astro.url.pathname === "/contribute" ? "active" : ""}
             >
-            ＋Contribute
+              ＋Contribute
             </a>
           </div>
         </div>
       </footer>
     </div>
 
-    <!-- Script to properly handle Astro's view transitions -->
+    <!-- Script to handle navigation state -->
     <script>
-      document.addEventListener('astro:page-load', () => {
+      import {
+        saveCurrentUrlState,
+        clearSavedUrlState,
+      } from "../lib/navigationUtils";
+
+      // Handle view transitions navigation
+      document.addEventListener("astro:before-swap", () => {
+        // Check if we're on the dashboard page
+        const isDashboard =
+          window.location.pathname === "/" || window.location.pathname === "";
+
+        // If we're leaving the dashboard, save the state
+        if (isDashboard) {
+          if (window.location.search) {
+            saveCurrentUrlState();
+          } else {
+            // If there are no search params, explicitly set empty state
+            saveCurrentUrlState(true);
+          }
+        }
+      });
+
+      // After each page load
+      document.addEventListener("astro:page-load", () => {
+        // Check if we're on the dashboard page
+        const isDashboard =
+          window.location.pathname === "/" || window.location.pathname === "";
+
+        // If we're on the dashboard
+        if (isDashboard) {
+          if (window.location.search) {
+            // Has search params, save them
+            saveCurrentUrlState();
+          } else {
+            // No search params, make sure we save empty state
+            saveCurrentUrlState(true);
+          }
+        }
+
         // After each navigation, ensure all components are properly initialized
         // Dispatch events that our React components listen for
         const prefs = window.userPreferences || {};
-        
+
         if (prefs.darkMode !== undefined) {
-          window.dispatchEvent(new CustomEvent('theme-changed', { 
-            detail: { isDarkMode: prefs.darkMode } 
-          }));
+          window.dispatchEvent(
+            new CustomEvent("theme-changed", {
+              detail: { isDarkMode: prefs.darkMode },
+            }),
+          );
         }
-        
+
         if (prefs.isListView !== undefined) {
-          window.dispatchEvent(new CustomEvent('view-changed', {
-            detail: { isListView: prefs.isListView }
-          }));
+          window.dispatchEvent(
+            new CustomEvent("view-changed", {
+              detail: { isListView: prefs.isListView },
+            }),
+          );
+        }
+      });
+
+      // Listen for search clear events
+      window.addEventListener("search-changed", (event) => {
+        if (!event.detail.query) {
+          // When search is cleared, force save empty state
+          saveCurrentUrlState(true);
         }
       });
     </script>

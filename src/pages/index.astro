@@ -55,3 +55,21 @@ const { searchQuery, disciplineSlugs } = parseUrlParams(Astro.url.toString());
     </div>
   </div>
 </BaseLayout>
+
+<script>
+  import { saveCurrentUrlState } from '../lib/navigationUtils';
+  
+  // Save the current URL state for potential "back" navigation
+  document.addEventListener('astro:page-load', () => {
+    saveCurrentUrlState();
+  });
+  
+  // Also save URL state when search or filter changes
+  window.addEventListener('search-changed', () => {
+    saveCurrentUrlState();
+  });
+  
+  window.addEventListener('disciplines-changed', () => {
+    saveCurrentUrlState();
+  });
+</script>

@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import Fuse from 'fuse.js';
 import BottleneckCard from './BottleneckCard';
+import { scrollToSavedPosition } from '../../lib/scrollPositionUtils';
 
 // Configure Fuse.js options for fuzzy search
 const fuseOptions = {
@@ -34,6 +35,7 @@ export default function BottleneckGrid({
   const [selectedDisciplines, setSelectedDisciplines] = useState(initialSelectedDisciplineIds);
   const [isListView, setIsListView] = useState(false);
   const [fuse, setFuse] = useState(null);
+  const [hasRestoredScroll, setHasRestoredScroll] = useState(false);
 
   // Initialize after mount
   useEffect(() => {
@@ -41,6 +43,35 @@ export default function BottleneckGrid({
       // Check for global preferences
       if (typeof window !== 'undefined' && window.userPreferences) {
         setIsListView(window.userPreferences.isListView);
+      }
+      
+      // Check if we're coming back from a detail page
+      // Parse URL parameters to ensure we're showing the correct filters
+      if (typeof window !== 'undefined') {
+        const params = new URLSearchParams(window.location.search);
+        const urlQuery = params.get('q');
+        const urlDisciplines = params.get('disciplines');
+        
+        if (urlQuery && urlQuery !== currentSearchQuery) {
+          setCurrentSearchQuery(urlQuery);
+        }
+        
+        if (urlDisciplines) {
+          const disciplineSlugs = urlDisciplines.split(',');
+          
+          // Convert slugs to IDs
+          const disciplineIds = disciplineSlugs.map(slug => {
+            const match = bottlenecks.find(b =>
+              b.discipline && b.discipline.title.toLowerCase().replace(/\s+/g, '-') === slug
+            )?.discipline;
+            return match ? match.id : null;
+          }).filter(Boolean);
+          
+          if (disciplineIds.length > 0 && 
+              JSON.stringify(disciplineIds) !== JSON.stringify(selectedDisciplines)) {
+            setSelectedDisciplines(disciplineIds);
+          }
+        }
       }
     } catch (e) {
       console.error('Error loading view preference:', e);
@@ -54,6 +85,8 @@ export default function BottleneckGrid({
 
   // Listen for URL parameters on mount
   useEffect(() => {
+    if (typeof window === 'undefined') return;
+    
     const params = new URLSearchParams(window.location.search);
     const urlQuery = params.get('q');
     const urlDisciplines = params.get('disciplines');
@@ -118,18 +151,6 @@ export default function BottleneckGrid({
     };
   }, []);
 
-  // Add an effect to listen for view-changed events
-  useEffect(() => {
-    const handleViewChange = (event) => {
-      setIsListView(event.detail.isListView);
-    };
-
-    window.addEventListener('view-changed', handleViewChange);
-
-    return () => {
-      window.removeEventListener('view-changed', handleViewChange);
-    };
-  }, []);
   // Apply filtering when search or disciplines change
   useEffect(() => {
     if (!fuse) return;
@@ -149,6 +170,18 @@ export default function BottleneckGrid({
 
     setFilteredBottlenecks(results);
   }, [currentSearchQuery, selectedDisciplines, fuse, bottlenecks]);
+  
+  // Attempt to restore scroll position after filtered bottlenecks are updated
+  useEffect(() => {
+    // Only try to restore scroll once
+    if (!hasRestoredScroll && filteredBottlenecks.length > 0) {
+      // Wait a bit for the DOM to update
+      setTimeout(() => {
+        scrollToSavedPosition(filteredBottlenecks);
+        setHasRestoredScroll(true);
+      }, 100);
+    }
+  }, [filteredBottlenecks, hasRestoredScroll]);
 
   const gridClass = isListView ? 'bottleneck-grid bottleneck-grid--list-view' : 'bottleneck-grid';
 
