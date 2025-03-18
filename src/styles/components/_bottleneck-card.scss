@@ -3,7 +3,7 @@
   flex-direction: column;
   gap: $spacing-lg;
   background-color: var(--card-background);
-  border: 1px solid var(--border-dull);
+  // border: 1px solid var(--border-dull);
   border-radius: $border-radius-lg;
   padding: $spacing-xl $spacing-xl $spacing-lg $spacing-xl;
   height: 100%;
@@ -23,7 +23,7 @@
     
     &__discipline {
       display: inline-block;
-      background-color: var(--background-color-dark);
+      background-color: var(--background-color);
       color: var(--text-lighter);
       padding: $spacing-xs $spacing-sm;
       border-radius: $border-radius-md;
@@ -43,6 +43,7 @@
       
       a {
         color: inherit;
+        opacity: 0.88;
         transition: color $transition;
         &:hover {
           color: var(--primary-color);
@@ -66,4 +67,3 @@
       margin-block-start: $spacing-sm;
     }
 }
-
