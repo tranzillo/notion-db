@@ -1,14 +1,15 @@
 .discipline-filter {
   position: sticky;
-  top: $spacing-xl;
+  top: $spacing-xxl;
   display: flex;
   flex-direction: column;
   gap: $spacing-md;
   background-color: var(--background-color-dark);
   border-radius: $border-radius-lg;
   padding: $spacing-lg 0 $spacing-md;
-  max-width: 18rem;
-  max-height: calc(100vh - (2 * $spacing-xl));
+  line-height: 1.15;
+  max-width: 13rem;
+  max-height: calc(100vh - (2 * $spacing-xxl));
   overflow: auto;
   transition:
     background-color $transition,

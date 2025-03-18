@@ -14,7 +14,10 @@
     letter-spacing: 0.02em;;
     transition: background-color $transition, color $transition;
   }
-  
+  ::selection {
+    background-color: var(--highlight-bg);
+    color: var(--highlight-color);
+  }
   a {
     color: var(--primary-color);
     transition: color $transition;

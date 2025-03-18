@@ -6,7 +6,8 @@
   border: 1px solid var(--border-dull);
   border-radius: $border-radius-lg;
   padding: $spacing-xl;
-  transition: background-color $transition;
+  transition: background-color $transition,
+  border $transition;
 
   &__header {
     display:flex;
