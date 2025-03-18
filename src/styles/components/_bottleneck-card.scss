@@ -3,7 +3,7 @@
   flex-direction: column;
   gap: $spacing-lg;
   background-color: var(--card-background);
-  // border: 1px solid var(--border-dull);
+  border: 1px solid var(--border-dull);
   border-radius: $border-radius-lg;
   padding: $spacing-xl $spacing-xl $spacing-lg $spacing-xl;
   height: 100%;
@@ -12,7 +12,7 @@
   transition: background-color $transition,
   border $transition;;
     &__header {
-      background-color: var(--background-color-dark);
+      background-color: var(--background-color);
       border-radius: $border-radius-lg $border-radius-md 0 0;
       padding: $spacing-xl;
       margin: calc($spacing-xl * (-1)) calc($spacing-xl * (-1)) 0 calc($spacing-xl * (-1));
@@ -43,7 +43,6 @@
       
       a {
         color: inherit;
-        opacity: 0.88;
         transition: color $transition;
         &:hover {
           color: var(--primary-color);
@@ -67,3 +66,4 @@
       margin-block-start: $spacing-sm;
     }
 }
+
