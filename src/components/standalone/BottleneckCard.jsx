@@ -72,7 +72,7 @@ export default function BottleneckCard({
 
       <div className="bottleneck-card__footer">
         {bottleneck.discipline && bottleneck.discipline.title && (
-          <div className={`bottleneck-card__discipline ${isDisciplineSelected ? 'active' : ''}`}>
+          <div className={`bottleneck-card__discipline ${isDisciplineSelected ? 'active' : ''} ${bottleneck.discipline.colorClass || ''}`}>
             {bottleneck.discipline.title}
           </div>
         )}

@@ -4,15 +4,11 @@ import Search from '../components/standalone/Search';
 import Filter from '../components/standalone/Filter';
 import BottleneckGrid from '../components/standalone/DashboardGrid';
 import ViewToggle from '../components/standalone/ViewToggle';
-import ThemeToggle from '../components/standalone/ThemeToggle';
-import { getAllData } from '../lib/notion';
-import { extractDisciplines, parseUrlParams } from '../lib/dataUtils';
+import { parseUrlParams } from '../lib/dataUtils';
+import { getEnhancedData } from '../lib/enhancedData';
 
-// Fetch all data from Notion at build time
-const { bottlenecks } = await getAllData();
-
-// Extract disciplines from bottlenecks
-const disciplines = extractDisciplines(bottlenecks);
+// Fetch all enhanced data from Notion at build time
+const { bottlenecks, disciplines } = await getEnhancedData();
 
 // Get URL parameters
 const { searchQuery, disciplineSlugs } = parseUrlParams(Astro.url.toString());
@@ -55,21 +51,3 @@ const { searchQuery, disciplineSlugs } = parseUrlParams(Astro.url.toString());
     </div>
   </div>
 </BaseLayout>
-
-<script>
-  import { saveCurrentUrlState } from '../lib/navigationUtils';
-  
-  // Save the current URL state for potential "back" navigation
-  document.addEventListener('astro:page-load', () => {
-    saveCurrentUrlState();
-  });
-  
-  // Also save URL state when search or filter changes
-  window.addEventListener('search-changed', () => {
-    saveCurrentUrlState();
-  });
-  
-  window.addEventListener('disciplines-changed', () => {
-    saveCurrentUrlState();
-  });
-</script>

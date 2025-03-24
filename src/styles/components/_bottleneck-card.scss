@@ -22,6 +22,7 @@
     }
     
     &__discipline {
+      @extend .discipline-tag;
       display: inline-block;
       background-color: var(--background-color);
       color: var(--text-lighter);
@@ -29,12 +30,7 @@
       border-radius: $border-radius-md;
       font-size: $font-size-sm;
       letter-spacing: 0.04em;
-      transition: background-color $transition, color $transition;
-    
-      &.active {
-        background-color: var(--primary-color);
-        color: var(--pure-white);
-      }
+
     }
     
     &__title {

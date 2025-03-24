@@ -1,8 +1,3 @@
-/* View layout styling based on data attribute */
-html[data-list-view="true"] .bottleneck-grid {
-  grid-template-columns: 1fr !important;
-}
-
 :root {
   /* Light mode variables */
   --primary-color: #3498db;
@@ -76,8 +71,16 @@ $breakpoint-md: 768px;
 $breakpoint-lg: 992px;
 $breakpoint-xl: 1280px;
 $breakpoint-xxl: 1440px;
-$breakpoint-xxxl: 2560px; 
+$breakpoint-xxxl: 2560px;
 $breakpoint-max: 3840px;
 
 //Timing
 $transition: 0.3s;
+
+
+/* View layout styling based on data attribute */
+html[data-list-view="true"] {
+  .bottleneck-grid {
+    grid-template-columns: 1fr !important;
+  }
+}

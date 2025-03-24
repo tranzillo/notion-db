@@ -2,11 +2,11 @@
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import SolutionCard from "../../components/SolutionCard.astro";
 import EnhancedBackButton from "../../components/standalone/EnhancedBackButton";
-import { getAllData } from "../../lib/notion";
+import { getEnhancedData } from "../../lib/enhancedData";
 
 export async function getStaticPaths() {
-  // Fetch all data
-  const { bottlenecks } = await getAllData();
+  // Fetch all enhanced data
+  const { bottlenecks } = await getEnhancedData();
 
   // Generate paths for each bottleneck
   return bottlenecks.map((bottleneck) => {
@@ -37,7 +37,7 @@ if (!bottleneck) {
     <div class="bottleneck-detail__header">
       {
         bottleneck.discipline && bottleneck.discipline.title && (
-          <div class="bottleneck-detail__discipline">
+          <div class={`bottleneck-detail__discipline active ${bottleneck.discipline.colorClass || ''}`}>
             {bottleneck.discipline.title}
           </div>
         )

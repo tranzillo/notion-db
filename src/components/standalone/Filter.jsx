@@ -128,10 +128,10 @@ export default function Filter({ disciplines = [], initialSelectedIds = [] }) {
         </button>
       </div> */}
 
-      <div className="discipline-filter__list">
+<div className="discipline-filter__list">
         {disciplines.map((discipline) => (
           <div className="discipline-filter__item" key={discipline.id}>
-            <div className={`discipline-filter__checkbox ${selected.includes(discipline.id) ? 'active' : ''}`}>
+            <div className={`discipline-filter__checkbox ${selected.includes(discipline.id) ? 'active' : ''} ${discipline.colorClass || ''}`}>
               <input
                 type="checkbox"
                 id={`discipline-${discipline.id}`}

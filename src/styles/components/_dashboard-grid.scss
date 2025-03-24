@@ -98,6 +98,12 @@
   box-shadow: 0 $spacing-lg $spacing-lg 0 var(--background-color),
     0 calc(($spacing-xxl) * -1) 0 0 var(--background-color);
 
+  @media (max-width: $breakpoint-lg) {
+    top: $spacing-md;
+    box-shadow: 0 $spacing-lg $spacing-lg 0 var(--background-color),
+    0 calc(($spacing-xl) * -1) 0 0 var(--background-color);
+  }
+
   @media (max-width: $breakpoint-sm) {
     top: $spacing-md;
     box-shadow: 0 $spacing-md $spacing-lg 0 var(--background-color),

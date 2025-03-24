@@ -1,0 +1,121 @@
+// src/styles/_discipline-colors.scss
+
+// Define discipline color CSS variables
+:root {
+  // Blue 
+  --discipline-blue-primary: #1a73e8;
+  --discipline-blue-bg: #e8f0fe;
+  --discipline-blue-text: #1a5cb8;
+  --discipline-blue-border: #4285f4;
+  
+  // Green
+  --discipline-green-primary: #188038;
+  --discipline-green-bg: #e6f4ea;
+  --discipline-green-text: #137333;
+  --discipline-green-border: #34a853;
+  
+  // Yellow
+  --discipline-yellow-primary: #ea8600;
+  --discipline-yellow-bg: #fef7e0;
+  --discipline-yellow-text: #ea8600;
+  --discipline-yellow-border: #fbbc04;
+  
+  // Red
+  --discipline-red-primary: #c5221f;
+  --discipline-red-bg: #fce8e6;
+  --discipline-red-text: #a50e0e;
+  --discipline-red-border: #ea4335;
+  
+  // Purple
+  --discipline-purple-primary: #7627bb;
+  --discipline-purple-bg: #f3e8fd;
+  --discipline-purple-text: #681da8;
+  --discipline-purple-border: #a142f4;
+  
+  // Teal
+  --discipline-teal-primary: #098591;
+  --discipline-teal-bg: #e4f7fb;
+  --discipline-teal-text: #07565f;
+  --discipline-teal-border: #12b5cb;
+  
+  // Orange  
+  --discipline-orange-primary: #e37400;
+  --discipline-orange-bg: #feefe3;
+  --discipline-orange-text: #b06000;
+  --discipline-orange-border: #fa903e;
+  
+  // Pink
+  --discipline-pink-primary: #d01884;
+  --discipline-pink-bg: #fde7f3;
+  --discipline-pink-text: #b80672;
+  --discipline-pink-border: #f439a0;
+}
+
+// Dark theme variables
+html[data-theme="dark"],
+.dark-mode {
+  // Blue 
+  --discipline-blue-primary: #8ab4f8;
+  --discipline-blue-bg: #174ea6;
+  --discipline-blue-text: #c3dbff;
+  --discipline-blue-border: #8ab4f8;
+  
+  // Green
+  --discipline-green-primary: #81c995;
+  --discipline-green-bg: #1e4620;
+  --discipline-green-text: #ceead6;
+  --discipline-green-border: #81c995;
+  
+  // Yellow
+  --discipline-yellow-primary: #fdd663;
+  --discipline-yellow-bg: #664d00;
+  --discipline-yellow-text: #feefc3;
+  --discipline-yellow-border: #fdd663;
+  
+  // Red
+  --discipline-red-primary: #f28b82;
+  --discipline-red-bg: #5c0f0c;
+  --discipline-red-text: #fad2cf;
+  --discipline-red-border: #f28b82;
+  
+  // Purple
+  --discipline-purple-primary: #d7aefb;
+  --discipline-purple-bg: #48217e;
+  --discipline-purple-text: #ead6fd;
+  --discipline-purple-border: #d7aefb;
+  
+  // Teal
+  --discipline-teal-primary: #86fbfb;
+  --discipline-teal-bg: #05505c;
+  --discipline-teal-text: #cbf0f8;
+  --discipline-teal-border: #86fbfb;
+  
+  // Orange
+  --discipline-orange-primary: #fab980;
+  --discipline-orange-bg: #653200;
+  --discipline-orange-text: #fde0c2;
+  --discipline-orange-border: #fab980;
+  
+  // Pink
+  --discipline-pink-primary: #ff8bcb;
+  --discipline-pink-bg: #68024c;
+  --discipline-pink-text: #ffd7eb;
+  --discipline-pink-border: #ff8bcb;
+}
+
+// Classes for discipline elements
+.discipline-tag {  
+  // Apply color-specific styles to each class
+  @each $color in ("blue", "green", "yellow", "red", "purple", "teal", "orange", "pink") {
+    &.discipline-#{$color} {
+      background-color: var(--discipline-#{$color}-bg);
+      color: var(--text-light);
+      border: 1px solid transparent;
+      transition: background-color $transition, color $transition, border $transition;
+      &.active {
+        color: var(--discipline-#{$color}-text);
+        border: 1px solid var(--discipline-#{$color}-border);
+      }
+    }
+  }
+}

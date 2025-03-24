@@ -24,15 +24,13 @@
   }
 
   &__discipline {
+    @extend .discipline-tag;
     display: block;
     margin-block-start: 0.42em;
-    background-color: var(--primary-color);
-    color: var(--pure-white);
     padding: $spacing-xs $spacing-sm;
     border-radius: $border-radius-md;
     font-size: $font-size-sm;
     letter-spacing: 0.04em;
-    transition: background-color $transition, color $transition;
   }
 
   &__title {
