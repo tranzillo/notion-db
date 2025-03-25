@@ -1,5 +1,6 @@
 import React from 'react';
 import { saveScrollPosition } from '../../lib/scrollPositionUtils';
+import RankIndicator from '../../components/standalone/RankIndicator';
 
 export default function BottleneckCard({
   bottleneck,
@@ -45,20 +46,20 @@ export default function BottleneckCard({
   const displayContent = searchQuery
     ? highlightMatches(truncatedContent, searchQuery)
     : truncatedContent;
-  
+
   // Handle click to save position information
   const handleCardClick = () => {
     saveScrollPosition(bottleneck.id, bottleneck.slug);
   };
 
   return (
-    <div 
-      className="bottleneck-card" 
+    <div
+      className="bottleneck-card"
       id={`bottleneck-card-${bottleneck.id}`}
     >
       <div className="bottleneck-card__header">
         <h2 className="bottleneck-card__title">
-          <a 
+          <a
             href={bottleneckUrl}
             dangerouslySetInnerHTML={{ __html: displayTitle }}
             onClick={handleCardClick}
@@ -71,12 +72,19 @@ export default function BottleneckCard({
       </div>
 
       <div className="bottleneck-card__footer">
-        {bottleneck.discipline && bottleneck.discipline.title && (
-          <div className={`bottleneck-card__discipline ${isDisciplineSelected ? 'active' : ''} ${bottleneck.discipline.colorClass || ''}`}>
-            {bottleneck.discipline.title}
-          </div>
-        )}
+        <div className="bottleneck-card__footer-left">
+          {bottleneck.discipline && bottleneck.discipline.title && (
+            <div className={`bottleneck-card__discipline ${isDisciplineSelected ? 'active' : ''} ${bottleneck.discipline.colorClass || ''}`}>
+              {bottleneck.discipline.title}
+            </div>
+          )}
+        </div>
+        <div className="bottleneck-card__footer-right">
+          <RankIndicator rank={bottleneck.rank || 0} />
+        </div>
       </div>
     </div>
   );
 }
+
+

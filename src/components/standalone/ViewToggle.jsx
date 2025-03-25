@@ -52,16 +52,11 @@ export default function ViewToggle() {
     };
   }, []);
 
-  // Toggle to grid view
-  const setGridView = () => {
-    setIsListView(false);
-    savePreference(false);
-  };
-
-  // Toggle to list view
-  const setListView = () => {
-    setIsListView(true);
-    savePreference(true);
+  // Toggle the view state
+  const toggleView = () => {
+    const newIsListView = !isListView;
+    setIsListView(newIsListView);
+    savePreference(newIsListView);
   };
 
   // Save preference and notify other components
@@ -105,24 +100,12 @@ export default function ViewToggle() {
   return (
     <div className="view-toggle">
       <button
-        className={`view-toggle__button ${isListView ? 'active' : ''}`}
-        onClick={setListView}
-        aria-label="List view"
-      >
-        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <line x1="8" y1="6" x2="21" y2="6"></line>
-          <line x1="8" y1="12" x2="21" y2="12"></line>
-          <line x1="8" y1="18" x2="21" y2="18"></line>
-          <line x1="3" y1="6" x2="3.01" y2="6"></line>
-          <line x1="3" y1="12" x2="3.01" y2="12"></line>
-          <line x1="3" y1="18" x2="3.01" y2="18"></line>
-        </svg>
-      </button>
-      <button
         className={`view-toggle__button ${!isListView ? 'active' : ''}`}
-        onClick={setGridView}
-        aria-label="Grid view"
+        onClick={toggleView}
+        aria-label={isListView ? "Switch to grid view" : "Switch to list view"}
+        title={isListView ? "Switch to grid view" : "Switch to list view"}
       >
+        {/* Always show the grid icon, only the active state changes */}
         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <rect x="3" y="3" width="7" height="7"></rect>
           <rect x="14" y="3" width="7" height="7"></rect>

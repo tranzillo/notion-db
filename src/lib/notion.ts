@@ -29,6 +29,7 @@ export interface Solution {
   id: string;
   title: string;
   content: string;
+  rank: number;
   references: Reference[];
 }
 
@@ -37,8 +38,45 @@ export interface Bottleneck {
   title: string;
   content: string;
   slug: string;
+  rank: number;
   discipline: Discipline;
   solutions: Solution[];
+}
+
+// Function to safely extract rank from Notion property
+function extractRankFromPage(page: any, pageName: string = 'unknown') {
+  let rank = 0;
+  
+  try {
+    // Case 1: Standard Notion number property named "Rank"
+    if (page.properties.Rank && page.properties.Rank.type === 'number') {
+      rank = page.properties.Rank.number !== null ? page.properties.Rank.number : 0;
+    } 
+    // Case 2: Try alternate casing or property structure
+    else {
+      // Find property with name 'rank' (case-insensitive)
+      const rankProp = Object.keys(page.properties).find(
+        key => key.toLowerCase() === 'rank'
+      );
+      
+      if (rankProp) {
+        const propData = page.properties[rankProp];
+        
+        if (propData.type === 'number' && propData.number !== null) {
+          rank = propData.number;
+        } else if (propData.type === 'select' && propData.select) {
+          rank = parseInt(propData.select.name) || 0;
+        } else if (propData.type === 'rich_text' && propData.rich_text.length > 0) {
+          rank = parseInt(propData.rich_text[0].plain_text) || 0;
+        }
+      }
+    }
+  } catch (error) {
+    console.error(`Error extracting rank from ${pageName}:`, error);
+  }
+  
+  // Ensure rank is between 0-5
+  return Math.min(5, Math.max(0, rank));
 }
 
 // Function to fetch and parse references
@@ -128,6 +166,9 @@ export async function getSolutions(references: Reference[]): Promise<Solution[]>
         return references.find(r => r.id === ref.id);
       }).filter(Boolean);
       
+      // Extract rank using the helper function
+      const rank = extractRankFromPage(page, title);
+      
       const mdBlocks = await n2m.pageToMarkdown(page.id);
       const content = n2m.toMarkdownString(mdBlocks);
       
@@ -135,6 +176,7 @@ export async function getSolutions(references: Reference[]): Promise<Solution[]>
         id: page.id,
         title,
         content: content.parent,
+        rank,
         references: solutionReferences
       };
     })
@@ -168,6 +210,9 @@ export async function getBottlenecks(
         return solutions.find(s => s.id === sol.id);
       }).filter(Boolean);
       
+      // Extract rank using the helper function
+      const rank = extractRankFromPage(page, title);
+      
       const mdBlocks = await n2m.pageToMarkdown(page.id);
       const content = n2m.toMarkdownString(mdBlocks);
       
@@ -179,6 +224,7 @@ export async function getBottlenecks(
         title,
         content: content.parent,
         slug,
+        rank,
         discipline: bottleneckDiscipline || { id: '', title: 'Uncategorized', content: '' },
         solutions: bottleneckSolutions
       };

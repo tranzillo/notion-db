@@ -55,8 +55,8 @@ export function getDisciplineIdsFromUrl(url, disciplines) {
 
 /**
  * Parse query parameters from URL for server-side use
- * @param {AstroGlobal} Astro - Astro global object
- * @returns {Object} - Object with searchQuery and disciplineSlugs
+ * @param {string} url - URL string
+ * @returns {Object} - Object with searchQuery, disciplineSlugs, and sortBy
  */
 export function parseUrlParams(url) {
   const params = new URLSearchParams(
@@ -66,10 +66,12 @@ export function parseUrlParams(url) {
   const searchQuery = params.get('q') || '';
   const disciplinesParam = params.get('disciplines') || '';
   const disciplineSlugs = disciplinesParam ? disciplinesParam.split(',') : [];
+  const sortBy = params.get('sort') || 'rank'; // Default to rank sort
   
   return {
     searchQuery,
-    disciplineSlugs
+    disciplineSlugs,
+    sortBy
   };
 }
 

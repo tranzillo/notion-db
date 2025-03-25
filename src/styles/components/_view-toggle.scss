@@ -1,11 +1,5 @@
 .view-toggle {
-  background-color: var(--card-background);
   display: flex;
-  border: 1px solid var(--border-color);
-  border-left-color: var(--border-dull);
-  border-radius: 0 $border-radius-lg $border-radius-lg 0;
-  overflow: hidden;
-  transition: border-color $transition;
 }
 
 .view-toggle__button {
@@ -19,19 +13,19 @@
     border $transition,
     color $transition;
 
-  &:first-child {
-    border-right: 1px solid var(--border-dull);
-  }
-
   &:hover {
     background-color: var(--border-dull);
   }
 
   &.active {
-    background-color: var(--background-color-dark);
+    background-color: var(--primary-color);
     color: var(--text-color);
+    svg {
+      color: var(--pure-white);
+    }
   }
 }
+
 .theme-toggle {
   background: none;
   border: none;
@@ -40,11 +34,45 @@
   padding: $spacing-sm;
   border-radius: 50%;
   display: flex;
-  align-items: center;
   justify-content: center;
+}
 
-  &:hover {
-    background-color: rgba(128, 128, 128, 0.1);
-    color: var(--primary-color);
+.sort-control {
+  display: flex;
+
+  &__label {
+    color: var(--text-light);
+  }
+
+  &__button {
+    background-color: var(--card-background);
+    border: none;
+    padding: $spacing-sm $spacing-md;
+    cursor: pointer;
+    color: var(--text-lighter);
+    transition:
+      background-color $transition,
+      border $transition,
+      color $transition;
+
+    svg {
+      filter: invert(54%) sepia(14%) saturate(273%) hue-rotate(28deg) brightness(91%) contrast(89%);
+    }
+
+    &:hover {
+      background-color: var(--border-dull);
+    }
+
+    &.active {
+      background-color: var(--background-color-dark);
+      color: var(--primary-color);
+      svg {
+        filter: invert(41%) sepia(9%) saturate(315%) hue-rotate(21deg) brightness(94%) contrast(87%);
+      }
+    }
+
+    &:first-child {
+      border-inline: 1px solid var(--border-dull);
+    }
   }
 }

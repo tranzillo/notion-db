@@ -1,12 +1,15 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import SolutionCard from "../../components/SolutionCard.astro";
+import RankIndicator from "../../components/standalone/RankIndicator";
 import EnhancedBackButton from "../../components/standalone/EnhancedBackButton";
+import { getAllData } from "../../lib/notion";
 import { getEnhancedData } from "../../lib/enhancedData";
 
 export async function getStaticPaths() {
   // Fetch all enhanced data
   const { bottlenecks } = await getEnhancedData();
+
 
   // Generate paths for each bottleneck
   return bottlenecks.map((bottleneck) => {
@@ -33,15 +36,23 @@ if (!bottleneck) {
 
 <BaseLayout title={`${bottleneck.title} | Science Bottlenecks`}>
   <EnhancedBackButton client:load />
+  
   <div class="bottleneck-detail">
     <div class="bottleneck-detail__header">
-      {
-        bottleneck.discipline && bottleneck.discipline.title && (
+      <div class="bottleneck-detail__meta">
+        {
+          bottleneck.discipline && bottleneck.discipline.title && (
           <div class={`bottleneck-detail__discipline active ${bottleneck.discipline.colorClass || ''}`}>
-            {bottleneck.discipline.title}
-          </div>
-        )
-      }
+              {bottleneck.discipline.title}
+            </div>
+          )
+        }
+        
+        <!-- Use the existing React RankIndicator with client:load directive -->
+        <div class="bottleneck-detail__rank">
+          <RankIndicator rank={bottleneck.rank || 0} client:load />
+        </div>
+      </div>
 
       <h1 class="bottleneck-detail__title">{bottleneck.title}</h1>
     </div>
@@ -54,7 +65,7 @@ if (!bottleneck) {
           <h3>Potential Solutions</h3>
           <div class="bottleneck-detail__solutions-grid">
             {bottleneck.solutions.map((solution) => (
-              <SolutionCard solution={solution} />
+              <SolutionCard solution={solution} rank={solution.rank} />
             ))}
           </div>
         </div>
@@ -69,7 +80,6 @@ if (!bottleneck) {
   
   document.addEventListener('astro:page-load', () => {
     // This runs when the page is fully loaded
-    // Save the current bottleneck ID for potential scroll restoration
     if (bottleneckId) {
       // Don't actually need to do anything here since we're tracking clicks in the BottleneckCard
       // But we could manually save position for direct URL accesses

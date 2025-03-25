@@ -1,4 +1,4 @@
-// src/components/standalone/BottleneckGrid.jsx
+// src/components/standalone/DashboardGrid.jsx
 import React, { useState, useEffect } from 'react';
 import Fuse from 'fuse.js';
 import BottleneckCard from './BottleneckCard';
@@ -20,6 +20,10 @@ const fuseOptions = {
     {
       name: 'discipline.title',
       weight: 0.3
+    },
+    {
+      name: 'rank',
+      weight: 0.2
     }
   ]
 };
@@ -27,12 +31,14 @@ const fuseOptions = {
 export default function BottleneckGrid({
   bottlenecks = [],
   initialSearchQuery = '',
-  initialSelectedDisciplineIds = []
+  initialSelectedDisciplineIds = [],
+  initialSortBy = 'rank'
 }) {
   // Always start with consistent state for SSR
   const [filteredBottlenecks, setFilteredBottlenecks] = useState(bottlenecks);
   const [currentSearchQuery, setCurrentSearchQuery] = useState(initialSearchQuery);
   const [selectedDisciplines, setSelectedDisciplines] = useState(initialSelectedDisciplineIds);
+  const [sortBy, setSortBy] = useState(initialSortBy);
   const [isListView, setIsListView] = useState(false);
   const [fuse, setFuse] = useState(null);
   const [hasRestoredScroll, setHasRestoredScroll] = useState(false);
@@ -51,6 +57,7 @@ export default function BottleneckGrid({
         const params = new URLSearchParams(window.location.search);
         const urlQuery = params.get('q');
         const urlDisciplines = params.get('disciplines');
+        const urlSortBy = params.get('sort');
         
         if (urlQuery && urlQuery !== currentSearchQuery) {
           setCurrentSearchQuery(urlQuery);
@@ -72,6 +79,11 @@ export default function BottleneckGrid({
             setSelectedDisciplines(disciplineIds);
           }
         }
+        
+        // Check for sort parameter
+        if (urlSortBy && ['rank', 'alpha'].includes(urlSortBy)) {
+          setSortBy(urlSortBy);
+        }
       }
     } catch (e) {
       console.error('Error loading view preference:', e);
@@ -90,6 +102,7 @@ export default function BottleneckGrid({
     const params = new URLSearchParams(window.location.search);
     const urlQuery = params.get('q');
     const urlDisciplines = params.get('disciplines');
+    const urlSortBy = params.get('sort');
 
     if (urlQuery) {
       setCurrentSearchQuery(urlQuery);
@@ -109,6 +122,11 @@ export default function BottleneckGrid({
       if (disciplineIds.length > 0) {
         setSelectedDisciplines(disciplineIds);
       }
+    }
+    
+    // Check for sort parameter
+    if (urlSortBy && ['rank', 'alpha'].includes(urlSortBy)) {
+      setSortBy(urlSortBy);
     }
   }, [bottlenecks]);
 
@@ -150,26 +168,57 @@ export default function BottleneckGrid({
       window.removeEventListener('view-changed', handleViewChange);
     };
   }, []);
+  
+  // Listen for sort changes
+  useEffect(() => {
+    const handleSortChange = (event) => {
+      setSortBy(event.detail.sortBy);
+    };
 
-  // Apply filtering when search or disciplines change
+    window.addEventListener('sort-changed', handleSortChange);
+
+    return () => {
+      window.removeEventListener('sort-changed', handleSortChange);
+    };
+  }, []);
+
+  // Apply filtering and sorting when search, disciplines, or sort method change
   useEffect(() => {
     if (!fuse) return;
 
     // Apply search
-    let results = currentSearchQuery
+    let filteredResults = currentSearchQuery
       ? fuse.search(currentSearchQuery).map(result => result.item)
       : bottlenecks;
 
     // Apply discipline filtering
     if (selectedDisciplines.length > 0) {
-      results = results.filter(bottleneck =>
+      filteredResults = filteredResults.filter(bottleneck =>
         bottleneck.discipline &&
         selectedDisciplines.includes(bottleneck.discipline.id)
       );
     }
 
-    setFilteredBottlenecks(results);
-  }, [currentSearchQuery, selectedDisciplines, fuse, bottlenecks]);
+    // Apply sorting
+    filteredResults = [...filteredResults].sort((a, b) => {
+      if (sortBy === 'alpha') {
+        // Sort alphabetically by title
+        return a.title.localeCompare(b.title);
+      } else {
+        // Sort by rank (descending) with alphabetical title as tiebreaker
+        const rankA = parseInt(a.rank) || 0;
+        const rankB = parseInt(b.rank) || 0;
+        
+        if (rankA === rankB) {
+          return a.title.localeCompare(b.title);
+        }
+        
+        return rankB - rankA; // Higher rank first
+      }
+    });
+
+    setFilteredBottlenecks(filteredResults);
+  }, [currentSearchQuery, selectedDisciplines, sortBy, fuse, bottlenecks]);
   
   // Attempt to restore scroll position after filtered bottlenecks are updated
   useEffect(() => {

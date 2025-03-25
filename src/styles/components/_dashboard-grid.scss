@@ -115,4 +115,10 @@
 .dashboard-controls {
   display: flex;
   justify-content: flex-end;
+  align-items: stretch;
+  border: 1px solid var(--border-color);
+  border-inline-start-color: transparent;
+  border-radius: 0 $border-radius-lg $border-radius-lg 0;
+  overflow: hidden;
+  transition: border-color $transition;
 }

@@ -4,14 +4,17 @@ import Search from '../components/standalone/Search';
 import Filter from '../components/standalone/Filter';
 import BottleneckGrid from '../components/standalone/DashboardGrid';
 import ViewToggle from '../components/standalone/ViewToggle';
-import { parseUrlParams } from '../lib/dataUtils';
+import SortControl from '../components/standalone/SortControl';
+import ThemeToggle from '../components/standalone/ThemeToggle';
+import { getAllData } from '../lib/notion';
+import { extractDisciplines, parseUrlParams } from '../lib/dataUtils';
 import { getEnhancedData } from '../lib/enhancedData';
 
 // Fetch all enhanced data from Notion at build time
 const { bottlenecks, disciplines } = await getEnhancedData();
 
 // Get URL parameters
-const { searchQuery, disciplineSlugs } = parseUrlParams(Astro.url.toString());
+const { searchQuery, disciplineSlugs, sortBy } = parseUrlParams(Astro.url.toString());
 ---
 
 <BaseLayout title="Bottleneckbase">
@@ -38,6 +41,7 @@ const { searchQuery, disciplineSlugs } = parseUrlParams(Astro.url.toString());
       <div class="dashboard-search">
         <Search client:load initialQuery={searchQuery} />
         <div class="dashboard-controls">
+          <SortControl client:load initialSortBy={sortBy} />
           <ViewToggle client:load />
         </div>
       </div>
@@ -47,7 +51,30 @@ const { searchQuery, disciplineSlugs } = parseUrlParams(Astro.url.toString());
         bottlenecks={bottlenecks}
         initialSearchQuery={searchQuery}
         initialSelectedDisciplineIds={disciplineSlugs}
+        initialSortBy={sortBy}
       />
     </div>
   </div>
 </BaseLayout>
+
+<script>
+  import { saveCurrentUrlState } from '../lib/navigationUtils';
+  
+  // Save the current URL state for potential "back" navigation
+  document.addEventListener('astro:page-load', () => {
+    saveCurrentUrlState();
+  });
+  
+  // Also save URL state when search or filter changes
+  window.addEventListener('search-changed', () => {
+    saveCurrentUrlState();
+  });
+  
+  window.addEventListener('disciplines-changed', () => {
+    saveCurrentUrlState();
+  });
+  
+  window.addEventListener('sort-changed', () => {
+    saveCurrentUrlState();
+  });
+</script>
