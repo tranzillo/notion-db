@@ -9,7 +9,7 @@ export default function RankIndicator({ rank = 0 }) {
     return (
         <div class="rank-indicator-container">
             <h3 class="title">Urgency</h3>
-            <div className="rank-indicator" title={`Rank: ${safeRank}`}>
+            <div className="rank-indicator" title={`Rank: ${safeRank} out of 5`}>
                 {[1, 2, 3, 4, 5].map((blockRank) => (
                     <div
                         key={blockRank}

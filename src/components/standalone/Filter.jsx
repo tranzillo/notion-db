@@ -1,3 +1,4 @@
+// src/components/standalone/Filter.jsx
 import React, { useState, useEffect } from 'react';
 import { saveCurrentUrlState } from '../../lib/navigationUtils';
 
@@ -24,22 +25,24 @@ export default function Filter({ disciplines = [], initialSelectedIds = [] }) {
     setSelected(processedDisciplines);
     
     // Also check URL parameters directly on mount
-    const params = new URLSearchParams(window.location.search);
-    const urlDisciplines = params.get('disciplines');
-    
-    if (urlDisciplines) {
-      const disciplineSlugs = urlDisciplines.split(',');
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      const urlDisciplines = params.get('disciplines');
       
-      // Convert slugs to IDs
-      const disciplineIds = disciplineSlugs.map(slug => {
-        const match = disciplines.find(d => 
-          d.title.toLowerCase().replace(/\s+/g, '-') === slug
-        );
-        return match ? match.id : null;
-      }).filter(Boolean);
-      
-      if (disciplineIds.length > 0) {
-        setSelected(disciplineIds);
+      if (urlDisciplines) {
+        const disciplineSlugs = urlDisciplines.split(',');
+        
+        // Convert slugs to IDs
+        const disciplineIds = disciplineSlugs.map(slug => {
+          const match = disciplines.find(d => 
+            d.title.toLowerCase().replace(/\s+/g, '-') === slug
+          );
+          return match ? match.id : null;
+        }).filter(Boolean);
+        
+        if (disciplineIds.length > 0) {
+          setSelected(disciplineIds);
+        }
       }
     }
   }, []);
@@ -104,14 +107,14 @@ export default function Filter({ disciplines = [], initialSelectedIds = [] }) {
     // Force save empty state when clearing all disciplines
     saveCurrentUrlState(true);
   };
-
+  
   return (
     <div className="discipline-filter">
       <div className="discipline-filter__header">
         <h3>Filter by Discipline</h3>
       </div>
       
-      {/* <div className="discipline-filter__actions">
+      <div className="discipline-filter__actions">
         <button 
           type="button" 
           className="discipline-filter__button" 
@@ -126,9 +129,9 @@ export default function Filter({ disciplines = [], initialSelectedIds = [] }) {
         >
           None
         </button>
-      </div> */}
+      </div>
 
-<div className="discipline-filter__list">
+      <div className="discipline-filter__list">
         {disciplines.map((discipline) => (
           <div className="discipline-filter__item" key={discipline.id}>
             <div className={`discipline-filter__checkbox ${selected.includes(discipline.id) ? 'active' : ''} ${discipline.colorClass || ''}`}>
@@ -146,7 +149,6 @@ export default function Filter({ disciplines = [], initialSelectedIds = [] }) {
           </div>
         ))}
       </div>
-    
     </div>
   );
 }

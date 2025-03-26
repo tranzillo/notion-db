@@ -1,0 +1,312 @@
+:root {
+
+  --discipline-color-0: #94eead;
+  --discipline-color-0-light: #daf5e2;
+  --discipline-color-0-dark: #27e75d;
+  --discipline-color-0-hover: #b8f0c8;
+  --discipline-color-0-border: #27e75d;
+
+  --discipline-color-1: #95d0ce;
+  --discipline-color-1-light: #cae3e2;
+  --discipline-color-1-dark: #48b2ae;
+  --discipline-color-1-hover: #b0d9d7;
+  --discipline-color-1-border: #48b2ae;
+
+  --discipline-color-2: #9fb5db;
+  --discipline-color-2-light: #d9e0ed;
+  --discipline-color-2-dark: #4774c2;
+  --discipline-color-2-hover: #bdcbe3;
+  --discipline-color-2-border: #4774c2;
+
+  --discipline-color-3: #be9cd2;
+  --discipline-color-3-light: #ded1e6;
+  --discipline-color-3-dark: #8e4cb4;
+  --discipline-color-3-hover: #ceb7db;
+  --discipline-color-3-border: #8e4cb4;
+
+  --discipline-color-4: #dfa1a5;
+  --discipline-color-4-light: #f0ddde;
+  --discipline-color-4-dark: #c8454e;
+  --discipline-color-4-hover: #e7c0c2;
+  --discipline-color-4-border: #c8454e;
+
+  --discipline-color-5: #e5ba90;
+  --discipline-color-5-light: #efe0d0;
+  --discipline-color-5-dark: #d7822e;
+  --discipline-color-5-hover: #e9cdb1;
+  --discipline-color-5-border: #d7822e;
+
+  --discipline-color-6: #e9d787;
+  --discipline-color-6-light: #f0e9ca;
+  --discipline-color-6-dark: #e1bd21;
+  --discipline-color-6-hover: #ebdfaa;
+  --discipline-color-6-border: #e1bd21;
+}
+
+
+            .discipline-gradient-0 {
+                background-color: var(--discipline-color-0-light);
+            }
+
+            .discipline-gradient-0.active {
+                border-color: var(--discipline-color-0-dark);
+            }
+
+            .discipline-gradient-0:hover input + label {
+                background-color: var(--discipline-color-0-hover) !important;
+           }
+
+            .discipline-gradient-0.active input + label {
+                background-color: var(--discipline-color-0-light) !important;
+                border-color: var(--discipline-color-0-dark) !important;
+            }
+            
+            
+            .dark-mode .discipline-gradient-0 {
+                border-color: var(--discipline-color-0-dark) !important;
+                color: #818374 !important;
+                background-color: transparent !important;
+            }
+
+            .dark-mode .discipline-gradient-0.active {
+                color: var(--discipline-color-0-hover) !important;
+            }
+
+            .dark-mode .discipline-gradient-0:hover input + label {
+                border-color: var(--discipline-color-0-dark) !important;
+                color: var(--discipline-color-0-hover) !important;
+                background-color: transparent !important;
+           }
+
+            .dark-mode .discipline-gradient-0.active input + label {
+                color: var(--discipline-color-0-light) !important;
+                background-color: transparent !important;
+            }
+            .discipline-gradient-1 {
+                background-color: var(--discipline-color-1-light);
+            }
+
+            .discipline-gradient-1.active {
+                border-color: var(--discipline-color-1-dark);
+            }
+
+            .discipline-gradient-1:hover input + label {
+                background-color: var(--discipline-color-1-hover) !important;
+           }
+
+            .discipline-gradient-1.active input + label {
+                background-color: var(--discipline-color-1-light) !important;
+                border-color: var(--discipline-color-1-dark) !important;
+            }
+            
+            
+            .dark-mode .discipline-gradient-1 {
+                border-color: var(--discipline-color-1-dark) !important;
+                color: #818374 !important;
+                background-color: transparent !important;
+            }
+
+            .dark-mode .discipline-gradient-1.active {
+                color: var(--discipline-color-1-hover) !important;
+            }
+
+            .dark-mode .discipline-gradient-1:hover input + label {
+                border-color: var(--discipline-color-1-dark) !important;
+                color: var(--discipline-color-1-hover) !important;
+                background-color: transparent !important;
+           }
+
+            .dark-mode .discipline-gradient-1.active input + label {
+                color: var(--discipline-color-1-light) !important;
+                background-color: transparent !important;
+            }
+            .discipline-gradient-2 {
+                background-color: var(--discipline-color-2-light);
+            }
+
+            .discipline-gradient-2.active {
+                border-color: var(--discipline-color-2-dark);
+            }
+
+            .discipline-gradient-2:hover input + label {
+                background-color: var(--discipline-color-2-hover) !important;
+           }
+
+            .discipline-gradient-2.active input + label {
+                background-color: var(--discipline-color-2-light) !important;
+                border-color: var(--discipline-color-2-dark) !important;
+            }
+            
+            
+            .dark-mode .discipline-gradient-2 {
+                border-color: var(--discipline-color-2-dark) !important;
+                color: #818374 !important;
+                background-color: transparent !important;
+            }
+
+            .dark-mode .discipline-gradient-2.active {
+                color: var(--discipline-color-2-hover) !important;
+            }
+
+            .dark-mode .discipline-gradient-2:hover input + label {
+                border-color: var(--discipline-color-2-dark) !important;
+                color: var(--discipline-color-2-hover) !important;
+                background-color: transparent !important;
+           }
+
+            .dark-mode .discipline-gradient-2.active input + label {
+                color: var(--discipline-color-2-light) !important;
+                background-color: transparent !important;
+            }
+            .discipline-gradient-3 {
+                background-color: var(--discipline-color-3-light);
+            }
+
+            .discipline-gradient-3.active {
+                border-color: var(--discipline-color-3-dark);
+            }
+
+            .discipline-gradient-3:hover input + label {
+                background-color: var(--discipline-color-3-hover) !important;
+           }
+
+            .discipline-gradient-3.active input + label {
+                background-color: var(--discipline-color-3-light) !important;
+                border-color: var(--discipline-color-3-dark) !important;
+            }
+            
+            
+            .dark-mode .discipline-gradient-3 {
+                border-color: var(--discipline-color-3-dark) !important;
+                color: #818374 !important;
+                background-color: transparent !important;
+            }
+
+            .dark-mode .discipline-gradient-3.active {
+                color: var(--discipline-color-3-hover) !important;
+            }
+
+            .dark-mode .discipline-gradient-3:hover input + label {
+                border-color: var(--discipline-color-3-dark) !important;
+                color: var(--discipline-color-3-hover) !important;
+                background-color: transparent !important;
+           }
+
+            .dark-mode .discipline-gradient-3.active input + label {
+                color: var(--discipline-color-3-light) !important;
+                background-color: transparent !important;
+            }
+            .discipline-gradient-4 {
+                background-color: var(--discipline-color-4-light);
+            }
+
+            .discipline-gradient-4.active {
+                border-color: var(--discipline-color-4-dark);
+            }
+
+            .discipline-gradient-4:hover input + label {
+                background-color: var(--discipline-color-4-hover) !important;
+           }
+
+            .discipline-gradient-4.active input + label {
+                background-color: var(--discipline-color-4-light) !important;
+                border-color: var(--discipline-color-4-dark) !important;
+            }
+            
+            
+            .dark-mode .discipline-gradient-4 {
+                border-color: var(--discipline-color-4-dark) !important;
+                color: #818374 !important;
+                background-color: transparent !important;
+            }
+
+            .dark-mode .discipline-gradient-4.active {
+                color: var(--discipline-color-4-hover) !important;
+            }
+
+            .dark-mode .discipline-gradient-4:hover input + label {
+                border-color: var(--discipline-color-4-dark) !important;
+                color: var(--discipline-color-4-hover) !important;
+                background-color: transparent !important;
+           }
+
+            .dark-mode .discipline-gradient-4.active input + label {
+                color: var(--discipline-color-4-light) !important;
+                background-color: transparent !important;
+            }
+            .discipline-gradient-5 {
+                background-color: var(--discipline-color-5-light);
+            }
+
+            .discipline-gradient-5.active {
+                border-color: var(--discipline-color-5-dark);
+            }
+
+            .discipline-gradient-5:hover input + label {
+                background-color: var(--discipline-color-5-hover) !important;
+           }
+
+            .discipline-gradient-5.active input + label {
+                background-color: var(--discipline-color-5-light) !important;
+                border-color: var(--discipline-color-5-dark) !important;
+            }
+            
+            
+            .dark-mode .discipline-gradient-5 {
+                border-color: var(--discipline-color-5-dark) !important;
+                color: #818374 !important;
+                background-color: transparent !important;
+            }
+
+            .dark-mode .discipline-gradient-5.active {
+                color: var(--discipline-color-5-hover) !important;
+            }
+
+            .dark-mode .discipline-gradient-5:hover input + label {
+                border-color: var(--discipline-color-5-dark) !important;
+                color: var(--discipline-color-5-hover) !important;
+                background-color: transparent !important;
+           }
+
+            .dark-mode .discipline-gradient-5.active input + label {
+                color: var(--discipline-color-5-light) !important;
+                background-color: transparent !important;
+            }
+            .discipline-gradient-6 {
+                background-color: var(--discipline-color-6-light);
+            }
+
+            .discipline-gradient-6.active {
+                border-color: var(--discipline-color-6-dark);
+            }
+
+            .discipline-gradient-6:hover input + label {
+                background-color: var(--discipline-color-6-hover) !important;
+           }
+
+            .discipline-gradient-6.active input + label {
+                background-color: var(--discipline-color-6-light) !important;
+                border-color: var(--discipline-color-6-dark) !important;
+            }
+            
+            
+            .dark-mode .discipline-gradient-6 {
+                border-color: var(--discipline-color-6-dark) !important;
+                color: #818374 !important;
+                background-color: transparent !important;
+            }
+
+            .dark-mode .discipline-gradient-6.active {
+                color: var(--discipline-color-6-hover) !important;
+            }
+
+            .dark-mode .discipline-gradient-6:hover input + label {
+                border-color: var(--discipline-color-6-dark) !important;
+                color: var(--discipline-color-6-hover) !important;
+                background-color: transparent !important;
+           }
+
+            .dark-mode .discipline-gradient-6.active input + label {
+                color: var(--discipline-color-6-light) !important;
+                background-color: transparent !important;
+            }

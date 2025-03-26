@@ -43,49 +43,42 @@
   &__checkbox {
     display: flex;
     align-items: center;
+    border-color: transparent;
     border-radius: $border-radius-md;
+    background-color: transparent;
+    
+    &:hover {
+      background-color: transparent;
+    }
+  
+    &.active {
+      background-color: transparent;
+    }
 
-    @each $color in ("blue", "green", "yellow", "red", "purple", "teal", "orange", "pink") {
-      &.discipline-#{$color} {
-        &.active {
-          background-color: rgba(var(--discipline-#{$color}-primary), 0.1);
-        }
+    input {
+      height: 0;
+      width: 0;
 
-        input {
-          height: 0;
-          width: 0;
-
-          &:checked {
-            +label {
-              background-color: var(--discipline-#{$color}-bg);
-              color: var(--discipline-#{$color}-text);
-              border-color: transparent;
-            }
-          }
-
-          &:focus {
-            +label {
-              border-color: var(--discipline-#{$color}-border);
-            }
-          }
-        }
-
-        label {
-          cursor: pointer;
-          padding: $spacing-xs $spacing-sm;
-          color: var(--text-light);
-          border-radius: $border-radius-md;
-          border: 1px solid transparent;
-          transition: background-color $transition,
-            color $transition,
-            border-color $transition;
-
-          &:hover {
-            background-color: var(--discipline-#{$color}-bg);
-          }
+      &:checked {
+        +label {
+          border-color: transparent;
         }
       }
     }
+
+    label {
+      cursor: pointer;
+      padding: $spacing-xs $spacing-sm;
+      color: var(--text-light);
+      background-color: transparent;
+      border-radius: $border-radius-md;
+      border: 1px solid transparent;
+      transition: background-color $transition,
+        color $transition,
+        border-color $transition;
+    }
+
+
   }
 
   &__actions {

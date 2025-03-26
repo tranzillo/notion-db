@@ -10,69 +10,76 @@
   display: flex;
   flex-direction: column;
   transition: background-color $transition,
-  border $transition;;
-    &__header {
-      background-color: var(--background-color);
-      border-radius: $border-radius-lg $border-radius-md 0 0;
-      padding: $spacing-xl;
-      margin: calc($spacing-xl * (-1)) calc($spacing-xl * (-1)) 0 calc($spacing-xl * (-1));
-      border-bottom: 1px solid var(--border-dull);
-      transition: border-color $transition,
+    border $transition;
+  ;
+
+  &__header {
+    background-color: var(--background-color);
+    border-radius: $border-radius-lg $border-radius-md 0 0;
+    padding: $spacing-xl;
+    margin: calc($spacing-xl * (-1)) calc($spacing-xl * (-1)) 0 calc($spacing-xl * (-1));
+    border-bottom: 1px solid var(--border-dull);
+    transition: border-color $transition,
       background-color $transition;
-    }
-    
-    &__discipline {
-      @extend .discipline-tag;
-      display: inline-block;
-      background-color: var(--background-color);
-      color: var(--text-lighter);
-      padding: $spacing-xs $spacing-sm;
-      border-radius: $border-radius-md;
-      font-size: $font-size-sm;
-      letter-spacing: 0.04em;
+  }
 
-    }
-    
-    &__title {
-      font-size: $font-size-lg;
-      margin: 0;
-      
-      a {
-        color: inherit;
-        transition: color $transition;
-        &:hover {
-          color: var(--primary-color);
-        }
+  &__discipline {
+    // @extend .discipline-tag;
+    display: inline-block;
+    // background-color: var(--background-color);
+    color: var(--text-light);
+    padding: $spacing-xs $spacing-sm;
+    border: 1px solid transparent;
+    border-radius: $border-radius-md;
+    font-size: $font-size-sm;
+    letter-spacing: 0.04em;
+    transition: background-color $transition,
+      color $transition,
+      border-color $transition;
+
+  }
+
+  &__title {
+    font-size: $font-size-lg;
+    margin: 0;
+
+    a {
+      color: inherit;
+      transition: color $transition;
+
+      &:hover {
+        color: var(--primary-color);
       }
     }
-    
-    &__content {
-      color: var(--text-light);
-      flex-grow: 1;
-      line-height: 1.5;
-      line-clamp: 5;
-      display: -webkit-box;
-      -webkit-box-orient: vertical;
-      -webkit-line-clamp: 5;
-      overflow: hidden;
-      max-width: 90ch;
-      div {
-        clip-path: inset(0);
-      }
+  }
+
+  &__content {
+    color: var(--text-light);
+    flex-grow: 1;
+    line-height: 1.5;
+    line-clamp: 5;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 5;
+    overflow: hidden;
+    max-width: 90ch;
+
+    div {
+      clip-path: inset(0);
     }
-    
-    &__footer {
-      margin-block-start: $spacing-sm;
+  }
+
+  &__footer {
+    margin-block-start: $spacing-sm;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: $spacing-xl;
+
+    &-left,
+    &-right {
       display: flex;
-      justify-content: space-between;
       align-items: center;
-      gap: $spacing-xl;
-
-      &-left,
-      &-right {
-          display: flex;
-          align-items: center;
-      }
     }
+  }
 }
-

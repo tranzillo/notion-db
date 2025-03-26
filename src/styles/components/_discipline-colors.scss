@@ -7,43 +7,43 @@
   --discipline-blue-bg: #e8f0fe;
   --discipline-blue-text: #1a5cb8;
   --discipline-blue-border: #4285f4;
-  
+
   // Green
   --discipline-green-primary: #1fa748;
   --discipline-green-bg: #e6f4ea;
   --discipline-green-text: #137333;
   --discipline-green-border: #34a853;
-  
+
   // Yellow
   --discipline-yellow-primary: #eabf00;
   --discipline-yellow-bg: #fef7e0;
   --discipline-yellow-text: #ea8600;
   --discipline-yellow-border: #fbbc04;
-  
+
   // Red
   --discipline-red-primary: #d63937;
   --discipline-red-bg: #fce8e6;
   --discipline-red-text: #a50e0e;
   --discipline-red-border: #ea4335;
-  
+
   // Purple
   --discipline-purple-primary: #7627bb;
   --discipline-purple-bg: #f3e8fd;
   --discipline-purple-text: #681da8;
   --discipline-purple-border: #a142f4;
-  
+
   // Teal
   --discipline-teal-primary: #2b919b;
   --discipline-teal-bg: #e4f7fb;
   --discipline-teal-text: #07565f;
   --discipline-teal-border: #12b5cb;
-  
+
   // Orange  
   --discipline-orange-primary: #e28521;
   --discipline-orange-bg: #feefe3;
   --discipline-orange-text: #b06000;
   --discipline-orange-border: #fa903e;
-  
+
   // Pink
   --discipline-pink-primary: #d01884;
   --discipline-pink-bg: #fde7f3;
@@ -59,43 +59,43 @@ html[data-theme="dark"],
   --discipline-blue-bg: #174ea6;
   --discipline-blue-text: #c3dbff;
   --discipline-blue-border: #8ab4f8;
-  
+
   // Green
   --discipline-green-primary: #81c995;
   --discipline-green-bg: #1e4620;
   --discipline-green-text: #ceead6;
   --discipline-green-border: #81c995;
-  
+
   // Yellow
   --discipline-yellow-primary: #fdd663;
   --discipline-yellow-bg: #664d00;
   --discipline-yellow-text: #feefc3;
   --discipline-yellow-border: #fdd663;
-  
+
   // Red
   --discipline-red-primary: #f28b82;
   --discipline-red-bg: #5c0f0c;
   --discipline-red-text: #fad2cf;
   --discipline-red-border: #f28b82;
-  
+
   // Purple
   --discipline-purple-primary: #d7aefb;
   --discipline-purple-bg: #48217e;
   --discipline-purple-text: #ead6fd;
   --discipline-purple-border: #d7aefb;
-  
+
   // Teal
   --discipline-teal-primary: #86fbfb;
   --discipline-teal-bg: #05505c;
   --discipline-teal-text: #cbf0f8;
   --discipline-teal-border: #86fbfb;
-  
+
   // Orange
   --discipline-orange-primary: #fab980;
   --discipline-orange-bg: #653200;
   --discipline-orange-text: #fde0c2;
   --discipline-orange-border: #fab980;
-  
+
   // Pink
   --discipline-pink-primary: #ff8bcb;
   --discipline-pink-bg: #68024c;
@@ -103,19 +103,69 @@ html[data-theme="dark"],
   --discipline-pink-border: #ff8bcb;
 }
 
-// Classes for discipline elements
-.discipline-tag {  
-  // Apply color-specific styles to each class
-  @each $color in ("blue", "green", "yellow", "red", "purple", "teal", "orange", "pink") {
-    &.discipline-#{$color} {
-      background-color: var(--discipline-#{$color}-bg);
-      color: var(--text-light);
-      border: 1px solid transparent;
-      transition: background-color $transition, color $transition, border $transition;
-      &.active {
-        color: var(--discipline-#{$color}-text);
-        border: 1px solid var(--discipline-#{$color}-border);
-      }
-    }
+// src/styles/discipline-colors.scss
+
+// Import the generated CSS file with discipline color variables and classes
+@import 'generated/discipline-colors.css';
+
+// Additional SCSS utility functions for discipline colors (optional)
+
+// Returns a specific discipline color variation
+@function discipline-color($index, $variant: 'base') {
+  @if $variant =='base' {
+    @return var(--discipline-color-#{$index});
   }
+
+  @else if $variant =='light' {
+    @return var(--discipline-color-#{$index}-light);
+  }
+
+  @else if $variant =='dark' {
+    @return var(--discipline-color-#{$index}-dark);
+  }
+
+  @else if $variant =='hover' {
+    @return var(--discipline-color-#{$index}-hover);
+  }
+
+  @else if $variant =='text' {
+    @return var(--discipline-color-#{$index}-text);
+  }
+
+  @else if $variant =='border' {
+    @return var(--discipline-color-#{$index}-border);
+  }
+
+  @else {
+    @return var(--discipline-color-#{$index});
+  }
+}
+
+// Mixin to apply all discipline color properties
+@mixin discipline-colors($index) {
+  background-color: var(--discipline-color-#{$index}-light);
+  color: var(--discipline-color-#{$index}-text);
+  border-color: var(--discipline-color-#{$index}-border);
+
+  &:hover {
+    background-color: var(--discipline-color-#{$index}-hover);
+  }
+
+  &.active {
+    background-color: var(--discipline-color-#{$index});
+    color: var(--discipline-color-#{$index}-text);
+    border-color: var(--discipline-color-#{$index}-dark);
+  }  
+}
+
+cheater {
+  background-color: gradient(
+    #94eead, 
+    #94ced3, 
+    #9bb7dd, 
+    #bc95dd, 
+    #e69e9d, 
+    #e4b98f, 
+    #e9d787,
+  );
 }

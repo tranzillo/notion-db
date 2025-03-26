@@ -61,6 +61,21 @@
         const grids = document.querySelectorAll('.bottleneck-grid');
         grids.forEach(grid => grid.classList.add('bottleneck-grid--list-view'));
       }
+      
+      // Load discipline color CSS if not already loaded
+      if (!document.getElementById('discipline-color-styles')) {
+        const disciplineColorCssPath = '/styles/generated/discipline-colors.css';
+        try {
+          // Create a link element for the generated CSS
+          const linkElement = document.createElement('link');
+          linkElement.id = 'discipline-color-styles';
+          linkElement.rel = 'stylesheet';
+          linkElement.href = disciplineColorCssPath;
+          document.head.appendChild(linkElement);
+        } catch (error) {
+          console.error('Error loading discipline colors CSS:', error);
+        }
+      }
     }
     
     // Don't reset the theme if we're in a view transition
