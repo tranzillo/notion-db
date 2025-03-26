@@ -1,0 +1,22 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import ContributeForm from "../../components/standalone/ContributeForm";
+import { getEnhancedData } from "../../lib/enhancedData";
+
+// Fetch disciplines for the form dropdown
+const { disciplines } = await getEnhancedData();
+---
+
+<BaseLayout title="Contribute | BottleNexus">
+  <div class="contribute-page">
+    <div class="contribute-header">
+      <h1>Contribute to our Database</h1>
+      <p>
+        Help advance scientific progress by submitting new bottlenecks, solutions, 
+        and references. Your contribution will be reviewed by our team before being added to the database.
+      </p>
+    </div>
+
+    <ContributeForm client:load disciplines={disciplines} />
+  </div>
+</BaseLayout>

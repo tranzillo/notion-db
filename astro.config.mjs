@@ -1,11 +1,13 @@
 import { defineConfig } from 'astro/config';
 import react from '@astrojs/react';
-import disciplineColorsIntegration from './src/integrations/disciplineColors';
+import disciplineColorsIntegration from './src/integrations/disciplineColors';import node from '@astrojs/node';
 
 export default defineConfig({
   integrations: [react(), disciplineColorsIntegration(),],
-  // Enable SSR for dynamic routes
-  output: 'static',
+
+ 
+  // Enable SSR for dynamic routes   output: 'static',
+
   // Use SCSS for styling
   vite: {
     css: {
@@ -15,5 +17,10 @@ export default defineConfig({
         }
       }
     }
-  }
+  },
+
+  output: 'server',
+  adapter: node({
+    mode: 'standalone'
+  })
 });

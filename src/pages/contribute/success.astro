@@ -1,0 +1,52 @@
+---
+// src/pages/contribute/success.astro
+import BaseLayout from "../../layouts/BaseLayout.astro";
+
+// Get submission info from URL
+const { searchParams } = Astro.url;
+const submissionType = searchParams.get('type') || 'contribution';
+const submissionId = searchParams.get('id');
+
+// Format the type for display
+const typeDisplay = submissionType.charAt(0).toUpperCase() + submissionType.slice(1);
+
+// Custom message based on submission type
+let customMessage = "";
+if (submissionType === 'bottleneck') {
+  customMessage = "Thank you for your help identifying critical challenges in scientific advancement.";
+} else if (submissionType === 'solution') {
+  customMessage = "Thank you for your help addressing key opportunities in scientific progress.";
+} else if (submissionType === 'reference') {
+  customMessage = "Thank you for your help providing valuable resources to the community.";
+}
+---
+
+<BaseLayout title="Submission Successful | BottleNexus">
+  <div class="success-page">
+    <div class="success-container">
+      <div class="success-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+          <polyline points="22 4 12 14.01 9 11.01"></polyline>
+        </svg>
+      </div>
+      <h1>You Submitted a {typeDisplay}!</h1>
+      <p>Your submission has been received and will be reviewed by our team.</p>
+      
+      {customMessage && (
+        <p class="success-custom-message">{customMessage}</p>
+      )}
+      
+      {submissionId && (
+        <div class="success-id">
+          <p>Submission ID: <code>{submissionId}</code></p>
+        </div>
+      )}
+      
+      <div class="success-navigation">
+        <a href="/contribute" class="button button-secondary">Submit Another</a>
+        <a href="/" class="button button-primary">Return Home</a>
+      </div>
+    </div>
+  </div>
+</BaseLayout>

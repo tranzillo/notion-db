@@ -1,0 +1,44 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+// Get query parameters
+const { searchParams } = Astro.url;
+const type = searchParams.get('type') || 'contribution';
+
+// Convert to nice display name
+const typeDisplay = 
+  type === 'bottleneck' ? 'research bottleneck' :
+  type === 'solution' ? 'potential solution' :
+  type === 'reference' ? 'reference' : 'contribution';
+---
+
+<BaseLayout title="Thank You for Your Contribution">
+  <div style="max-width: 600px; margin: 3rem auto; text-align: center; padding: 2rem; background-color: #f8f9fa; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+    <div style="color: #28a745; margin-bottom: 2rem;">
+      <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+        <polyline points="22 4 12 14.01 9 11.01"></polyline>
+      </svg>
+    </div>
+    
+    <h1 style="font-size: 2rem; margin-bottom: 1rem;">Thank You!</h1>
+    
+    <p style="font-size: 1.2rem; margin-bottom: 1rem;">
+      Your {typeDisplay} has been successfully submitted and is awaiting review.
+    </p>
+    
+    <p style="background-color: rgba(40, 167, 69, 0.1); padding: 1rem; border-radius: 6px; margin: 1.5rem 0;">
+      Our team will carefully review your submission and integrate it into the BottleNexus database if approved.
+      This process typically takes 3-5 business days.
+    </p>
+    
+    <div style="margin-top: 2rem;">
+      <a href="/contribute" style="display: inline-block; margin-right: 1rem; padding: 0.75rem 1.5rem; background-color: transparent; color: #0d6efd; border: 1px solid #0d6efd; border-radius: 4px; text-decoration: none; font-weight: 500;">
+        Submit Another
+      </a>
+      <a href="/" style="display: inline-block; padding: 0.75rem 1.5rem; background-color: #0d6efd; color: white; border-radius: 4px; text-decoration: none; font-weight: 500;">
+        Return to Home
+      </a>
+    </div>
+  </div>
+</BaseLayout>
