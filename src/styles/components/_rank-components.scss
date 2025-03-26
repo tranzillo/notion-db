@@ -17,7 +17,7 @@
             &.active {
                 background-color: var(--text-lighter);
                 &:first-of-type {
-                    background-color: var(--discipline-teal-primary)
+                    background-color: var(--discipline-blue-primary)
                 }
                 &:nth-of-type(2) {
                     background-color: var(--discipline-green-primary)
@@ -44,36 +44,3 @@
         opacity: 0.65;
     }
 }
-
-// Dark mode support
-//   :root[data-theme="dark"] {
-//     .rank-indicator {
-//       &__block {
-//         background-color: var(--color-border-dark, #2d3748);
-
-//         &.active {
-//           background-color: var(--color-primary, #4a6cf7);
-//         }
-//       }
-//     }
-
-//     .sort-control {
-//       &__buttons {
-//         border-color: var(--color-border-dark, #2d3748);
-//       }
-
-//       &__button {
-//         &:hover {
-//           background-color: var(--color-bg-hover-dark, #2d3748);
-//         }
-
-//         &.active {
-//           background-color: var(--color-bg-active-dark, #1a202c);
-//         }
-
-//         &:first-child {
-//           border-right-color: var(--color-border-dark, #2d3748);
-//         }
-//       }
-//     }
-//   }
