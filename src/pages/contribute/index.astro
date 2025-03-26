@@ -10,11 +10,7 @@ const { disciplines } = await getEnhancedData();
 <BaseLayout title="Contribute | BottleNexus">
   <div class="contribute-page">
     <div class="contribute-header">
-      <h1>Contribute to BottleNexus</h1>
-      <p>
-        Share your insights about scientific bottlenecks and potential solutions.
-        Your contribution will be reviewed before being added to the database.
-      </p>
+      <h1>Contribute to the Database</h1>
     </div>
     
     <div class="contribute-content">
@@ -22,33 +18,3 @@ const { disciplines } = await getEnhancedData();
     </div>
   </div>
 </BaseLayout>
-
-<style lang="scss">
-  .contribute-page {
-    padding: 2rem 0;
-  }
-  
-  .contribute-header {
-    margin-bottom: 2rem;
-    text-align: center;
-    
-    h1 {
-      margin-bottom: 1rem;
-    }
-    
-    p {
-      max-width: 700px;
-      margin: 0 auto;
-      line-height: 1.6;
-    }
-  }
-  
-  .contribute-content {
-    max-width: 800px;
-    margin: 0 auto;
-    background: var(--card-bg-color);
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    padding: 2rem;
-  }
-</style>

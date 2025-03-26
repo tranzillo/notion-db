@@ -8,9 +8,9 @@
   functions = "netlify/functions"
   publish = "dist"
 
-# Redirect all API calls to the serverless functions
+# Redirect for API calls to serverless functions - fixed format
 [[redirects]]
-  from = "/.netlify/functions/*"
+  from = "/api/*"
   to = "/.netlify/functions/:splat"
   status = 200
 

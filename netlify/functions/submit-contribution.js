@@ -1,6 +1,12 @@
 // netlify/functions/submit-contribution.js
 const { Client } = require('@notionhq/client');
 
+// For debugging - log environment variables (redacted) to verify they exist
+console.log('Environment check:', {
+  hasApiKey: !!process.env.NOTION_CONTRIBUTIONS_API_KEY,
+  hasDbId: !!process.env.NOTION_CONTRIBUTIONS_DB_ID,
+});
+
 // Initialize Notion client with the API key from environment variables
 const notion = new Client({
   auth: process.env.NOTION_CONTRIBUTIONS_API_KEY
@@ -10,8 +16,12 @@ const notion = new Client({
 const CONTRIBUTIONS_DB_ID = process.env.NOTION_CONTRIBUTIONS_DB_ID;
 
 exports.handler = async (event, context) => {
+  // Log request details for debugging
+  console.log(`Request received: ${event.httpMethod} ${event.path}`);
+  
   // Only allow POST requests
   if (event.httpMethod !== 'POST') {
+    console.log(`Method not allowed: ${event.httpMethod}`);
     return {
       statusCode: 405,
       body: JSON.stringify({ message: 'Method not allowed' }),
