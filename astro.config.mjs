@@ -3,10 +3,6 @@ import { defineConfig } from 'astro/config';
 import react from '@astrojs/react';
 import disciplineColorsIntegration from './src/integrations/disciplineColors';
 import netlify from '@astrojs/netlify';
-import node from '@astrojs/node';
-
-// Detect environment
-const isNetlify = process.env.NETLIFY === 'true';
 
 export default defineConfig({
   integrations: [
@@ -21,19 +17,27 @@ export default defineConfig({
           additionalData: `@import "./src/styles/_variables.scss";`
         }
       }
+    },
+    // Make sure Netlify environment variables are available
+    define: {
+      'process.env.NETLIFY': JSON.stringify(process.env.NETLIFY),
     }
   },
 
-  // Use server output for API endpoints
   output: 'server',
   
-  // Conditional adapter based on environment
-  adapter: isNetlify 
-    ? netlify({
-        // Netlify Functions/Edge config if needed
-        edgeMiddleware: true  // Enable Edge Middleware
-      })
-    : node({
-        mode: 'standalone'
-      })
+  adapter: netlify(),
+  
+  // Specific route configuration
+  routes: [
+    // Mark all API routes as server-rendered
+    { pattern: '/api/*', prerender: false },
+    // Ensure all other routes are static
+    { pattern: '/*', prerender: true }
+  ],
+  
+  // Explicitly tell Astro to prerender as much as possible
+  build: {
+    format: 'directory'
+  }
 });

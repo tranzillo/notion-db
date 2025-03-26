@@ -3,17 +3,11 @@
   publish = "dist"
   
 [build.environment]
-  NETLIFY = "true"
   NODE_VERSION = "18"
 
-# Redirect all routes to the index so client-side routing works
 [[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200
-
-# Handle API routes specially
-[[redirects]]
-  from = "/api/*"
-  to = "/.netlify/functions/entry/:splat"
-  status = 200
+  force = false
+  conditions = {type = ["text/html"]}
