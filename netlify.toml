@@ -8,15 +8,11 @@
   functions = "netlify/functions"
   publish = "dist"
 
-# Redirect for API calls to serverless functions - fixed format
-[[redirects]]
-  from = "/api/*"
-  to = "/.netlify/functions/:splat"
-  status = 200
-
-# Redirect all paths to index.html for client-side routing
+# Redirect only for SPA routing - excluding Netlify Functions
 [[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200
   force = false
+  # Don't redirect to index.html for Netlify function calls
+  conditions = {Path = {exclude = ["/.netlify/functions/*"]}}
