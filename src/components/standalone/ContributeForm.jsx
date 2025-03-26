@@ -1,313 +1,372 @@
-// src/components/standalone/ContributeForm.jsx
-import React, { useState, useEffect } from 'react';
-import { sanitizeFormData } from '../../lib/sanitizeInput.js';
+import React, { useState } from 'react';
 
 export default function ContributeForm({ disciplines = [] }) {
-  // Form submission type (bottleneck, solution, reference)
-  const [submissionType, setSubmissionType] = useState('bottleneck');
-  
-  // Form fields - common fields across all types
-  const [title, setTitle] = useState('');
-  const [content, setContent] = useState('');
-  const [email, setEmail] = useState('');
-  
-  // Type-specific fields
-  const [rank, setRank] = useState(3); // 1-5 for bottlenecks
-  const [selectedDiscipline, setSelectedDiscipline] = useState('');
-  const [url, setUrl] = useState(''); // For references
-  
-  // Form state
+  const [activeTab, setActiveTab] = useState('bottleneck');
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitResult, setSubmitResult] = useState(null);
-  const [errors, setErrors] = useState({});
-
-  // Reset form based on submission type
-  useEffect(() => {
-    // Reset type-specific fields when type changes
-    setRank(3);
-    setSelectedDiscipline('');
-    setUrl('');
-    setErrors({});
-    setSubmitResult(null);
-  }, [submissionType]);
-
-  // Validate form fields
-  const validateForm = () => {
-    const newErrors = {};
-    
-    // Common validations
-    if (!title.trim()) newErrors.title = 'Title is required';
-    if (!content.trim()) newErrors.content = 'Content is required';
-    if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      newErrors.email = 'Valid email is required if provided';
-    }
-    
-    // Type-specific validations
-    if (submissionType === 'bottleneck') {
-      if (rank < 1 || rank > 5) newErrors.rank = 'Rank must be between 1 and 5';
-      if (!selectedDiscipline) newErrors.discipline = 'Discipline is required for bottlenecks';
-    }
-    
-    if (submissionType === 'reference') {
-      if (!url.trim()) newErrors.url = 'URL is required for references';
-      if (url && !/^https?:\/\/.+/.test(url)) {
-        newErrors.url = 'URL must start with http:// or https://';
-      }
-    }
-    
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+  const [formError, setFormError] = useState('');
+  
+  // Form data state
+  const [bottleneckData, setBottleneckData] = useState({
+    title: '',
+    content: '',
+    disciplineId: '',
+    rank: 3
+  });
+  
+  const [solutionData, setSolutionData] = useState({
+    title: '',
+    content: '',
+    bottleneckTitle: '',
+    references: '',
+    rank: 3
+  });
+  
+  const [referenceData, setReferenceData] = useState({
+    title: '',
+    url: '',
+    content: ''
+  });
+  
+  // Reset form when switching tabs
+  const handleTabChange = (tabName) => {
+    setActiveTab(tabName);
+    setFormError('');
   };
-
-  // Handle form submission
-  const handleSubmit = async (e) => {
+  
+  // Form submission handlers
+  const handleBottleneckSubmit = async (e) => {
     e.preventDefault();
-    
-    // Validate form
-    if (!validateForm()) return;
-    
     setIsSubmitting(true);
-    setSubmitResult(null);
+    setFormError('');
     
     try {
-      // Build submission data based on type
-      const formData = {
-        type: submissionType,
-        title,
-        content,
-        email,
-      };
-      
-      // Add type-specific fields
-      if (submissionType === 'bottleneck') {
-        formData.rank = rank;
-        formData.discipline = selectedDiscipline;
-      } else if (submissionType === 'reference') {
-        formData.url = url;
-      }
-      
-      // Sanitize form data before sending
-      const sanitizedData = sanitizeFormData(formData);
-      
-      // Submit to API
-      const response = await fetch('/api/submit-to-notion', {
+      const response = await fetch('/.netlify/functions/submit-contribution', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(sanitizedData),
+        body: JSON.stringify({
+          type: 'bottleneck',
+          data: bottleneckData
+        }),
       });
       
-      const result = await response.json();
-      
-      if (result.success) {
-        // Show brief success message
-        setSubmitResult({
-          type: 'success',
-          message: 'Submission successful! Redirecting...',
-        });
-        
-        // Redirect to success page after a short delay
-        setTimeout(() => {
-          // Create URL with submission type information
-          const successUrl = new URL('/contribute/success', window.location.origin);
-          successUrl.searchParams.append('type', submissionType);
-          
-          // Add the submission ID if available from the Notion response
-          if (result.id) {
-            successUrl.searchParams.append('id', result.id);
-          }
-          
-          // Redirect to the success page
-          window.location.href = successUrl.toString();
-        }, 1000);
-      } else {
-        setSubmitResult({
-          type: 'error',
-          message: result.error || 'Failed to submit your contribution. Please try again.',
-        });
-        setIsSubmitting(false);
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to submit');
       }
+      
+      // Redirect to success page
+      window.location.href = '/contribution-success';
     } catch (error) {
-      console.error('Error submitting form:', error);
-      setSubmitResult({
-        type: 'error',
-        message: 'An unexpected error occurred. Please try again later.',
-      });
+      console.error('Error submitting bottleneck:', error);
+      setFormError(error.message || 'An error occurred. Please try again.');
       setIsSubmitting(false);
     }
   };
-
+  
+  const handleSolutionSubmit = async (e) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    setFormError('');
+    
+    try {
+      const response = await fetch('/.netlify/functions/submit-contribution', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          type: 'solution',
+          data: solutionData
+        }),
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to submit');
+      }
+      
+      // Redirect to success page
+      window.location.href = '/contribution-success';
+    } catch (error) {
+      console.error('Error submitting solution:', error);
+      setFormError(error.message || 'An error occurred. Please try again.');
+      setIsSubmitting(false);
+    }
+  };
+  
+  const handleReferenceSubmit = async (e) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    setFormError('');
+    
+    try {
+      const response = await fetch('/.netlify/functions/submit-contribution', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          type: 'reference',
+          data: referenceData
+        }),
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to submit');
+      }
+      
+      // Redirect to success page
+      window.location.href = '/contribution-success';
+    } catch (error) {
+      console.error('Error submitting reference:', error);
+      setFormError(error.message || 'An error occurred. Please try again.');
+      setIsSubmitting(false);
+    }
+  };
+  
   return (
     <div className="contribute-form">
-      {/* Form type selector */}
-      <div className="contribute-form__type-selector">
-        <label>What would you like to contribute?</label>
-        <div className="contribute-form__type-buttons">
-          <button
-            type="button"
-            className={`contribute-form__type-button ${submissionType === 'bottleneck' ? 'active' : ''}`}
-            onClick={() => setSubmissionType('bottleneck')}
-          >
-            Bottleneck
-          </button>
-          <button
-            type="button"
-            className={`contribute-form__type-button ${submissionType === 'solution' ? 'active' : ''}`}
-            onClick={() => setSubmissionType('solution')}
-          >
-            Solution
-          </button>
-          <button
-            type="button"
-            className={`contribute-form__type-button ${submissionType === 'reference' ? 'active' : ''}`}
-            onClick={() => setSubmissionType('reference')}
-          >
-            Reference
-          </button>
-        </div>
+      <div className="contribute-form__info">
+        <p>
+          Your contribution will be reviewed by our team before being added to the BottleNexus database.
+          All submissions are stored in a central queue for review.
+        </p>
       </div>
 
-      {/* Submission result message */}
-      {submitResult && (
-        <div className={`contribute-form__result ${submitResult.type}`}>
-          {submitResult.message}
+      <div className="contribute-form__tabs">
+        <button
+          className={`contribute-form__tab ${activeTab === 'bottleneck' ? 'active' : ''}`}
+          onClick={() => handleTabChange('bottleneck')}
+        >
+          Submit Bottleneck
+        </button>
+        <button
+          className={`contribute-form__tab ${activeTab === 'solution' ? 'active' : ''}`}
+          onClick={() => handleTabChange('solution')}
+        >
+          Submit Solution
+        </button>
+        <button
+          className={`contribute-form__tab ${activeTab === 'reference' ? 'active' : ''}`}
+          onClick={() => handleTabChange('reference')}
+        >
+          Submit Reference
+        </button>
+      </div>
+      
+      {formError && (
+        <div className="contribute-form__error">
+          {formError}
         </div>
       )}
-
-      <form onSubmit={handleSubmit} className="contribute-form__form">
-        {/* Common fields */}
-        <div className="contribute-form__field">
-          <label htmlFor="title">Title <span className="required">*</span></label>
-          <input
-            type="text"
-            id="title"
-            name="title"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            placeholder={`${submissionType === 'bottleneck' ? 'E.g., Lack of standardized metrics for AI safety' : 
-                          submissionType === 'solution' ? 'E.g., Open-source safety benchmarks' : 
-                          'E.g., AI Safety Metrics Initiative'}`}
-            className={errors.title ? 'error' : ''}
-          />
-          {errors.title && <span className="error-message">{errors.title}</span>}
-        </div>
-
-        <div className="contribute-form__field">
-          <label htmlFor="content">Description <span className="required">*</span></label>
-          <textarea
-            id="content"
-            name="content"
-            value={content}
-            onChange={(e) => setContent(e.target.value)}
-            placeholder={`${submissionType === 'bottleneck' ? 'Describe the scientific bottleneck...' : 
-                          submissionType === 'solution' ? 'Describe your proposed solution...' : 
-                          'Provide a brief summary of this reference...'}`}
-            rows="6"
-            className={errors.content ? 'error' : ''}
-          />
-          {errors.content && <span className="error-message">{errors.content}</span>}
-        </div>
-
-        {/* Type-specific fields */}
-        {submissionType === 'bottleneck' && (
-          <>
-            <div className="contribute-form__field">
-              <label htmlFor="rank">Urgency/Importance Rank (1-5) <span className="required">*</span></label>
-              <div className="contribute-form__rank-slider">
-                <input
-                  type="range"
-                  id="rank"
-                  name="rank"
-                  min="1"
-                  max="5"
-                  step="1"
-                  value={rank}
-                  onChange={(e) => setRank(parseInt(e.target.value))}
-                  className="contribute-form__slider"
-                />
-                <div className="contribute-form__slider-labels">
-                  <span>1</span>
-                  <span>2</span>
-                  <span>3</span>
-                  <span>4</span>
-                  <span>5</span>
-                </div>
-              </div>
-              <div className="contribute-form__rank-value">
-                <strong>Selected: {rank}</strong> - 
-                {rank === 1 && 'Low urgency/importance'}
-                {rank === 2 && 'Moderate urgency/importance'}
-                {rank === 3 && 'Average urgency/importance'}
-                {rank === 4 && 'High urgency/importance'}
-                {rank === 5 && 'Critical urgency/importance'}
-              </div>
+      
+      <div className="contribute-form__content">
+        {/* Bottleneck Form */}
+        {activeTab === 'bottleneck' && (
+          <form onSubmit={handleBottleneckSubmit}>
+            <div className="form-group">
+              <label htmlFor="bottleneck-title">Bottleneck Title *</label>
+              <input
+                type="text"
+                id="bottleneck-title"
+                value={bottleneckData.title}
+                onChange={(e) => setBottleneckData({...bottleneckData, title: e.target.value})}
+                required
+              />
             </div>
-
-            <div className="contribute-form__field">
-              <label htmlFor="discipline">Discipline <span className="required">*</span></label>
+            
+            <div className="form-group">
+              <label htmlFor="bottleneck-discipline">Discipline *</label>
               <select
-                id="discipline"
-                name="discipline"
-                value={selectedDiscipline}
-                onChange={(e) => setSelectedDiscipline(e.target.value)}
-                className={errors.discipline ? 'error' : ''}
+                id="bottleneck-discipline"
+                value={bottleneckData.disciplineId}
+                onChange={(e) => setBottleneckData({...bottleneckData, disciplineId: e.target.value})}
+                required
               >
                 <option value="">Select a discipline</option>
                 {disciplines.map((discipline) => (
-                  <option key={discipline.id} value={discipline.title}>
+                  <option key={discipline.id} value={discipline.id}>
                     {discipline.title}
                   </option>
                 ))}
-                <option value="Other">Other (please specify in description)</option>
               </select>
-              {errors.discipline && <span className="error-message">{errors.discipline}</span>}
             </div>
-          </>
+            
+            <div className="form-group">
+              <label htmlFor="bottleneck-rank">
+                Urgency Rank: {bottleneckData.rank}
+              </label>
+              <input
+                type="range"
+                id="bottleneck-rank"
+                min="0"
+                max="5"
+                step="1"
+                value={bottleneckData.rank}
+                onChange={(e) => setBottleneckData({...bottleneckData, rank: parseInt(e.target.value)})}
+              />
+              <div className="range-labels">
+                <span>Low</span>
+                <span>High</span>
+              </div>
+            </div>
+            
+            <div className="form-group">
+              <label htmlFor="bottleneck-content">Description *</label>
+              <textarea
+                id="bottleneck-content"
+                rows="8"
+                value={bottleneckData.content}
+                onChange={(e) => setBottleneckData({...bottleneckData, content: e.target.value})}
+                placeholder="Describe the bottleneck in detail. What makes it significant? What are the implications?"
+                required
+              ></textarea>
+            </div>
+            
+            <div className="form-actions">
+              <button 
+                type="submit" 
+                className="submit-button"
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? 'Submitting...' : 'Submit Bottleneck'}
+              </button>
+            </div>
+          </form>
         )}
-
-        {submissionType === 'reference' && (
-          <div className="contribute-form__field">
-            <label htmlFor="url">URL <span className="required">*</span></label>
-            <input
-              type="url"
-              id="url"
-              name="url"
-              value={url}
-              onChange={(e) => setUrl(e.target.value)}
-              placeholder="https://example.com/article"
-              className={errors.url ? 'error' : ''}
-            />
-            {errors.url && <span className="error-message">{errors.url}</span>}
-          </div>
+        
+        {/* Solution Form */}
+        {activeTab === 'solution' && (
+          <form onSubmit={handleSolutionSubmit}>
+            <div className="form-group">
+              <label htmlFor="solution-title">Solution Title *</label>
+              <input
+                type="text"
+                id="solution-title"
+                value={solutionData.title}
+                onChange={(e) => setSolutionData({...solutionData, title: e.target.value})}
+                required
+              />
+            </div>
+            
+            <div className="form-group">
+              <label htmlFor="solution-bottleneck">Related Bottleneck *</label>
+              <input
+                type="text"
+                id="solution-bottleneck"
+                value={solutionData.bottleneckTitle}
+                onChange={(e) => setSolutionData({...solutionData, bottleneckTitle: e.target.value})}
+                placeholder="Enter the name of an existing bottleneck or suggest a new one"
+                required
+              />
+            </div>
+            
+            <div className="form-group">
+              <label htmlFor="solution-rank">
+                Feasibility Rank: {solutionData.rank}
+              </label>
+              <input
+                type="range"
+                id="solution-rank"
+                min="0"
+                max="5"
+                step="1"
+                value={solutionData.rank}
+                onChange={(e) => setSolutionData({...solutionData, rank: parseInt(e.target.value)})}
+              />
+              <div className="range-labels">
+                <span>Low</span>
+                <span>High</span>
+              </div>
+            </div>
+            
+            <div className="form-group">
+              <label htmlFor="solution-content">Description *</label>
+              <textarea
+                id="solution-content"
+                rows="8"
+                value={solutionData.content}
+                onChange={(e) => setSolutionData({...solutionData, content: e.target.value})}
+                placeholder="Describe the proposed solution. How would it address the bottleneck? What makes it feasible?"
+                required
+              ></textarea>
+            </div>
+            
+            <div className="form-group">
+              <label htmlFor="solution-references">References</label>
+              <textarea
+                id="solution-references"
+                rows="4"
+                value={solutionData.references}
+                onChange={(e) => setSolutionData({...solutionData, references: e.target.value})}
+                placeholder="List any references that support this solution (one per line). Include URLs if available."
+              ></textarea>
+            </div>
+            
+            <div className="form-actions">
+              <button 
+                type="submit" 
+                className="submit-button"
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? 'Submitting...' : 'Submit Solution'}
+              </button>
+            </div>
+          </form>
         )}
-
-        {/* Contact information (optional) */}
-        <div className="contribute-form__field">
-          <label htmlFor="email">Your Email (optional)</label>
-          <input
-            type="email"
-            id="email"
-            name="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="email@example.com"
-            className={errors.email ? 'error' : ''}
-          />
-          {errors.email && <span className="error-message">{errors.email}</span>}
-        </div>
-
-        {/* Submit button */}
-        <div className="contribute-form__actions">
-          <button 
-            type="submit" 
-            className="contribute-form__submit"
-            disabled={isSubmitting}
-          >
-            {isSubmitting ? 'Submitting...' : 'Submit Contribution'}
-          </button>
-        </div>
-      </form>
+        
+        {/* Reference Form */}
+        {activeTab === 'reference' && (
+          <form onSubmit={handleReferenceSubmit}>
+            <div className="form-group">
+              <label htmlFor="reference-title">Reference Title *</label>
+              <input
+                type="text"
+                id="reference-title"
+                value={referenceData.title}
+                onChange={(e) => setReferenceData({...referenceData, title: e.target.value})}
+                required
+              />
+            </div>
+            
+            <div className="form-group">
+              <label htmlFor="reference-url">URL *</label>
+              <input
+                type="url"
+                id="reference-url"
+                value={referenceData.url}
+                onChange={(e) => setReferenceData({...referenceData, url: e.target.value})}
+                placeholder="https://example.com/article"
+                required
+              />
+            </div>
+            
+            <div className="form-group">
+              <label htmlFor="reference-content">Summary</label>
+              <textarea
+                id="reference-content"
+                rows="6"
+                value={referenceData.content}
+                onChange={(e) => setReferenceData({...referenceData, content: e.target.value})}
+                placeholder="Provide a brief summary of this reference and its relevance"
+              ></textarea>
+            </div>
+            
+            <div className="form-actions">
+              <button 
+                type="submit" 
+                className="submit-button"
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? 'Submitting...' : 'Submit Reference'}
+              </button>
+            </div>
+          </form>
+        )}
+      </div>
     </div>
   );
 }

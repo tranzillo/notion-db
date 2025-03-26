@@ -1,52 +1,111 @@
 ---
-// src/pages/contribute/success.astro
 import BaseLayout from "../../layouts/BaseLayout.astro";
-
-// Get submission info from URL
-const { searchParams } = Astro.url;
-const submissionType = searchParams.get('type') || 'contribution';
-const submissionId = searchParams.get('id');
-
-// Format the type for display
-const typeDisplay = submissionType.charAt(0).toUpperCase() + submissionType.slice(1);
-
-// Custom message based on submission type
-let customMessage = "";
-if (submissionType === 'bottleneck') {
-  customMessage = "Thank you for your help identifying critical challenges in scientific advancement.";
-} else if (submissionType === 'solution') {
-  customMessage = "Thank you for your help addressing key opportunities in scientific progress.";
-} else if (submissionType === 'reference') {
-  customMessage = "Thank you for your help providing valuable resources to the community.";
-}
 ---
 
-<BaseLayout title="Submission Successful | BottleNexus">
+<BaseLayout title="Contribution Received | BottleNexus">
   <div class="success-page">
-    <div class="success-container">
+    <div class="success-card">
       <div class="success-icon">
         <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
           <polyline points="22 4 12 14.01 9 11.01"></polyline>
         </svg>
       </div>
-      <h1>You Submitted a {typeDisplay}!</h1>
-      <p>Your submission has been received and will be reviewed by our team.</p>
       
-      {customMessage && (
-        <p class="success-custom-message">{customMessage}</p>
-      )}
+      <h1>Thank You for Your Contribution!</h1>
       
-      {submissionId && (
-        <div class="success-id">
-          <p>Submission ID: <code>{submissionId}</code></p>
-        </div>
-      )}
+      <p>
+        Your submission has been received and will be reviewed by our team.
+        We appreciate your contribution to the BottleNexus project.
+      </p>
       
-      <div class="success-navigation">
+      <div class="success-actions">
         <a href="/contribute" class="button button-secondary">Submit Another</a>
-        <a href="/" class="button button-primary">Return Home</a>
+        <a href="/" class="button button-primary">Return to Dashboard</a>
       </div>
     </div>
   </div>
 </BaseLayout>
+
+<style lang="scss">
+.success-page {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 60vh;
+  padding: 2rem 1rem;
+}
+
+.success-card {
+  max-width: 600px;
+  background: var(--card-bg-color);
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  padding: 3rem 2rem;
+  text-align: center;
+  
+  h1 {
+    margin: 1.5rem 0 1rem;
+  }
+  
+  p {
+    color: var(--text-muted-color);
+    line-height: 1.6;
+    margin-bottom: 2rem;
+  }
+}
+
+.success-icon {
+  color: #4caf50;
+  margin: 0 auto;
+}
+
+.success-actions {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  
+  .button {
+    display: inline-block;
+    padding: 0.75rem 1.5rem;
+    border-radius: 4px;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    
+    &.button-primary {
+      background-color: var(--primary-color);
+      color: white;
+      
+      &:hover {
+        background-color: var(--primary-color-dark);
+      }
+    }
+    
+    &.button-secondary {
+      background-color: transparent;
+      color: var(--primary-color);
+      border: 1px solid var(--primary-color);
+      
+      &:hover {
+        background-color: rgba(0, 0, 0, 0.05);
+      }
+    }
+  }
+}
+
+// Dark mode adjustments
+.dark-mode {
+  .success-card {
+    background: var(--card-bg-color);
+  }
+  
+  .success-actions {
+    .button-secondary {
+      &:hover {
+        background-color: rgba(255, 255, 255, 0.05);
+      }
+    }
+  }
+}
+</style>
