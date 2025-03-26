@@ -32,6 +32,6 @@
   },
   "devDependencies": {
     "vitest": "latest",
-    "netlify-cli": "^latest"
+    "netlify-cli": "latest"
   }
 }
