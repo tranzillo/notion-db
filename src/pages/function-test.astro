@@ -1,0 +1,249 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+---
+
+<BaseLayout title="Function Test | BottleNexus">
+  <div class="test-page">
+    <h1>Netlify Function Tests</h1>
+    
+    <div class="test-card">
+      <h2>Test 1: Hello Function</h2>
+      <p>This tests a simple function that returns a greeting</p>
+      <div id="helloResults" class="results-panel">
+        <p>Click the button to test:</p>
+      </div>
+      <button id="helloBtn" class="test-button">Test Hello Function</button>
+    </div>
+    
+    <div class="test-card">
+      <h2>Test 2: Submit Function</h2>
+      <p>This tests the form submission function with sample data</p>
+      <div id="submitResults" class="results-panel">
+        <p>Click the button to test:</p>
+      </div>
+      <button id="submitBtn" class="test-button">Test Submit Function</button>
+    </div>
+    
+    <div class="test-card">
+      <h2>Test 3: Environment Variables</h2>
+      <p>This checks if your environment variables are correctly set</p>
+      <div id="envResults" class="results-panel">
+        <p>Click the button to check:</p>
+      </div>
+      <button id="envBtn" class="test-button">Check Environment Variables</button>
+    </div>
+      <ul>
+        <li><strong>If both tests fail:</strong> Your Netlify Functions setup isn't working. Check your netlify.toml configuration.</li>
+        <li><strong>If hello works but submit fails:</strong> There's an issue with your submit-contribution.js function.</li>
+        <li><strong>If both work here but the form still fails:</strong> The issue is in how your form component calls the function.</li>
+      </ul>
+      
+      <h3>Function Path Structure</h3>
+      <p>When deployed to Netlify, your functions are accessible at:</p>
+      <code>/.netlify/functions/[function-filename-without-extension]</code>
+      
+      <p>So if your function file is called <code>hello.js</code>, you access it at:</p>
+      <code>/.netlify/functions/hello</code>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .test-page {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 1rem;
+  }
+  
+  .test-card {
+    margin-bottom: 2rem;
+    padding: 1.5rem;
+    background-color: var(--card-bg-color);
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  }
+  
+  .results-panel {
+    margin: 1rem 0;
+    padding: 1rem;
+    background-color: #f5f5f5;
+    border-radius: 4px;
+    min-height: 100px;
+    font-family: monospace;
+    white-space: pre-wrap;
+  }
+  
+  .test-button {
+    padding: 0.75rem 1.5rem;
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .test-info {
+    margin-top: 3rem;
+    padding: 1.5rem;
+    border-top: 1px solid #eee;
+    font-size: 0.9rem;
+    background-color: var(--card-bg-color);
+    border-radius: 8px;
+  }
+  
+  code {
+    padding: 0.2rem 0.4rem;
+    background-color: #f0f0f0;
+    border-radius: 4px;
+    font-family: monospace;
+    display: block;
+    margin: 0.5rem 0;
+  }
+  
+  .success {
+    color: green;
+  }
+  
+  .error {
+    color: red;
+  }
+  
+  /* Dark mode adjustments */
+  .dark-mode .results-panel {
+    background-color: rgba(255, 255, 255, 0.1);
+  }
+  
+  .dark-mode code {
+    background-color: rgba(255, 255, 255, 0.1);
+  }
+</style>
+
+<script>
+  // Function to test the Hello function
+  async function testHelloFunction() {
+    const resultsElem = document.getElementById('helloResults');
+    
+    resultsElem.innerHTML = '<p>Testing hello function...</p>';
+    
+    try {
+      // Test the simple hello function
+      const response = await fetch('/.netlify/functions/hello');
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error: ${response.status}`);
+      }
+      
+      const data = await response.json();
+      
+      // Display the results
+      resultsElem.innerHTML = `
+        <p class="success">✅ Hello function working!</p>
+        <pre>${JSON.stringify(data, null, 2)}</pre>
+      `;
+    } catch (error) {
+      resultsElem.innerHTML = `
+        <p class="error">❌ Error testing hello function:</p>
+        <pre>${error.message}</pre>
+        <p>Check your browser console for more details.</p>
+      `;
+      console.error('Function test error:', error);
+    }
+  }
+  
+  // Function to test the Submit function
+  async function testSubmitFunction() {
+    const resultsElem = document.getElementById('submitResults');
+    
+    resultsElem.innerHTML = '<p>Testing submit function...</p>';
+    
+    try {
+      // Create test data similar to what the form would send
+      const testData = {
+        type: 'bottleneck',
+        data: {
+          title: 'Test Bottleneck',
+          content: 'This is a test submission from the test page',
+          disciplineId: 'test123',
+          rank: 3
+        }
+      };
+      
+      // Test the submit function
+      const response = await fetch('/.netlify/functions/submit-contribution', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(testData)
+      });
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error: ${response.status}`);
+      }
+      
+      const data = await response.json();
+      
+      // Display the results
+      resultsElem.innerHTML = `
+        <p class="success">✅ Submit function working!</p>
+        <pre>${JSON.stringify(data, null, 2)}</pre>
+      `;
+    } catch (error) {
+      resultsElem.innerHTML = `
+        <p class="error">❌ Error testing submit function:</p>
+        <pre>${error.message}</pre>
+        <p>Check your browser console for more details.</p>
+      `;
+      console.error('Function test error:', error);
+    }
+  }
+  
+  // Function to test the environment variables
+  async function checkEnvironment() {
+    const resultsElem = document.getElementById('envResults');
+    
+    resultsElem.innerHTML = '<p>Checking environment variables...</p>';
+    
+    try {
+      // Test the env check function
+      const response = await fetch('/.netlify/functions/env-check');
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error: ${response.status}`);
+      }
+      
+      const data = await response.json();
+      
+      // Display the results
+      resultsElem.innerHTML = `
+        <p class="success">✅ Environment check completed!</p>
+        <pre>${JSON.stringify(data, null, 2)}</pre>
+      `;
+    } catch (error) {
+      resultsElem.innerHTML = `
+        <p class="error">❌ Error checking environment:</p>
+        <pre>${error.message}</pre>
+        <p>Check your browser console for more details.</p>
+      `;
+      console.error('Environment check error:', error);
+    }
+  }
+  
+  // Set up event listeners
+  document.addEventListener('DOMContentLoaded', () => {
+    const helloBtn = document.getElementById('helloBtn');
+    if (helloBtn) {
+      helloBtn.addEventListener('click', testHelloFunction);
+    }
+    
+    const submitBtn = document.getElementById('submitBtn');
+    if (submitBtn) {
+      submitBtn.addEventListener('click', testSubmitFunction);
+    }
+    
+    const envBtn = document.getElementById('envBtn');
+    if (envBtn) {
+      envBtn.addEventListener('click', checkEnvironment);
+    }
+  });
+</script>
