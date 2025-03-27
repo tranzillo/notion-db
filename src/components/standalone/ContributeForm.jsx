@@ -57,7 +57,7 @@ export default function ContributeForm({ disciplines = [] }) {
       }
       
       // Redirect to success page
-      window.location.href = '/contribution-success';
+      window.location.href = '/success';
     } catch (error) {
       console.error('Error submitting bottleneck:', error);
       setFormError(error.message || 'An error occurred. Please try again.');
@@ -88,7 +88,7 @@ export default function ContributeForm({ disciplines = [] }) {
       }
       
       // Redirect to success page
-      window.location.href = '/contribution-success';
+      window.location.href = '/success';
     } catch (error) {
       console.error('Error submitting solution:', error);
       setFormError(error.message || 'An error occurred. Please try again.');
@@ -119,7 +119,7 @@ export default function ContributeForm({ disciplines = [] }) {
       }
       
       // Redirect to success page
-      window.location.href = '/contribution-success';
+      window.location.href = '/success';
     } catch (error) {
       console.error('Error submitting reference:', error);
       setFormError(error.message || 'An error occurred. Please try again.');
