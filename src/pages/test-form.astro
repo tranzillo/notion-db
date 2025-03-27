@@ -1,0 +1,54 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import ContributeFormSimple from "../components/ContributeFormSimple";
+import { getEnhancedData } from "../lib/enhancedData";
+
+// Fetch disciplines for the form dropdown
+const { disciplines } = await getEnhancedData();
+---
+
+<BaseLayout title="Test Form | BottleNexus">
+  <div class="contribute-page">
+    <div class="contribute-header">
+      <h1>Test Form</h1>
+      <p>
+        This is a simplified test form that uses a bare-bones function without Notion integration.
+        Use this to verify that the form submission process and serverless functions are working correctly.
+      </p>
+    </div>
+    
+    <div class="contribute-content">
+      <ContributeFormSimple client:load disciplines={disciplines} />
+    </div>
+  </div>
+</BaseLayout>
+
+<style lang="scss">
+  .contribute-page {
+    padding: 2rem 0;
+  }
+  
+  .contribute-header {
+    margin-bottom: 2rem;
+    text-align: center;
+    
+    h1 {
+      margin-bottom: 1rem;
+    }
+    
+    p {
+      max-width: 700px;
+      margin: 0 auto;
+      line-height: 1.6;
+    }
+  }
+  
+  .contribute-content {
+    max-width: 800px;
+    margin: 0 auto;
+    background: var(--card-bg-color);
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    padding: 2rem;
+  }
+</style>

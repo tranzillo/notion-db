@@ -229,6 +229,83 @@ import BaseLayout from "../layouts/BaseLayout.astro";
     }
   }
   
+  // Function to test the simple function
+  async function testSimpleFunction() {
+    const resultsElem = document.getElementById('simpleResults');
+    
+    resultsElem.innerHTML = '<p>Testing simple function...</p>';
+    
+    try {
+      // Test the simple function
+      const response = await fetch('/.netlify/functions/test-simple');
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error: ${response.status}`);
+      }
+      
+      const data = await response.json();
+      
+      // Display the results
+      resultsElem.innerHTML = `
+        <p class="success">✅ Simple function working!</p>
+        <pre>${JSON.stringify(data, null, 2)}</pre>
+      `;
+    } catch (error) {
+      resultsElem.innerHTML = `
+        <p class="error">❌ Error testing simple function:</p>
+        <pre>${error.message}</pre>
+        <p>Check your browser console for more details.</p>
+      `;
+      console.error('Function test error:', error);
+    }
+  }
+  
+  // Function to test the simple submit function
+  async function testSimpleSubmitFunction() {
+    const resultsElem = document.getElementById('simpleSubmitResults');
+    
+    resultsElem.innerHTML = '<p>Testing simple submit function...</p>';
+    
+    try {
+      // Create test data
+      const testData = {
+        type: 'bottleneck',
+        data: {
+          title: 'Test Bottleneck',
+          content: 'This is a test submission'
+        }
+      };
+      
+      // Test the simple submit function
+      const response = await fetch('/.netlify/functions/submit-simple', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(testData)
+      });
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error: ${response.status}`);
+      }
+      
+      const data = await response.json();
+      
+      // Display the results
+      resultsElem.innerHTML = `
+        <p class="success">✅ Simple submit function working!</p>
+        <pre>${JSON.stringify(data, null, 2)}</pre>
+      `;
+    } catch (error) {
+      resultsElem.innerHTML = `
+        <p class="error">❌ Error testing simple submit function:</p>
+        <pre>${error.message}</pre>
+        <p>Check your browser console for more details.</p>
+      `;
+      console.error('Function test error:', error);
+    }
+  }
+  
   // Set up event listeners
   document.addEventListener('DOMContentLoaded', () => {
     const helloBtn = document.getElementById('helloBtn');
@@ -244,6 +321,16 @@ import BaseLayout from "../layouts/BaseLayout.astro";
     const envBtn = document.getElementById('envBtn');
     if (envBtn) {
       envBtn.addEventListener('click', checkEnvironment);
+    }
+    
+    const simpleBtn = document.getElementById('simpleBtn');
+    if (simpleBtn) {
+      simpleBtn.addEventListener('click', testSimpleFunction);
+    }
+    
+    const simpleSubmitBtn = document.getElementById('simpleSubmitBtn');
+    if (simpleSubmitBtn) {
+      simpleSubmitBtn.addEventListener('click', testSimpleSubmitFunction);
     }
   });
 </script>
