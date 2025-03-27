@@ -4,7 +4,6 @@ export default function ContributeForm({ disciplines = [] }) {
   const [activeTab, setActiveTab] = useState('bottleneck');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formError, setFormError] = useState('');
-  const [successMessage, setSuccessMessage] = useState('');
   
   // Form data state
   const [bottleneckData, setBottleneckData] = useState({
@@ -32,7 +31,6 @@ export default function ContributeForm({ disciplines = [] }) {
   const handleTabChange = (tabName) => {
     setActiveTab(tabName);
     setFormError('');
-    setSuccessMessage('');
   };
   
   // Form submission handlers
@@ -53,23 +51,13 @@ export default function ContributeForm({ disciplines = [] }) {
         }),
       });
       
-      const responseData = await response.json();
-      
       if (!response.ok) {
-        throw new Error(responseData.message || 'Failed to submit');
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to submit');
       }
       
-      // Show success message instead of redirecting
-      setSuccessMessage(`Submission successful! ${JSON.stringify(responseData)}`);
-      
-      // Clear form
-      setBottleneckData({
-        title: '',
-        content: '',
-        disciplineId: '',
-        rank: 3
-      });
-      setIsSubmitting(false);
+      // Redirect to success page
+      window.location.href = '/contribution-success';
     } catch (error) {
       console.error('Error submitting bottleneck:', error);
       setFormError(error.message || 'An error occurred. Please try again.');
@@ -94,24 +82,13 @@ export default function ContributeForm({ disciplines = [] }) {
         }),
       });
       
-      const responseData = await response.json();
-      
       if (!response.ok) {
-        throw new Error(responseData.message || 'Failed to submit');
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to submit');
       }
       
-      // Show success message instead of redirecting
-      setSuccessMessage(`Submission successful! ${JSON.stringify(responseData)}`);
-      
-      // Clear form
-      setSolutionData({
-        title: '',
-        content: '',
-        bottleneckTitle: '',
-        references: '',
-        rank: 3
-      });
-      setIsSubmitting(false);
+      // Redirect to success page
+      window.location.href = '/contribution-success';
     } catch (error) {
       console.error('Error submitting solution:', error);
       setFormError(error.message || 'An error occurred. Please try again.');
@@ -136,22 +113,13 @@ export default function ContributeForm({ disciplines = [] }) {
         }),
       });
       
-      const responseData = await response.json();
-      
       if (!response.ok) {
-        throw new Error(responseData.message || 'Failed to submit');
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to submit');
       }
       
-      // Show success message instead of redirecting
-      setSuccessMessage(`Submission successful! ${JSON.stringify(responseData)}`);
-      
-      // Clear form
-      setReferenceData({
-        title: '',
-        url: '',
-        content: ''
-      });
-      setIsSubmitting(false);
+      // Redirect to success page
+      window.location.href = '/contribution-success';
     } catch (error) {
       console.error('Error submitting reference:', error);
       setFormError(error.message || 'An error occurred. Please try again.');
@@ -192,12 +160,6 @@ export default function ContributeForm({ disciplines = [] }) {
       {formError && (
         <div className="contribute-form__error">
           {formError}
-        </div>
-      )}
-      
-      {successMessage && (
-        <div className="contribute-form__success">
-          {successMessage}
         </div>
       )}
       

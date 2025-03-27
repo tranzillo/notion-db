@@ -1,6 +1,6 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
-import ContributeForm from "../components/standalone/ContributeForm";
+import ContributeForm from "../components/ContributeForm";
 import { getEnhancedData } from "../lib/enhancedData";
 
 // Fetch disciplines for the form dropdown
@@ -15,10 +15,6 @@ const { disciplines } = await getEnhancedData();
         Share your insights about scientific bottlenecks and potential solutions.
         Your contribution will be reviewed before being added to the database.
       </p>
-      <div class="note">
-        <strong>Note:</strong> This form is using a simplified test version of the submission function
-        that does not actually send data to Notion yet. This is for demonstration purposes.
-      </div>
     </div>
     
     <div class="contribute-content">

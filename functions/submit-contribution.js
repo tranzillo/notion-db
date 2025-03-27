@@ -2,11 +2,8 @@
 const { Client } = require('@notionhq/client');
 
 exports.handler = async function(event, context) {
-  console.log("Function called:", event.httpMethod, event.path);
-  
   // Only allow POST requests
   if (event.httpMethod !== 'POST') {
-    console.log("Method not allowed:", event.httpMethod);
     return {
       statusCode: 405,
       body: JSON.stringify({ message: 'Method not allowed' }),
@@ -18,11 +15,8 @@ exports.handler = async function(event, context) {
     const payload = JSON.parse(event.body);
     const { type, data } = payload;
     
-    console.log("Received submission type:", type);
-    
     // Validate the request
     if (!type || !data) {
-      console.log("Missing data:", payload);
       return {
         statusCode: 400,
         body: JSON.stringify({ message: 'Invalid request: Missing type or data' }),
@@ -31,40 +25,18 @@ exports.handler = async function(event, context) {
     
     // Check if required environment variables exist
     if (!process.env.NOTION_CONTRIBUTIONS_API_KEY || !process.env.NOTION_CONTRIBUTIONS_DB_ID) {
-      console.log("Missing environment variables:", {
-        hasApiKey: !!process.env.NOTION_CONTRIBUTIONS_API_KEY,
-        hasDbId: !!process.env.NOTION_CONTRIBUTIONS_DB_ID
-      });
-      
       return {
         statusCode: 500,
         body: JSON.stringify({ 
-          message: 'Server configuration error: Missing environment variables',
-          debug: {
-            hasApiKey: !!process.env.NOTION_CONTRIBUTIONS_API_KEY,
-            hasDbId: !!process.env.NOTION_CONTRIBUTIONS_DB_ID
-          }
+          message: 'Server configuration error: Missing environment variables'
         }),
       };
     }
     
     // Initialize Notion client
-    let notion;
-    try {
-      notion = new Client({
-        auth: process.env.NOTION_CONTRIBUTIONS_API_KEY
-      });
-      console.log("Notion client initialized");
-    } catch (err) {
-      console.error("Notion client initialization error:", err);
-      return {
-        statusCode: 500,
-        body: JSON.stringify({ 
-          message: 'Error initializing Notion client',
-          error: err.message
-        }),
-      };
-    }
+    const notion = new Client({
+      auth: process.env.NOTION_CONTRIBUTIONS_API_KEY
+    });
     
     // Process based on submission type
     let result;
@@ -87,7 +59,6 @@ exports.handler = async function(event, context) {
     
     return result;
   } catch (error) {
-    console.error('Error in submit-contribution function:', error);
     return {
       statusCode: 500,
       body: JSON.stringify({ 
@@ -102,8 +73,6 @@ exports.handler = async function(event, context) {
  * Submit a bottleneck contribution to Notion
  */
 async function handleBottleneckSubmission(notion, data) {
-  console.log("Processing bottleneck submission:", data.title);
-  
   // Validate required fields
   if (!data.title || !data.content) {
     return {
@@ -175,13 +144,11 @@ async function handleBottleneckSubmission(notion, data) {
       ],
     });
 
-    console.log("Bottleneck submission successful:", data.title);
     return {
       statusCode: 200,
       body: JSON.stringify({ message: 'Bottleneck contribution submitted successfully' }),
     };
   } catch (error) {
-    console.error('Error submitting bottleneck to Notion:', error);
     return {
       statusCode: 500,
       body: JSON.stringify({ 
@@ -196,8 +163,6 @@ async function handleBottleneckSubmission(notion, data) {
  * Submit a solution contribution to Notion
  */
 async function handleSolutionSubmission(notion, data) {
-  console.log("Processing solution submission:", data.title);
-  
   // Validate required fields
   if (!data.title || !data.content) {
     return {
@@ -307,13 +272,11 @@ async function handleSolutionSubmission(notion, data) {
       children: childBlocks,
     });
 
-    console.log("Solution submission successful:", data.title);
     return {
       statusCode: 200,
       body: JSON.stringify({ message: 'Solution contribution submitted successfully' }),
     };
   } catch (error) {
-    console.error('Error submitting solution to Notion:', error);
     return {
       statusCode: 500,
       body: JSON.stringify({ 
@@ -328,8 +291,6 @@ async function handleSolutionSubmission(notion, data) {
  * Submit a reference contribution to Notion
  */
 async function handleReferenceSubmission(notion, data) {
-  console.log("Processing reference submission:", data.title);
-  
   // Validate required fields
   if (!data.title || !data.url) {
     return {
@@ -389,13 +350,11 @@ async function handleReferenceSubmission(notion, data) {
         : [],
     });
 
-    console.log("Reference submission successful:", data.title);
     return {
       statusCode: 200,
       body: JSON.stringify({ message: 'Reference contribution submitted successfully' }),
     };
   } catch (error) {
-    console.error('Error submitting reference to Notion:', error);
     return {
       statusCode: 500,
       body: JSON.stringify({ 
