@@ -130,10 +130,6 @@ export default function ContributeForm({ disciplines = [] }) {
   return (
     <div className="contribute-form">
       <div className="contribute-form__info">
-        <p>
-          Your contribution will be reviewed by our team before being added to the BottleNexus database.
-          All submissions are stored in a central queue for review.
-        </p>
       </div>
 
       <div className="contribute-form__tabs">
@@ -141,19 +137,19 @@ export default function ContributeForm({ disciplines = [] }) {
           className={`contribute-form__tab ${activeTab === 'bottleneck' ? 'active' : ''}`}
           onClick={() => handleTabChange('bottleneck')}
         >
-          Submit Bottleneck
+          Bottleneck
         </button>
         <button
           className={`contribute-form__tab ${activeTab === 'solution' ? 'active' : ''}`}
           onClick={() => handleTabChange('solution')}
         >
-          Submit Solution
+          Solution
         </button>
         <button
           className={`contribute-form__tab ${activeTab === 'reference' ? 'active' : ''}`}
           onClick={() => handleTabChange('reference')}
         >
-          Submit Reference
+          Reference
         </button>
       </div>
       
@@ -264,7 +260,7 @@ export default function ContributeForm({ disciplines = [] }) {
               />
             </div>
             
-            <div className="form-group">
+            {/* <div className="form-group">
               <label htmlFor="solution-rank">
                 Feasibility Rank: {solutionData.rank}
               </label>
@@ -281,7 +277,7 @@ export default function ContributeForm({ disciplines = [] }) {
                 <span>Low</span>
                 <span>High</span>
               </div>
-            </div>
+            </div> */}
             
             <div className="form-group">
               <label htmlFor="solution-content">Description *</label>
@@ -295,7 +291,7 @@ export default function ContributeForm({ disciplines = [] }) {
               ></textarea>
             </div>
             
-            <div className="form-group">
+            {/* <div className="form-group">
               <label htmlFor="solution-references">References</label>
               <textarea
                 id="solution-references"
@@ -304,7 +300,7 @@ export default function ContributeForm({ disciplines = [] }) {
                 onChange={(e) => setSolutionData({...solutionData, references: e.target.value})}
                 placeholder="List any references that support this solution (one per line). Include URLs if available."
               ></textarea>
-            </div>
+            </div> */}
             
             <div className="form-actions">
               <button 
