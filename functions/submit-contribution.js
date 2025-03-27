@@ -125,7 +125,7 @@ async function handleBottleneckSubmission(notion, data) {
         ],
       },
       Status: {
-        select: {
+        status: {
           name: 'Pending Review',
         },
       },
@@ -219,7 +219,7 @@ async function handleSolutionSubmission(notion, data) {
         ],
       },
       Status: {
-        select: {
+        status: {
           name: 'Pending Review',
         },
       },
@@ -355,7 +355,7 @@ async function handleReferenceSubmission(notion, data) {
           ],
         },
         Status: {
-          select: {
+          status: {
             name: 'Pending Review',
           },
         },
