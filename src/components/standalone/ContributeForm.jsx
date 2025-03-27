@@ -42,7 +42,7 @@ export default function ContributeForm({ disciplines = [] }) {
     setFormError('');
     
     try {
-      const response = await fetch('/.netlify/functions/submit-contribution-v2', {
+      const response = await fetch('/.netlify/functions/submit-contribution', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -83,7 +83,7 @@ export default function ContributeForm({ disciplines = [] }) {
     setFormError('');
     
     try {
-      const response = await fetch('/.netlify/functions/submit-contribution-v2', {
+      const response = await fetch('/.netlify/functions/submit-contribution', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -125,7 +125,7 @@ export default function ContributeForm({ disciplines = [] }) {
     setFormError('');
     
     try {
-      const response = await fetch('/.netlify/functions/submit-contribution-v2', {
+      const response = await fetch('/.netlify/functions/submit-contribution', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
