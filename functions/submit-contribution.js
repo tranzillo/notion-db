@@ -290,6 +290,7 @@ async function handleSolutionSubmission(notion, data) {
 /**
  * Submit a reference contribution to Notion
  */
+// In submit-contribution.js
 async function handleReferenceSubmission(notion, data) {
   // Validate required fields
   if (!data.title || !data.url) {
@@ -322,7 +323,7 @@ async function handleReferenceSubmission(notion, data) {
         },
         Type: {
           select: {
-            name: 'Reference',
+            name: data.type || 'Publication', // Use the type string directly
           },
         },
         URL: {

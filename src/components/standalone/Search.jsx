@@ -1,7 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { saveCurrentUrlState } from '../../lib/navigationUtils';
 
-export default function Search({ initialQuery = '' }) {
+export default function Search({ 
+  initialQuery = '', 
+  bottleneckCount = 0, 
+  solutionCount = 0 
+}) {
   const [searchQuery, setSearchQuery] = useState(initialQuery);
 
   // Handle search input change
@@ -86,11 +90,12 @@ export default function Search({ initialQuery = '' }) {
           type="text"
           name="q"
           className="search-bar__input"
-          placeholder="Search bottlenecks..."
+          placeholder={`Exploring ${solutionCount} Foundational Capabilities among ${bottleneckCount} Bottlenecks...`}
           value={searchQuery}
           onChange={handleSearchChange}
           autoComplete="off"
         />
+        <p class="sr-only">{`Exploring ${solutionCount} Foundational Capabilities among ${bottleneckCount} Bottlenecks...`}</p>
         {searchQuery && (
           <button
             type="button"

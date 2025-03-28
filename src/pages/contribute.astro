@@ -4,7 +4,7 @@ import ContributeForm from "../components/standalone/ContributeForm";
 import { getEnhancedData } from "../lib/enhancedData";
 
 // Fetch disciplines for the form dropdown
-const { disciplines } = await getEnhancedData();
+const { disciplines, referenceTypeOptions } = await getEnhancedData();
 ---
 
 <BaseLayout title="Contribute | BottleNexus">
@@ -18,7 +18,7 @@ const { disciplines } = await getEnhancedData();
     </div>
     
     <div class="contribute-content">
-      <ContributeForm client:load disciplines={disciplines} />
+      <ContributeForm client:load disciplines={disciplines} referenceTypeOptions={referenceTypeOptions} />
     </div>
   </div>
 </BaseLayout>

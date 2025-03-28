@@ -11,10 +11,22 @@ import { extractDisciplines, parseUrlParams } from '../lib/dataUtils';
 import { getEnhancedData } from '../lib/enhancedData';
 
 // Fetch all enhanced data from Notion at build time
-const { bottlenecks, disciplines } = await getEnhancedData();
+const { bottlenecks, solutions, disciplines } = await getEnhancedData();
 
 // Get URL parameters
 const { searchQuery, disciplineSlugs, sortBy } = parseUrlParams(Astro.url.toString());
+
+// Calculate counts for display
+const bottleneckCount = bottlenecks.length;
+const solutionCount = solutions.length;
+
+// Calculate discipline counts
+const disciplineCounts = {};
+bottlenecks.forEach(bottleneck => {
+  if (bottleneck.discipline && bottleneck.discipline.id) {
+    disciplineCounts[bottleneck.discipline.id] = (disciplineCounts[bottleneck.discipline.id] || 0) + 1;
+  }
+});
 ---
 
 <BaseLayout title="Bottleneckbase">
@@ -34,12 +46,18 @@ const { searchQuery, disciplineSlugs, sortBy } = parseUrlParams(Astro.url.toStri
         client:load 
         disciplines={disciplines} 
         initialSelectedIds={disciplineSlugs}
+        disciplineCounts={disciplineCounts}
       />
     </aside>
     
     <div class="dashboard-layout__main">
       <div class="dashboard-search">
-        <Search client:load initialQuery={searchQuery} />
+        <Search 
+          client:load 
+          initialQuery={searchQuery} 
+          bottleneckCount={bottleneckCount} 
+          solutionCount={solutionCount}
+        />
         <div class="dashboard-controls">
           <SortControl client:load initialSortBy={sortBy} />
           <ViewToggle client:load />

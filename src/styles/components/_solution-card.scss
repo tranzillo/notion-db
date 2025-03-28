@@ -64,7 +64,7 @@
       letter-spacing: 0.04em;
       line-height: 1.25;
       background-color: var(--background-color-dark);
-      padding: $spacing-xs $spacing-sm;
+      padding: $spacing-sm;
       border-radius: $border-radius-md;
       transition: background-color $transition;
 
@@ -88,8 +88,24 @@
 
 
   &__reference-item {
-    a {
-      text-decoration: none;
+
+    .solution-card__reference-link {
+      display: flex;
+      flex-direction: column;
+      gap: $spacing-xs;
+      a {
+        text-decoration: none;
+        margin-inline: $spacing-xs;
+      }
+    }
+
+    .solution-card__reference-type {
+      font-size: $font-size-xs;
+      color: var(--text-lighter);
+      background-color: var(--background-color-dark);
+      padding: calc($spacing-xs * 0.5) $spacing-xs;
+      border-radius: $border-radius-sm;
+      align-self: flex-start;
     }
   }
 }

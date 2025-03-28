@@ -1,8 +1,11 @@
-// src/components/standalone/Filter.jsx
 import React, { useState, useEffect } from 'react';
 import { saveCurrentUrlState } from '../../lib/navigationUtils';
 
-export default function Filter({ disciplines = [], initialSelectedIds = [] }) {
+export default function Filter({ 
+  disciplines = [], 
+  initialSelectedIds = [],
+  disciplineCounts = {} // Object with discipline IDs as keys and counts as values
+}) {
   const [selected, setSelected] = useState(initialSelectedIds);
 
   // Process discipline IDs/slugs on first render
@@ -144,7 +147,12 @@ export default function Filter({ disciplines = [], initialSelectedIds = [] }) {
                 onChange={() => handleDisciplineChange(discipline.id)}
                 tabIndex="0"
               />
-              <label htmlFor={`discipline-${discipline.id}`}>{discipline.title}</label>
+              <label htmlFor={`discipline-${discipline.id}`}>
+                {discipline.title} 
+                <span className="discipline-count">
+                  {disciplineCounts[discipline.id] ? ` (${disciplineCounts[discipline.id]})` : ''}
+                </span>
+              </label>
             </div>
           </div>
         ))}

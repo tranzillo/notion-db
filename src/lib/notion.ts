@@ -17,6 +17,7 @@ export interface Reference {
   title: string;
   url: string;
   content: string;
+  type: string;
 }
 
 export interface Discipline {
@@ -91,7 +92,7 @@ export async function getReferences(): Promise<Reference[]> {
     response.results.map(async (page: any) => {
       const title = page.properties.Title.title[0]?.plain_text || 'Untitled';
       
-      // Extract URL - handle various formats
+      // Extract URL - handle various formats (keep existing code)
       let url = '';
       
       // Try standard URL property
@@ -112,6 +113,13 @@ export async function getReferences(): Promise<Reference[]> {
         }
       }
       
+      // Extract type as a simple string
+      let type = 'Publication'; // Default value
+      
+      if (page.properties.Type && page.properties.Type.select) {
+        type = page.properties.Type.select.name || type;
+      }
+      
       const mdBlocks = await n2m.pageToMarkdown(page.id);
       const content = n2m.toMarkdownString(mdBlocks);
       
@@ -119,10 +127,39 @@ export async function getReferences(): Promise<Reference[]> {
         id: page.id,
         title,
         url,
-        content: content.parent
+        content: content.parent,
+        type
       };
     })
   );
+}
+
+// Function to fetch reference type options as strings
+export async function getReferenceTypeOptions(): Promise<string[]> {
+  const databaseId = process.env.NOTION_REFERENCES_DB_ID as string;
+  
+  try {
+    // Fetch database information to get the select options
+    const database = await notion.databases.retrieve({
+      database_id: databaseId,
+    });
+    
+    // Get the Type property's select options
+    const typeProperty = Object.values(database.properties).find(
+      (prop: any) => prop.name.toLowerCase() === 'type' && prop.type === 'select'
+    );
+    
+    if (!typeProperty || !typeProperty.select || !typeProperty.select.options) {
+      console.warn('No reference type options found in Notion database');
+      return ['Publication']; // Default option
+    }
+    
+    // Extract just the option names
+    return typeProperty.select.options.map((option: any) => option.name);
+  } catch (error) {
+    console.error('Error fetching reference type options:', error);
+    return ['Publication']; // Default option
+  }
 }
 
 // Function to fetch and parse disciplines
@@ -238,17 +275,20 @@ export async function getAllData(): Promise<{
   disciplines: Discipline[];
   solutions: Solution[];
   bottlenecks: Bottleneck[];
+  referenceTypeOptions: string[];
 }> {
   // We need to fetch these in order to maintain relationships
   const references = await getReferences();
   const disciplines = await getDisciplines();
   const solutions = await getSolutions(references);
   const bottlenecks = await getBottlenecks(disciplines, solutions);
+  const referenceTypeOptions = await getReferenceTypeOptions();
   
   return {
     references,
     disciplines,
     solutions,
-    bottlenecks
+    bottlenecks,
+    referenceTypeOptions
   };
 }

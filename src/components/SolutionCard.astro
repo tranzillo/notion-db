@@ -1,5 +1,5 @@
 ---
-import type { Solution } from '../lib/notion';
+import type { Solution } from "../lib/notion";
 
 interface Props {
   solution: Solution;
@@ -10,25 +10,45 @@ const { solution } = Astro.props;
 
 <div class="solution-card">
   <h3 class="solution-card__title">{solution.title}</h3>
-  
+
   <div class="solution-card__content" set:html={solution.content} />
-  
-  {solution.references && solution.references.length > 0 && (
-    <div class="solution-card__references">
-      <h4>References</h4>
-      <ul class="solution-card__reference-list">
-        {solution.references.map((reference) => (
-          <li class="solution-card__reference-item">
-            {reference?.url ? (
-              <a href={reference.url} target="_blank" rel="noopener noreferrer">
-                {reference.title}
-              </a>
-            ) : (
-              <span>{reference?.title || "Untitled Reference"}</span>
-            )}
-          </li>
-        ))}
-      </ul>
-    </div>
-  )}
+
+  {
+    solution.references && solution.references.length > 0 && (
+      <div class="solution-card__references">
+        <h4>References</h4>
+        <ul class="solution-card__reference-list">
+          {solution.references.map((reference) => (
+            <li class="solution-card__reference-item">
+              {reference?.url ? (
+                <div class="solution-card__reference-link">
+                  {reference?.type && (
+                    <span class="solution-card__reference-type">
+                      {reference.type}
+                    </span>
+                  )}
+                  <a
+                    href={reference.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    {reference.title}
+                  </a>
+                </div>
+              ) : (
+                <div>
+                  {reference?.type && (
+                    <span class="solution-card__reference-type">
+                      {reference.type}
+                    </span>
+                  )}
+                  <span>{reference?.title || "Untitled Reference"}</span>
+                </div>
+              )}
+            </li>
+          ))}
+        </ul>
+      </div>
+    )
+  }
 </div>

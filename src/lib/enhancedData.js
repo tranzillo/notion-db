@@ -48,7 +48,8 @@ export async function getEnhancedData() {
   const { 
     bottlenecks: originalBottlenecks,
     solutions,
-    references 
+    references,
+    referenceTypeOptions
   } = await getAllData();
   
   // Extract disciplines without colors
@@ -75,6 +76,7 @@ export async function getEnhancedData() {
     bottlenecks,
     solutions,
     references,
-    disciplines
+    disciplines,
+    referenceTypeOptions
   };
 }

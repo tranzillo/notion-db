@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-export default function ContributeForm({ disciplines = [] }) {
+export default function ContributeForm({ disciplines = [], referenceTypeOptions = [] }) {
   const [activeTab, setActiveTab] = useState('bottleneck');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formError, setFormError] = useState('');
@@ -24,9 +24,25 @@ export default function ContributeForm({ disciplines = [] }) {
   const [referenceData, setReferenceData] = useState({
     title: '',
     url: '',
-    content: ''
+    content: '',
+    type: referenceTypeOptions.length > 0 ? referenceTypeOptions[0] : 'Publication'
   });
   
+   // Fallback array of common reference types in case fetching from Notion fails
+   const defaultReferenceTypes = [
+    'Research Paper',
+    'Publication',
+    'Book',
+    'Article',
+    'Blog Post',
+    'Dataset',
+    'Report',
+    'Website'
+  ];
+  
+  // Use fetched options if available, otherwise use defaults
+  const typeOptions = referenceTypeOptions.length > 0 ? referenceTypeOptions : defaultReferenceTypes;
+
   // Reset form when switching tabs
   const handleTabChange = (tabName) => {
     setActiveTab(tabName);
@@ -96,6 +112,7 @@ export default function ContributeForm({ disciplines = [] }) {
     }
   };
   
+  // Handle reference submission
   const handleReferenceSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
@@ -316,52 +333,68 @@ export default function ContributeForm({ disciplines = [] }) {
         
         {/* Reference Form */}
         {activeTab === 'reference' && (
-          <form onSubmit={handleReferenceSubmit}>
-            <div className="form-group">
-              <label htmlFor="reference-title">Reference Title *</label>
-              <input
-                type="text"
-                id="reference-title"
-                value={referenceData.title}
-                onChange={(e) => setReferenceData({...referenceData, title: e.target.value})}
-                required
-              />
-            </div>
-            
-            <div className="form-group">
-              <label htmlFor="reference-url">URL *</label>
-              <input
-                type="url"
-                id="reference-url"
-                value={referenceData.url}
-                onChange={(e) => setReferenceData({...referenceData, url: e.target.value})}
-                placeholder="https://example.com/article"
-                required
-              />
-            </div>
-            
-            <div className="form-group">
-              <label htmlFor="reference-content">Summary</label>
-              <textarea
-                id="reference-content"
-                rows="6"
-                value={referenceData.content}
-                onChange={(e) => setReferenceData({...referenceData, content: e.target.value})}
-                placeholder="Provide a brief summary of this reference and its relevance"
-              ></textarea>
-            </div>
-            
-            <div className="form-actions">
-              <button 
-                type="submit" 
-                className="submit-button"
-                disabled={isSubmitting}
-              >
-                {isSubmitting ? 'Submitting...' : 'Submit Reference'}
-              </button>
-            </div>
-          </form>
-        )}
+    <form onSubmit={handleReferenceSubmit}>
+      <div className="form-group">
+        <label htmlFor="reference-title">Reference Title *</label>
+        <input
+          type="text"
+          id="reference-title"
+          value={referenceData.title}
+          onChange={(e) => setReferenceData({...referenceData, title: e.target.value})}
+          required
+        />
+      </div>
+      
+      <div className="form-group">
+        <label htmlFor="reference-type">Reference Type *</label>
+        <select
+          id="reference-type"
+          value={referenceData.type}
+          onChange={(e) => setReferenceData({...referenceData, type: e.target.value})}
+          required
+        >
+          {typeOptions.map((type) => (
+            <option key={type} value={type}>
+              {type}
+            </option>
+          ))}
+        </select>
+      </div>
+      
+      <div className="form-group">
+        <label htmlFor="reference-url">URL *</label>
+        <input
+          type="url"
+          id="reference-url"
+          value={referenceData.url}
+          onChange={(e) => setReferenceData({...referenceData, url: e.target.value})}
+          placeholder="https://example.com/article"
+          required
+        />
+      </div>
+      
+      <div className="form-group">
+        <label htmlFor="reference-content">Summary</label>
+        <textarea
+          id="reference-content"
+          rows="6"
+          value={referenceData.content}
+          onChange={(e) => setReferenceData({...referenceData, content: e.target.value})}
+          placeholder="Provide a brief summary of this reference and its relevance"
+        ></textarea>
+      </div>
+      
+      <div className="form-actions">
+        <button 
+          type="submit" 
+          className="submit-button"
+          disabled={isSubmitting}
+        >
+          {isSubmitting ? 'Submitting...' : 'Submit Reference'}
+        </button>
+      </div>
+    </form>
+  )}
       </div>
     </div>
   );
