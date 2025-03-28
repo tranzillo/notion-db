@@ -17,7 +17,7 @@ export interface Reference {
   title: string;
   url: string;
   content: string;
-  type: string;
+  referenceType: string;
 }
 
 export interface Discipline {
@@ -47,22 +47,22 @@ export interface Bottleneck {
 // Function to safely extract rank from Notion property
 function extractRankFromPage(page: any, pageName: string = 'unknown') {
   let rank = 0;
-  
+
   try {
     // Case 1: Standard Notion number property named "Rank"
     if (page.properties.Rank && page.properties.Rank.type === 'number') {
       rank = page.properties.Rank.number !== null ? page.properties.Rank.number : 0;
-    } 
+    }
     // Case 2: Try alternate casing or property structure
     else {
       // Find property with name 'rank' (case-insensitive)
       const rankProp = Object.keys(page.properties).find(
         key => key.toLowerCase() === 'rank'
       );
-      
+
       if (rankProp) {
         const propData = page.properties[rankProp];
-        
+
         if (propData.type === 'number' && propData.number !== null) {
           rank = propData.number;
         } else if (propData.type === 'select' && propData.select) {
@@ -75,7 +75,7 @@ function extractRankFromPage(page: any, pageName: string = 'unknown') {
   } catch (error) {
     console.error(`Error extracting rank from ${pageName}:`, error);
   }
-  
+
   // Ensure rank is between 0-5
   return Math.min(5, Math.max(0, rank));
 }
@@ -86,6 +86,7 @@ export async function getReferences(): Promise<Reference[]> {
   
   const response = await notion.databases.query({
     database_id: databaseId,
+    // No filter for ContentType needed, since we're already querying the References database
   });
 
   return Promise.all(
@@ -113,11 +114,15 @@ export async function getReferences(): Promise<Reference[]> {
         }
       }
       
-      // Extract type as a simple string
-      let type = 'Publication'; // Default value
+      // Extract referenceType - look for ReferenceType or Type property
+      let referenceType = 'Publication'; // Default value
       
-      if (page.properties.Type && page.properties.Type.select) {
-        type = page.properties.Type.select.name || type;
+      if (page.properties.ReferenceType && page.properties.ReferenceType.select) {
+        referenceType = page.properties.ReferenceType.select.name || referenceType;
+      }
+      // Fall back to Type if ReferenceType doesn't exist
+      else if (page.properties.Type && page.properties.Type.select) {
+        referenceType = page.properties.Type.select.name || referenceType;
       }
       
       const mdBlocks = await n2m.pageToMarkdown(page.id);
@@ -128,12 +133,11 @@ export async function getReferences(): Promise<Reference[]> {
         title,
         url,
         content: content.parent,
-        type
+        referenceType
       };
     })
   );
 }
-
 // Function to fetch reference type options as strings
 export async function getReferenceTypeOptions(): Promise<string[]> {
   const databaseId = process.env.NOTION_REFERENCES_DB_ID as string;
@@ -144,10 +148,17 @@ export async function getReferenceTypeOptions(): Promise<string[]> {
       database_id: databaseId,
     });
     
-    // Get the Type property's select options
-    const typeProperty = Object.values(database.properties).find(
-      (prop: any) => prop.name.toLowerCase() === 'type' && prop.type === 'select'
+    // First try ReferenceType property
+    let typeProperty = Object.values(database.properties).find(
+      (prop: any) => prop.name === 'ReferenceType' && prop.type === 'select'
     );
+    
+    // Fall back to Type property if ReferenceType doesn't exist
+    if (!typeProperty) {
+      typeProperty = Object.values(database.properties).find(
+        (prop: any) => prop.name === 'Type' && prop.type === 'select'
+      );
+    }
     
     if (!typeProperty || !typeProperty.select || !typeProperty.select.options) {
       console.warn('No reference type options found in Notion database');
@@ -165,7 +176,7 @@ export async function getReferenceTypeOptions(): Promise<string[]> {
 // Function to fetch and parse disciplines
 export async function getDisciplines(): Promise<Discipline[]> {
   const databaseId = process.env.NOTION_DISCIPLINES_DB_ID as string;
-  
+
   const response = await notion.databases.query({
     database_id: databaseId,
   });
@@ -175,7 +186,7 @@ export async function getDisciplines(): Promise<Discipline[]> {
       const title = page.properties.Title.title[0]?.plain_text || 'Untitled';
       const mdBlocks = await n2m.pageToMarkdown(page.id);
       const content = n2m.toMarkdownString(mdBlocks);
-      
+
       return {
         id: page.id,
         title,
@@ -188,7 +199,7 @@ export async function getDisciplines(): Promise<Discipline[]> {
 // Function to fetch and parse solutions with their references
 export async function getSolutions(references: Reference[]): Promise<Solution[]> {
   const databaseId = process.env.NOTION_SOLUTIONS_DB_ID as string;
-  
+
   const response = await notion.databases.query({
     database_id: databaseId,
   });
@@ -196,19 +207,19 @@ export async function getSolutions(references: Reference[]): Promise<Solution[]>
   return Promise.all(
     response.results.map(async (page: any) => {
       const title = page.properties.Title.title[0]?.plain_text || 'Untitled';
-      
+
       // Get the reference relations
       const referenceRelations = page.properties.References?.relation || [];
       const solutionReferences = referenceRelations.map((ref: any) => {
         return references.find(r => r.id === ref.id);
       }).filter(Boolean);
-      
+
       // Extract rank using the helper function
       const rank = extractRankFromPage(page, title);
-      
+
       const mdBlocks = await n2m.pageToMarkdown(page.id);
       const content = n2m.toMarkdownString(mdBlocks);
-      
+
       return {
         id: page.id,
         title,
@@ -226,7 +237,7 @@ export async function getBottlenecks(
   solutions: Solution[]
 ): Promise<Bottleneck[]> {
   const databaseId = process.env.NOTION_BOTTLENECKS_DB_ID as string;
-  
+
   const response = await notion.databases.query({
     database_id: databaseId,
   });
@@ -234,28 +245,28 @@ export async function getBottlenecks(
   return Promise.all(
     response.results.map(async (page: any) => {
       const title = page.properties.Title.title[0]?.plain_text || 'Untitled';
-      
+
       // Get the discipline relation
       const disciplineRelation = page.properties.Discipline?.relation[0] || null;
-      const bottleneckDiscipline = disciplineRelation 
+      const bottleneckDiscipline = disciplineRelation
         ? disciplines.find(d => d.id === disciplineRelation.id)
         : null;
-      
+
       // Get the solution relations
       const solutionRelations = page.properties.Solutions?.relation || [];
       const bottleneckSolutions = solutionRelations.map((sol: any) => {
         return solutions.find(s => s.id === sol.id);
       }).filter(Boolean);
-      
+
       // Extract rank using the helper function
       const rank = extractRankFromPage(page, title);
-      
+
       const mdBlocks = await n2m.pageToMarkdown(page.id);
       const content = n2m.toMarkdownString(mdBlocks);
-      
+
       // Generate a slug from the title
       const slug = title.toLowerCase().replace(/[^\w\s]/gi, '').replace(/\s+/g, '-');
-      
+
       return {
         id: page.id,
         title,
@@ -277,13 +288,13 @@ export async function getAllData(): Promise<{
   bottlenecks: Bottleneck[];
   referenceTypeOptions: string[];
 }> {
-  // We need to fetch these in order to maintain relationships
+  // Fetch data in order to maintain relationships
   const references = await getReferences();
   const disciplines = await getDisciplines();
   const solutions = await getSolutions(references);
   const bottlenecks = await getBottlenecks(disciplines, solutions);
   const referenceTypeOptions = await getReferenceTypeOptions();
-  
+
   return {
     references,
     disciplines,

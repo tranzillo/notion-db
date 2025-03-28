@@ -290,7 +290,6 @@ async function handleSolutionSubmission(notion, data) {
 /**
  * Submit a reference contribution to Notion
  */
-// In submit-contribution.js
 async function handleReferenceSubmission(notion, data) {
   // Validate required fields
   if (!data.title || !data.url) {
@@ -301,7 +300,8 @@ async function handleReferenceSubmission(notion, data) {
   }
 
   try {
-    // Create the page in Notion
+    // Create the page in Notion with both ContentType and ReferenceType
+    // ContentType is needed in the contributions database to know where this should go
     await notion.pages.create({
       parent: {
         database_id: process.env.NOTION_CONTRIBUTIONS_DB_ID,
@@ -321,9 +321,14 @@ async function handleReferenceSubmission(notion, data) {
             name: 'Pending Review',
           },
         },
-        Type: {
+        ContentType: {  // This is needed in the contributions database
           select: {
-            name: data.type || 'Publication', // Use the type string directly
+            name: 'Reference',
+          },
+        },
+        ReferenceType: {  // This specifies what kind of reference it is
+          select: {
+            name: data.referenceType || 'Publication',
           },
         },
         URL: {

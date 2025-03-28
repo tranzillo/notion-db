@@ -20,13 +20,13 @@ const { solution } = Astro.props;
         <ul class="solution-card__reference-list">
           {solution.references.map((reference) => (
             <li class="solution-card__reference-item">
+              {reference?.referenceType && (
+                <span class="solution-card__reference-type">
+                  {reference.referenceType}
+                </span>
+              )}
               {reference?.url ? (
                 <div class="solution-card__reference-link">
-                  {reference?.type && (
-                    <span class="solution-card__reference-type">
-                      {reference.type}
-                    </span>
-                  )}
                   <a
                     href={reference.url}
                     target="_blank"
@@ -37,9 +37,9 @@ const { solution } = Astro.props;
                 </div>
               ) : (
                 <div>
-                  {reference?.type && (
+                  {reference?.referenceType && (
                     <span class="solution-card__reference-type">
-                      {reference.type}
+                      {reference.referenceType}
                     </span>
                   )}
                   <span>{reference?.title || "Untitled Reference"}</span>
