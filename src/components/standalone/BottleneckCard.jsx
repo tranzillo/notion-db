@@ -57,8 +57,14 @@ export default function BottleneckCard({
       className="bottleneck-card"
       id={`bottleneck-card-${bottleneck.id}`}
     >
+      <a
+        href={bottleneckUrl}
+        className="bottleneck-card__clickable"
+        onClick={handleCardClick}
+        aria-labelledby={`card-title-${bottleneck.id}`}
+      />
       <div className="bottleneck-card__header">
-        <h2 className="bottleneck-card__title">
+      <h2 className="bottleneck-card__title">
           <a
             href={bottleneckUrl}
             dangerouslySetInnerHTML={{ __html: displayTitle }}

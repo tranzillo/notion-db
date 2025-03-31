@@ -95,7 +95,7 @@
   border-radius: $border-radius-lg;
   border: 1px solid var(--border-color);
   overflow: hidden;
-  z-index: 1;
+  z-index: 3;
   transition: box-shadow $transition,
     border-color $transition;
   box-shadow: 0 $spacing-lg $spacing-lg 0 var(--background-color),
