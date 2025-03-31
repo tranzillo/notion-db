@@ -42,13 +42,14 @@
     gap: 0.75rem;
 
     .logo-mark {
-      max-height: $spacing-xxl;
+      max-height: 3em;
       width: auto;
       transition: filter $transition;
       filter: invert(59%) sepia(68%) saturate(660%) hue-rotate(176deg) brightness(87%) contrast(101%);
     }
 
     .word-mark {
+      height: 1.75em;
       transition: filter $transition;
       filter: invert(22%) sepia(18%) saturate(363%) hue-rotate(26deg) brightness(96%) contrast(87%);
     }
@@ -63,6 +64,7 @@
 
     &-item {
       margin-left: $spacing-lg;
+      white-space: nowrap;
 
       a {
         color: var(--text-color);
