@@ -2,6 +2,7 @@
   width: 100%;
   margin: 0 auto;
   padding: 0 $spacing-xxl;
+
   @media (max-width: $breakpoint-sm) {
     padding: 0 $spacing-sm;
   }
@@ -11,48 +12,61 @@
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+
   &__header {
     background-color: var(--header-background);
     padding: $spacing-xl 0;
     font-weight: 600;
     border-bottom: 1px solid var(--border-dull);
     transition: background-color $transition, border-color $transition;
-  
+
     .container {
       display: flex;
       justify-content: space-between;
       align-items: center;
     }
   }
-  
+
   &__controls {
     display: flex;
     align-items: center;
     gap: $spacing-md;
   }
-  
+
   &__logo {
     font-size: $font-size-xl;
     color: var(--text-color);
     text-decoration: none;
-  
-    span {
-      color: var(--primary-color);
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+
+    .logo-mark {
+      max-height: $spacing-xxl;
+      width: auto;
+      transition: filter $transition;
+      filter: invert(59%) sepia(68%) saturate(660%) hue-rotate(176deg) brightness(87%) contrast(101%);
     }
+
+    .word-mark {
+      transition: filter $transition;
+      filter: invert(22%) sepia(18%) saturate(363%) hue-rotate(26deg) brightness(96%) contrast(87%);
+    }
+
   }
-  
+
   &__nav {
     display: flex;
     // @media (max-width: $breakpoint-sm) {
     //   display: none;
     // }
-  
+
     &-item {
       margin-left: $spacing-lg;
-  
+
       a {
         color: var(--text-color);
-  
+
         &:hover,
         &.active {
           color: var(--primary-color);
@@ -60,50 +74,50 @@
       }
     }
   }
-  
+
   &__main {
     flex-grow: 1;
     padding: $spacing-xxl 0;
   }
-  
+
   &__footer {
     background-color: var(--footer-background);
     padding: $spacing-lg 0;
     border-top: 1px solid var(--border-dull);
     margin-top: auto;
     transition: background-color $transition, border-color $transition;
-  
+
     .container {
       display: flex;
       flex-direction: column;
       align-items: center;
       gap: $spacing-md;
-  
-      @media (min-width:  $breakpoint-md) {
+
+      @media (min-width: $breakpoint-md) {
         flex-direction: row;
         justify-content: space-between;
       }
     }
   }
-  
+
   &__footer-text {
     color: var(--text-light);
     font-size: $font-size-sm;
     letter-spacing: 0.04em;
   }
-  
+
   &__footer-links {
     display: flex;
     gap: $spacing-md;
-  
+
     a {
       color: var(--text-color);
       font-size: $font-size-sm;
       letter-spacing: 0.04em;
+
       &:hover {
         color: var(--primary-color);
       }
     }
   }
 }
-

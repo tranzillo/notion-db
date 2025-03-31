@@ -90,12 +90,11 @@ export default function Search({
           type="text"
           name="q"
           className="search-bar__input"
-          placeholder={`Exploring ${solutionCount} Foundational Capabilities among ${bottleneckCount} Bottlenecks...`}
+          placeholder={`Search ${bottleneckCount} Bottlenecks...`}
           value={searchQuery}
           onChange={handleSearchChange}
           autoComplete="off"
         />
-        <p class="sr-only">{`Exploring ${solutionCount} Foundational Capabilities among ${bottleneckCount} Bottlenecks...`}</p>
         {searchQuery && (
           <button
             type="button"

@@ -37,6 +37,12 @@ html[data-theme="dark"],
   --highlight-bg: rgba(104, 179, 223, 0.2);
   --highlight-color: #2980b9;
   --pure-white: #e0e0e0;
+
+  .base-layout__logo {
+    .word-mark {
+      filter: invert(96%) sepia(7%) saturate(718%) hue-rotate(16deg) brightness(88%) contrast(94%);
+    }
+  }
 }
 
 

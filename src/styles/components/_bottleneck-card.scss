@@ -1,6 +1,7 @@
 .bottleneck-card {
   display: flex;
   flex-direction: column;
+  position: relative;
   gap: $spacing-lg;
   background-color: var(--card-background);
   border: 1px solid var(--border-dull);
@@ -12,7 +13,11 @@
   transition: background-color $transition,
     border $transition;
   ;
-
+&__clickable {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+}
   &__header {
     background-color: var(--background-color);
     border-radius: $border-radius-lg $border-radius-md 0 0;
