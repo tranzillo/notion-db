@@ -36,9 +36,17 @@ function enhanceDiscipline(discipline) {
     };
   }
   
-  return discipline;
+  // If no pre-generated color is found, assign a default color class
+  // based on the discipline ID to ensure consistency
+  const colorId = Math.abs(discipline.id.split('').reduce((acc, char) => 
+    acc + char.charCodeAt(0), 0) % 8);
+  
+  return {
+    ...discipline,
+    colorName: `gradient-${colorId}`,
+    colorClass: `discipline-gradient-${colorId}`
+  };
 }
-
 /**
  * Get all data from Notion and enhance it with pre-generated color information
  * @returns {Object} Enhanced data
@@ -47,7 +55,7 @@ export async function getEnhancedData() {
   // Fetch raw data from Notion
   const { 
     bottlenecks: originalBottlenecks,
-    solutions,
+    solutions: originalSolutions,
     references,
     referenceTypeOptions
   } = await getAllData();
@@ -70,6 +78,33 @@ export async function getEnhancedData() {
       }
     }
     return bottleneck;
+  });
+  
+  // Create solutions with associated bottlenecks (but avoid circular references)
+  const solutions = originalSolutions.map(solution => {
+    // Generate slug if needed
+    const slug = solution.slug || solution.title.toLowerCase().replace(/[^\w\s]/gi, '').replace(/\s+/g, '-');
+    
+    // Find associated bottlenecks from the enhanced bottlenecks array
+    const associatedBottlenecks = bottlenecks
+      .filter(bottleneck => bottleneck.solutions.some(s => s.id === solution.id))
+      .map(bottleneck => ({
+        id: bottleneck.id,
+        title: bottleneck.title,
+        content: bottleneck.content,
+        slug: bottleneck.slug,
+        discipline: bottleneck.discipline, // This has the colorClass from above
+        rank: bottleneck.rank,
+        tags: bottleneck.tags,
+        privateTags: bottleneck.privateTags
+        // No solutions array to avoid circular references
+      }));
+    
+    return {
+      ...solution,
+      slug,
+      bottlenecks: associatedBottlenecks
+    };
   });
   
   return {

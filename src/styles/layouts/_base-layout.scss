@@ -106,6 +106,15 @@
     color: var(--text-light);
     font-size: $font-size-sm;
     letter-spacing: 0.04em;
+    a {
+      color: var(--text-color);
+      font-size: $font-size-sm;
+      letter-spacing: 0.04em;
+
+      &:hover {
+        color: var(--primary-color);
+      }
+    }
   }
 
   &__footer-links {

@@ -1,0 +1,175 @@
+.solution-detail {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-xxl;
+    background-color: var(--card-background);
+    border: 1px solid var(--border-dull);
+    border-radius: $border-radius-lg;
+    padding: $spacing-xl;
+    transition: background-color $transition,
+      border $transition;
+  
+    &__header {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: $spacing-md $spacing-xxl;
+      flex-wrap: wrap;
+      border-radius: $border-radius-lg $border-radius-lg 0 0;
+      padding: $spacing-xl;
+      margin: calc($spacing-xl * (-1)) calc($spacing-xl * (-1)) 0 calc($spacing-xl * (-1));
+      border-bottom: 1px solid var(--border-dull);
+      transition: background-color $transition,
+        border-color $transition;
+    }
+  
+    &__disciplines {
+      display: flex;
+      flex-wrap: wrap;
+      gap: $spacing-xs;
+      margin-bottom: $spacing-sm;
+    }
+  
+    &__discipline {
+      display: block;
+      margin-block-start: 0.42em;
+      padding: $spacing-xs $spacing-sm;
+      border-radius: $border-radius-md;
+      font-size: $font-size-sm;
+      border: 1px solid transparent;
+      letter-spacing: 0.04em;
+    }
+  
+    &__meta {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      gap: $spacing-xl;
+    }
+  
+    &__content {
+      max-width: 80ch;
+      margin-top: calc($spacing-md * (-1));
+      font-size: $font-size-md;
+      color: var(--text-light);
+      line-height: 1.5;
+    }
+  
+    &__references {
+      padding: $spacing-xl;
+      margin: 0 calc($spacing-xl * (-1)) 0 calc($spacing-xl * (-1));
+      background-color: var(--background-color);
+      border-top: 1px solid var(--border-dull);
+      transition: border $transition,
+        background-color $transition;
+  
+      h3 {
+        font-size: $font-size-md;
+        letter-spacing: 0.01em;
+        font-weight: normal;
+        color: var(--text-light);
+      }
+    }
+  
+    &__reference-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: $spacing-sm;
+      padding: $spacing-md 0;
+      align-items: flex-start;
+    }
+  
+    &__reference-item {
+      font-size: $font-size-sm;
+      letter-spacing: 0.04em;
+      line-height: 1.25;
+      background-color: var(--background-color-dark);
+      padding: $spacing-sm;
+      border-radius: $border-radius-md;
+      transition: background-color $transition;
+      display: flex;
+      flex-direction: column;
+      gap: $spacing-sm;
+  
+      a {
+        color: var(--text-color);
+        display: inline-block;
+        max-width: 65ch;
+        line-height: 1.1;
+        letter-spacing: 0.04em;
+        &::after {
+          content: "🡥";
+          display: inline;
+          font-size: 0.85em;
+        }
+        &:hover {
+          color: var(--primary-color);
+        }
+      }
+    }
+  
+    &__reference-type {
+      font-size: $font-size-xs;
+      color: var(--text-lighter);
+      background-color: var(--background-color);
+      padding: calc($spacing-xs * 0.5) $spacing-xs;
+      border-radius: $border-radius-sm;
+      align-self: flex-start;
+    }
+  
+    &__bottlenecks {
+      padding: $spacing-xxl $spacing-xl $spacing-xl;
+      margin: 0 calc($spacing-xl * (-1)) calc($spacing-xl * (-1)) calc($spacing-xl * (-1));
+      background-color: var(--background-color);
+      border-top: 1px solid var(--border-dull);
+      border-radius: 0 0 $border-radius-lg $border-radius-lg;
+      transition: border $transition,
+        background-color $transition;
+  
+      h3 {
+        font-size: $font-size-md;
+        letter-spacing: 0.01em;
+        font-weight: normal;
+        color: var(--text-light);
+      }
+    }
+  
+    &__bottlenecks-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: $spacing-md;
+      margin-block-start: $spacing-lg;
+  
+      @media (min-width: $breakpoint-lg) {
+        grid-template-columns: 1fr 1fr;
+      }
+  
+      @media (min-width: $breakpoint-xxl) {
+        grid-template-columns: 1fr 1fr 1fr;
+      }
+    }
+  }
+
+  .solution-card {
+    &--grid {
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      gap: $spacing-lg;
+      background-color: var(--card-background);
+      border: 1px solid var(--border-dull);
+      border-radius: $border-radius-lg;
+      padding: $spacing-xl $spacing-xl $spacing-lg $spacing-xl;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      transition: background-color $transition,
+        border $transition,
+        box-shadow $transition,
+        scale $transition;
+    }
+  
+  }

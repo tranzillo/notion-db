@@ -113,8 +113,7 @@
       color $transition;
 
     &:hover {
-      background-color: var(--border-color);
-      color: var(--pure-white);
+      background-color: var(--highlight-bg);
     }
   }
 }

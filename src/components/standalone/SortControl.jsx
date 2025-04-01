@@ -5,9 +5,29 @@ import { updateUrlParamsWithoutHistory } from '../../lib/dataUtils';
 export default function SortControl({ initialSortBy = 'rank' }) {
   const [sortBy, setSortBy] = useState(initialSortBy);
 
-  // Handle toggle between rank and alphabetical sorting
+  // Determine if we're in solutions view
+  const [isSolutionsView, setIsSolutionsView] = useState(false);
+
+  useEffect(() => {
+    // Check if we're in the solutions view based on pathname
+    if (typeof window !== 'undefined') {
+      setIsSolutionsView(window.location.pathname.startsWith('/solutions'));
+    }
+  }, []);
+
+  // Handle toggle between sorting options
   const toggleSort = () => {
-    const newSortBy = sortBy === 'rank' ? 'alpha' : 'rank';
+    let newSortBy;
+    
+    // Different sort cycling based on view
+    if (isSolutionsView) {
+      // For solutions: alpha -> bottlenecks -> alpha
+      newSortBy = sortBy === 'alpha' ? 'bottlenecks' : 'alpha';
+    } else {
+      // For bottlenecks: rank -> alpha -> rank
+      newSortBy = sortBy === 'rank' ? 'alpha' : 'rank';
+    }
+    
     setSortBy(newSortBy);
 
     // Update URL without creating history entry
@@ -29,19 +49,40 @@ export default function SortControl({ initialSortBy = 'rank' }) {
     if (typeof window !== 'undefined') {
       const params = new URLSearchParams(window.location.search);
       const urlSortBy = params.get('sort');
-      if (urlSortBy && ['rank', 'alpha'].includes(urlSortBy) && urlSortBy !== sortBy) {
+      const validSortOptions = isSolutionsView 
+        ? ['bottlenecks', 'alpha']
+        : ['rank', 'alpha'];
+        
+      if (urlSortBy && validSortOptions.includes(urlSortBy) && urlSortBy !== sortBy) {
         setSortBy(urlSortBy);
       }
     }
-  }, []);
+  }, [isSolutionsView]);
+
+  // Get appropriate aria-label and title based on view and current sort
+  const getButtonLabels = () => {
+    if (isSolutionsView) {
+      return {
+        ariaLabel: sortBy === 'alpha' ? "Sort by bottleneck count" : "Sort alphabetically",
+        title: sortBy === 'alpha' ? "Sort by bottleneck count" : "Sort alphabetically"
+      };
+    } else {
+      return {
+        ariaLabel: sortBy === 'alpha' ? "Sort by rank" : "Sort alphabetically",
+        title: sortBy === 'alpha' ? "Sort by rank" : "Sort alphabetically"
+      };
+    }
+  };
+
+  const { ariaLabel, title } = getButtonLabels();
 
   return (
     <div className="sort-control">
       <button
         className={`sort-control__button ${sortBy === 'alpha' ? 'active' : ''}`}
         onClick={toggleSort}
-        aria-label={sortBy === 'alpha' ? "Sort by rank" : "Sort alphabetically"}
-        title={sortBy === 'alpha' ? "Sort by rank" : "Sort alphabetically"}
+        aria-label={ariaLabel}
+        title={title}
       >
         {/* Always show the alphabetical sorting icon, only the active state changes */}
         <svg xmlns="http://www.w3.org/2000/svg" width="19" height="24" viewBox="0 0 37 44" fill="none">

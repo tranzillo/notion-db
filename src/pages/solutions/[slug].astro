@@ -1,0 +1,159 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import BottleneckCard from "../../components/standalone/BottleneckCard";
+import EnhancedBackButton from "../../components/standalone/EnhancedBackButton";
+import { getEnhancedData } from "../../lib/enhancedData";
+
+export async function getStaticPaths() {
+    // Fetch all enhanced data
+    const { solutions } = await getEnhancedData();
+
+    // Generate paths for each solution with slugs
+    return solutions.map((solution) => {
+        // Create a slug if it doesn't exist
+        const slug =
+            solution.slug ||
+            solution.title
+                .toLowerCase()
+                .replace(/[^\w\s]/gi, "")
+                .replace(/\s+/g, "-");
+
+        return {
+            params: { slug },
+            props: { solution },
+        };
+    });
+}
+
+// TypeScript type for the props
+interface Props {
+    solution: any; // Type comes from getStaticPaths
+}
+
+// Get the solution from props
+const { solution } = Astro.props;
+
+// 404 handling (should not happen with static paths, but just in case)
+if (!solution) {
+    return Astro.redirect("/404");
+}
+
+// Extract tags for display
+const publicTags = solution.tags || [];
+
+// Get all unique disciplines from associated bottlenecks
+const uniqueDisciplines = [];
+const disciplineMap = new Map();
+
+if (solution.bottlenecks && Array.isArray(solution.bottlenecks)) {
+    solution.bottlenecks.forEach((bottleneck) => {
+        if (bottleneck.discipline && bottleneck.discipline.id) {
+            disciplineMap.set(bottleneck.discipline.id, bottleneck.discipline);
+        }
+    });
+
+    uniqueDisciplines.push(...Array.from(disciplineMap.values()));
+}
+---
+
+<BaseLayout title={`${solution.title} - Convergent 101`}>
+    <EnhancedBackButton client:load path="/solutions" />
+
+    <div class="solution-detail">
+        <div class="solution-detail__header">
+            <div class="solution-detail__meta">
+                {
+                    uniqueDisciplines.length > 0 && (
+                        <div class="solution-detail__disciplines">
+                            {uniqueDisciplines.map((discipline) => (
+                                <div
+                                    class={`solution-detail__discipline ${discipline.colorClass || ""}`}
+                                >
+                                    {discipline.title}
+                                </div>
+                            ))}
+                        </div>
+                    )
+                }
+            </div>
+
+            <h1 class="solution-detail__title">{solution.title}</h1>
+
+            <!-- Display public tags if available -->
+            {
+                publicTags.length > 0 && (
+                    <div class="solution-detail__tags">
+                        {publicTags.map((tag) => (
+                            <span class="solution-detail__tag">{tag}</span>
+                        ))}
+                    </div>
+                )
+            }
+        </div>
+
+        <div class="solution-detail__content" set:html={solution.content} />
+
+        {
+            solution.references && solution.references.length > 0 && (
+                <div class="solution-detail__references">
+                    <h3>References</h3>
+                    <ul class="solution-detail__reference-list">
+                        {solution.references.map((reference) => (
+                            <li class="solution-detail__reference-item">
+                                {reference?.referenceType && (
+                                    <span class="solution-detail__reference-type">
+                                        {reference.referenceType}
+                                    </span>
+                                )}
+                                {reference?.url ? (
+                                    <a
+                                        href={reference.url}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                    >
+                                        {reference.title}
+                                    </a>
+                                ) : (
+                                    <span>
+                                        {reference?.title ||
+                                            "Untitled Reference"}
+                                    </span>
+                                )}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }
+
+        {
+            solution.bottlenecks && solution.bottlenecks.length > 0 && (
+                <div class="solution-detail__bottlenecks">
+                    <h3>Related Bottlenecks ({solution.bottlenecks.length})</h3>
+                    <div class="solution-detail__bottlenecks-grid">
+                        {solution.bottlenecks.map((bottleneck) => (
+                            <BottleneckCard
+                                bottleneck={bottleneck}
+                                client:load
+                                truncateLength={300}
+                            />
+                        ))}
+                    </div>
+                </div>
+            )
+        }
+    </div>
+</BaseLayout>
+
+<script define:vars={{ solutionId: solution.id, solutionSlug: solution.slug }}>
+    // Save the current solution info for potential scroll restoration
+    import { saveScrollPosition } from "../../lib/scrollPositionUtils";
+
+    document.addEventListener("astro:page-load", () => {
+        // This runs when the page is fully loaded
+        if (solutionId) {
+            // Could manually save position for direct URL accesses if needed
+            // saveScrollPosition(solutionId, solutionSlug);
+        }
+    });
+</script>

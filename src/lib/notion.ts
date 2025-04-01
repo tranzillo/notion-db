@@ -30,6 +30,7 @@ export interface Solution {
   id: string;
   title: string;
   content: string;
+  slug: string;
   rank: number;
   references: Reference[];
   tags: string[];

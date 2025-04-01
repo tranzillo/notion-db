@@ -35,7 +35,7 @@ export default function BottleneckCard({
     selectedDisciplines.includes(bottleneck.discipline.id);
 
   // Prepare the content
-  const bottleneckUrl = `/bottleneck/${bottleneck.slug}`;
+  const bottleneckUrl = `/bottlenecks/${bottleneck.slug}`;
   const truncatedContent = truncateText(bottleneck.content, truncateLength);
 
   // Apply highlighting if search query exists

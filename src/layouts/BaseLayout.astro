@@ -50,6 +50,14 @@ const {
                   ＋Contribute
                 </a>
               </div>
+              <div class="base-layout__nav-item">
+                <a
+                  href="/solutions"
+                  class={Astro.url.pathname.startsWith("/solution") ? "active" : ""}
+                >
+                  Solutions
+                </a>
+              </div>
             </nav>
 
             <!-- Include ThemeToggle -->
@@ -70,13 +78,19 @@ const {
       <footer class="base-layout__footer">
         <div class="container">
           <div class="base-layout__footer-text">
-            &copy; {new Date().getFullYear()} Convergent Research
+            &copy; {new Date().getFullYear()} <a href="https://convergentresearch.org" target="_blank">Convergent Research</a>
           </div>
 
           <div class="base-layout__footer-links">
             <a href="/" class={Astro.url.pathname === "/" ? "active" : ""}>
               Home
             </a>
+              <a
+                href="/solutions"
+                class={Astro.url.pathname.startsWith("/solution") ? "active" : ""}
+              >
+                Solutions
+              </a>
             <a
               href="/contribute"
               class={Astro.url.pathname === "/contribute" ? "active" : ""}

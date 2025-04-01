@@ -1,14 +1,14 @@
 ---
-import BaseLayout from "../layouts/BaseLayout.astro";
-import Search from "../components/standalone/Search";
-import Filter from "../components/standalone/Filter";
-import BottleneckGrid from "../components/standalone/DashboardGrid";
-import ViewToggle from "../components/standalone/ViewToggle";
-import SortControl from "../components/standalone/SortControl";
-import TagCloud from "../components/standalone/TagCloud";
-import PrivateTagBanner from "../components/standalone/PrivateTagBanner";
-import { extractTags, parseUrlParamsWithTags } from "../lib/tagUtils";
-import { getEnhancedData } from "../lib/enhancedData";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Search from "../../components/standalone/Search";
+import Filter from "../../components/standalone/Filter";
+import BottleneckGrid from "../../components/standalone/DashboardGrid";
+import ViewToggle from "../../components/standalone/ViewToggle";
+import SortControl from "../../components/standalone/SortControl";
+import TagCloud from "../../components/standalone/TagCloud";
+import PrivateTagBanner from "../../components/standalone/PrivateTagBanner";
+import { extractTags, parseUrlParamsWithTags } from "../../lib/tagUtils";
+import { getEnhancedData } from "../../lib/enhancedData";
 
 // Fetch all enhanced data from Notion at build time
 const { bottlenecks, solutions, disciplines } = await getEnhancedData();
@@ -33,7 +33,7 @@ bottlenecks.forEach(bottleneck => {
 });
 ---
 
-<BaseLayout title="Convergetn 101">
+<BaseLayout title="Convergent 101">
   <div class="dashboard-header">
     <h1>Discover Patterns among Problems</h1>
     <p>
@@ -81,7 +81,7 @@ bottlenecks.forEach(bottleneck => {
 </BaseLayout>
 
 <script>
-  import { saveCurrentUrlState } from "../lib/navigationUtils";
+  import { saveCurrentUrlState } from "../../lib/navigationUtils";
 
   // Save the current URL state for potential "back" navigation
   document.addEventListener("astro:page-load", () => {

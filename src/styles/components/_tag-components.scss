@@ -25,7 +25,7 @@
     &__tag {
       background-color: var(--background-color-dark);
       color: var(--text-light);
-      border: 1px solid var(--border-dull);
+      border: none;
       border-radius: $border-radius-md;
       padding: $spacing-xs $spacing-sm;
       font-size: $font-size-sm;
@@ -33,7 +33,7 @@
       transition: all $transition;
       
       &:hover {
-        border-color: var(--primary-color);
+        background-color: var(--highlight-bg);
       }
       
       &.active {
