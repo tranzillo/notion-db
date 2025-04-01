@@ -10,7 +10,6 @@ export async function getStaticPaths() {
   // Fetch all enhanced data
   const { bottlenecks } = await getEnhancedData();
 
-
   // Generate paths for each bottleneck
   return bottlenecks.map((bottleneck) => {
     return {
@@ -32,6 +31,9 @@ const { bottleneck } = Astro.props;
 if (!bottleneck) {
   return Astro.redirect("/404");
 }
+
+// Extract tags for display
+const publicTags = bottleneck.tags || [];
 ---
 
 <BaseLayout title={`${bottleneck.title} | Science Bottlenecks`}>
@@ -55,6 +57,15 @@ if (!bottleneck) {
       </div>
 
       <h1 class="bottleneck-detail__title">{bottleneck.title}</h1>
+      
+      <!-- Display public tags if available -->
+      {publicTags.length > 0 && (
+        <div class="bottleneck-detail__tags">
+          {publicTags.map((tag) => (
+            <span class="bottleneck-detail__tag">{tag}</span>
+          ))}
+        </div>
+      )}
     </div>
 
     <div class="bottleneck-detail__content" set:html={bottleneck.content} />
@@ -76,7 +87,7 @@ if (!bottleneck) {
 
 <script define:vars={{ bottleneckId: bottleneck.id, bottleneckSlug: bottleneck.slug }}>
   // Save the current bottleneck info for potential scroll restoration
-  import { saveScrollPosition } from '../lib/scrollPositionUtils';
+  import { saveScrollPosition } from '../../lib/scrollPositionUtils';
   
   document.addEventListener('astro:page-load', () => {
     // This runs when the page is fully loaded
@@ -87,3 +98,21 @@ if (!bottleneck) {
     }
   });
 </script>
+
+<style lang="scss">
+  .bottleneck-detail__tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+  }
+  
+  .bottleneck-detail__tag {
+    display: inline-block;
+    background-color: var(--background-color-dark);
+    color: var(--text-light);
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.875rem;
+  }
+</style>

@@ -105,7 +105,7 @@
     color: var(--text-light);
     cursor: pointer;
     background-color: var(--background-color);
-    border: 1px solid var(--border-color);
+    border: 1px solid var(--border-dull);
     padding: $spacing-xs $spacing-sm;
     border-radius: $border-radius-md;
     transition: background-color $transition,

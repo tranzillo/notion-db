@@ -22,6 +22,10 @@ const fuseOptions = {
       weight: 0.3
     },
     {
+      name: 'tags',
+      weight: 0.4
+    },
+    {
       name: 'rank',
       weight: 0.2
     }
@@ -32,7 +36,9 @@ export default function BottleneckGrid({
   bottlenecks = [],
   initialSearchQuery = '',
   initialSelectedDisciplineIds = [],
-  initialSortBy = 'rank'
+  initialSortBy = 'rank',
+  initialSelectedTag = '',
+  initialPrivateTag = ''
 }) {
   // Always start with consistent state for SSR
   const [filteredBottlenecks, setFilteredBottlenecks] = useState(bottlenecks);
@@ -40,6 +46,8 @@ export default function BottleneckGrid({
   const [selectedDisciplines, setSelectedDisciplines] = useState(initialSelectedDisciplineIds);
   const [sortBy, setSortBy] = useState(initialSortBy);
   const [isListView, setIsListView] = useState(false);
+  const [selectedTag, setSelectedTag] = useState(initialSelectedTag);
+  const [privateTag, setPrivateTag] = useState(initialPrivateTag);
   const [fuse, setFuse] = useState(null);
   const [hasRestoredScroll, setHasRestoredScroll] = useState(false);
 
@@ -58,6 +66,8 @@ export default function BottleneckGrid({
         const urlQuery = params.get('q');
         const urlDisciplines = params.get('disciplines');
         const urlSortBy = params.get('sort');
+        const urlTag = params.get('tag');
+        const urlPrivateTag = params.get('for');
         
         if (urlQuery && urlQuery !== currentSearchQuery) {
           setCurrentSearchQuery(urlQuery);
@@ -84,6 +94,16 @@ export default function BottleneckGrid({
         if (urlSortBy && ['rank', 'alpha'].includes(urlSortBy)) {
           setSortBy(urlSortBy);
         }
+        
+        // Check for tag parameter
+        if (urlTag && urlTag !== selectedTag) {
+          setSelectedTag(urlTag);
+        }
+        
+        // Check for private tag parameter
+        if (urlPrivateTag && urlPrivateTag !== privateTag) {
+          setPrivateTag(urlPrivateTag);
+        }
       }
     } catch (e) {
       console.error('Error loading view preference:', e);
@@ -103,6 +123,8 @@ export default function BottleneckGrid({
     const urlQuery = params.get('q');
     const urlDisciplines = params.get('disciplines');
     const urlSortBy = params.get('sort');
+    const urlTag = params.get('tag');
+    const urlPrivateTag = params.get('for');
 
     if (urlQuery) {
       setCurrentSearchQuery(urlQuery);
@@ -127,6 +149,16 @@ export default function BottleneckGrid({
     // Check for sort parameter
     if (urlSortBy && ['rank', 'alpha'].includes(urlSortBy)) {
       setSortBy(urlSortBy);
+    }
+    
+    // Check for tag parameter
+    if (urlTag) {
+      setSelectedTag(urlTag);
+    }
+    
+    // Check for private tag parameter
+    if (urlPrivateTag) {
+      setPrivateTag(urlPrivateTag);
     }
   }, [bottlenecks]);
 
@@ -156,6 +188,60 @@ export default function BottleneckGrid({
     };
   }, []);
 
+  // Listen for tag filter changes
+  useEffect(() => {
+    const handleTagChange = (event) => {
+      setSelectedTag(event.detail.selectedTag);
+      
+      // Clear private tag if public tag is selected (mutually exclusive)
+      if (event.detail.selectedTag) {
+        setPrivateTag('');
+        
+        // Also update URL to remove 'for' parameter
+        if (typeof window !== 'undefined') {
+          const params = new URLSearchParams(window.location.search);
+          params.delete('for');
+          
+          const newUrl = `${window.location.pathname}${params.toString() ? '?' + params.toString() : ''}`;
+          window.history.pushState({}, '', newUrl);
+        }
+      }
+    };
+
+    window.addEventListener('tag-changed', handleTagChange);
+
+    return () => {
+      window.removeEventListener('tag-changed', handleTagChange);
+    };
+  }, []);
+
+  // Listen for private tag filter changes
+  useEffect(() => {
+    const handlePrivateTagChange = (event) => {
+      setPrivateTag(event.detail.privateTag);
+      
+      // Clear public tag if private tag is selected (mutually exclusive)
+      if (event.detail.privateTag) {
+        setSelectedTag('');
+        
+        // Also update URL to remove 'tag' parameter
+        if (typeof window !== 'undefined') {
+          const params = new URLSearchParams(window.location.search);
+          params.delete('tag');
+          
+          const newUrl = `${window.location.pathname}${params.toString() ? '?' + params.toString() : ''}`;
+          window.history.pushState({}, '', newUrl);
+        }
+      }
+    };
+
+    window.addEventListener('private-tag-changed', handlePrivateTagChange);
+
+    return () => {
+      window.removeEventListener('private-tag-changed', handlePrivateTagChange);
+    };
+  }, []);
+
   // Listen for view toggle button clicks
   useEffect(() => {
     const handleViewChange = (event) => {
@@ -182,7 +268,7 @@ export default function BottleneckGrid({
     };
   }, []);
 
-  // Apply filtering and sorting when search, disciplines, or sort method change
+  // Apply filtering and sorting when search, disciplines, tags, or sort method change
   useEffect(() => {
     if (!fuse) return;
 
@@ -196,6 +282,20 @@ export default function BottleneckGrid({
       filteredResults = filteredResults.filter(bottleneck =>
         bottleneck.discipline &&
         selectedDisciplines.includes(bottleneck.discipline.id)
+      );
+    }
+    
+    // Apply public tag filtering
+    if (selectedTag) {
+      filteredResults = filteredResults.filter(bottleneck =>
+        bottleneck.tags && bottleneck.tags.includes(selectedTag)
+      );
+    }
+    
+    // Apply private tag filtering
+    if (privateTag) {
+      filteredResults = filteredResults.filter(bottleneck =>
+        bottleneck.privateTags && bottleneck.privateTags.includes(privateTag)
       );
     }
 
@@ -218,7 +318,15 @@ export default function BottleneckGrid({
     });
 
     setFilteredBottlenecks(filteredResults);
-  }, [currentSearchQuery, selectedDisciplines, sortBy, fuse, bottlenecks]);
+  }, [
+    currentSearchQuery, 
+    selectedDisciplines, 
+    selectedTag, 
+    privateTag, 
+    sortBy, 
+    fuse, 
+    bottlenecks
+  ]);
   
   // Attempt to restore scroll position after filtered bottlenecks are updated
   useEffect(() => {

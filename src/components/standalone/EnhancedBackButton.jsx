@@ -10,15 +10,21 @@ export default function EnhancedBackButton({ defaultHref = '/', className = 'bac
     // Get saved dashboard state, if any
     const savedState = getSavedUrlState();
     if (savedState) {
-      // Check if the savedState contains a sort parameter
+      // Check if the savedState contains required parameters
       const params = new URLSearchParams(savedState);
+      
+      // If no sort parameter exists, add the default 'rank' sort
       if (!params.has('sort')) {
-        // If no sort parameter exists, add the default 'rank' sort
         params.set('sort', 'rank');
-        setTargetHref(`/?${params.toString()}`);
-      } else {
-        setTargetHref(`/${savedState}`);
       }
+      
+      // Ensure tag and for parameters are mutually exclusive
+      if (params.has('tag') && params.has('for')) {
+        // Prioritize 'for' parameter if both exist
+        params.delete('tag');
+      }
+      
+      setTargetHref(`/?${params.toString()}`);
     }
   }, []);
   

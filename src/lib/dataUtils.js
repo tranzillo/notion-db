@@ -67,11 +67,15 @@ export function parseUrlParams(url) {
   const disciplinesParam = params.get('disciplines') || '';
   const disciplineSlugs = disciplinesParam ? disciplinesParam.split(',') : [];
   const sortBy = params.get('sort') || 'rank'; // Default to rank sort
+  const tag = params.get('tag') || '';
+  const privateTag = params.get('for') || '';
   
   return {
     searchQuery,
     disciplineSlugs,
-    sortBy
+    sortBy,
+    tag,
+    privateTag
   };
 }
 
@@ -94,6 +98,16 @@ export function updateUrlParamsWithoutHistory(paramsObject) {
       params.set(key, value);
     }
   });
+  
+  // Ensure tag and for parameters are mutually exclusive
+  if (params.has('tag') && params.has('for')) {
+    // Prioritize whatever was just added
+    if (paramsObject.tag !== undefined) {
+      params.delete('for');
+    } else if (paramsObject.for !== undefined) {
+      params.delete('tag');
+    }
+  }
   
   // Construct the new URL
   const newUrl = `${window.location.pathname}${params.toString() ? '?' + params.toString() : ''}`;

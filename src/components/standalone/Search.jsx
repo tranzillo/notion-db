@@ -90,7 +90,7 @@ export default function Search({
           type="text"
           name="q"
           className="search-bar__input"
-          placeholder={`Search ${bottleneckCount} Bottlenecks...`}
+          placeholder={`Search Bottlenecks...`}
           value={searchQuery}
           onChange={handleSearchChange}
           autoComplete="off"

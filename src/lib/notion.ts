@@ -32,6 +32,8 @@ export interface Solution {
   content: string;
   rank: number;
   references: Reference[];
+  tags: string[];
+  privateTags: string[];
 }
 
 export interface Bottleneck {
@@ -42,6 +44,8 @@ export interface Bottleneck {
   rank: number;
   discipline: Discipline;
   solutions: Solution[];
+  tags: string[];
+  privateTags: string[];
 }
 
 // Function to safely extract rank from Notion property
@@ -220,12 +224,26 @@ export async function getSolutions(references: Reference[]): Promise<Solution[]>
       const mdBlocks = await n2m.pageToMarkdown(page.id);
       const content = n2m.toMarkdownString(mdBlocks);
 
+      // Extract tags (public)
+      let tags: string[] = [];
+      if (page.properties.Tags && page.properties.Tags.multi_select) {
+        tags = page.properties.Tags.multi_select.map((tag: any) => tag.name);
+      }
+      
+      // Extract private tags
+      let privateTags: string[] = [];
+      if (page.properties.PrivateTags && page.properties.PrivateTags.multi_select) {
+        privateTags = page.properties.PrivateTags.multi_select.map((tag: any) => tag.name);
+      }
+
       return {
         id: page.id,
         title,
         content: content.parent,
         rank,
-        references: solutionReferences
+        references: solutionReferences,
+        tags,
+        privateTags
       };
     })
   );
@@ -267,6 +285,17 @@ export async function getBottlenecks(
       // Generate a slug from the title
       const slug = title.toLowerCase().replace(/[^\w\s]/gi, '').replace(/\s+/g, '-');
 
+      let tags: string[] = [];
+      if (page.properties.Tags && page.properties.Tags.multi_select) {
+        tags = page.properties.Tags.multi_select.map((tag: any) => tag.name);
+      }
+      
+      // Extract private tags
+      let privateTags: string[] = [];
+      if (page.properties.PrivateTags && page.properties.PrivateTags.multi_select) {
+        privateTags = page.properties.PrivateTags.multi_select.map((tag: any) => tag.name);
+      }
+
       return {
         id: page.id,
         title,
@@ -274,7 +303,9 @@ export async function getBottlenecks(
         slug,
         rank,
         discipline: bottleneckDiscipline || { id: '', title: 'Uncategorized', content: '' },
-        solutions: bottleneckSolutions
+        solutions: bottleneckSolutions,
+        tags,
+        privateTags
       };
     })
   );

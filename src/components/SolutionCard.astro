@@ -1,54 +1,63 @@
 ---
-import type { Solution } from "../lib/notion";
+import type { Solution } from '../lib/notion';
 
 interface Props {
   solution: Solution;
 }
 
 const { solution } = Astro.props;
+
+// Extract tags
+const tags = solution.tags || [];
 ---
 
 <div class="solution-card">
   <h3 class="solution-card__title">{solution.title}</h3>
-
+  
   <div class="solution-card__content" set:html={solution.content} />
-
-  {
-    solution.references && solution.references.length > 0 && (
-      <div class="solution-card__references">
-        <h4>References</h4>
-        <ul class="solution-card__reference-list">
-          {solution.references.map((reference) => (
-            <li class="solution-card__reference-item">
-              {reference?.referenceType && (
-                <span class="solution-card__reference-type">
-                  {reference.referenceType}
-                </span>
-              )}
-              {reference?.url ? (
-                <div class="solution-card__reference-link">
-                  <a
-                    href={reference.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    {reference.title}
-                  </a>
-                </div>
-              ) : (
-                <div>
-                  {reference?.referenceType && (
-                    <span class="solution-card__reference-type">
-                      {reference.referenceType}
-                    </span>
-                  )}
-                  <span>{reference?.title || "Untitled Reference"}</span>
-                </div>
-              )}
-            </li>
-          ))}
-        </ul>
-      </div>
-    )
-  }
+  
+  {tags.length > 0 && (
+    <div class="solution-card__tags">
+      {tags.map((tag) => (
+        <span class="solution-card__tag">{tag}</span>
+      ))}
+    </div>
+  )}
+  
+  {solution.references && solution.references.length > 0 && (
+    <div class="solution-card__references">
+      <h4>References</h4>
+      <ul class="solution-card__reference-list">
+        {solution.references.map((reference) => (
+          <li class="solution-card__reference-item">
+            {reference?.url ? (
+              <a href={reference.url} target="_blank" rel="noopener noreferrer">
+                {reference.title}
+              </a>
+            ) : (
+              <span>{reference?.title || "Untitled Reference"}</span>
+            )}
+          </li>
+        ))}
+      </ul>
+    </div>
+  )}
 </div>
+
+<style lang="scss">
+  .solution-card__tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 1rem;
+  }
+  
+  .solution-card__tag {
+    display: inline-block;
+    background-color: var(--background-color-dark);
+    color: var(--text-light);
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.875rem;
+  }
+</style>
