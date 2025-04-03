@@ -44,18 +44,38 @@ const {
             <nav class="base-layout__nav">
               <div class="base-layout__nav-item">
                 <a
-                  href="/contribute"
-                  class={Astro.url.pathname === "/contribute" ? "active" : ""}
+                  href="/"
+                  class={Astro.url.pathname.startsWith("/bottlenecks") || Astro.url.pathname === ("/") ? "active" : ""}
+                  target="_self"
                 >
-                  ＋Contribute
+                  Bottlenecks
                 </a>
               </div>
               <div class="base-layout__nav-item">
                 <a
-                  href="/solutions"
-                  class={Astro.url.pathname.startsWith("/solution") ? "active" : ""}
+                  href="/capabilities"
+                  class={Astro.url.pathname.startsWith("/capabilities") ? "active" : ""}
+                  target="_self"
                 >
-                  Solutions
+                Foundational Capabilities
+                </a>
+              </div>
+              <div class="base-layout__nav-item">
+                <a
+                  href="/about"
+                  class={Astro.url.pathname === "/about" ? "active" : ""}
+                  target="_self"
+                >
+                  About
+                </a>
+              </div>
+              <div class="base-layout__nav-item">
+                <a
+                  href="/contribute"
+                  class={Astro.url.pathname === "/contribute" ? "active" : ""}
+                  target="_self"
+                >
+                  Contribute
                 </a>
               </div>
             </nav>
@@ -82,20 +102,33 @@ const {
           </div>
 
           <div class="base-layout__footer-links">
-            <a href="/" class={Astro.url.pathname === "/" ? "active" : ""}>
-              Home
+                <a
+                  href="/"
+                  class={Astro.url.pathname.startsWith("/bottlenecks") || Astro.url.pathname === ("/") ? "active" : ""}
+                  target="_self"
+                >
+                  Bottlenecks
+                </a>
+            <a
+              href="/capabilities"
+              class={Astro.url.pathname.startsWith("/capabilities") ? "active" : ""}
+              target="_self"
+            >
+            Foundational Capabilities
             </a>
-              <a
-                href="/solutions"
-                class={Astro.url.pathname.startsWith("/solution") ? "active" : ""}
-              >
-                Solutions
-              </a>
+            <a
+              href="/about"
+              class={Astro.url.pathname === "/about" ? "active" : ""}
+              target="_self"
+            >
+              About
+            </a>
             <a
               href="/contribute"
               class={Astro.url.pathname === "/contribute" ? "active" : ""}
+              target="_self"
             >
-              ＋Contribute
+              Contribute
             </a>
           </div>
         </div>

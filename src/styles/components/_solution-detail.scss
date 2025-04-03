@@ -1,4 +1,4 @@
-.solution-detail {
+.capabilities-detail {
     display: flex;
     flex-direction: column;
     gap: $spacing-xxl;
@@ -23,14 +23,14 @@
         border-color $transition;
     }
   
-    &__disciplines {
+    &__fields {
       display: flex;
       flex-wrap: wrap;
       gap: $spacing-xs;
       margin-bottom: $spacing-sm;
     }
   
-    &__discipline {
+    &__field {
       display: block;
       margin-block-start: 0.42em;
       padding: $spacing-xs $spacing-sm;
@@ -57,7 +57,7 @@
       line-height: 1.5;
     }
   
-    &__references {
+    &__resources {
       padding: $spacing-xl;
       margin: 0 calc($spacing-xl * (-1)) 0 calc($spacing-xl * (-1));
       background-color: var(--background-color);
@@ -73,7 +73,7 @@
       }
     }
   
-    &__reference-list {
+    &__resource-list {
       list-style: none;
       display: flex;
       flex-direction: column;
@@ -82,7 +82,7 @@
       align-items: flex-start;
     }
   
-    &__reference-item {
+    &__resource-item {
       font-size: $font-size-sm;
       letter-spacing: 0.04em;
       line-height: 1.25;
@@ -111,7 +111,7 @@
       }
     }
   
-    &__reference-type {
+    &__resource-type {
       font-size: $font-size-xs;
       color: var(--text-lighter);
       background-color: var(--background-color);
@@ -153,7 +153,7 @@
     }
   }
 
-  .solution-card {
+  .capabilities-card {
     &--grid {
       display: flex;
       flex-direction: column;

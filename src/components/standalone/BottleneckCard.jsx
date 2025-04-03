@@ -1,3 +1,4 @@
+// src/components/standalone/BottleneckCard.jsx
 import React from 'react';
 import { saveScrollPosition } from '../../lib/scrollPositionUtils';
 import RankIndicator from '../../components/standalone/RankIndicator';
@@ -5,7 +6,7 @@ import RankIndicator from '../../components/standalone/RankIndicator';
 export default function BottleneckCard({
   bottleneck,
   searchQuery = '',
-  selectedDisciplines = [],
+  selectedFields = [], // renamed from selectedDisciplines
   truncateLength = 500
 }) {
   // Function to highlight search matches in text
@@ -30,18 +31,18 @@ export default function BottleneckCard({
     return text.substring(0, maxLength) + '...';
   };
 
-  // Check if discipline is selected
-  const isDisciplineSelected = bottleneck.discipline &&
-    selectedDisciplines.includes(bottleneck.discipline.id);
+  // Check if field is selected
+  const isFieldSelected = bottleneck.field &&
+    selectedFields.includes(bottleneck.field.id);
 
   // Prepare the content
   const bottleneckUrl = `/bottlenecks/${bottleneck.slug}`;
-  const truncatedContent = truncateText(bottleneck.content, truncateLength);
+  const truncatedContent = truncateText(bottleneck.bottleneck_description || '', truncateLength);
 
   // Apply highlighting if search query exists
   const displayTitle = searchQuery
-    ? highlightMatches(bottleneck.title, searchQuery)
-    : bottleneck.title;
+    ? highlightMatches(bottleneck.bottleneck_name, searchQuery)
+    : bottleneck.bottleneck_name;
 
   const displayContent = searchQuery
     ? highlightMatches(truncatedContent, searchQuery)
@@ -51,6 +52,12 @@ export default function BottleneckCard({
   const handleCardClick = () => {
     saveScrollPosition(bottleneck.id, bottleneck.slug);
   };
+
+  // Get tags for display
+  const tags = bottleneck.tags || [];
+
+  // Check if we have a valid rank to display
+  const hasRank = bottleneck.bottleneck_rank !== undefined && bottleneck.bottleneck_rank !== null && bottleneck.bottleneck_rank > 0;
 
   return (
     <div
@@ -64,7 +71,7 @@ export default function BottleneckCard({
         aria-labelledby={`card-title-${bottleneck.id}`}
       />
       <div className="bottleneck-card__header">
-      <h2 className="bottleneck-card__title">
+        <h2 className="bottleneck-card__title">
           <a
             href={bottleneckUrl}
             dangerouslySetInnerHTML={{ __html: displayTitle }}
@@ -79,18 +86,35 @@ export default function BottleneckCard({
 
       <div className="bottleneck-card__footer">
         <div className="bottleneck-card__footer-left">
-          {bottleneck.discipline && bottleneck.discipline.title && (
-            <div className={`bottleneck-card__discipline ${isDisciplineSelected ? 'active' : ''} ${bottleneck.discipline.colorClass || ''}`}>
-              {bottleneck.discipline.title}
+          {/* Display public tags */}
+          {tags.length > 0 && (
+            <div className="bottleneck-card__tags">
+              {tags.map((tag, index) => (
+                <span key={index} className="bottleneck-card__tag">
+                  {tag}
+                </span>
+              ))}
+            </div>
+          )}
+          {bottleneck.field && bottleneck.field.field_name && (
+            <div className={`bottleneck-card__field ${isFieldSelected ? 'active' : ''} ${bottleneck.field.colorClass || ''}`}>
+              {bottleneck.field.field_name}
             </div>
           )}
         </div>
         <div className="bottleneck-card__footer-right">
-          <RankIndicator rank={bottleneck.rank || 0} />
+          <div className="bottleneck-card__footer-right-container">
+            {/* Only render the rank indicator if there's a valid rank */}
+            {hasRank && <RankIndicator rank={bottleneck.bottleneck_rank} />}
+            {/* Display bottleneck number if it exists */}
+            {bottleneck.bottleneck_number !== undefined && bottleneck.bottleneck_number > 0 && (
+              <div className="bottleneck-card__index">
+                #{bottleneck.bottleneck_number}
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </div>
   );
 }
-
-

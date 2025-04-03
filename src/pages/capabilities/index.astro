@@ -1,67 +1,66 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import Search from "../../components/standalone/Search";
-import Filter from "../../components/standalone/Filter";
-import SolutionsGrid from "../../components/standalone/SolutionsGrid";
+import FieldFilter from "../../components/standalone/FieldFilter";
+import CapabilitiesGrid from "../../components/standalone/CapabilitiesGrid";
 import ViewToggle from "../../components/standalone/ViewToggle";
 import SortControl from "../../components/standalone/SortControl";
-import TagCloud from "../../components/standalone/TagCloud";
 import PrivateTagBanner from "../../components/standalone/PrivateTagBanner";
 import { extractTags, parseUrlParamsWithTags } from "../../lib/tagUtils";
 import { getEnhancedData } from "../../lib/enhancedData";
 
 // Fetch all enhanced data from Notion at build time
-const { bottlenecks, solutions, disciplines } = await getEnhancedData();
+const { bottlenecks, foundationalCapabilities, fields, contentAreas } = await getEnhancedData();
 
-// Extract all unique tags from solutions
-const tags = extractTags(solutions);
+// Extract all unique tags from capabilities
+const tags = extractTags(foundationalCapabilities);
 
 // Get URL parameters including tag parameters
-const { searchQuery, disciplineSlugs, sortBy, tag, privateTag } =
+const { searchQuery, fieldSlugs, sortBy, tag, privateTag } =
   parseUrlParamsWithTags(Astro.url.toString());
 
 // Calculate counts for display
 const bottleneckCount = bottlenecks.length;
-const solutionCount = solutions.length;
+const capabilityCount = foundationalCapabilities.length;
 
-// Calculate discipline counts for solutions (aggregated from related bottlenecks)
-const disciplineCounts = {};
-solutions.forEach(solution => {
-  if (solution.bottlenecks && Array.isArray(solution.bottlenecks)) {
-    solution.bottlenecks.forEach(bottleneck => {
-      if (bottleneck.discipline && bottleneck.discipline.id) {
-        disciplineCounts[bottleneck.discipline.id] = (disciplineCounts[bottleneck.discipline.id] || 0) + 1;
+// Calculate field counts for capabilities (aggregated from related bottlenecks)
+const fieldCounts = {};
+foundationalCapabilities.forEach(capability => {
+  if (capability.bottlenecks && Array.isArray(capability.bottlenecks)) {
+    capability.bottlenecks.forEach(bottleneck => {
+      if (bottleneck.field && bottleneck.field.id) {
+        fieldCounts[bottleneck.field.id] = (fieldCounts[bottleneck.field.id] || 0) + 1;
       }
     });
   }
 });
+
+// Get capabilities content if available
+const capabilitiesContent = contentAreas?.capabilities || {
+  title: "Explore Foundational Capabilities",
+  content: `<p>Discover <em>${capabilityCount} Foundational Capabilities</em> that address <em>${bottleneckCount} Bottlenecks</em> in scientific advancement. Use the search and filters to find capabilities relevant to your interests.</p>`
+};
 ---
 
-<BaseLayout title="Solutions - Convergent 101">
+<BaseLayout title="Foundational Capabilities - Convergent 101">
   <div class="dashboard-header">
-    <h1>Explore Fundamental Capabilities</h1>
-    <p>
-      Discover <em>{solutionCount} Fundamental Capabilities</em> that address <em>{bottleneckCount} Bottlenecks</em> in scientific advancement.
-      Use the search and filters to find solutions relevant to your interests.
-    </p>
+    <h1>{capabilitiesContent.title}</h1>
+    <div class="dashboard-content notion-content" set:html={capabilitiesContent.content} />
   </div>
 
   <div class="dashboard-layout">
     <aside class="dashboard-layout__sidebar">
-      <Filter
+      <FieldFilter
         client:load
-        disciplines={disciplines}
-        initialSelectedIds={disciplineSlugs}
-        disciplineCounts={disciplineCounts}
+        fields={fields}
+        initialSelectedIds={fieldSlugs}
+        fieldCounts={fieldCounts}
       />
     </aside>
 
     <div class="dashboard-layout__main">
       <!-- Private Tag Banner -->
       <PrivateTagBanner client:load />
-
-      <!-- Tag Cloud (only shown when not using private tag) -->
-      <TagCloud client:load tags={tags} initialSelectedTag={tag} />
       
       <div class="dashboard-search">
         <Search client:load initialQuery={searchQuery} />
@@ -71,11 +70,11 @@ solutions.forEach(solution => {
         </div>
       </div>
 
-      <SolutionsGrid
+      <CapabilitiesGrid
         client:load
-        solutions={solutions}
+        capabilities={foundationalCapabilities}
         initialSearchQuery={searchQuery}
-        initialSelectedDisciplineIds={disciplineSlugs}
+        initialSelectedFieldIds={fieldSlugs}
         initialSortBy={sortBy}
         initialSelectedTag={tag}
         initialPrivateTag={privateTag}
@@ -97,7 +96,7 @@ solutions.forEach(solution => {
     saveCurrentUrlState();
   });
 
-  window.addEventListener("disciplines-changed", () => {
+  window.addEventListener("fields-changed", () => {
     saveCurrentUrlState();
   });
 

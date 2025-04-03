@@ -3,10 +3,16 @@ import React, { useEffect, useState } from 'react';
 import { getSavedUrlState } from '../../lib/navigationUtils';
 import { getSavedScrollPosition } from '../../lib/scrollPositionUtils';
 
-export default function EnhancedBackButton({ defaultHref = '/', className = 'back-link' }) {
-  const [targetHref, setTargetHref] = useState(defaultHref);
+export default function EnhancedBackButton({ defaultHref = '/', className = 'back-link', path = '' }) {
+  const [targetHref, setTargetHref] = useState(path || defaultHref);
   
   useEffect(() => {
+    // If path is explicitly provided, use it
+    if (path) {
+      setTargetHref(path);
+      return;
+    }
+    
     // Get saved dashboard state, if any
     const savedState = getSavedUrlState();
     if (savedState) {
@@ -24,9 +30,9 @@ export default function EnhancedBackButton({ defaultHref = '/', className = 'bac
         params.delete('tag');
       }
       
-      setTargetHref(`/?${params.toString()}`);
+      setTargetHref(`${defaultHref}?${params.toString()}`);
     }
-  }, []);
+  }, [defaultHref, path]);
   
   const handleClick = (e) => {
     e.preventDefault();

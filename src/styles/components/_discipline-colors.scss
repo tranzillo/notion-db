@@ -112,50 +112,50 @@ html[data-theme="dark"],
 // Additional SCSS utility functions for discipline colors (optional)
 
 // Returns a specific discipline color variation
-@function discipline-color($index, $variant: 'base') {
+@function field-color($index, $variant: 'base') {
   @if $variant =='base' {
-    @return var(--discipline-color-#{$index});
+    @return var(--field-color-#{$index});
   }
 
   @else if $variant =='light' {
-    @return var(--discipline-color-#{$index}-light);
+    @return var(--field-color-#{$index}-light);
   }
 
   @else if $variant =='dark' {
-    @return var(--discipline-color-#{$index}-dark);
+    @return var(--field-color-#{$index}-dark);
   }
 
   @else if $variant =='hover' {
-    @return var(--discipline-color-#{$index}-hover);
+    @return var(--field-color-#{$index}-hover);
   }
 
   @else if $variant =='text' {
-    @return var(--discipline-color-#{$index}-text);
+    @return var(--field-color-#{$index}-text);
   }
 
   @else if $variant =='border' {
-    @return var(--discipline-color-#{$index}-border);
+    @return var(--field-color-#{$index}-border);
   }
 
   @else {
-    @return var(--discipline-color-#{$index});
+    @return var(--field-color-#{$index});
   }
 }
 
 // Mixin to apply all discipline color properties
-@mixin discipline-colors($index) {
-  background-color: var(--discipline-color-#{$index}-light);
-  color: var(--discipline-color-#{$index}-text);
-  border-color: var(--discipline-color-#{$index}-border);
+@mixin field-colors($index) {
+  background-color: var(--field-color-#{$index}-light);
+  color: var(--field-color-#{$index}-text);
+  border-color: var(--field-color-#{$index}-border);
 
   &:hover {
-    background-color: var(--discipline-color-#{$index}-hover);
+    background-color: var(--field-color-#{$index}-hover);
   }
 
   &.active {
-    background-color: var(--discipline-color-#{$index});
-    color: var(--discipline-color-#{$index}-text);
-    border-color: var(--discipline-color-#{$index}-dark);
+    background-color: var(--field-color-#{$index});
+    color: var(--field-color-#{$index}-text);
+    border-color: var(--field-color-#{$index}-dark);
   }
 }
 

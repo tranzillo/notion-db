@@ -1,6 +1,7 @@
+// ContributeForm.jsx
 import React, { useState } from 'react';
 
-export default function ContributeForm({ disciplines = [], referenceTypeOptions = [] }) {
+export default function ContributeForm({ fields = [], resourceTypeOptions = [] }) {
   const [activeTab, setActiveTab] = useState('bottleneck');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formError, setFormError] = useState('');
@@ -9,11 +10,11 @@ export default function ContributeForm({ disciplines = [], referenceTypeOptions 
   const [bottleneckData, setBottleneckData] = useState({
     title: '',
     content: '',
-    disciplineId: '',
+    fieldId: '',
     rank: 3
   });
 
-  const [solutionData, setSolutionData] = useState({
+  const [fcData, setFcData] = useState({
     title: '',
     content: '',
     bottleneckTitle: '',
@@ -21,24 +22,14 @@ export default function ContributeForm({ disciplines = [], referenceTypeOptions 
     rank: 3
   });
 
-  const [referenceData, setReferenceData] = useState({
+  const [resourceData, setResourceData] = useState({
     title: '',
     url: '',
     content: '',
-    referenceType: referenceTypeOptions.length > 0 ? referenceTypeOptions[0] : 'Publication'
+    resourceType: resourceTypeOptions.length > 0 ? resourceTypeOptions[0] : 'Publication'
   });
 
-  // Fallback array of common reference types in case fetching from Notion fails
-  const defaultReferenceTypes = [
-    'Dataset',
-    'Publication',
-    'Research Paper',
-  ];
-
-  // Use fetched options if available, otherwise use defaults
-  const typeOptions = referenceTypeOptions.length > 0 ? referenceTypeOptions : defaultReferenceTypes;
-
-  // Reset form when switching tabs
+  // Handle tab change
   const handleTabChange = (tabName) => {
     setActiveTab(tabName);
     setFormError('');
@@ -58,7 +49,12 @@ export default function ContributeForm({ disciplines = [], referenceTypeOptions 
         },
         body: JSON.stringify({
           type: 'bottleneck',
-          data: bottleneckData
+          data: {
+            bottleneck_name: bottleneckData.title,
+            bottleneck_description: bottleneckData.content,
+            fieldId: bottleneckData.fieldId,
+            bottleneck_rank: bottleneckData.rank
+          }
         }),
       });
 
@@ -76,7 +72,7 @@ export default function ContributeForm({ disciplines = [], referenceTypeOptions 
     }
   };
 
-  const handleSolutionSubmit = async (e) => {
+  const handleFCSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
     setFormError('');
@@ -88,8 +84,13 @@ export default function ContributeForm({ disciplines = [], referenceTypeOptions 
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          type: 'solution',
-          data: solutionData
+          type: 'capability',
+          data: {
+            fc_name: fcData.title,
+            fc_description: fcData.content,
+            bottleneckTitle: fcData.bottleneckTitle,
+            references: fcData.references
+          }
         }),
       });
 
@@ -101,14 +102,14 @@ export default function ContributeForm({ disciplines = [], referenceTypeOptions 
       // Redirect to success page
       window.location.href = '/success';
     } catch (error) {
-      console.error('Error submitting solution:', error);
+      console.error('Error submitting foundational capability:', error);
       setFormError(error.message || 'An error occurred. Please try again.');
       setIsSubmitting(false);
     }
   };
 
-  // Handle reference submission
-  const handleReferenceSubmit = async (e) => {
+  // Handle resource submission
+  const handleResourceSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
     setFormError('');
@@ -120,8 +121,13 @@ export default function ContributeForm({ disciplines = [], referenceTypeOptions 
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          type: 'reference',
-          data: referenceData
+          type: 'resource',
+          data: {
+            resource_title: resourceData.title,
+            resource_url: resourceData.url,
+            content: resourceData.content,
+            resource_type: resourceData.resourceType
+          }
         }),
       });
 
@@ -133,7 +139,7 @@ export default function ContributeForm({ disciplines = [], referenceTypeOptions 
       // Redirect to success page
       window.location.href = '/success';
     } catch (error) {
-      console.error('Error submitting reference:', error);
+      console.error('Error submitting resource:', error);
       setFormError(error.message || 'An error occurred. Please try again.');
       setIsSubmitting(false);
     }
@@ -141,9 +147,6 @@ export default function ContributeForm({ disciplines = [], referenceTypeOptions 
 
   return (
     <div className="contribute-form">
-      <div className="contribute-form__info">
-      </div>
-
       <div className="contribute-form__tabs">
         <button
           className={`contribute-form__tab ${activeTab === 'bottleneck' ? 'active' : ''}`}
@@ -152,16 +155,16 @@ export default function ContributeForm({ disciplines = [], referenceTypeOptions 
           Bottleneck
         </button>
         <button
-          className={`contribute-form__tab ${activeTab === 'solution' ? 'active' : ''}`}
-          onClick={() => handleTabChange('solution')}
+          className={`contribute-form__tab ${activeTab === 'capability' ? 'active' : ''}`}
+          onClick={() => handleTabChange('capability')}
         >
-          Solution
+          Foundational Capability
         </button>
         <button
-          className={`contribute-form__tab ${activeTab === 'reference' ? 'active' : ''}`}
-          onClick={() => handleTabChange('reference')}
+          className={`contribute-form__tab ${activeTab === 'resource' ? 'active' : ''}`}
+          onClick={() => handleTabChange('resource')}
         >
-          Reference
+          Resource
         </button>
       </div>
 
@@ -176,7 +179,7 @@ export default function ContributeForm({ disciplines = [], referenceTypeOptions 
         {activeTab === 'bottleneck' && (
           <form onSubmit={handleBottleneckSubmit}>
             <div className="form-group">
-              <label htmlFor="bottleneck-title">Bottleneck Title *</label>
+              <label htmlFor="bottleneck-title">Bottleneck Name *</label>
               <input
                 type="text"
                 id="bottleneck-title"
@@ -187,17 +190,17 @@ export default function ContributeForm({ disciplines = [], referenceTypeOptions 
             </div>
 
             <div className="form-group">
-              <label htmlFor="bottleneck-discipline">Discipline *</label>
+              <label htmlFor="bottleneck-field">Field *</label>
               <select
-                id="bottleneck-discipline"
-                value={bottleneckData.disciplineId}
-                onChange={(e) => setBottleneckData({ ...bottleneckData, disciplineId: e.target.value })}
+                id="bottleneck-field"
+                value={bottleneckData.fieldId}
+                onChange={(e) => setBottleneckData({ ...bottleneckData, fieldId: e.target.value })}
                 required
               >
-                <option value="">Select a discipline</option>
-                {disciplines.map((discipline) => (
-                  <option key={discipline.id} value={discipline.id}>
-                    {discipline.title}
+                <option value="">Select a field</option>
+                {fields.map((field) => (
+                  <option key={field.id} value={field.id}>
+                    {field.field_name}
                   </option>
                 ))}
               </select>
@@ -246,73 +249,43 @@ export default function ContributeForm({ disciplines = [], referenceTypeOptions 
           </form>
         )}
 
-        {/* Solution Form */}
-        {activeTab === 'solution' && (
-          <form onSubmit={handleSolutionSubmit}>
+        {/* Foundational Capability Form */}
+        {activeTab === 'capability' && (
+          <form onSubmit={handleFCSubmit}>
             <div className="form-group">
-              <label htmlFor="solution-title">Solution Title *</label>
+              <label htmlFor="fc-title">Foundational Capability Name *</label>
               <input
                 type="text"
-                id="solution-title"
-                value={solutionData.title}
-                onChange={(e) => setSolutionData({ ...solutionData, title: e.target.value })}
+                id="fc-title"
+                value={fcData.title}
+                onChange={(e) => setFcData({ ...fcData, title: e.target.value })}
                 required
               />
             </div>
 
             <div className="form-group">
-              <label htmlFor="solution-bottleneck">Related Bottleneck *</label>
+              <label htmlFor="fc-bottleneck">Related Bottleneck *</label>
               <input
                 type="text"
-                id="solution-bottleneck"
-                value={solutionData.bottleneckTitle}
-                onChange={(e) => setSolutionData({ ...solutionData, bottleneckTitle: e.target.value })}
+                id="fc-bottleneck"
+                value={fcData.bottleneckTitle}
+                onChange={(e) => setFcData({ ...fcData, bottleneckTitle: e.target.value })}
                 placeholder="Enter the name of an existing bottleneck or suggest a new one"
                 required
               />
             </div>
 
-            {/* <div className="form-group">
-              <label htmlFor="solution-rank">
-                Feasibility Rank: {solutionData.rank}
-              </label>
-              <input
-                type="range"
-                id="solution-rank"
-                min="0"
-                max="5"
-                step="1"
-                value={solutionData.rank}
-                onChange={(e) => setSolutionData({...solutionData, rank: parseInt(e.target.value)})}
-              />
-              <div className="range-labels">
-                <span>Low</span>
-                <span>High</span>
-              </div>
-            </div> */}
-
             <div className="form-group">
-              <label htmlFor="solution-content">Description *</label>
+              <label htmlFor="fc-content">Description *</label>
               <textarea
-                id="solution-content"
+                id="fc-content"
                 rows="8"
-                value={solutionData.content}
-                onChange={(e) => setSolutionData({ ...solutionData, content: e.target.value })}
-                placeholder="Describe the proposed solution. How would it address the bottleneck? What makes it feasible?"
+                value={fcData.content}
+                onChange={(e) => setFcData({ ...fcData, content: e.target.value })}
+                placeholder="Describe the proposed foundational capability. How would it address the bottleneck? What makes it feasible?"
                 required
               ></textarea>
             </div>
-
-            {/* <div className="form-group">
-              <label htmlFor="solution-references">References</label>
-              <textarea
-                id="solution-references"
-                rows="4"
-                value={solutionData.references}
-                onChange={(e) => setSolutionData({...solutionData, references: e.target.value})}
-                placeholder="List any references that support this solution (one per line). Include URLs if available."
-              ></textarea>
-            </div> */}
 
             <div className="form-actions">
               <button
@@ -320,35 +293,35 @@ export default function ContributeForm({ disciplines = [], referenceTypeOptions 
                 className="submit-button"
                 disabled={isSubmitting}
               >
-                {isSubmitting ? 'Submitting...' : 'Submit Solution'}
+                {isSubmitting ? 'Submitting...' : 'Submit Foundational Capability'}
               </button>
             </div>
           </form>
         )}
 
-        {/* Reference Form */}
-        {activeTab === 'reference' && (
-          <form onSubmit={handleReferenceSubmit}>
+        {/* Resource Form */}
+        {activeTab === 'resource' && (
+          <form onSubmit={handleResourceSubmit}>
             <div className="form-group">
-              <label htmlFor="reference-title">Reference Title *</label>
+              <label htmlFor="resource-title">Resource Title *</label>
               <input
                 type="text"
-                id="reference-title"
-                value={referenceData.title}
-                onChange={(e) => setReferenceData({ ...referenceData, title: e.target.value })}
+                id="resource-title"
+                value={resourceData.title}
+                onChange={(e) => setResourceData({ ...resourceData, title: e.target.value })}
                 required
               />
             </div>
 
             <div className="form-group">
-              <label htmlFor="reference-type">Reference Type *</label>
+              <label htmlFor="resource-type">Resource Type *</label>
               <select
-                id="reference-type"
-                value={referenceData.referenceType}
-                onChange={(e) => setReferenceData({ ...referenceData, referenceType: e.target.value })}
+                id="resource-type"
+                value={resourceData.resourceType}
+                onChange={(e) => setResourceData({ ...resourceData, resourceType: e.target.value })}
                 required
               >
-                {typeOptions.map((type) => (
+                {resourceTypeOptions.map((type) => (
                   <option key={type} value={type}>
                     {type}
                   </option>
@@ -357,25 +330,25 @@ export default function ContributeForm({ disciplines = [], referenceTypeOptions 
             </div>
 
             <div className="form-group">
-              <label htmlFor="reference-url">URL *</label>
+              <label htmlFor="resource-url">URL *</label>
               <input
                 type="url"
-                id="reference-url"
-                value={referenceData.url}
-                onChange={(e) => setReferenceData({ ...referenceData, url: e.target.value })}
+                id="resource-url"
+                value={resourceData.url}
+                onChange={(e) => setResourceData({ ...resourceData, url: e.target.value })}
                 placeholder="https://example.com/article"
                 required
               />
             </div>
 
             <div className="form-group">
-              <label htmlFor="reference-content">Summary</label>
+              <label htmlFor="resource-content">Summary</label>
               <textarea
-                id="reference-content"
+                id="resource-content"
                 rows="6"
-                value={referenceData.content}
-                onChange={(e) => setReferenceData({ ...referenceData, content: e.target.value })}
-                placeholder="Provide a brief summary of this reference and its relevance"
+                value={resourceData.content}
+                onChange={(e) => setResourceData({ ...resourceData, content: e.target.value })}
+                placeholder="Provide a brief summary of this resource and its relevance"
               ></textarea>
             </div>
 
@@ -385,7 +358,7 @@ export default function ContributeForm({ disciplines = [], referenceTypeOptions 
                 className="submit-button"
                 disabled={isSubmitting}
               >
-                {isSubmitting ? 'Submitting...' : 'Submit Reference'}
+                {isSubmitting ? 'Submitting...' : 'Submit Resource'}
               </button>
             </div>
           </form>

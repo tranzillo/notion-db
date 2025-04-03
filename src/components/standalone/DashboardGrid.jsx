@@ -10,15 +10,15 @@ const fuseOptions = {
   threshold: 0.4,
   keys: [
     {
-      name: 'title',
+      name: 'bottleneck_name', // Updated field name
       weight: 0.7
     },
     {
-      name: 'content',
+      name: 'bottleneck_description', // Updated field name
       weight: 0.5
     },
     {
-      name: 'discipline.title',
+      name: 'field.field_name', // Updated field name
       weight: 0.3
     },
     {
@@ -26,7 +26,11 @@ const fuseOptions = {
       weight: 0.4
     },
     {
-      name: 'rank',
+      name: 'bottleneck_rank', // Updated field name
+      weight: 0.2
+    },
+    {
+      name: 'bottleneck_number', // Updated field name
       weight: 0.2
     }
   ]
@@ -35,7 +39,7 @@ const fuseOptions = {
 export default function BottleneckGrid({
   bottlenecks = [],
   initialSearchQuery = '',
-  initialSelectedDisciplineIds = [],
+  initialSelectedFieldIds = [], // renamed from initialSelectedDisciplineIds
   initialSortBy = 'rank',
   initialSelectedTag = '',
   initialPrivateTag = ''
@@ -43,16 +47,20 @@ export default function BottleneckGrid({
   // Always start with consistent state for SSR
   const [filteredBottlenecks, setFilteredBottlenecks] = useState(bottlenecks);
   const [currentSearchQuery, setCurrentSearchQuery] = useState(initialSearchQuery);
-  const [selectedDisciplines, setSelectedDisciplines] = useState(initialSelectedDisciplineIds);
+  const [selectedFields, setSelectedFields] = useState(initialSelectedFieldIds);
   const [sortBy, setSortBy] = useState(initialSortBy);
   const [isListView, setIsListView] = useState(false);
   const [selectedTag, setSelectedTag] = useState(initialSelectedTag);
   const [privateTag, setPrivateTag] = useState(initialPrivateTag);
   const [fuse, setFuse] = useState(null);
   const [hasRestoredScroll, setHasRestoredScroll] = useState(false);
+  // Add this to prevent filtering until component is mounted
+  const [isMounted, setIsMounted] = useState(false);
 
   // Initialize after mount
   useEffect(() => {
+    setIsMounted(true);
+    
     try {
       // Check for global preferences
       if (typeof window !== 'undefined' && window.userPreferences) {
@@ -91,7 +99,7 @@ export default function BottleneckGrid({
         }
         
         // Check for sort parameter
-        if (urlSortBy && ['rank', 'alpha'].includes(urlSortBy)) {
+        if (urlSortBy && ['rank', 'index', 'alpha'].includes(urlSortBy)) {
           setSortBy(urlSortBy);
         }
         
@@ -112,7 +120,9 @@ export default function BottleneckGrid({
 
   // Initialize search index
   useEffect(() => {
-    setFuse(new Fuse(bottlenecks, fuseOptions));
+    if (bottlenecks.length > 0) {
+      setFuse(new Fuse(bottlenecks, fuseOptions));
+    }
   }, [bottlenecks]);
 
   // Listen for URL parameters on mount
@@ -270,18 +280,18 @@ export default function BottleneckGrid({
 
   // Apply filtering and sorting when search, disciplines, tags, or sort method change
   useEffect(() => {
-    if (!fuse) return;
+    if (!isMounted || !fuse) return;
 
     // Apply search
     let filteredResults = currentSearchQuery
       ? fuse.search(currentSearchQuery).map(result => result.item)
       : bottlenecks;
 
-    // Apply discipline filtering
-    if (selectedDisciplines.length > 0) {
+    // Apply field filtering
+    if (selectedFields.length > 0) {
       filteredResults = filteredResults.filter(bottleneck =>
-        bottleneck.discipline &&
-        selectedDisciplines.includes(bottleneck.discipline.id)
+        bottleneck.field &&
+        selectedFields.includes(bottleneck.field.id)
       );
     }
     
@@ -303,14 +313,34 @@ export default function BottleneckGrid({
     filteredResults = [...filteredResults].sort((a, b) => {
       if (sortBy === 'alpha') {
         // Sort alphabetically by title
-        return a.title.localeCompare(b.title);
+        return a.bottleneck_name.localeCompare(b.bottleneck_name);
+      } else if (sortBy === 'bottleneck_number') {
+        // Sort primarily by bottleneck_number (ascending)
+        const numberA = parseInt(a.bottleneck_number) || 0;
+        const numberB = parseInt(b.bottleneck_number) || 0;
+        
+        if (numberA === numberB) {
+          // If indices are equal, fall back to title as tiebreaker
+          return a.bottleneck_name.localeCompare(b.bottleneck_name);
+        }
+        
+        return numberA - numberB; // Lower number first
       } else {
-        // Sort by rank (descending) with alphabetical title as tiebreaker
-        const rankA = parseInt(a.rank) || 0;
-        const rankB = parseInt(b.rank) || 0;
+        // Default: sort by rank (descending) with bottleneck_number as tiebreaker
+        const rankA = parseInt(a.bottleneck_rank) || 0;
+        const rankB = parseInt(b.bottleneck_rank) || 0;
         
         if (rankA === rankB) {
-          return a.title.localeCompare(b.title);
+          // If ranks are equal, sort by bottleneck_number (ascending)
+          const numberA = parseInt(a.bottleneck_number) || 0;
+          const numberB = parseInt(b.bottleneck_number) || 0;
+          
+          if (numberA === numberB) {
+            // If both ranks and numbers are equal, fall back to alphabetical
+            return a.bottleneck_name.localeCompare(b.bottleneck_name);
+          }
+          
+          return numberA - numberB; // Lower number first
         }
         
         return rankB - rankA; // Higher rank first
@@ -320,12 +350,13 @@ export default function BottleneckGrid({
     setFilteredBottlenecks(filteredResults);
   }, [
     currentSearchQuery, 
-    selectedDisciplines, 
+    selectedFields, 
     selectedTag, 
     privateTag, 
     sortBy, 
     fuse, 
-    bottlenecks
+    bottlenecks,
+    isMounted // Add this dependency
   ]);
   
   // Attempt to restore scroll position after filtered bottlenecks are updated
@@ -363,7 +394,7 @@ export default function BottleneckGrid({
           key={bottleneck.id}
           bottleneck={bottleneck}
           searchQuery={currentSearchQuery}
-          selectedDisciplines={selectedDisciplines}
+          selectedFields={selectedFields}
         />
       ))}
     </div>

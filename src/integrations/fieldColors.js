@@ -1,33 +1,33 @@
-// src/integrations/disciplineColors.js
+// src/integrations/fieldColors.js
 import fs from 'fs';
 import path from 'path';
-import { enhanceDisciplinesWithStaticColors } from '../lib/enhancedColorUtils';
-import { extractDisciplines } from '../lib/dataUtils';
+import { enhanceFieldsWithStaticColors } from '../lib/enhancedColorUtils';
+import { extractFields } from '../lib/dataUtils';
 import { getAllData } from '../lib/notion';
 
 /**
- * Astro integration for discipline color generation
+ * Astro integration for field color generation
  * @returns {Object} - Astro integration object
  */
-export default function disciplineColorsIntegration() {
+export default function fieldColorsIntegration() {
   return {
-    name: 'discipline-colors-integration',
+    name: 'field-colors-integration',
     hooks: {
       'astro:config:setup': async ({ logger }) => {
-        logger.info('Starting discipline color generation');
+        logger.info('Starting field color generation');
         
         try {
           // Fetch data from Notion
           const { bottlenecks } = await getAllData();
           
-          // Extract unique disciplines
-          const disciplines = extractDisciplines(bottlenecks);
+          // Extract unique fields
+          const fields = extractFields(bottlenecks);
           
-          logger.info(`Found ${disciplines.length} unique disciplines`);
+          logger.info(`Found ${fields.length} unique fields`);
           
           // Generate colors
-          const { enhancedDisciplines, css } = enhanceDisciplinesWithStaticColors(
-            disciplines,
+          const { enhancedFields, css } = enhanceFieldsWithStaticColors(
+            fields,
             [   '#94eead', 
                 '#94ced3', 
                 '#9bb7dd', 
@@ -45,14 +45,14 @@ export default function disciplineColorsIntegration() {
           }
           
           // Write CSS to file
-          const cssPath = path.resolve('./src/styles/generated/discipline-colors.css');
+          const cssPath = path.resolve('./src/styles/generated/field-colors.css');
           fs.writeFileSync(cssPath, css);
           
-          // Generate JS module with enhanced disciplines
-          const jsContent = `// Generated discipline color data - DO NOT EDIT
-export const enhancedDisciplines = ${JSON.stringify(enhancedDisciplines, null, 2)};`;
+          // Generate JS module with enhanced fields
+          const jsContent = `// Generated field color data - DO NOT EDIT
+export const enhancedFields = ${JSON.stringify(enhancedFields, null, 2)};`;
           
-          const jsPath = path.resolve('./src/lib/generated/disciplineColorData.js');
+          const jsPath = path.resolve('./src/lib/generated/fieldColorData.js');
           
           // Ensure directory exists
           const jsDir = path.dirname(jsPath);
@@ -62,11 +62,11 @@ export const enhancedDisciplines = ${JSON.stringify(enhancedDisciplines, null, 2
           
           fs.writeFileSync(jsPath, jsContent);
           
-          logger.info(`Generated discipline colors for ${disciplines.length} disciplines`);
+          logger.info(`Generated field colors for ${fields.length} fields`);
           logger.info(`- CSS written to: ${cssPath}`);
           logger.info(`- JS data written to: ${jsPath}`);
         } catch (error) {
-          logger.error('Error generating discipline colors:');
+          logger.error('Error generating field colors:');
           logger.error(error);
         }
       }

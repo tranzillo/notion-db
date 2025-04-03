@@ -12,39 +12,41 @@ const notion = new Client({
 const n2m = new NotionToMarkdown({ notionClient: notion });
 
 // Type definitions for our database structures
-export interface Reference {
+export interface Resource {
   id: string;
-  title: string;
-  url: string;
+  resource_title: string;
+  resource_url: string;
   content: string;
-  referenceType: string;
+  resourceType: string;
 }
 
-export interface Discipline {
+export interface Field {
   id: string;
-  title: string;
-  content: string;
+  field_name: string;
+  field_description: string;
 }
 
-export interface Solution {
+export interface FoundationalCapability {
   id: string;
-  title: string;
-  content: string;
+  fc_name: string;
+  fc_description: string;
   slug: string;
   rank: number;
-  references: Reference[];
+  index: number;
+  resources: Resource[];
   tags: string[];
   privateTags: string[];
 }
 
 export interface Bottleneck {
   id: string;
-  title: string;
-  content: string;
+  bottleneck_name: string;
+  bottleneck_description: string;
   slug: string;
-  rank: number;
-  discipline: Discipline;
-  solutions: Solution[];
+  bottleneck_rank: number;
+  bottleneck_number: number;
+  field: Field;
+  foundational_capabilities: FoundationalCapability[];
   tags: string[];
   privateTags: string[];
 }
@@ -85,49 +87,31 @@ function extractRankFromPage(page: any, pageName: string = 'unknown') {
   return Math.min(5, Math.max(0, rank));
 }
 
-// Function to fetch and parse references
-export async function getReferences(): Promise<Reference[]> {
-  const databaseId = process.env.NOTION_REFERENCES_DB_ID as string;
+// Function to fetch and parse resources
+export async function getResources(): Promise<Resource[]> {
+  const databaseId = process.env.NOTION_RESOURCES_DB_ID as string;
   
   const response = await notion.databases.query({
     database_id: databaseId,
-    // No filter for ContentType needed, since we're already querying the References database
   });
 
   return Promise.all(
     response.results.map(async (page: any) => {
-      const title = page.properties.Title.title[0]?.plain_text || 'Untitled';
+      // Updated field names
+      const resource_title = page.properties.Resource_Title.title[0]?.plain_text || 'Untitled';
       
-      // Extract URL - handle various formats (keep existing code)
-      let url = '';
+      // Extract URL with updated field name
+      let resource_url = '';
       
-      // Try standard URL property
-      if (page.properties.URL && page.properties.URL.url) {
-        url = page.properties.URL.url;
-      }
-      // Also try 'Url' (capitalization variation)
-      else if (page.properties.Url && page.properties.Url.url) {
-        url = page.properties.Url.url;
-      }
-      // Also try looking for a property with type 'url'
-      else {
-        for (const [key, value] of Object.entries(page.properties)) {
-          if ((value as any).type === 'url' && (value as any).url) {
-            url = (value as any).url;
-            break;
-          }
-        }
+      if (page.properties.Resource_URL && page.properties.Resource_URL.url) {
+        resource_url = page.properties.Resource_URL.url;
       }
       
-      // Extract referenceType - look for ReferenceType or Type property
-      let referenceType = 'Publication'; // Default value
+      // Extract resourceType with updated field name
+      let resourceType = 'Publication'; // Default value
       
-      if (page.properties.ReferenceType && page.properties.ReferenceType.select) {
-        referenceType = page.properties.ReferenceType.select.name || referenceType;
-      }
-      // Fall back to Type if ReferenceType doesn't exist
-      else if (page.properties.Type && page.properties.Type.select) {
-        referenceType = page.properties.Type.select.name || referenceType;
+      if (page.properties.Resource_Type && page.properties.Resource_Type.select) {
+        resourceType = page.properties.Resource_Type.select.name || resourceType;
       }
       
       const mdBlocks = await n2m.pageToMarkdown(page.id);
@@ -135,17 +119,17 @@ export async function getReferences(): Promise<Reference[]> {
       
       return {
         id: page.id,
-        title,
-        url,
+        resource_title,
+        resource_url,
         content: content.parent,
-        referenceType
+        resourceType
       };
     })
   );
 }
-// Function to fetch reference type options as strings
-export async function getReferenceTypeOptions(): Promise<string[]> {
-  const databaseId = process.env.NOTION_REFERENCES_DB_ID as string;
+// Function to fetch resource type options as strings
+export async function getResourceTypeOptions(): Promise<string[]> {
+  const databaseId = process.env.NOTION_RESOURCES_DB_ID as string;
   
   try {
     // Fetch database information to get the select options
@@ -153,12 +137,12 @@ export async function getReferenceTypeOptions(): Promise<string[]> {
       database_id: databaseId,
     });
     
-    // First try ReferenceType property
+    // First try ResourceType property
     let typeProperty = Object.values(database.properties).find(
-      (prop: any) => prop.name === 'ReferenceType' && prop.type === 'select'
+      (prop: any) => prop.name === 'ResourceType' && prop.type === 'select'
     );
     
-    // Fall back to Type property if ReferenceType doesn't exist
+    // Fall back to Type property if ResourceType doesn't exist
     if (!typeProperty) {
       typeProperty = Object.values(database.properties).find(
         (prop: any) => prop.name === 'Type' && prop.type === 'select'
@@ -166,21 +150,21 @@ export async function getReferenceTypeOptions(): Promise<string[]> {
     }
     
     if (!typeProperty || !typeProperty.select || !typeProperty.select.options) {
-      console.warn('No reference type options found in Notion database');
+      console.warn('No resource type options found in Notion database');
       return ['Publication']; // Default option
     }
     
     // Extract just the option names
     return typeProperty.select.options.map((option: any) => option.name);
   } catch (error) {
-    console.error('Error fetching reference type options:', error);
+    console.error('Error fetching resource type options:', error);
     return ['Publication']; // Default option
   }
 }
 
 // Function to fetch and parse disciplines
-export async function getDisciplines(): Promise<Discipline[]> {
-  const databaseId = process.env.NOTION_DISCIPLINES_DB_ID as string;
+export async function getFields(): Promise<Field[]> {
+  const databaseId = process.env.NOTION_FIELDS_DB_ID as string;
 
   const response = await notion.databases.query({
     database_id: databaseId,
@@ -188,22 +172,22 @@ export async function getDisciplines(): Promise<Discipline[]> {
 
   return Promise.all(
     response.results.map(async (page: any) => {
-      const title = page.properties.Title.title[0]?.plain_text || 'Untitled';
+      const field_name = page.properties.Field_Name.title[0]?.plain_text || 'Untitled';
       const mdBlocks = await n2m.pageToMarkdown(page.id);
-      const content = n2m.toMarkdownString(mdBlocks);
+      const field_description = n2m.toMarkdownString(mdBlocks);
 
       return {
         id: page.id,
-        title,
-        content: content.parent
+        field_name,
+        field_description: field_description.parent
       };
     })
   );
 }
 
-// Function to fetch and parse solutions with their references
-export async function getSolutions(references: Reference[]): Promise<Solution[]> {
-  const databaseId = process.env.NOTION_SOLUTIONS_DB_ID as string;
+// Update the getFoundationalCapabilities function (previously getSolutions)
+export async function getFoundationalCapabilities(resources: Resource[]): Promise<FoundationalCapability[]> {
+  const databaseId = process.env.NOTION_CAPABILITIES_DB_ID as string;
 
   const response = await notion.databases.query({
     database_id: databaseId,
@@ -211,127 +195,211 @@ export async function getSolutions(references: Reference[]): Promise<Solution[]>
 
   return Promise.all(
     response.results.map(async (page: any) => {
-      const title = page.properties.Title.title[0]?.plain_text || 'Untitled';
+      const fc_name = page.properties.FC_Name.title[0]?.plain_text || 'Untitled';
 
-      // Get the reference relations
-      const referenceRelations = page.properties.References?.relation || [];
-      const solutionReferences = referenceRelations.map((ref: any) => {
-        return references.find(r => r.id === ref.id);
+      // Get the resource relations with updated field name
+      const resourceRelations = page.properties.Resources?.relation || [];
+      const fcResources = resourceRelations.map((ref: any) => {
+        return resources.find(r => r.id === ref.id);
       }).filter(Boolean);
 
-      // Extract rank using the helper function
-      const rank = extractRankFromPage(page, title);
+      // Extract fc_description directly from property
+      let fc_description = '';
+      if (page.properties.FC_Description && 
+          page.properties.FC_Description.rich_text && 
+          page.properties.FC_Description.rich_text.length > 0) {
+        fc_description = page.properties.FC_Description.rich_text.map(
+          (text: any) => text.plain_text
+        ).join('');
+      } else {
+        // Fallback to page content if the property doesn't exist
+        const mdBlocks = await n2m.pageToMarkdown(page.id);
+        const content = n2m.toMarkdownString(mdBlocks);
+        fc_description = content.parent;
+      }
 
-      const mdBlocks = await n2m.pageToMarkdown(page.id);
-      const content = n2m.toMarkdownString(mdBlocks);
+      // Extract rank
+      const rank = extractRankFromPage(page, fc_name);
 
-      // Extract tags (public)
-      let tags: string[] = [];
-      if (page.properties.Tags && page.properties.Tags.multi_select) {
-        tags = page.properties.Tags.multi_select.map((tag: any) => tag.name);
+      // Extract tags (public) - now with relations
+      let tags = [];
+      if (page.properties.Tags && page.properties.Tags.relation) {
+        // Store tag IDs for now
+        tags = page.properties.Tags.relation.map((tagRelation: any) => tagRelation.id);
       }
       
       // Extract private tags
-      let privateTags: string[] = [];
+      let privateTags = [];
       if (page.properties.PrivateTags && page.properties.PrivateTags.multi_select) {
         privateTags = page.properties.PrivateTags.multi_select.map((tag: any) => tag.name);
       }
 
-      return {
-        id: page.id,
-        title,
-        content: content.parent,
-        rank,
-        references: solutionReferences,
-        tags,
-        privateTags
-      };
-    })
-  );
-}
-
-// Function to fetch and parse bottlenecks with their disciplines and solutions
-export async function getBottlenecks(
-  disciplines: Discipline[],
-  solutions: Solution[]
-): Promise<Bottleneck[]> {
-  const databaseId = process.env.NOTION_BOTTLENECKS_DB_ID as string;
-
-  const response = await notion.databases.query({
-    database_id: databaseId,
-  });
-
-  return Promise.all(
-    response.results.map(async (page: any) => {
-      const title = page.properties.Title.title[0]?.plain_text || 'Untitled';
-
-      // Get the discipline relation
-      const disciplineRelation = page.properties.Discipline?.relation[0] || null;
-      const bottleneckDiscipline = disciplineRelation
-        ? disciplines.find(d => d.id === disciplineRelation.id)
-        : null;
-
-      // Get the solution relations
-      const solutionRelations = page.properties.Solutions?.relation || [];
-      const bottleneckSolutions = solutionRelations.map((sol: any) => {
-        return solutions.find(s => s.id === sol.id);
-      }).filter(Boolean);
-
-      // Extract rank using the helper function
-      const rank = extractRankFromPage(page, title);
-
-      const mdBlocks = await n2m.pageToMarkdown(page.id);
-      const content = n2m.toMarkdownString(mdBlocks);
-
-      // Generate a slug from the title
-      const slug = title.toLowerCase().replace(/[^\w\s]/gi, '').replace(/\s+/g, '-');
-
-      let tags: string[] = [];
-      if (page.properties.Tags && page.properties.Tags.multi_select) {
-        tags = page.properties.Tags.multi_select.map((tag: any) => tag.name);
-      }
-      
-      // Extract private tags
-      let privateTags: string[] = [];
-      if (page.properties.PrivateTags && page.properties.PrivateTags.multi_select) {
-        privateTags = page.properties.PrivateTags.multi_select.map((tag: any) => tag.name);
-      }
+      // Generate slug if needed
+      const slug = fc_name.toLowerCase().replace(/[^\w\s]/gi, '').replace(/\s+/g, '-');
 
       return {
         id: page.id,
-        title,
-        content: content.parent,
+        fc_name,
+        fc_description,
         slug,
         rank,
-        discipline: bottleneckDiscipline || { id: '', title: 'Uncategorized', content: '' },
-        solutions: bottleneckSolutions,
+        resources: fcResources,
         tags,
         privateTags
       };
     })
   );
 }
+// Function to fetch and parse bottlenecks with their disciplines and solutions
+export async function getBottlenecks(
+  fields: Field[],
+  foundationalCapabilities: FoundationalCapability[]
+): Promise<Bottleneck[]> {
+  const databaseId = process.env.NOTION_BOTTLENECKS_DB_ID as string;
+  
+  const response = await notion.databases.query({
+    database_id: databaseId,
+  });
 
-// Main function to get all data with relationships
+  return Promise.all(
+    response.results.map(async (page: any) => {
+      const bottleneck_name = page.properties.Bottleneck_Name.title[0]?.plain_text || 'Untitled';
+
+      // Get the field relation (previously discipline)
+      const fieldRelation = page.properties.Fields?.relation[0] || null;
+      const bottleneckField = fieldRelation
+        ? fields.find(d => d.id === fieldRelation.id)
+        : null;
+
+      // Get the foundational capabilities relations (previously solutions)
+      const fcRelations = page.properties.Foundational_Capabilities?.relation || [];
+      const bottleneckFCs = fcRelations.map((fc: any) => {
+        return foundationalCapabilities.find(s => s.id === fc.id);
+      }).filter(Boolean);
+
+      // Extract bottleneck description directly from property
+      let bottleneck_description = '';
+      if (page.properties.Bottleneck_Description && 
+          page.properties.Bottleneck_Description.rich_text && 
+          page.properties.Bottleneck_Description.rich_text.length > 0) {
+        bottleneck_description = page.properties.Bottleneck_Description.rich_text.map(
+          (text: any) => text.plain_text
+        ).join('');
+      } else {
+        // Fallback to page content if the property doesn't exist
+        const mdBlocks = await n2m.pageToMarkdown(page.id);
+        const content = n2m.toMarkdownString(mdBlocks);
+        bottleneck_description = content.parent;
+      }
+
+      // Extract rank with updated field name
+      let bottleneck_rank = 0;
+      try {
+        if (page.properties.Bottleneck_Rank && page.properties.Bottleneck_Rank.type === 'number') {
+          bottleneck_rank = page.properties.Bottleneck_Rank.number !== null ? page.properties.Bottleneck_Rank.number : 0;
+        }
+      } catch (error) {
+        console.error(`Error extracting rank from ${bottleneck_name}:`, error);
+      }
+      
+      // Extract bottleneck number (previously index)
+      let bottleneck_number = 0;
+      try {
+        if (page.properties.Bottleneck_Number && page.properties.Bottleneck_Number.type === 'number') {
+          bottleneck_number = page.properties.Bottleneck_Number.number !== null ? page.properties.Bottleneck_Number.number : 0;
+        }
+      } catch (error) {
+        console.error(`Error extracting number from ${bottleneck_name}:`, error);
+      }
+
+      // Generate a slug from the name
+      const slug = bottleneck_name.toLowerCase().replace(/[^\w\s]/gi, '').replace(/\s+/g, '-');
+
+      // Extract tags with updated relationship
+      let tags = [];
+      if (page.properties.Tags && page.properties.Tags.relation) {
+        // We need to fetch each tag's name from the Tags database
+        // For now, we'll just store the IDs and handle tag names later
+        tags = page.properties.Tags.relation.map((tagRelation: any) => tagRelation.id);
+      }
+      
+      // Extract private tags
+      let privateTags = [];
+      if (page.properties.PrivateTags && page.properties.PrivateTags.multi_select) {
+        privateTags = page.properties.PrivateTags.multi_select.map((tag: any) => tag.name);
+      }
+
+      return {
+        id: page.id,
+        bottleneck_name,
+        bottleneck_description,
+        slug,
+        bottleneck_rank,
+        bottleneck_number,
+        field: bottleneckField || { id: '', field_name: 'Uncategorized', field_description: '' },
+        foundational_capabilities: bottleneckFCs,
+        tags,
+        privateTags
+      };
+    })
+  );
+}
+export async function getTags(): Promise<Map<string, string>> {
+  const databaseId = process.env.NOTION_TAGS_DB_ID as string;
+  
+  try {
+    const response = await notion.databases.query({
+      database_id: databaseId,
+    });
+    
+    // Create a map of tag ID to tag name
+    const tagMap = new Map<string, string>();
+    
+    response.results.forEach((page: any) => {
+      const tagName = page.properties.Name?.title[0]?.plain_text || 'Unnamed Tag';
+      tagMap.set(page.id, tagName);
+    });
+    
+    return tagMap;
+  } catch (error) {
+    console.error('Error fetching tags:', error);
+    return new Map();
+  }
+}
+
+// Update getAllData to include tags
 export async function getAllData(): Promise<{
-  references: Reference[];
-  disciplines: Discipline[];
-  solutions: Solution[];
+  resources: Resource[];
+  fields: Field[];
+  foundationalCapabilities: FoundationalCapability[];
   bottlenecks: Bottleneck[];
-  referenceTypeOptions: string[];
+  resourceTypeOptions: string[];
 }> {
   // Fetch data in order to maintain relationships
-  const references = await getReferences();
-  const disciplines = await getDisciplines();
-  const solutions = await getSolutions(references);
-  const bottlenecks = await getBottlenecks(disciplines, solutions);
-  const referenceTypeOptions = await getReferenceTypeOptions();
+  const resources = await getResources();
+  const fields = await getFields();
+  const foundationalCapabilities = await getFoundationalCapabilities(resources);
+  const bottlenecks = await getBottlenecks(fields, foundationalCapabilities);
+  const resourceTypeOptions = await getResourceTypeOptions();
+  
+  // Get all tags
+  const tagMap = await getTags();
+  
+  // Replace tag IDs with tag names in bottlenecks
+  bottlenecks.forEach(bottleneck => {
+    bottleneck.tags = bottleneck.tags.map(tagId => tagMap.get(tagId) || 'Unknown Tag');
+  });
+  
+  // Replace tag IDs with tag names in foundational capabilities
+  foundationalCapabilities.forEach(capability => {
+    capability.tags = capability.tags.map(tagId => tagMap.get(tagId) || 'Unknown Tag');
+  });
 
   return {
-    references,
-    disciplines,
-    solutions,
+    resources,
+    fields,
+    foundationalCapabilities,
     bottlenecks,
-    referenceTypeOptions
+    resourceTypeOptions
   };
 }

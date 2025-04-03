@@ -1,9 +1,10 @@
+// astro.config.mjs
 import { defineConfig } from 'astro/config';
 import react from '@astrojs/react';
-import disciplineColorsIntegration from './src/integrations/disciplineColors';
+import fieldColorsIntegration from './src/integrations/fieldColors';
 
 export default defineConfig({
-  integrations: [react(), disciplineColorsIntegration(),],
+  integrations: [react(), fieldColorsIntegration()],
   // Enable SSR for dynamic routes
   output: 'static',
   // Use SCSS for styling

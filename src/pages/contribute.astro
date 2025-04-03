@@ -3,8 +3,8 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 import ContributeForm from "../components/standalone/ContributeForm";
 import { getEnhancedData } from "../lib/enhancedData";
 
-// Fetch disciplines for the form dropdown
-const { disciplines, referenceTypeOptions } = await getEnhancedData();
+// Fetch fields for the form dropdown
+const { fields, resourceTypeOptions } = await getEnhancedData();
 ---
 
 <BaseLayout title="Contribute - Convergent 101">
@@ -18,7 +18,7 @@ const { disciplines, referenceTypeOptions } = await getEnhancedData();
     </div>
     
     <div class="contribute-content">
-      <ContributeForm client:load disciplines={disciplines} referenceTypeOptions={referenceTypeOptions} />
+      <ContributeForm client:load fields={fields} resourceTypeOptions={resourceTypeOptions} />
     </div>
   </div>
 </BaseLayout>

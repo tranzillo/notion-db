@@ -1,94 +1,21 @@
 // functions/submit-contribution.js
-const { Client } = require('@notionhq/client');
-
-exports.handler = async function(event, context) {
-  // Only allow POST requests
-  if (event.httpMethod !== 'POST') {
-    return {
-      statusCode: 405,
-      body: JSON.stringify({ message: 'Method not allowed' }),
-    };
-  }
-  
-  try {
-    // Parse the request body
-    const payload = JSON.parse(event.body);
-    const { type, data } = payload;
-    
-    // Validate the request
-    if (!type || !data) {
-      return {
-        statusCode: 400,
-        body: JSON.stringify({ message: 'Invalid request: Missing type or data' }),
-      };
-    }
-    
-    // Check if required environment variables exist
-    if (!process.env.NOTION_CONTRIBUTIONS_API_KEY || !process.env.NOTION_CONTRIBUTIONS_DB_ID) {
-      return {
-        statusCode: 500,
-        body: JSON.stringify({ 
-          message: 'Server configuration error: Missing environment variables'
-        }),
-      };
-    }
-    
-    // Initialize Notion client
-    const notion = new Client({
-      auth: process.env.NOTION_CONTRIBUTIONS_API_KEY
-    });
-    
-    // Process based on submission type
-    let result;
-    switch (type) {
-      case 'bottleneck':
-        result = await handleBottleneckSubmission(notion, data);
-        break;
-      case 'solution':
-        result = await handleSolutionSubmission(notion, data);
-        break;
-      case 'reference':
-        result = await handleReferenceSubmission(notion, data);
-        break;
-      default:
-        return {
-          statusCode: 400,
-          body: JSON.stringify({ message: `Invalid contribution type: ${type}` }),
-        };
-    }
-    
-    return result;
-  } catch (error) {
-    return {
-      statusCode: 500,
-      body: JSON.stringify({ 
-        message: 'Error processing request',
-        error: error.message 
-      }),
-    };
-  }
-};
-
-/**
- * Submit a bottleneck contribution to Notion
- */
 async function handleBottleneckSubmission(notion, data) {
   // Validate required fields
-  if (!data.title || !data.content) {
+  if (!data.bottleneck_name || !data.bottleneck_description) {
     return {
       statusCode: 400,
-      body: JSON.stringify({ message: 'Missing required fields for bottleneck (title, content)' }),
+      body: JSON.stringify({ message: 'Missing required fields for bottleneck (bottleneck_name, bottleneck_description)' }),
     };
   }
 
   try {
     // Create page properties object
     const pageProperties = {
-      Title: {
+      Bottleneck_Name: {
         title: [
           {
             text: {
-              content: data.title,
+              content: data.bottleneck_name,
             },
           },
         ],
@@ -103,17 +30,17 @@ async function handleBottleneckSubmission(notion, data) {
           name: 'Bottleneck',
         },
       },
-      Rank: {
-        number: data.rank || 0,
+      Bottleneck_Rank: {
+        number: data.bottleneck_rank || 0,
       },
     };
     
-    // Add Discipline relation if provided
-    if (data.disciplineId) {
-      pageProperties.Discipline = {
+    // Add Field relation if provided
+    if (data.fieldId) {
+      pageProperties.Fields = {
         relation: [
           {
-            id: data.disciplineId,
+            id: data.fieldId,
           },
         ],
       };
@@ -135,7 +62,7 @@ async function handleBottleneckSubmission(notion, data) {
               {
                 type: 'text',
                 text: {
-                  content: data.content,
+                  content: data.bottleneck_description,
                 },
               },
             ],
@@ -159,26 +86,23 @@ async function handleBottleneckSubmission(notion, data) {
   }
 }
 
-/**
- * Submit a solution contribution to Notion
- */
-async function handleSolutionSubmission(notion, data) {
+async function handleCapabilitySubmission(notion, data) {
   // Validate required fields
-  if (!data.title || !data.content) {
+  if (!data.fc_name || !data.fc_description) {
     return {
       statusCode: 400,
-      body: JSON.stringify({ message: 'Missing required fields for solution (title, content)' }),
+      body: JSON.stringify({ message: 'Missing required fields for capability (fc_name, fc_description)' }),
     };
   }
 
   try {
     // Create the page properties
     const pageProperties = {
-      Title: {
+      FC_Name: {
         title: [
           {
             text: {
-              content: data.title,
+              content: data.fc_name,
             },
           },
         ],
@@ -190,11 +114,8 @@ async function handleSolutionSubmission(notion, data) {
       },
       Type: {
         select: {
-          name: 'Solution',
+          name: 'Foundational Capability',
         },
-      },
-      Rank: {
-        number: data.rank || 0,
       },
     };
     
@@ -211,41 +132,13 @@ async function handleSolutionSubmission(notion, data) {
       };
     }
     
-    // Prepare children blocks
-    const childBlocks = [
-      {
-        object: 'block',
-        type: 'paragraph',
-        paragraph: {
-          rich_text: [
-            {
-              type: 'text',
-              text: {
-                content: data.content,
-              },
-            },
-          ],
-        },
+    // Create the page in Notion
+    await notion.pages.create({
+      parent: {
+        database_id: process.env.NOTION_CONTRIBUTIONS_DB_ID,
       },
-    ];
-    
-    // Add references if provided
-    if (data.references) {
-      childBlocks.push(
-        {
-          object: 'block',
-          type: 'heading_3',
-          heading_3: {
-            rich_text: [
-              {
-                type: 'text',
-                text: {
-                  content: 'References',
-                },
-              },
-            ],
-          },
-        },
+      properties: pageProperties,
+      children: [
         {
           object: 'block',
           type: 'paragraph',
@@ -254,27 +147,18 @@ async function handleSolutionSubmission(notion, data) {
               {
                 type: 'text',
                 text: {
-                  content: data.references,
+                  content: data.fc_description,
                 },
               },
             ],
           },
-        }
-      );
-    }
-    
-    // Create the page in Notion
-    await notion.pages.create({
-      parent: {
-        database_id: process.env.NOTION_CONTRIBUTIONS_DB_ID,
-      },
-      properties: pageProperties,
-      children: childBlocks,
+        },
+      ],
     });
 
     return {
       statusCode: 200,
-      body: JSON.stringify({ message: 'Solution contribution submitted successfully' }),
+      body: JSON.stringify({ message: 'Foundational Capability contribution submitted successfully' }),
     };
   } catch (error) {
     return {
@@ -287,31 +171,27 @@ async function handleSolutionSubmission(notion, data) {
   }
 }
 
-/**
- * Submit a reference contribution to Notion
- */
-async function handleReferenceSubmission(notion, data) {
+async function handleResourceSubmission(notion, data) {
   // Validate required fields
-  if (!data.title || !data.url) {
+  if (!data.resource_title || !data.resource_url) {
     return {
       statusCode: 400,
-      body: JSON.stringify({ message: 'Missing required fields for reference (title, url)' }),
+      body: JSON.stringify({ message: 'Missing required fields for resource (resource_title, resource_url)' }),
     };
   }
 
   try {
-    // Create the page in Notion with both ContentType and ReferenceType
-    // ContentType is needed in the contributions database to know where this should go
+    // Create the page in Notion with updated field names
     await notion.pages.create({
       parent: {
         database_id: process.env.NOTION_CONTRIBUTIONS_DB_ID,
       },
       properties: {
-        Title: {
+        Resource_Title: {
           title: [
             {
               text: {
-                content: data.title,
+                content: data.resource_title,
               },
             },
           ],
@@ -323,16 +203,16 @@ async function handleReferenceSubmission(notion, data) {
         },
         ContentType: {  // This is needed in the contributions database
           select: {
-            name: 'Reference',
+            name: 'Resource',
           },
         },
-        ReferenceType: {  // This specifies what kind of reference it is
+        Resource_Type: {  // This specifies what kind of resource it is
           select: {
-            name: data.referenceType || 'Publication',
+            name: data.resource_type || 'Publication',
           },
         },
-        URL: {
-          url: data.url,
+        Resource_URL: {
+          url: data.resource_url,
         },
       },
       // Add the content summary if provided
@@ -358,7 +238,7 @@ async function handleReferenceSubmission(notion, data) {
 
     return {
       statusCode: 200,
-      body: JSON.stringify({ message: 'Reference contribution submitted successfully' }),
+      body: JSON.stringify({ message: 'Resource contribution submitted successfully' }),
     };
   } catch (error) {
     return {
@@ -370,3 +250,62 @@ async function handleReferenceSubmission(notion, data) {
     };
   }
 }
+
+// Update the exports.handler function to handle the new type names
+exports.handler = async function(event, context) {
+  // Only allow POST requests
+  if (event.httpMethod !== 'POST') {
+    return {
+      statusCode: 405,
+      body: JSON.stringify({ message: 'Method not allowed' }),
+    };
+  }
+  
+  try {
+    // Parse the request body
+    const payload = JSON.parse(event.body);
+    const { type, data } = payload;
+    
+    // Validate the request
+    if (!type || !data) {
+      return {
+        statusCode: 400,
+        body: JSON.stringify({ message: 'Invalid request: Missing type or data' }),
+      };
+    }
+    
+    // Initialize Notion client
+    const notion = new Client({
+      auth: process.env.NOTION_CONTRIBUTIONS_API_KEY
+    });
+    
+    // Process based on submission type
+    let result;
+    switch (type) {
+      case 'bottleneck':
+        result = await handleBottleneckSubmission(notion, data);
+        break;
+      case 'capability': // Updated from 'solution'
+        result = await handleCapabilitySubmission(notion, data);
+        break;
+      case 'resource': // Updated from 'reference'
+        result = await handleResourceSubmission(notion, data);
+        break;
+      default:
+        return {
+          statusCode: 400,
+          body: JSON.stringify({ message: `Invalid contribution type: ${type}` }),
+        };
+    }
+    
+    return result;
+  } catch (error) {
+    return {
+      statusCode: 500,
+      body: JSON.stringify({ 
+        message: 'Error processing request',
+        error: error.message 
+      }),
+    };
+  }
+};

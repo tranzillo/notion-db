@@ -72,13 +72,13 @@ export function generateColorFamily(baseColor) {
 }
 
 /**
- * Generate CSS variables for all discipline colors
+ * Generate CSS variables for all field colors
  * @param {Array} colorFamilies - Array of color family objects
  * @returns {string} - CSS string with custom properties
  */
 export function generateColorCssVariables(colorFamilies) {
     return colorFamilies.map((family, index) => {
-        const prefix = `--discipline-color-${index}`;
+        const prefix = `--field-color-${index}`;
         return `
   ${prefix}: ${family.base};
   ${prefix}-light: ${family.light};
@@ -89,51 +89,51 @@ export function generateColorCssVariables(colorFamilies) {
 }
 
 /**
- * Generate CSS rules for discipline colors
- * @param {number} count - Number of disciplines
+ * Generate CSS rules for field colors
+ * @param {number} count - Number of fields
  * @returns {string} - CSS string with class selectors
  */
-export function generateDisciplineColorClasses(count) {
+export function generateFieldColorClasses(count) {
     let css = '';
 
     for (let i = 0; i < count; i++) {
         css += `
-            .discipline-gradient-${i} {
-                background-color: var(--discipline-color-${i}-light);
+            .field-gradient-${i} {
+                background-color: var(--field-color-${i}-light);
             }
 
-            .discipline-gradient-${i}.active {
-                border-color: var(--discipline-color-${i}-dark);
+            .field-gradient-${i}.active {
+                border-color: var(--field-color-${i}-dark);
             }
 
-            .discipline-gradient-${i}:hover input + label {
-                background-color: var(--discipline-color-${i}-hover) !important;
+            .field-gradient-${i}:hover input + label {
+                background-color: var(--field-color-${i}-hover) !important;
            }
 
-            .discipline-gradient-${i}.active input + label {
-                background-color: var(--discipline-color-${i}-light) !important;
-                border-color: var(--discipline-color-${i}-dark) !important;
+            .field-gradient-${i}.active input + label {
+                background-color: var(--field-color-${i}-light) !important;
+                border-color: var(--field-color-${i}-dark) !important;
             }
             
             
-            .dark-mode .discipline-gradient-${i} {
-                border-color: var(--discipline-color-${i}-dark) !important;
+            .dark-mode .field-gradient-${i} {
+                border-color: var(--field-color-${i}-dark) !important;
                 color: #818374 !important;
                 background-color: transparent !important;
             }
 
-            .dark-mode .discipline-gradient-${i}.active {
-                color: var(--discipline-color-${i}-hover) !important;
+            .dark-mode .field-gradient-${i}.active {
+                color: var(--field-color-${i}-hover) !important;
             }
 
-            .dark-mode .discipline-gradient-${i}:hover input + label {
-                border-color: var(--discipline-color-${i}-dark) !important;
-                color: var(--discipline-color-${i}-hover) !important;
+            .dark-mode .field-gradient-${i}:hover input + label {
+                border-color: var(--field-color-${i}-dark) !important;
+                color: var(--field-color-${i}-hover) !important;
                 background-color: transparent !important;
            }
 
-            .dark-mode .discipline-gradient-${i}.active input + label {
-                color: var(--discipline-color-${i}-light) !important;
+            .dark-mode .field-gradient-${i}.active input + label {
+                color: var(--field-color-${i}-light) !important;
                 background-color: transparent !important;
             }`;
     }
@@ -142,13 +142,13 @@ export function generateDisciplineColorClasses(count) {
 }
 
 /**
- * Generate complete CSS for discipline colors
- * @param {Array} disciplines - Array of discipline objects
+ * Generate complete CSS for field colors
+ * @param {Array} fields - Array of field objects
  * @param {Array} colorRange - Optional array of colors defining gradient endpoints
- * @returns {string} - Complete CSS string for discipline colors
+ * @returns {string} - Complete CSS string for field colors
  */
-export function generateDisciplineColorCss(disciplines, colorRange) {
-    const count = disciplines.length;
+export function generateFieldColorCss(fields, colorRange) {
+    const count = fields.length;
 
     // Generate base colors from gradient
     const baseColors = generateGradientColors(count, colorRange);
@@ -160,7 +160,7 @@ export function generateDisciplineColorCss(disciplines, colorRange) {
     const cssVariables = generateColorCssVariables(colorFamilies);
 
     // Generate class selectors
-    const cssClasses = generateDisciplineColorClasses(count);
+    const cssClasses = generateFieldColorClasses(count);
 
     // Combine into complete CSS
     return `:root {
@@ -171,36 +171,72 @@ ${cssClasses}`;
 }
 
 /**
- * Enhance disciplines with color information for static generation
- * @param {Array} disciplines - Array of discipline objects
+ * Enhance fields with color information for static generation
+ * @param {Array} fields - Array of field objects
  * @param {Array} colorRange - Optional array of colors defining gradient endpoints
- * @returns {Object} - Object with enhanced disciplines and CSS
+ * @returns {Object} - Object with enhanced fields and CSS
  */
-export function enhanceDisciplinesWithStaticColors(disciplines, colorRange = ['#4361ee', '#7209b7', '#f72585']) {
-    if (!disciplines || !Array.isArray(disciplines) || disciplines.length === 0) {
-        return { enhancedDisciplines: [], css: '' };
+export function enhanceFieldsWithStaticColors(fields, colorRange = ['#4361ee', '#7209b7', '#f72585']) {
+    if (!fields || !Array.isArray(fields) || fields.length === 0) {
+        return { enhancedFields: [], css: '' };
     }
 
     // Generate base colors from gradient
-    const baseColors = generateGradientColors(disciplines.length, colorRange);
+    const baseColors = generateGradientColors(fields.length, colorRange);
 
-    // Enhance disciplines with color information
-    const enhancedDisciplines = disciplines.map((discipline, index) => {
+    // Enhance fields with color information
+    const enhancedFields = fields.map((field, index) => {
         const colorName = `gradient-${index}`;
-        const colorClass = `discipline-gradient-${index}`;
+        const colorClass = `field-gradient-${index}`;
 
         return {
-            ...discipline,
+            ...field,
             colorName,
             colorClass
         };
     });
 
     // Generate the CSS
-    const css = generateDisciplineColorCss(disciplines, colorRange);
+    const css = generateFieldColorCss(fields, colorRange);
 
     return {
-        enhancedDisciplines,
+        enhancedFields,
         css
     };
 }
+
+/**
+ * Helper function to get field color CSS class based on field ID
+ * @param {string} fieldId - Field ID to get color class for
+ * @param {Array} enhancedFields - Array of enhanced field objects with color info
+ * @returns {string} - CSS class for the field color
+ */
+export function getFieldColorClass(fieldId, enhancedFields) {
+    const field = enhancedFields.find(field => field.id === fieldId);
+    return field ? field.colorClass : '';
+}
+
+/**
+ * Get a random field color class
+ * @param {number} seed - Optional seed number for deterministic selection
+ * @param {number} totalColors - Total number of available color classes
+ * @returns {string} - Random field color CSS class
+ */
+export function getRandomFieldColorClass(seed, totalColors = 8) {
+    const index = seed 
+        ? Math.abs(seed) % totalColors 
+        : Math.floor(Math.random() * totalColors);
+    return `field-gradient-${index}`;
+}
+
+export default {
+    simpleHash,
+    generateGradientColors,
+    generateColorFamily,
+    generateColorCssVariables,
+    generateFieldColorClasses,
+    generateFieldColorCss,
+    enhanceFieldsWithStaticColors,
+    getFieldColorClass,
+    getRandomFieldColorClass
+};

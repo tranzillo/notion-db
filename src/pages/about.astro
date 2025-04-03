@@ -1,0 +1,129 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { getEnhancedData } from "../lib/enhancedData";
+
+// Fetch content from Notion
+const { contentAreas } = await getEnhancedData();
+
+// Get about page content
+const aboutContent = contentAreas?.about || {
+  title: "About Convergent 101",
+  content: "Content is currently being loaded from Notion."
+};
+---
+
+<BaseLayout title={`${aboutContent.title} - Convergent 101`}>
+  <div class="about-page">
+    <div class="about-header">
+      <h1>{aboutContent.title}</h1>
+    </div>
+    
+    <div class="about-content">
+      <div class="content-container notion-content" set:html={aboutContent.content} />
+    </div>
+  </div>
+</BaseLayout>
+
+<style lang="scss">
+.about-page {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-xl;
+  max-width: 80ch;
+  margin: 0 auto;
+}
+
+
+.about-content {
+  line-height: 1.6;
+  color: var(--text-light);
+  
+  .content-container {
+    :global(h2) {
+      font-size: $font-size-xl;
+      margin-top: $spacing-xxl;
+      margin-bottom: $spacing-md;
+      color: var(--text-color);
+    }
+    
+    :global(h3) {
+      font-size: $font-size-lg;
+      margin-top: $spacing-lg;
+      margin-bottom: $spacing-sm;
+      color: var(--text-color);
+    }
+    
+    :global(p) {
+      margin-bottom: $spacing-lg;
+    }
+    
+    :global(ul), :global(ol) {
+      margin-bottom: $spacing-lg;
+      padding-left: $spacing-xl;
+    }
+    
+    :global(li) {
+      margin-bottom: $spacing-sm;
+    }
+    
+    :global(a) {
+      color: var(--primary-color);
+      text-decoration: none;
+      
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+    
+    :global(blockquote) {
+      border-left: 4px solid var(--border-color);
+      padding-left: $spacing-lg;
+      margin-left: 0;
+      margin-bottom: $spacing-lg;
+      color: var(--text-lighter);
+    }
+    
+    :global(img) {
+      max-width: 100%;
+      height: auto;
+      border-radius: $border-radius-md;
+      margin: $spacing-md 0;
+    }
+    
+    :global(code) {
+      background-color: var(--background-color-dark);
+      padding: $spacing-xs $spacing-sm;
+      border-radius: $border-radius-sm;
+      font-family: monospace;
+    }
+    
+    :global(pre) {
+      background-color: var(--background-color-dark);
+      padding: $spacing-md;
+      border-radius: $border-radius-md;
+      overflow-x: auto;
+      margin-bottom: $spacing-lg;
+      
+      :global(code) {
+        background-color: transparent;
+        padding: 0;
+      }
+    }
+  }
+}
+
+// Dark mode adjustments
+.dark-mode {
+  .about-content {
+    .content-container {
+      :global(blockquote) {
+        border-left-color: var(--border-dull);
+      }
+      
+      :global(code), :global(pre) {
+        background-color: var(--card-background);
+      }
+    }
+  }
+}
+</style>

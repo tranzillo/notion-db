@@ -1,0 +1,183 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import BottleneckCard from "../../components/standalone/BottleneckCard";
+import EnhancedBackButton from "../../components/standalone/EnhancedBackButton";
+import { getEnhancedData } from "../../lib/enhancedData";
+
+export async function getStaticPaths() {
+    // Fetch all enhanced data
+    const { foundationalCapabilities } = await getEnhancedData();
+
+    // Generate paths for each capability with slugs
+    return foundationalCapabilities.map((capability) => {
+        // Create a slug if it doesn't exist
+        const slug =
+            capability.slug ||
+            capability.fc_name
+                .toLowerCase()
+                .replace(/[^\w\s-]/gi, "")
+                .replace(/\s+/g, "-");
+
+        return {
+            params: { slug },
+            props: { capability },
+        };
+    });
+}
+
+// TypeScript type for the props
+interface Props {
+    capability: any; // Type comes from getStaticPaths
+}
+
+// Get the capability from props
+const { capability } = Astro.props;
+
+// 404 handling (should not happen with static paths, but just in case)
+if (!capability) {
+    return Astro.redirect("/404");
+}
+
+// Extract tags for display
+const publicTags = capability.tags || [];
+
+// Get all unique fields from associated bottlenecks
+const uniqueFields = [];
+const fieldMap = new Map();
+
+if (capability.bottlenecks && Array.isArray(capability.bottlenecks)) {
+    capability.bottlenecks.forEach((bottleneck) => {
+        if (bottleneck.field && bottleneck.field.id) {
+            fieldMap.set(bottleneck.field.id, bottleneck.field);
+        }
+    });
+
+    uniqueFields.push(...Array.from(fieldMap.values()));
+}
+---
+
+<BaseLayout title={`${capability.fc_name} - Convergent 101`}>
+    <EnhancedBackButton client:load path="/capabilities" />
+
+    <div class="capability-detail">
+        <div class="capability-detail__header">
+            <div class="capability-detail__meta">
+                {
+                    uniqueFields.length > 0 && (
+                        <div class="capability-detail__fields">
+                            {uniqueFields.map((field) => (
+                                <div
+                                    class={`capability-detail__field ${field.colorClass || ""}`}
+                                >
+                                    {field.field_name}
+                                </div>
+                            ))}
+                        </div>
+                    )
+                }
+            </div>
+
+            <h1 class="capability-detail__title">{capability.fc_name}</h1>
+
+            <!-- Display public tags if available -->
+            {
+                publicTags.length > 0 && (
+                    <div class="capability-detail__tags">
+                        {publicTags.map((tag) => (
+                            <span class="capability-detail__tag">{tag}</span>
+                        ))}
+                    </div>
+                )
+            }
+        </div>
+
+        <div class="capability-detail__content" set:html={capability.fc_description} />
+
+        {
+            capability.resources && capability.resources.length > 0 && (
+                <div class="capability-detail__resources">
+                    <h3>Resources</h3>
+                    <ul class="capability-detail__resource-list">
+                        {capability.resources.map((resource) => (
+                            <li class="capability-detail__resource-item">
+                                {resource?.resourceType && (
+                                    <span class="capability-detail__resource-type">
+                                        {resource.resourceType}
+                                    </span>
+                                )}
+                                {resource?.resource_url ? (
+                                    <a
+                                        href={resource.resource_url}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                    >
+                                        {resource.resource_title}
+                                    </a>
+                                ) : (
+                                    <span>
+                                        {resource?.resource_title ||
+                                            "Untitled Resource"}
+                                    </span>
+                                )}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }
+
+        {
+            capability.bottlenecks && capability.bottlenecks.length > 0 && (
+                <div class="capability-detail__bottlenecks">
+                    <h3>Related Bottlenecks ({capability.bottlenecks.length})</h3>
+                    <div class="capability-detail__bottlenecks-grid">
+                        {capability.bottlenecks.map((bottleneck) => (
+                            <BottleneckCard
+                                bottleneck={bottleneck}
+                                client:load
+                                truncateLength={300}
+                            />
+                        ))}
+                    </div>
+                </div>
+            )
+        }
+    </div>
+</BaseLayout>
+
+<script define:vars={{ capabilityId: capability.id, capabilitySlug: capability.slug }}>
+    // Save the current capability info for potential scroll restoration
+    import { saveScrollPosition } from "../../lib/scrollPositionUtils";
+
+    document.addEventListener("astro:page-load", () => {
+        // This runs when the page is fully loaded
+        if (capabilityId) {
+            // Could manually save position for direct URL accesses if needed
+            // saveScrollPosition(capabilityId, capabilitySlug);
+        }
+    });
+</script>
+
+<style lang="scss">
+  .capability-detail__tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+  }
+  
+  .capability-detail__tag {
+    display: inline-block;
+    background-color: var(--background-color-dark);
+    color: var(--text-light);
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.875rem;
+
+    &::before {
+      content: "#";
+      margin-right: 2px;
+      opacity: 0.7;
+    }
+  }
+</style>

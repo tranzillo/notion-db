@@ -1,0 +1,312 @@
+:root {
+
+  --field-color-0: #94eead;
+  --field-color-0-light: #daf5e2;
+  --field-color-0-dark: #27e75d;
+  --field-color-0-hover: #b8f0c8;
+  --field-color-0-border: #27e75d;
+
+  --field-color-1: #95d0ce;
+  --field-color-1-light: #cae3e2;
+  --field-color-1-dark: #48b2ae;
+  --field-color-1-hover: #b0d9d7;
+  --field-color-1-border: #48b2ae;
+
+  --field-color-2: #9fb5db;
+  --field-color-2-light: #d9e0ed;
+  --field-color-2-dark: #4774c2;
+  --field-color-2-hover: #bdcbe3;
+  --field-color-2-border: #4774c2;
+
+  --field-color-3: #be9cd2;
+  --field-color-3-light: #ded1e6;
+  --field-color-3-dark: #8e4cb4;
+  --field-color-3-hover: #ceb7db;
+  --field-color-3-border: #8e4cb4;
+
+  --field-color-4: #dfa1a5;
+  --field-color-4-light: #f0ddde;
+  --field-color-4-dark: #c8454e;
+  --field-color-4-hover: #e7c0c2;
+  --field-color-4-border: #c8454e;
+
+  --field-color-5: #e5ba90;
+  --field-color-5-light: #efe0d0;
+  --field-color-5-dark: #d7822e;
+  --field-color-5-hover: #e9cdb1;
+  --field-color-5-border: #d7822e;
+
+  --field-color-6: #e9d787;
+  --field-color-6-light: #f0e9ca;
+  --field-color-6-dark: #e1bd21;
+  --field-color-6-hover: #ebdfaa;
+  --field-color-6-border: #e1bd21;
+}
+
+
+            .field-gradient-0 {
+                background-color: var(--field-color-0-light);
+            }
+
+            .field-gradient-0.active {
+                border-color: var(--field-color-0-dark);
+            }
+
+            .field-gradient-0:hover input + label {
+                background-color: var(--field-color-0-hover) !important;
+           }
+
+            .field-gradient-0.active input + label {
+                background-color: var(--field-color-0-light) !important;
+                border-color: var(--field-color-0-dark) !important;
+            }
+            
+            
+            .dark-mode .field-gradient-0 {
+                border-color: var(--field-color-0-dark) !important;
+                color: #818374 !important;
+                background-color: transparent !important;
+            }
+
+            .dark-mode .field-gradient-0.active {
+                color: var(--field-color-0-hover) !important;
+            }
+
+            .dark-mode .field-gradient-0:hover input + label {
+                border-color: var(--field-color-0-dark) !important;
+                color: var(--field-color-0-hover) !important;
+                background-color: transparent !important;
+           }
+
+            .dark-mode .field-gradient-0.active input + label {
+                color: var(--field-color-0-light) !important;
+                background-color: transparent !important;
+            }
+            .field-gradient-1 {
+                background-color: var(--field-color-1-light);
+            }
+
+            .field-gradient-1.active {
+                border-color: var(--field-color-1-dark);
+            }
+
+            .field-gradient-1:hover input + label {
+                background-color: var(--field-color-1-hover) !important;
+           }
+
+            .field-gradient-1.active input + label {
+                background-color: var(--field-color-1-light) !important;
+                border-color: var(--field-color-1-dark) !important;
+            }
+            
+            
+            .dark-mode .field-gradient-1 {
+                border-color: var(--field-color-1-dark) !important;
+                color: #818374 !important;
+                background-color: transparent !important;
+            }
+
+            .dark-mode .field-gradient-1.active {
+                color: var(--field-color-1-hover) !important;
+            }
+
+            .dark-mode .field-gradient-1:hover input + label {
+                border-color: var(--field-color-1-dark) !important;
+                color: var(--field-color-1-hover) !important;
+                background-color: transparent !important;
+           }
+
+            .dark-mode .field-gradient-1.active input + label {
+                color: var(--field-color-1-light) !important;
+                background-color: transparent !important;
+            }
+            .field-gradient-2 {
+                background-color: var(--field-color-2-light);
+            }
+
+            .field-gradient-2.active {
+                border-color: var(--field-color-2-dark);
+            }
+
+            .field-gradient-2:hover input + label {
+                background-color: var(--field-color-2-hover) !important;
+           }
+
+            .field-gradient-2.active input + label {
+                background-color: var(--field-color-2-light) !important;
+                border-color: var(--field-color-2-dark) !important;
+            }
+            
+            
+            .dark-mode .field-gradient-2 {
+                border-color: var(--field-color-2-dark) !important;
+                color: #818374 !important;
+                background-color: transparent !important;
+            }
+
+            .dark-mode .field-gradient-2.active {
+                color: var(--field-color-2-hover) !important;
+            }
+
+            .dark-mode .field-gradient-2:hover input + label {
+                border-color: var(--field-color-2-dark) !important;
+                color: var(--field-color-2-hover) !important;
+                background-color: transparent !important;
+           }
+
+            .dark-mode .field-gradient-2.active input + label {
+                color: var(--field-color-2-light) !important;
+                background-color: transparent !important;
+            }
+            .field-gradient-3 {
+                background-color: var(--field-color-3-light);
+            }
+
+            .field-gradient-3.active {
+                border-color: var(--field-color-3-dark);
+            }
+
+            .field-gradient-3:hover input + label {
+                background-color: var(--field-color-3-hover) !important;
+           }
+
+            .field-gradient-3.active input + label {
+                background-color: var(--field-color-3-light) !important;
+                border-color: var(--field-color-3-dark) !important;
+            }
+            
+            
+            .dark-mode .field-gradient-3 {
+                border-color: var(--field-color-3-dark) !important;
+                color: #818374 !important;
+                background-color: transparent !important;
+            }
+
+            .dark-mode .field-gradient-3.active {
+                color: var(--field-color-3-hover) !important;
+            }
+
+            .dark-mode .field-gradient-3:hover input + label {
+                border-color: var(--field-color-3-dark) !important;
+                color: var(--field-color-3-hover) !important;
+                background-color: transparent !important;
+           }
+
+            .dark-mode .field-gradient-3.active input + label {
+                color: var(--field-color-3-light) !important;
+                background-color: transparent !important;
+            }
+            .field-gradient-4 {
+                background-color: var(--field-color-4-light);
+            }
+
+            .field-gradient-4.active {
+                border-color: var(--field-color-4-dark);
+            }
+
+            .field-gradient-4:hover input + label {
+                background-color: var(--field-color-4-hover) !important;
+           }
+
+            .field-gradient-4.active input + label {
+                background-color: var(--field-color-4-light) !important;
+                border-color: var(--field-color-4-dark) !important;
+            }
+            
+            
+            .dark-mode .field-gradient-4 {
+                border-color: var(--field-color-4-dark) !important;
+                color: #818374 !important;
+                background-color: transparent !important;
+            }
+
+            .dark-mode .field-gradient-4.active {
+                color: var(--field-color-4-hover) !important;
+            }
+
+            .dark-mode .field-gradient-4:hover input + label {
+                border-color: var(--field-color-4-dark) !important;
+                color: var(--field-color-4-hover) !important;
+                background-color: transparent !important;
+           }
+
+            .dark-mode .field-gradient-4.active input + label {
+                color: var(--field-color-4-light) !important;
+                background-color: transparent !important;
+            }
+            .field-gradient-5 {
+                background-color: var(--field-color-5-light);
+            }
+
+            .field-gradient-5.active {
+                border-color: var(--field-color-5-dark);
+            }
+
+            .field-gradient-5:hover input + label {
+                background-color: var(--field-color-5-hover) !important;
+           }
+
+            .field-gradient-5.active input + label {
+                background-color: var(--field-color-5-light) !important;
+                border-color: var(--field-color-5-dark) !important;
+            }
+            
+            
+            .dark-mode .field-gradient-5 {
+                border-color: var(--field-color-5-dark) !important;
+                color: #818374 !important;
+                background-color: transparent !important;
+            }
+
+            .dark-mode .field-gradient-5.active {
+                color: var(--field-color-5-hover) !important;
+            }
+
+            .dark-mode .field-gradient-5:hover input + label {
+                border-color: var(--field-color-5-dark) !important;
+                color: var(--field-color-5-hover) !important;
+                background-color: transparent !important;
+           }
+
+            .dark-mode .field-gradient-5.active input + label {
+                color: var(--field-color-5-light) !important;
+                background-color: transparent !important;
+            }
+            .field-gradient-6 {
+                background-color: var(--field-color-6-light);
+            }
+
+            .field-gradient-6.active {
+                border-color: var(--field-color-6-dark);
+            }
+
+            .field-gradient-6:hover input + label {
+                background-color: var(--field-color-6-hover) !important;
+           }
+
+            .field-gradient-6.active input + label {
+                background-color: var(--field-color-6-light) !important;
+                border-color: var(--field-color-6-dark) !important;
+            }
+            
+            
+            .dark-mode .field-gradient-6 {
+                border-color: var(--field-color-6-dark) !important;
+                color: #818374 !important;
+                background-color: transparent !important;
+            }
+
+            .dark-mode .field-gradient-6.active {
+                color: var(--field-color-6-hover) !important;
+            }
+
+            .dark-mode .field-gradient-6:hover input + label {
+                border-color: var(--field-color-6-dark) !important;
+                color: var(--field-color-6-hover) !important;
+                background-color: transparent !important;
+           }
+
+            .dark-mode .field-gradient-6.active input + label {
+                color: var(--field-color-6-light) !important;
+                background-color: transparent !important;
+            }

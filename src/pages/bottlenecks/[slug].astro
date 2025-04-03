@@ -1,9 +1,7 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
-import SolutionCard from "../../components/SolutionCard.astro";
 import RankIndicator from "../../components/standalone/RankIndicator";
 import EnhancedBackButton from "../../components/standalone/EnhancedBackButton";
-import { getAllData } from "../../lib/notion";
 import { getEnhancedData } from "../../lib/enhancedData";
 
 export async function getStaticPaths() {
@@ -34,29 +32,52 @@ if (!bottleneck) {
 
 // Extract tags for display
 const publicTags = bottleneck.tags || [];
+
+// Check if we have a valid rank to display
+const hasRank = bottleneck.bottleneck_rank !== undefined && bottleneck.bottleneck_rank !== null && bottleneck.bottleneck_rank > 0;
 ---
 
-<BaseLayout title={`${bottleneck.title} - Convergent 101`}>
-  <EnhancedBackButton client:load />
+<BaseLayout title={`${bottleneck.bottleneck_name} | Science Bottlenecks`}>
+  <EnhancedBackButton client:load path="/bottlenecks" />
   
   <div class="bottleneck-detail">
     <div class="bottleneck-detail__header">
       <div class="bottleneck-detail__meta">
         {
-          bottleneck.discipline && bottleneck.discipline.title && (
-          <div class={`bottleneck-detail__discipline active ${bottleneck.discipline.colorClass || ''}`}>
-              {bottleneck.discipline.title}
+          bottleneck.field && bottleneck.field.field_name && (
+          <div class={`bottleneck-detail__field active ${bottleneck.field.colorClass || ''}`}>
+              {bottleneck.field.field_name}
             </div>
           )
         }
         
-        <!-- Use the existing React RankIndicator with client:load directive -->
-        <div class="bottleneck-detail__rank">
-          <RankIndicator rank={bottleneck.rank || 0} client:load />
-        </div>
+        <!-- Show the bottleneck rank only if available -->
+        {hasRank && (
+          <div class="bottleneck-detail__rank">
+            <div class="rank-indicator-container">
+              <h3 class="title">Urgency</h3>
+              <div class="rank-indicator" title={`Rank: ${bottleneck.bottleneck_rank} out of 5`}>
+                {[1, 2, 3, 4, 5].map((blockRank) => (
+                  <div
+                    class={`rank-indicator__block ${blockRank <= bottleneck.bottleneck_rank ? 'active' : ''}`}
+                    aria-hidden="true"
+                  />
+                ))}
+                <span class="sr-only">Rank: {bottleneck.bottleneck_rank} out of 5</span>
+              </div>
+            </div>
+          </div>
+        )}
+        
+        <!-- Display bottleneck number if available and greater than 0 -->
+        {bottleneck.bottleneck_number !== undefined && bottleneck.bottleneck_number > 0 && (
+          <div class="bottleneck-detail__index">
+            <span>Index: #{bottleneck.bottleneck_number}</span>
+          </div>
+        )}
       </div>
 
-      <h1 class="bottleneck-detail__title">{bottleneck.title}</h1>
+      <h1 class="bottleneck-detail__title">{bottleneck.bottleneck_name}</h1>
       
       <!-- Display public tags if available -->
       {publicTags.length > 0 && (
@@ -68,20 +89,59 @@ const publicTags = bottleneck.tags || [];
       )}
     </div>
 
-    <div class="bottleneck-detail__content" set:html={bottleneck.content} />
+    <div class="bottleneck-detail__content" set:html={bottleneck.bottleneck_description} />
 
-    {
-      bottleneck.solutions && bottleneck.solutions.length > 0 && (
-        <div class="bottleneck-detail__solutions">
-          <h3>Potential Solutions</h3>
-          <div class="bottleneck-detail__solutions-grid">
-            {bottleneck.solutions.map((solution) => (
-              <SolutionCard solution={solution} rank={solution.rank} />
-            ))}
-          </div>
+    {bottleneck.foundational_capabilities && bottleneck.foundational_capabilities.length > 0 && (
+      <div class="bottleneck-detail__capabilities">
+        <h3>Potential Foundational Capabilities ({bottleneck.foundational_capabilities.length})</h3>
+        <div class="bottleneck-detail__capabilities-grid">
+          {bottleneck.foundational_capabilities.map((capability) => {
+            // Generate slug if missing
+            const capabilitySlug = capability.slug || 
+              capability.fc_name
+                .toLowerCase()
+                .replace(/[^\w\s-]/gi, "")
+                .replace(/\s+/g, "-");
+                
+            return (
+              <div class="capability-card">
+                <h3 class="capability-card__title">
+                  <a href={`/capabilities/${capabilitySlug}`}>{capability.fc_name}</a>
+                </h3>
+                
+                <div class="capability-card__content" set:html={capability.fc_description} />
+                
+                {capability.resources && capability.resources.length > 0 && (
+                  <div class="capability-card__resources">
+                    <h4>Resources</h4>
+                    <ul class="capability-card__resource-list">
+                      {capability.resources.map((resource) => (
+                        <li class="capability-card__resource-item">
+                          <div class="capability-card__resource-link">
+                            {resource?.resource_url ? (
+                              <a href={resource.resource_url} target="_blank" rel="noopener noreferrer">
+                                {resource.resource_title}
+                              </a>
+                            ) : (
+                              <span>{resource?.resource_title || "Untitled Resource"}</span>
+                            )}
+                            {resource?.resourceType && (
+                              <span class="capability-card__resource-type">
+                                {resource.resourceType}
+                              </span>
+                            )}
+                          </div>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </div>
+            );
+          })}
         </div>
-      )
-    }
+      </div>
+    )}
   </div>
 </BaseLayout>
 
@@ -114,5 +174,22 @@ const publicTags = bottleneck.tags || [];
     padding: 0.25rem 0.5rem;
     border-radius: 4px;
     font-size: 0.875rem;
+    
+    &::before {
+      content: "#";
+      margin-right: 2px;
+      opacity: 0.7;
+    }
+  }
+
+  .bottleneck-detail__index {
+    display: flex;
+    align-items: center;
+    background-color: var(--background-color-dark);
+    border-radius: 0.25rem;
+    padding: 0.25rem 0.5rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--text-light);
   }
 </style>

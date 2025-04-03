@@ -1,54 +1,56 @@
+// src/lib/dataUtils.js
+
 /**
- * Extract unique disciplines from bottlenecks
+ * Extract unique fields from bottlenecks
  * @param {Array} bottlenecks - Array of bottleneck objects
- * @returns {Array} - Array of unique discipline objects
+ * @returns {Array} - Array of unique field objects
  */
-export function extractDisciplines(bottlenecks) {
+export function extractFields(bottlenecks) {
   if (!bottlenecks || !Array.isArray(bottlenecks)) {
     return [];
   }
   
-  // Create a map to store unique disciplines by ID
-  const disciplineMap = new Map();
+  // Create a map to store unique fields by ID
+  const fieldMap = new Map();
   
-  // Add each discipline to the map
+  // Add each field to the map
   bottlenecks.forEach(bottleneck => {
-    if (bottleneck.discipline && bottleneck.discipline.id) {
-      disciplineMap.set(bottleneck.discipline.id, bottleneck.discipline);
+    if (bottleneck.field && bottleneck.field.id) {
+      fieldMap.set(bottleneck.field.id, bottleneck.field);
     }
   });
   
   // Convert the map values to an array
-  return Array.from(disciplineMap.values());
+  return Array.from(fieldMap.values());
 }
 
 /**
- * Extract discipline IDs from URL parameters
+ * Extract field IDs from URL parameters
  * @param {string} url - URL string or search params string
- * @param {Array} disciplines - Array of discipline objects
- * @returns {Array} - Array of discipline IDs
+ * @param {Array} fields - Array of field objects
+ * @returns {Array} - Array of field IDs
  */
-export function getDisciplineIdsFromUrl(url, disciplines) {
-  if (!url || !disciplines || !disciplines.length) {
+export function getFieldIdsFromUrl(url, fields) {
+  if (!url || !fields || !fields.length) {
     return [];
   }
   
   const urlObj = new URL(url.startsWith('http') ? url : `http://example.com${url}`);
-  const disciplinesParam = urlObj.searchParams.get('disciplines');
+  const fieldsParam = urlObj.searchParams.get('fields');
   
-  if (!disciplinesParam) {
+  if (!fieldsParam) {
     return [];
   }
   
-  const disciplineSlugs = disciplinesParam.split(',');
+  const fieldSlugs = fieldsParam.split(',');
   
   // Convert slugs to IDs
-  return disciplineSlugs
+  return fieldSlugs
     .map(slug => {
-      const discipline = disciplines.find(d => 
-        d.title.toLowerCase().replace(/\s+/g, '-') === slug
+      const field = fields.find(d => 
+        d.field_name.toLowerCase().replace(/\s+/g, '-') === slug
       );
-      return discipline ? discipline.id : null;
+      return field ? field.id : null;
     })
     .filter(Boolean);
 }

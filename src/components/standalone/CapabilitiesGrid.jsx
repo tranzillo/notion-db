@@ -1,23 +1,24 @@
-// src/components/standalone/SolutionsGrid.jsx
+// src/components/standalone/CapabilitiesGrid.jsx
 import React, { useState, useEffect } from 'react';
 import Fuse from 'fuse.js';
-import SolutionCard from './SolutionCard';
+import FoundationalCapabilityCard from './FoundationalCapabilityCard';
 import { scrollToSavedPosition } from '../../lib/scrollPositionUtils';
 
+// Configure Fuse.js options for fuzzy search
 const fuseOptions = {
   includeScore: true,
   threshold: 0.4,
   keys: [
     {
-      name: 'title',
+      name: 'fc_name',
       weight: 0.7
     },
     {
-      name: 'content',
+      name: 'fc_description',
       weight: 0.5
     },
     {
-      name: 'bottlenecks.discipline.title',
+      name: 'bottlenecks.field.field_name',
       weight: 0.3
     },
     {
@@ -27,27 +28,30 @@ const fuseOptions = {
   ]
 };
 
-export default function SolutionsGrid({
-  solutions = [],
+export default function CapabilitiesGrid({
+  capabilities = [],
   initialSearchQuery = '',
-  initialSelectedDisciplineIds = [],
+  initialSelectedFieldIds = [],
   initialSortBy = 'alpha',
   initialSelectedTag = '',
   initialPrivateTag = ''
 }) {
-  // State for filtered solutions and search/filter parameters
-  const [filteredSolutions, setFilteredSolutions] = useState(solutions);
+  // State for filtered capabilities and search/filter parameters
+  const [filteredCapabilities, setFilteredCapabilities] = useState(capabilities);
   const [currentSearchQuery, setCurrentSearchQuery] = useState(initialSearchQuery);
-  const [selectedDisciplines, setSelectedDisciplines] = useState(initialSelectedDisciplineIds);
+  const [selectedFields, setSelectedFields] = useState(initialSelectedFieldIds);
   const [sortBy, setSortBy] = useState(initialSortBy);
   const [isListView, setIsListView] = useState(false);
   const [selectedTag, setSelectedTag] = useState(initialSelectedTag);
   const [privateTag, setPrivateTag] = useState(initialPrivateTag);
   const [fuse, setFuse] = useState(null);
   const [hasRestoredScroll, setHasRestoredScroll] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
 
   // Initialize after mount
   useEffect(() => {
+    setIsMounted(true);
+    
     try {
       // Check for global preferences
       if (typeof window !== 'undefined' && window.userPreferences) {
@@ -58,7 +62,7 @@ export default function SolutionsGrid({
       if (typeof window !== 'undefined') {
         const params = new URLSearchParams(window.location.search);
         const urlQuery = params.get('q');
-        const urlDisciplines = params.get('disciplines');
+        const urlFields = params.get('fields');
         const urlSortBy = params.get('sort');
         const urlTag = params.get('tag');
         const urlPrivateTag = params.get('for');
@@ -67,26 +71,26 @@ export default function SolutionsGrid({
           setCurrentSearchQuery(urlQuery);
         }
         
-        if (urlDisciplines) {
-          const disciplineSlugs = urlDisciplines.split(',');
+        if (urlFields) {
+          const fieldSlugs = urlFields.split(',');
           
           // Convert slugs to IDs
-          const disciplineIds = disciplineSlugs.map(slug => {
-            // Find discipline by matching slug to discipline title
-            const matchingDisciplines = solutions.flatMap(solution => 
-              solution.bottlenecks?.map(bottleneck => bottleneck.discipline) || []
+          const fieldIds = fieldSlugs.map(slug => {
+            // Find field by matching slug to field title
+            const matchingFields = capabilities.flatMap(capability => 
+              capability.bottlenecks?.map(bottleneck => bottleneck.field) || []
             ).filter(Boolean);
             
-            const match = matchingDisciplines.find(d => 
-              d && d.title && d.title.toLowerCase().replace(/\s+/g, '-') === slug
+            const match = matchingFields.find(f => 
+              f && f.field_name && f.field_name.toLowerCase().replace(/\s+/g, '-') === slug
             );
             
             return match ? match.id : null;
           }).filter(Boolean);
           
-          if (disciplineIds.length > 0 && 
-              JSON.stringify(disciplineIds) !== JSON.stringify(selectedDisciplines)) {
-            setSelectedDisciplines(disciplineIds);
+          if (fieldIds.length > 0 && 
+              JSON.stringify(fieldIds) !== JSON.stringify(selectedFields)) {
+            setSelectedFields(fieldIds);
           }
         }
         
@@ -112,8 +116,10 @@ export default function SolutionsGrid({
 
   // Initialize search index
   useEffect(() => {
-    setFuse(new Fuse(solutions, fuseOptions));
-  }, [solutions]);
+    if (capabilities && capabilities.length > 0) {
+      setFuse(new Fuse(capabilities, fuseOptions));
+    }
+  }, [capabilities]);
 
   // Listen for search changes from other components
   useEffect(() => {
@@ -128,16 +134,16 @@ export default function SolutionsGrid({
     };
   }, []);
 
-  // Listen for discipline filter changes from other components
+  // Listen for field filter changes from other components
   useEffect(() => {
-    const handleDisciplineChange = (event) => {
-      setSelectedDisciplines(event.detail.selectedDisciplines);
+    const handleFieldChange = (event) => {
+      setSelectedFields(event.detail.selectedFields);
     };
 
-    window.addEventListener('disciplines-changed', handleDisciplineChange);
+    window.addEventListener('fields-changed', handleFieldChange);
 
     return () => {
-      window.removeEventListener('disciplines-changed', handleDisciplineChange);
+      window.removeEventListener('fields-changed', handleFieldChange);
     };
   }, []);
 
@@ -203,92 +209,93 @@ export default function SolutionsGrid({
     };
   }, []);
 
-  // Apply filtering and sorting when search, disciplines, tags, or sort method change
+  // Apply filtering and sorting when search, fields, tags, or sort method change
   useEffect(() => {
-    if (!fuse) return;
+    if (!isMounted || !fuse) return;
 
     // Apply search
     let filteredResults = currentSearchQuery
       ? fuse.search(currentSearchQuery).map(result => result.item)
-      : solutions;
+      : capabilities;
 
-    // Apply discipline filtering
-    if (selectedDisciplines.length > 0) {
-      filteredResults = filteredResults.filter(solution => {
-        // Check if any of the associated bottlenecks have a selected discipline
-        return solution.bottlenecks && solution.bottlenecks.some(bottleneck => 
-          bottleneck.discipline && selectedDisciplines.includes(bottleneck.discipline.id)
+    // Apply field filtering
+    if (selectedFields.length > 0) {
+      filteredResults = filteredResults.filter(capability => {
+        // Check if any of the associated bottlenecks have a selected field
+        return capability.bottlenecks && capability.bottlenecks.some(bottleneck => 
+          bottleneck.field && selectedFields.includes(bottleneck.field.id)
         );
       });
     }
     
     // Apply public tag filtering
     if (selectedTag) {
-      filteredResults = filteredResults.filter(solution =>
-        solution.tags && solution.tags.includes(selectedTag)
+      filteredResults = filteredResults.filter(capability =>
+        capability.tags && capability.tags.includes(selectedTag)
       );
     }
     
     // Apply private tag filtering
     if (privateTag) {
-      filteredResults = filteredResults.filter(solution =>
-        solution.privateTags && solution.privateTags.includes(privateTag)
+      filteredResults = filteredResults.filter(capability =>
+        capability.privateTags && capability.privateTags.includes(privateTag)
       );
     }
 
     // Apply sorting
     filteredResults = [...filteredResults].sort((a, b) => {
       if (sortBy === 'alpha') {
-        // Sort alphabetically by title
-        return a.title.localeCompare(b.title);
+        // Sort alphabetically by fc_name
+        return a.fc_name.localeCompare(b.fc_name);
       } else if (sortBy === 'bottlenecks') {
-        // Sort by number of bottlenecks (descending) with alphabetical title as tiebreaker
+        // Sort by number of bottlenecks (descending) with alphabetical fc_name as tiebreaker
         const countA = a.bottlenecks?.length || 0;
         const countB = b.bottlenecks?.length || 0;
         
         if (countA === countB) {
-          return a.title.localeCompare(b.title);
+          return a.fc_name.localeCompare(b.fc_name);
         }
         
         return countB - countA; // Higher count first
       } else {
         // Default to alphabetical
-        return a.title.localeCompare(b.title);
+        return a.fc_name.localeCompare(b.fc_name);
       }
     });
 
-    setFilteredSolutions(filteredResults);
+    setFilteredCapabilities(filteredResults);
   }, [
     currentSearchQuery, 
-    selectedDisciplines, 
+    selectedFields, 
     selectedTag, 
     privateTag, 
     sortBy, 
     fuse, 
-    solutions
+    capabilities,
+    isMounted
   ]);
   
-  // Attempt to restore scroll position after filtered solutions are updated
+  // Attempt to restore scroll position after filtered capabilities are updated
   useEffect(() => {
     // Only try to restore scroll once
-    if (!hasRestoredScroll && filteredSolutions.length > 0) {
+    if (!hasRestoredScroll && filteredCapabilities.length > 0) {
       // Wait a bit for the DOM to update
       setTimeout(() => {
-        scrollToSavedPosition(filteredSolutions);
+        scrollToSavedPosition(filteredCapabilities);
         setHasRestoredScroll(true);
       }, 100);
     }
-  }, [filteredSolutions, hasRestoredScroll]);
+  }, [filteredCapabilities, hasRestoredScroll]);
 
   const gridClass = isListView ? 'bottleneck-grid bottleneck-grid--list-view' : 'bottleneck-grid';
 
-  if (filteredSolutions.length === 0) {
+  if (filteredCapabilities.length === 0) {
     return (
       <div className={gridClass}>
         <div className="bottleneck-grid__empty-state">
           <h3>No results found</h3>
           <p>
-            We could not find any solutions matching your search criteria.
+            We could not find any foundational capabilities matching your search criteria.
             Try adjusting your filters or search terms.
           </p>
         </div>
@@ -298,12 +305,12 @@ export default function SolutionsGrid({
 
   return (
     <div className={gridClass}>
-      {filteredSolutions.map((solution) => (
-        <SolutionCard
-          key={solution.id}
-          solution={solution}
+      {filteredCapabilities.map((capability) => (
+        <FoundationalCapabilityCard
+          key={capability.id}
+          capability={capability}
           searchQuery={currentSearchQuery}
-          selectedDisciplines={selectedDisciplines}
+          selectedFields={selectedFields}
         />
       ))}
     </div>

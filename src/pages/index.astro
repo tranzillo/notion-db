@@ -1,64 +1,63 @@
 ---
-import BaseLayout from "../layouts/BaseLayout.astro";
-import Search from "../components/standalone/Search";
-import Filter from "../components/standalone/Filter";
-import BottleneckGrid from "../components/standalone/DashboardGrid";
-import ViewToggle from "../components/standalone/ViewToggle";
-import SortControl from "../components/standalone/SortControl";
-import TagCloud from "../components/standalone/TagCloud";
-import PrivateTagBanner from "../components/standalone/PrivateTagBanner";
-import { extractTags, parseUrlParamsWithTags } from "../lib/tagUtils";
-import { getEnhancedData } from "../lib/enhancedData";
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Search from '../components/standalone/Search';
+import FieldFilter from '../components/standalone/FieldFilter';
+import BottleneckGrid from '../components/standalone/DashboardGrid';
+import ViewToggle from '../components/standalone/ViewToggle';
+import SortControl from '../components/standalone/SortControl';
+import PrivateTagBanner from '../components/standalone/PrivateTagBanner';
+import { extractTags, parseUrlParamsWithTags } from '../lib/tagUtils';
+import { getEnhancedData } from '../lib/enhancedData';
 
 // Fetch all enhanced data from Notion at build time
-const { bottlenecks, solutions, disciplines } = await getEnhancedData();
+const { bottlenecks, foundationalCapabilities, fields, contentAreas } = await getEnhancedData();
 
 // Extract all unique tags from bottlenecks
 const tags = extractTags(bottlenecks);
 
 // Get URL parameters including tag parameters
-const { searchQuery, disciplineSlugs, sortBy, tag, privateTag } =
+const { searchQuery, fieldSlugs, sortBy, tag, privateTag } =
   parseUrlParamsWithTags(Astro.url.toString());
 
 // Calculate counts for display
 const bottleneckCount = bottlenecks.length;
-const solutionCount = solutions.length;
+const capabilityCount = foundationalCapabilities.length;
 
-// Calculate discipline counts
-const disciplineCounts = {};
+// Calculate field counts
+const fieldCounts = {};
 bottlenecks.forEach(bottleneck => {
-  if (bottleneck.discipline && bottleneck.discipline.id) {
-    disciplineCounts[bottleneck.discipline.id] = (disciplineCounts[bottleneck.discipline.id] || 0) + 1;
+  if (bottleneck.field && bottleneck.field.id) {
+    fieldCounts[bottleneck.field.id] = (fieldCounts[bottleneck.field.id] || 0) + 1;
   }
 });
+
+// Get home content if available
+const homeContent = contentAreas?.home || {
+  title: "Discover Patterns among Problems",
+  content: `<p>Explore <em>${bottleneckCount} Bottlenecks</em> in scientific advancement and <em>${capabilityCount} related Foundational Capabilities</em>. Use the search and filters to discover bottlenecks relevant to your interests.</p>`
+};
 ---
 
 <BaseLayout title="Convergent 101">
   <div class="dashboard-header">
-    <h1>Discover Patterns among Problems</h1>
-    <p>
-      Explore <em>{bottleneckCount} Bottlenecks</em> in scientific advancement and <em>{solutionCount} related Fundamental Capabilities</em>.
-      Use the search and filters to discover bottlenecks relevant to your interests.
-    </p>
+    <h1>{homeContent.title}</h1>
+    <div class="dashboard-content notion-content" set:html={homeContent.content} />
   </div>
 
   <div class="dashboard-layout">
     <aside class="dashboard-layout__sidebar">
-      <Filter
+      <FieldFilter
         client:load
-        disciplines={disciplines}
-        initialSelectedIds={disciplineSlugs}
-        disciplineCounts={disciplineCounts}
+        fields={fields}
+        initialSelectedIds={fieldSlugs}
+        fieldCounts={fieldCounts}
       />
     </aside>
 
     <div class="dashboard-layout__main">
-
       <!-- Private Tag Banner -->
       <PrivateTagBanner client:load />
-
-      <!-- Tag Cloud (only shown when not using private tag) -->
-      <TagCloud client:load tags={tags} initialSelectedTag={tag} />
+      
       <div class="dashboard-search">
         <Search client:load initialQuery={searchQuery} />
         <div class="dashboard-controls">
@@ -71,7 +70,7 @@ bottlenecks.forEach(bottleneck => {
         client:load
         bottlenecks={bottlenecks}
         initialSearchQuery={searchQuery}
-        initialSelectedDisciplineIds={disciplineSlugs}
+        initialSelectedFieldIds={fieldSlugs}
         initialSortBy={sortBy}
         initialSelectedTag={tag}
         initialPrivateTag={privateTag}
@@ -81,32 +80,32 @@ bottlenecks.forEach(bottleneck => {
 </BaseLayout>
 
 <script>
-  import { saveCurrentUrlState } from "../lib/navigationUtils";
+  import { saveCurrentUrlState } from '../lib/navigationUtils';
 
   // Save the current URL state for potential "back" navigation
-  document.addEventListener("astro:page-load", () => {
+  document.addEventListener('astro:page-load', () => {
     saveCurrentUrlState();
   });
 
   // Also save URL state when search or filter changes
-  window.addEventListener("search-changed", () => {
+  window.addEventListener('search-changed', () => {
     saveCurrentUrlState();
   });
 
-  window.addEventListener("disciplines-changed", () => {
+  window.addEventListener('fields-changed', () => {
     saveCurrentUrlState();
   });
 
-  window.addEventListener("sort-changed", () => {
+  window.addEventListener('sort-changed', () => {
     saveCurrentUrlState();
   });
 
   // Add listeners for the new tag events
-  window.addEventListener("tag-changed", () => {
+  window.addEventListener('tag-changed', () => {
     saveCurrentUrlState();
   });
 
-  window.addEventListener("private-tag-changed", () => {
+  window.addEventListener('private-tag-changed', () => {
     saveCurrentUrlState();
   });
 </script>
