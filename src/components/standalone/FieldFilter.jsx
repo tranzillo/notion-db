@@ -138,7 +138,6 @@ export default function FieldFilter({
       <div className="field-filter__list">
         {fields.map((field) => (
           <div className="field-filter__item" key={field.id}>
-// In FieldFilter.jsx
             <div className={`field-filter__checkbox ${selected.includes(field.id) ? 'active' : ''} ${field.colorClass || ''}`}>
               <input
                 type="checkbox"
