@@ -100,7 +100,7 @@ async function markdownToHtml(markdown) {
 export async function getAllContentAreas() {
   const contentAreas = {
     home: process.env.NOTION_HOME_CONTENT_ID,
-    capabilities: process.env.NOTION_CAPABILITIES_DB_ID,
+    capabilities: process.env.NOTION_CAPABILITIES_CONTENT_ID,
     about: process.env.NOTION_ABOUT_CONTENT_ID
   };
 
