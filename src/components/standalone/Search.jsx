@@ -4,7 +4,7 @@ import { saveCurrentUrlState } from '../../lib/navigationUtils';
 export default function Search({ 
   initialQuery = '', 
   bottleneckCount = 0, 
-  solutionCount = 0 
+  capabilityCount = 0 
 }) {
   const [searchQuery, setSearchQuery] = useState(initialQuery);
 

@@ -18,7 +18,7 @@ export default function ContributeForm({ fields = [], resourceTypeOptions = [] }
     title: '',
     content: '',
     bottleneckTitle: '',
-    references: '',
+    resources: '',
     rank: 3
   });
 
@@ -89,7 +89,7 @@ export default function ContributeForm({ fields = [], resourceTypeOptions = [] }
             fc_name: fcData.title,
             fc_description: fcData.content,
             bottleneckTitle: fcData.bottleneckTitle,
-            references: fcData.references
+            resources: fcData.resources
           }
         }),
       });

@@ -162,7 +162,7 @@ export async function getResourceTypeOptions(): Promise<string[]> {
   }
 }
 
-// Function to fetch and parse disciplines
+// Function to fetch and parse fields
 export async function getFields(): Promise<Field[]> {
   const databaseId = process.env.NOTION_FIELDS_DB_ID as string;
 
@@ -185,7 +185,7 @@ export async function getFields(): Promise<Field[]> {
   );
 }
 
-// Update the getFoundationalCapabilities function (previously getSolutions)
+// Update the getFoundationalCapabilities function
 export async function getFoundationalCapabilities(resources: Resource[]): Promise<FoundationalCapability[]> {
   const databaseId = process.env.NOTION_CAPABILITIES_DB_ID as string;
 
@@ -250,7 +250,7 @@ export async function getFoundationalCapabilities(resources: Resource[]): Promis
     })
   );
 }
-// Function to fetch and parse bottlenecks with their disciplines and solutions
+// Function to fetch and parse bottlenecks with their fields and capabilities
 export async function getBottlenecks(
   fields: Field[],
   foundationalCapabilities: FoundationalCapability[]
@@ -265,13 +265,13 @@ export async function getBottlenecks(
     response.results.map(async (page: any) => {
       const bottleneck_name = page.properties.Bottleneck_Name.title[0]?.plain_text || 'Untitled';
 
-      // Get the field relation (previously discipline)
+      // Get the field relation (previously field)
       const fieldRelation = page.properties.Fields?.relation[0] || null;
       const bottleneckField = fieldRelation
         ? fields.find(d => d.id === fieldRelation.id)
         : null;
 
-      // Get the foundational capabilities relations (previously solutions)
+      // Get the foundational capabilities relations
       const fcRelations = page.properties.Foundational_Capabilities?.relation || [];
       const bottleneckFCs = fcRelations.map((fc: any) => {
         return foundationalCapabilities.find(s => s.id === fc.id);

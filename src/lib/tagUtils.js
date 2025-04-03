@@ -1,8 +1,8 @@
 // src/lib/tagUtils.js
 
 /**
- * Extract unique tags from bottlenecks and solutions
- * @param {Array} items - Array of bottleneck or solution objects
+ * Extract unique tags from bottlenecks and capabilities
+ * @param {Array} items - Array of bottleneck or capability objects
  * @returns {Array} - Array of unique tag strings
  */
 export function extractTags(items) {

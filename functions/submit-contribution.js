@@ -285,10 +285,10 @@ exports.handler = async function(event, context) {
       case 'bottleneck':
         result = await handleBottleneckSubmission(notion, data);
         break;
-      case 'capability': // Updated from 'solution'
+      case 'capability':
         result = await handleCapabilitySubmission(notion, data);
         break;
-      case 'resource': // Updated from 'reference'
+      case 'resource':
         result = await handleResourceSubmission(notion, data);
         break;
       default:

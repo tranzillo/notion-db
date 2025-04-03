@@ -5,13 +5,13 @@ import { updateUrlParamsWithoutHistory } from '../../lib/dataUtils';
 export default function SortControl({ initialSortBy = 'rank' }) {
   const [sortBy, setSortBy] = useState(initialSortBy);
 
-  // Determine if we're in solutions view
-  const [isSolutionsView, setIsSolutionsView] = useState(false);
+  // Determine if we're in capabilities view
+  const [isCapabilitiesView, setIsCapabilitiesView] = useState(false);
 
   useEffect(() => {
-    // Check if we're in the solutions view based on pathname
+    // Check if we're in the capabilities view based on pathname
     if (typeof window !== 'undefined') {
-      setIsSolutionsView(window.location.pathname.startsWith('/solutions'));
+      setIsCapabilitiesView(window.location.pathname.startsWith('/capabilities'));
     }
   }, []);
 
@@ -20,8 +20,8 @@ export default function SortControl({ initialSortBy = 'rank' }) {
     let newSortBy;
     
     // Different sort cycling based on view
-    if (isSolutionsView) {
-      // For solutions: alpha -> bottlenecks -> alpha
+    if (isCapabilitiesView) {
+      // For capabilities: alpha -> bottlenecks -> alpha
       newSortBy = sortBy === 'alpha' ? 'bottlenecks' : 'alpha';
     } else {
       // For bottlenecks: rank -> alpha -> rank
@@ -49,7 +49,7 @@ export default function SortControl({ initialSortBy = 'rank' }) {
     if (typeof window !== 'undefined') {
       const params = new URLSearchParams(window.location.search);
       const urlSortBy = params.get('sort');
-      const validSortOptions = isSolutionsView 
+      const validSortOptions = isCapabilitiesView 
         ? ['bottlenecks', 'alpha']
         : ['rank', 'alpha'];
         
@@ -57,11 +57,11 @@ export default function SortControl({ initialSortBy = 'rank' }) {
         setSortBy(urlSortBy);
       }
     }
-  }, [isSolutionsView]);
+  }, [isCapabilitiesView]);
 
   // Get appropriate aria-label and title based on view and current sort
   const getButtonLabels = () => {
-    if (isSolutionsView) {
+    if (isCapabilitiesView) {
       return {
         ariaLabel: sortBy === 'alpha' ? "Sort by bottleneck count" : "Sort alphabetically",
         title: sortBy === 'alpha' ? "Sort by bottleneck count" : "Sort alphabetically"

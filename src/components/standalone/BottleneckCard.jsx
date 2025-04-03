@@ -6,7 +6,7 @@ import RankIndicator from '../../components/standalone/RankIndicator';
 export default function BottleneckCard({
   bottleneck,
   searchQuery = '',
-  selectedFields = [], // renamed from selectedDisciplines
+  selectedFields = [],
   truncateLength = 500
 }) {
   // Function to highlight search matches in text
