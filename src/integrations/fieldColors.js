@@ -4,6 +4,10 @@ import path from 'path';
 import { enhanceFieldsWithStaticColors } from '../lib/enhancedColorUtils';
 import { extractFields } from '../lib/dataUtils';
 import { getAllData } from '../lib/notion';
+import dotenv from 'dotenv';
+
+// Ensure environment variables are loaded
+dotenv.config();
 
 /**
  * Astro integration for field color generation
@@ -16,7 +20,26 @@ export default function fieldColorsIntegration() {
       'astro:config:setup': async ({ logger }) => {
         logger.info('Starting field color generation');
         
+        // Verify that required environment variables are set
+        const requiredEnvVars = [
+          'NOTION_API_KEY',
+          'NOTION_BOTTLENECKS_DB_ID',
+          'NOTION_FIELDS_DB_ID'
+        ];
+        
+        const missingVars = requiredEnvVars.filter(envVar => !process.env[envVar]);
+        
+        if (missingVars.length > 0) {
+          logger.error(`Missing required environment variables: ${missingVars.join(', ')}`);
+          logger.info('Skipping field color generation due to missing environment variables');
+          return;
+        }
+        
         try {
+          // Log the database IDs being used (for debugging)
+          logger.info(`Using NOTION_BOTTLENECKS_DB_ID: ${process.env.NOTION_BOTTLENECKS_DB_ID}`);
+          logger.info(`Using NOTION_FIELDS_DB_ID: ${process.env.NOTION_FIELDS_DB_ID}`);
+          
           // Fetch data from Notion
           const { bottlenecks } = await getAllData();
           

@@ -1,5 +1,6 @@
 .capability-card {
   display: flex;
+  position: relative;
   flex-direction: column;
   gap: $spacing-lg;
   background-color: var(--card-background);
@@ -23,14 +24,14 @@
       background-color $transition;
   }
 
-  &__disciplines {
+  &__fields {
     display: flex;
     flex-wrap: wrap;
     gap: $spacing-xs;
     margin-top: $spacing-sm;
   }
 
-  &__discipline {
+  &__field {
     display: inline-block;
     color: var(--text-light);
     padding: $spacing-xs $spacing-sm;

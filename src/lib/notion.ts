@@ -139,7 +139,7 @@ export async function getResourceTypeOptions(): Promise<string[]> {
     
     // First try ResourceType property
     let typeProperty = Object.values(database.properties).find(
-      (prop: any) => prop.name === 'ResourceType' && prop.type === 'select'
+      (prop: any) => prop.name === 'Resource_Type' && prop.type === 'select'
     );
     
     // Fall back to Type property if ResourceType doesn't exist
@@ -356,7 +356,7 @@ export async function getTags(): Promise<Map<string, string>> {
     const tagMap = new Map<string, string>();
     
     response.results.forEach((page: any) => {
-      const tagName = page.properties.Name?.title[0]?.plain_text || 'Unnamed Tag';
+      const tagName = page.properties.Tag_Name?.title[0]?.plain_text || 'Unnamed Tag';
       tagMap.set(page.id, tagName);
     });
     
