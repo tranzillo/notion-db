@@ -1,4 +1,5 @@
 // src/lib/dataUtils.js
+import { createFieldSlug } from './slugUtils';
 
 /**
  * Extract unique fields from bottlenecks
@@ -44,11 +45,11 @@ export function getFieldIdsFromUrl(url, fields) {
   
   const fieldSlugs = fieldsParam.split(',');
   
-  // Convert slugs to IDs
+  // Convert slugs to IDs using the slugUtils function
   return fieldSlugs
     .map(slug => {
       const field = fields.find(d => 
-        d.field_name.toLowerCase().replace(/\s+/g, '-') === slug
+        createFieldSlug(d.field_name) === slug
       );
       return field ? field.id : null;
     })
@@ -58,7 +59,7 @@ export function getFieldIdsFromUrl(url, fields) {
 /**
  * Parse query parameters from URL for server-side use
  * @param {string} url - URL string
- * @returns {Object} - Object with searchQuery, fieldSlugs, and sortBy
+ * @returns {Object} - Object with searchQuery, disciplineSlugs, and sortBy
  */
 export function parseUrlParams(url) {
   const params = new URLSearchParams(
@@ -66,15 +67,15 @@ export function parseUrlParams(url) {
   );
   
   const searchQuery = params.get('q') || '';
-  const fieldsParam = params.get('fields') || '';
-  const fieldSlugs = fieldsParam ? fieldsParam.split(',') : [];
+  const disciplinesParam = params.get('disciplines') || '';
+  const disciplineSlugs = disciplinesParam ? disciplinesParam.split(',') : [];
   const sortBy = params.get('sort') || 'rank'; // Default to rank sort
   const tag = params.get('tag') || '';
   const privateTag = params.get('for') || '';
   
   return {
     searchQuery,
-    fieldSlugs,
+    disciplineSlugs,
     sortBy,
     tag,
     privateTag

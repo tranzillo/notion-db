@@ -1,6 +1,7 @@
 // src/components/standalone/TagCloud.jsx
 import React, { useState, useEffect } from 'react';
 import { saveCurrentUrlState } from '../../lib/navigationUtils';
+import { createTagSlug } from '../../lib/tagUtils';
 
 export default function TagCloud({ tags = [], initialSelectedTag = '' }) {
   const [selectedTag, setSelectedTag] = useState(initialSelectedTag);
@@ -45,6 +46,7 @@ export default function TagCloud({ tags = [], initialSelectedTag = '' }) {
     const params = new URLSearchParams(window.location.search);
     
     if (selectedTag) {
+      // Use the original tag name (not slugified) for display purposes
       params.set('tag', selectedTag);
     } else {
       params.delete('tag');
@@ -91,7 +93,7 @@ export default function TagCloud({ tags = [], initialSelectedTag = '' }) {
       <div className="tag-cloud__tags">
         {tags.map((tag) => (
           <button
-            key={tag}
+            key={createTagSlug(tag)}
             className={`tag-cloud__tag ${selectedTag === tag ? 'active' : ''}`}
             onClick={() => handleTagClick(tag)}
             aria-pressed={selectedTag === tag}

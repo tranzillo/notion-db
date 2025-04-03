@@ -1,49 +1,136 @@
 // Generated field color data - DO NOT EDIT
 export const enhancedFields = [
   {
-    "id": "1b434d6d-7cea-80d5-b069-e43b8def1bb4",
-    "field_name": "Immunology",
-    "field_description": "\nIn principle, the immune system surveys essentially the entire body and stores a memory of much of what it finds. The system is theoretically highly programmable by inserting or removing DNA-encoded adaptive immune receptor molecules. However, our current ability to read-write this system is limited and new tools and datasets are needed to harness its power. \n\n",
+    "id": "1c1cb37e-2a00-80ad-b0ba-fe2564508931",
+    "field_name": "Chemistry",
+    "slug": "chemistry",
     "colorName": "gradient-0",
     "colorClass": "field-gradient-0"
   },
   {
-    "id": "1b434d6d-7cea-8072-93a4-e2cd7cbfcddb",
+    "id": "1c1cb37e-2a00-8072-8069-fe4247544341",
     "field_name": "Synthetic Biology",
-    "field_description": "\nSome of the long-standing holy grails in designing and customizing biological systems may now be coming into reach due to generative AI and high-throughput testing. We are beginning to design not only static protein structures but also functional enzymes, and even customize entire phages (viruses that infect bacteria) based on desired functions or host ranges. \n\n",
+    "slug": "synthetic-biology",
     "colorName": "gradient-1",
     "colorClass": "field-gradient-1"
   },
   {
-    "id": "1b434d6d-7cea-8057-a33f-fb7868a59190",
-    "field_name": "Cellular & Molecular Biology",
+    "id": "1c1cb37e-2a00-80e4-9e6e-ec1d2e30d87f",
+    "field_name": "Nanoscale Fabrication",
+    "slug": "nanoscale-fabrication",
     "colorName": "gradient-2",
     "colorClass": "field-gradient-2"
   },
   {
-    "id": "1b434d6d-7cea-80bd-bc82-ef691ad8ca0a",
-    "field_name": "Biophysics",
-    "field_description": "\nThere are many open questions in biophysics, especially regarding how to simulate and engineer complex biomolecular matter—such as the intricate networks found in tissues and neural systems. By developing advanced data collection techniques that capture spatial and temporal dynamics, implementing precise control mechanisms to modulate key variables, and deliberately narrowing the design space to focus on the most critical parameters, we can better simulate, control, and engineer complex biological systems.\n\n",
+    "id": "1c1cb37e-2a00-8018-9437-eaafd782ddbb",
+    "field_name": "Materials Science",
+    "slug": "materials-science",
     "colorName": "gradient-3",
     "colorClass": "field-gradient-3"
   },
   {
-    "id": "1b434d6d-7cea-804b-a234-ecc235fd8b5b",
-    "field_name": "Neuroscience",
+    "id": "1c2cb37e-2a00-80be-b01e-e0fcc67dcf05",
+    "field_name": "Mechanical Engineering",
+    "slug": "mechanical-engineering",
     "colorName": "gradient-4",
     "colorClass": "field-gradient-4"
   },
   {
-    "id": "1b434d6d-7cea-8048-a9e3-ed7436a6c0f5",
-    "field_name": "Chemistry",
-    "field_description": "\nWhile biology has taken the lead in leveraging large-scale open data and robotics, chemistry still has significant untapped potential. Biology’s early adoption of these approaches has accelerated discoveries and streamlined workflows, demonstrating that similar transformations in chemistry could revolutionize the field. By embracing open data practices and integrating robotics into high-throughput synthesis and experimentation, chemists can increase reproducibility and efficiency.\n\n",
+    "id": "1c2cb37e-2a00-803b-ba20-f4c68cf9d0ab",
+    "field_name": "Computation",
+    "slug": "computation",
     "colorName": "gradient-5",
     "colorClass": "field-gradient-5"
   },
   {
-    "id": "1b434d6d-7cea-80d5-8285-fbd34737a498",
-    "field_name": "Physiology & Medicine",
+    "id": "1c3cb37e-2a00-80f8-b6e6-d80f648bdd6e",
+    "field_name": "Geophysics and Climate",
+    "slug": "geophysics-and-climate",
     "colorName": "gradient-6",
     "colorClass": "field-gradient-6"
+  },
+  {
+    "id": "1c3cb37e-2a00-80b6-aff1-fb757c640349",
+    "field_name": "Astrophysics",
+    "slug": "astrophysics",
+    "colorName": "gradient-7",
+    "colorClass": "field-gradient-7"
+  },
+  {
+    "id": "1c3cb37e-2a00-80c7-8695-d48636945bea",
+    "field_name": "Physics",
+    "slug": "physics",
+    "colorName": "gradient-8",
+    "colorClass": "field-gradient-8"
+  },
+  {
+    "id": "1c4cb37e-2a00-80cb-8b3c-e28684425c8b",
+    "field_name": "Ecology",
+    "slug": "ecology",
+    "colorName": "gradient-9",
+    "colorClass": "field-gradient-9"
+  },
+  {
+    "id": "1c4cb37e-2a00-8000-9b59-d75e163b4e8c",
+    "field_name": "Space Engineering",
+    "slug": "space-engineering",
+    "colorName": "gradient-10",
+    "colorClass": "field-gradient-10"
+  },
+  {
+    "id": "1c4cb37e-2a00-8052-8884-fe94bcb4d564",
+    "field_name": "Biosecurity",
+    "slug": "biosecurity",
+    "colorName": "gradient-11",
+    "colorClass": "field-gradient-11"
+  },
+  {
+    "id": "1c7cb37e-2a00-80ac-986a-ede079165668",
+    "field_name": "Social Science",
+    "slug": "social-science",
+    "colorName": "gradient-12",
+    "colorClass": "field-gradient-12"
+  },
+  {
+    "id": "1c7cb37e-2a00-806b-a9e9-fbec288c4ed2",
+    "field_name": "Metascience",
+    "slug": "metascience",
+    "colorName": "gradient-13",
+    "colorClass": "field-gradient-13"
+  },
+  {
+    "id": "1c7cb37e-2a00-8060-84f0-fdaac2dab6d9",
+    "field_name": "Global Health",
+    "slug": "global-health",
+    "colorName": "gradient-14",
+    "colorClass": "field-gradient-14"
+  },
+  {
+    "id": "1c1cb37e-2a00-80e1-afda-fcf935b88476",
+    "field_name": "Biophysics",
+    "slug": "biophysics",
+    "colorName": "gradient-15",
+    "colorClass": "field-gradient-15"
+  },
+  {
+    "id": "1c0cb37e-2a00-8098-aa05-edbd8838763d",
+    "field_name": "Physiology and Medicine",
+    "slug": "physiology-and-medicine",
+    "colorName": "gradient-16",
+    "colorClass": "field-gradient-16"
+  },
+  {
+    "id": "1b6cb37e-2a00-8052-8d77-fa7ebf8cc8c0",
+    "field_name": "Cellular and Molecular Biology",
+    "slug": "cellular-and-molecular-biology",
+    "colorName": "gradient-17",
+    "colorClass": "field-gradient-17"
+  },
+  {
+    "id": "1b6cb37e-2a00-804b-bc98-d3e20805a016",
+    "field_name": "Immunology",
+    "slug": "immunology",
+    "colorName": "gradient-18",
+    "colorClass": "field-gradient-18"
   }
 ];

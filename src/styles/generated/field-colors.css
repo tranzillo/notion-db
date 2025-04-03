@@ -6,41 +6,113 @@
   --field-color-0-hover: #b8f0c8;
   --field-color-0-border: #27e75d;
 
-  --field-color-1: #95d0ce;
-  --field-color-1-light: #cae3e2;
-  --field-color-1-dark: #48b2ae;
-  --field-color-1-hover: #b0d9d7;
-  --field-color-1-border: #48b2ae;
+  --field-color-1: #94e3b9;
+  --field-color-1-light: #d3efe0;
+  --field-color-1-dark: #34d37e;
+  --field-color-1-hover: #b5e8cd;
+  --field-color-1-border: #34d37e;
 
-  --field-color-2: #9fb5db;
-  --field-color-2-light: #d9e0ed;
-  --field-color-2-dark: #4774c2;
-  --field-color-2-hover: #bdcbe3;
-  --field-color-2-border: #4774c2;
+  --field-color-2: #94d9c5;
+  --field-color-2-light: #cde9e1;
+  --field-color-2-dark: #3dc29c;
+  --field-color-2-hover: #b2e0d3;
+  --field-color-2-border: #3dc29c;
 
-  --field-color-3: #be9cd2;
-  --field-color-3-light: #ded1e6;
-  --field-color-3-dark: #8e4cb4;
-  --field-color-3-hover: #ceb7db;
-  --field-color-3-border: #8e4cb4;
+  --field-color-3: #95d0ce;
+  --field-color-3-light: #cae3e2;
+  --field-color-3-dark: #48b2ae;
+  --field-color-3-hover: #b0d9d7;
+  --field-color-3-border: #48b2ae;
 
-  --field-color-4: #dfa1a5;
-  --field-color-4-light: #f0ddde;
-  --field-color-4-dark: #c8454e;
-  --field-color-4-hover: #e7c0c2;
-  --field-color-4-border: #c8454e;
+  --field-color-4: #97c7d5;
+  --field-color-4-light: #cee1e7;
+  --field-color-4-dark: #44a0bb;
+  --field-color-4-hover: #b3d4dd;
+  --field-color-4-border: #44a0bb;
 
-  --field-color-5: #e5ba90;
-  --field-color-5-light: #efe0d0;
-  --field-color-5-dark: #d7822e;
-  --field-color-5-hover: #e9cdb1;
-  --field-color-5-border: #d7822e;
+  --field-color-5: #9abed9;
+  --field-color-5-light: #d3e0ea;
+  --field-color-5-dark: #438bc0;
+  --field-color-5-hover: #b7cfe1;
+  --field-color-5-border: #438bc0;
 
-  --field-color-6: #e9d787;
-  --field-color-6-light: #f0e9ca;
-  --field-color-6-dark: #e1bd21;
-  --field-color-6-hover: #ebdfaa;
-  --field-color-6-border: #e1bd21;
+  --field-color-6: #9fb5db;
+  --field-color-6-light: #d9e0ed;
+  --field-color-6-dark: #4774c2;
+  --field-color-6-hover: #bdcbe3;
+  --field-color-6-border: #4774c2;
+
+  --field-color-7: #a7abdc;
+  --field-color-7-light: #e0e2f0;
+  --field-color-7-dark: #4f57c0;
+  --field-color-7-hover: #c5c7e5;
+  --field-color-7-border: #4f57c0;
+
+  --field-color-8: #b2a2da;
+  --field-color-8-light: #e0dbed;
+  --field-color-8-dark: #6c4bbf;
+  --field-color-8-hover: #c9bfe3;
+  --field-color-8-border: #6c4bbf;
+
+  --field-color-9: #be9cd2;
+  --field-color-9-light: #ded1e6;
+  --field-color-9-dark: #8e4cb4;
+  --field-color-9-hover: #ceb7db;
+  --field-color-9-border: #8e4cb4;
+
+  --field-color-10: #ca9ac5;
+  --field-color-10-light: #e0cbde;
+  --field-color-10-dark: #a7529e;
+  --field-color-10-hover: #d4b3d1;
+  --field-color-10-border: #a7529e;
+
+  --field-color-11: #d69cb4;
+  --field-color-11-light: #e9d3dc;
+  --field-color-11-dark: #bb4878;
+  --field-color-11-hover: #dfb8c8;
+  --field-color-11-border: #bb4878;
+
+  --field-color-12: #dfa1a5;
+  --field-color-12-light: #f0ddde;
+  --field-color-12-dark: #c8454e;
+  --field-color-12-hover: #e7c0c2;
+  --field-color-12-border: #c8454e;
+
+  --field-color-13: #e3a89b;
+  --field-color-13-light: #f1deda;
+  --field-color-13-dark: #d1563b;
+  --field-color-13-hover: #e9c4bb;
+  --field-color-13-border: #d1563b;
+
+  --field-color-14: #e5b094;
+  --field-color-14-light: #f0ded4;
+  --field-color-14-dark: #d66b32;
+  --field-color-14-hover: #e9c7b5;
+  --field-color-14-border: #d66b32;
+
+  --field-color-15: #e5ba90;
+  --field-color-15-light: #efe0d0;
+  --field-color-15-dark: #d7822e;
+  --field-color-15-hover: #e9cdb1;
+  --field-color-15-border: #d7822e;
+
+  --field-color-16: #e6c38d;
+  --field-color-16-light: #efe2ce;
+  --field-color-16-dark: #da952a;
+  --field-color-16-hover: #e9d2af;
+  --field-color-16-border: #da952a;
+
+  --field-color-17: #e7cd8a;
+  --field-color-17-light: #efe5cc;
+  --field-color-17-dark: #dca926;
+  --field-color-17-hover: #ead9ac;
+  --field-color-17-border: #dca926;
+
+  --field-color-18: #e9d787;
+  --field-color-18-light: #f0e9ca;
+  --field-color-18-dark: #e1bd21;
+  --field-color-18-hover: #ebdfaa;
+  --field-color-18-border: #e1bd21;
 }
 
 
@@ -308,5 +380,461 @@
 
             .dark-mode .field-gradient-6.active input + label {
                 color: var(--field-color-6-light) !important;
+                background-color: transparent !important;
+            }
+            .field-gradient-7 {
+                background-color: var(--field-color-7-light);
+            }
+
+            .field-gradient-7.active {
+                border-color: var(--field-color-7-dark);
+            }
+
+            .field-gradient-7:hover input + label {
+                background-color: var(--field-color-7-hover) !important;
+           }
+
+            .field-gradient-7.active input + label {
+                background-color: var(--field-color-7-light) !important;
+                border-color: var(--field-color-7-dark) !important;
+            }
+            
+            
+            .dark-mode .field-gradient-7 {
+                border-color: var(--field-color-7-dark) !important;
+                color: #818374 !important;
+                background-color: transparent !important;
+            }
+
+            .dark-mode .field-gradient-7.active {
+                color: var(--field-color-7-hover) !important;
+            }
+
+            .dark-mode .field-gradient-7:hover input + label {
+                border-color: var(--field-color-7-dark) !important;
+                color: var(--field-color-7-hover) !important;
+                background-color: transparent !important;
+           }
+
+            .dark-mode .field-gradient-7.active input + label {
+                color: var(--field-color-7-light) !important;
+                background-color: transparent !important;
+            }
+            .field-gradient-8 {
+                background-color: var(--field-color-8-light);
+            }
+
+            .field-gradient-8.active {
+                border-color: var(--field-color-8-dark);
+            }
+
+            .field-gradient-8:hover input + label {
+                background-color: var(--field-color-8-hover) !important;
+           }
+
+            .field-gradient-8.active input + label {
+                background-color: var(--field-color-8-light) !important;
+                border-color: var(--field-color-8-dark) !important;
+            }
+            
+            
+            .dark-mode .field-gradient-8 {
+                border-color: var(--field-color-8-dark) !important;
+                color: #818374 !important;
+                background-color: transparent !important;
+            }
+
+            .dark-mode .field-gradient-8.active {
+                color: var(--field-color-8-hover) !important;
+            }
+
+            .dark-mode .field-gradient-8:hover input + label {
+                border-color: var(--field-color-8-dark) !important;
+                color: var(--field-color-8-hover) !important;
+                background-color: transparent !important;
+           }
+
+            .dark-mode .field-gradient-8.active input + label {
+                color: var(--field-color-8-light) !important;
+                background-color: transparent !important;
+            }
+            .field-gradient-9 {
+                background-color: var(--field-color-9-light);
+            }
+
+            .field-gradient-9.active {
+                border-color: var(--field-color-9-dark);
+            }
+
+            .field-gradient-9:hover input + label {
+                background-color: var(--field-color-9-hover) !important;
+           }
+
+            .field-gradient-9.active input + label {
+                background-color: var(--field-color-9-light) !important;
+                border-color: var(--field-color-9-dark) !important;
+            }
+            
+            
+            .dark-mode .field-gradient-9 {
+                border-color: var(--field-color-9-dark) !important;
+                color: #818374 !important;
+                background-color: transparent !important;
+            }
+
+            .dark-mode .field-gradient-9.active {
+                color: var(--field-color-9-hover) !important;
+            }
+
+            .dark-mode .field-gradient-9:hover input + label {
+                border-color: var(--field-color-9-dark) !important;
+                color: var(--field-color-9-hover) !important;
+                background-color: transparent !important;
+           }
+
+            .dark-mode .field-gradient-9.active input + label {
+                color: var(--field-color-9-light) !important;
+                background-color: transparent !important;
+            }
+            .field-gradient-10 {
+                background-color: var(--field-color-10-light);
+            }
+
+            .field-gradient-10.active {
+                border-color: var(--field-color-10-dark);
+            }
+
+            .field-gradient-10:hover input + label {
+                background-color: var(--field-color-10-hover) !important;
+           }
+
+            .field-gradient-10.active input + label {
+                background-color: var(--field-color-10-light) !important;
+                border-color: var(--field-color-10-dark) !important;
+            }
+            
+            
+            .dark-mode .field-gradient-10 {
+                border-color: var(--field-color-10-dark) !important;
+                color: #818374 !important;
+                background-color: transparent !important;
+            }
+
+            .dark-mode .field-gradient-10.active {
+                color: var(--field-color-10-hover) !important;
+            }
+
+            .dark-mode .field-gradient-10:hover input + label {
+                border-color: var(--field-color-10-dark) !important;
+                color: var(--field-color-10-hover) !important;
+                background-color: transparent !important;
+           }
+
+            .dark-mode .field-gradient-10.active input + label {
+                color: var(--field-color-10-light) !important;
+                background-color: transparent !important;
+            }
+            .field-gradient-11 {
+                background-color: var(--field-color-11-light);
+            }
+
+            .field-gradient-11.active {
+                border-color: var(--field-color-11-dark);
+            }
+
+            .field-gradient-11:hover input + label {
+                background-color: var(--field-color-11-hover) !important;
+           }
+
+            .field-gradient-11.active input + label {
+                background-color: var(--field-color-11-light) !important;
+                border-color: var(--field-color-11-dark) !important;
+            }
+            
+            
+            .dark-mode .field-gradient-11 {
+                border-color: var(--field-color-11-dark) !important;
+                color: #818374 !important;
+                background-color: transparent !important;
+            }
+
+            .dark-mode .field-gradient-11.active {
+                color: var(--field-color-11-hover) !important;
+            }
+
+            .dark-mode .field-gradient-11:hover input + label {
+                border-color: var(--field-color-11-dark) !important;
+                color: var(--field-color-11-hover) !important;
+                background-color: transparent !important;
+           }
+
+            .dark-mode .field-gradient-11.active input + label {
+                color: var(--field-color-11-light) !important;
+                background-color: transparent !important;
+            }
+            .field-gradient-12 {
+                background-color: var(--field-color-12-light);
+            }
+
+            .field-gradient-12.active {
+                border-color: var(--field-color-12-dark);
+            }
+
+            .field-gradient-12:hover input + label {
+                background-color: var(--field-color-12-hover) !important;
+           }
+
+            .field-gradient-12.active input + label {
+                background-color: var(--field-color-12-light) !important;
+                border-color: var(--field-color-12-dark) !important;
+            }
+            
+            
+            .dark-mode .field-gradient-12 {
+                border-color: var(--field-color-12-dark) !important;
+                color: #818374 !important;
+                background-color: transparent !important;
+            }
+
+            .dark-mode .field-gradient-12.active {
+                color: var(--field-color-12-hover) !important;
+            }
+
+            .dark-mode .field-gradient-12:hover input + label {
+                border-color: var(--field-color-12-dark) !important;
+                color: var(--field-color-12-hover) !important;
+                background-color: transparent !important;
+           }
+
+            .dark-mode .field-gradient-12.active input + label {
+                color: var(--field-color-12-light) !important;
+                background-color: transparent !important;
+            }
+            .field-gradient-13 {
+                background-color: var(--field-color-13-light);
+            }
+
+            .field-gradient-13.active {
+                border-color: var(--field-color-13-dark);
+            }
+
+            .field-gradient-13:hover input + label {
+                background-color: var(--field-color-13-hover) !important;
+           }
+
+            .field-gradient-13.active input + label {
+                background-color: var(--field-color-13-light) !important;
+                border-color: var(--field-color-13-dark) !important;
+            }
+            
+            
+            .dark-mode .field-gradient-13 {
+                border-color: var(--field-color-13-dark) !important;
+                color: #818374 !important;
+                background-color: transparent !important;
+            }
+
+            .dark-mode .field-gradient-13.active {
+                color: var(--field-color-13-hover) !important;
+            }
+
+            .dark-mode .field-gradient-13:hover input + label {
+                border-color: var(--field-color-13-dark) !important;
+                color: var(--field-color-13-hover) !important;
+                background-color: transparent !important;
+           }
+
+            .dark-mode .field-gradient-13.active input + label {
+                color: var(--field-color-13-light) !important;
+                background-color: transparent !important;
+            }
+            .field-gradient-14 {
+                background-color: var(--field-color-14-light);
+            }
+
+            .field-gradient-14.active {
+                border-color: var(--field-color-14-dark);
+            }
+
+            .field-gradient-14:hover input + label {
+                background-color: var(--field-color-14-hover) !important;
+           }
+
+            .field-gradient-14.active input + label {
+                background-color: var(--field-color-14-light) !important;
+                border-color: var(--field-color-14-dark) !important;
+            }
+            
+            
+            .dark-mode .field-gradient-14 {
+                border-color: var(--field-color-14-dark) !important;
+                color: #818374 !important;
+                background-color: transparent !important;
+            }
+
+            .dark-mode .field-gradient-14.active {
+                color: var(--field-color-14-hover) !important;
+            }
+
+            .dark-mode .field-gradient-14:hover input + label {
+                border-color: var(--field-color-14-dark) !important;
+                color: var(--field-color-14-hover) !important;
+                background-color: transparent !important;
+           }
+
+            .dark-mode .field-gradient-14.active input + label {
+                color: var(--field-color-14-light) !important;
+                background-color: transparent !important;
+            }
+            .field-gradient-15 {
+                background-color: var(--field-color-15-light);
+            }
+
+            .field-gradient-15.active {
+                border-color: var(--field-color-15-dark);
+            }
+
+            .field-gradient-15:hover input + label {
+                background-color: var(--field-color-15-hover) !important;
+           }
+
+            .field-gradient-15.active input + label {
+                background-color: var(--field-color-15-light) !important;
+                border-color: var(--field-color-15-dark) !important;
+            }
+            
+            
+            .dark-mode .field-gradient-15 {
+                border-color: var(--field-color-15-dark) !important;
+                color: #818374 !important;
+                background-color: transparent !important;
+            }
+
+            .dark-mode .field-gradient-15.active {
+                color: var(--field-color-15-hover) !important;
+            }
+
+            .dark-mode .field-gradient-15:hover input + label {
+                border-color: var(--field-color-15-dark) !important;
+                color: var(--field-color-15-hover) !important;
+                background-color: transparent !important;
+           }
+
+            .dark-mode .field-gradient-15.active input + label {
+                color: var(--field-color-15-light) !important;
+                background-color: transparent !important;
+            }
+            .field-gradient-16 {
+                background-color: var(--field-color-16-light);
+            }
+
+            .field-gradient-16.active {
+                border-color: var(--field-color-16-dark);
+            }
+
+            .field-gradient-16:hover input + label {
+                background-color: var(--field-color-16-hover) !important;
+           }
+
+            .field-gradient-16.active input + label {
+                background-color: var(--field-color-16-light) !important;
+                border-color: var(--field-color-16-dark) !important;
+            }
+            
+            
+            .dark-mode .field-gradient-16 {
+                border-color: var(--field-color-16-dark) !important;
+                color: #818374 !important;
+                background-color: transparent !important;
+            }
+
+            .dark-mode .field-gradient-16.active {
+                color: var(--field-color-16-hover) !important;
+            }
+
+            .dark-mode .field-gradient-16:hover input + label {
+                border-color: var(--field-color-16-dark) !important;
+                color: var(--field-color-16-hover) !important;
+                background-color: transparent !important;
+           }
+
+            .dark-mode .field-gradient-16.active input + label {
+                color: var(--field-color-16-light) !important;
+                background-color: transparent !important;
+            }
+            .field-gradient-17 {
+                background-color: var(--field-color-17-light);
+            }
+
+            .field-gradient-17.active {
+                border-color: var(--field-color-17-dark);
+            }
+
+            .field-gradient-17:hover input + label {
+                background-color: var(--field-color-17-hover) !important;
+           }
+
+            .field-gradient-17.active input + label {
+                background-color: var(--field-color-17-light) !important;
+                border-color: var(--field-color-17-dark) !important;
+            }
+            
+            
+            .dark-mode .field-gradient-17 {
+                border-color: var(--field-color-17-dark) !important;
+                color: #818374 !important;
+                background-color: transparent !important;
+            }
+
+            .dark-mode .field-gradient-17.active {
+                color: var(--field-color-17-hover) !important;
+            }
+
+            .dark-mode .field-gradient-17:hover input + label {
+                border-color: var(--field-color-17-dark) !important;
+                color: var(--field-color-17-hover) !important;
+                background-color: transparent !important;
+           }
+
+            .dark-mode .field-gradient-17.active input + label {
+                color: var(--field-color-17-light) !important;
+                background-color: transparent !important;
+            }
+            .field-gradient-18 {
+                background-color: var(--field-color-18-light);
+            }
+
+            .field-gradient-18.active {
+                border-color: var(--field-color-18-dark);
+            }
+
+            .field-gradient-18:hover input + label {
+                background-color: var(--field-color-18-hover) !important;
+           }
+
+            .field-gradient-18.active input + label {
+                background-color: var(--field-color-18-light) !important;
+                border-color: var(--field-color-18-dark) !important;
+            }
+            
+            
+            .dark-mode .field-gradient-18 {
+                border-color: var(--field-color-18-dark) !important;
+                color: #818374 !important;
+                background-color: transparent !important;
+            }
+
+            .dark-mode .field-gradient-18.active {
+                color: var(--field-color-18-hover) !important;
+            }
+
+            .dark-mode .field-gradient-18:hover input + label {
+                border-color: var(--field-color-18-dark) !important;
+                color: var(--field-color-18-hover) !important;
+                background-color: transparent !important;
+           }
+
+            .dark-mode .field-gradient-18.active input + label {
+                color: var(--field-color-18-light) !important;
                 background-color: transparent !important;
             }

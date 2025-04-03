@@ -7,6 +7,7 @@
   border-radius: $border-radius-lg;
   padding: $spacing-xl $spacing-xl $spacing-lg;
   border: 1px solid var(--border-color);
+  min-width: 0;
   transition: background-color $transition, border-color $transition;
   &__clickable {
     position: absolute;

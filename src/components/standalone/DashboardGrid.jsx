@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import Fuse from 'fuse.js';
 import BottleneckCard from './BottleneckCard';
 import { scrollToSavedPosition } from '../../lib/scrollPositionUtils';
+import { createFieldSlug } from '../../lib/slugUtils';
 
 // Configure Fuse.js options for fuzzy search
 const fuseOptions = {
@@ -39,7 +40,7 @@ const fuseOptions = {
 export default function BottleneckGrid({
   bottlenecks = [],
   initialSearchQuery = '',
-  initialSelectedFieldIds = [],
+  initialSelectedFieldIds = [], // renamed from initialSelectedDisciplineIds
   initialSortBy = 'rank',
   initialSelectedTag = '',
   initialPrivateTag = ''
@@ -72,7 +73,7 @@ export default function BottleneckGrid({
       if (typeof window !== 'undefined') {
         const params = new URLSearchParams(window.location.search);
         const urlQuery = params.get('q');
-        const urlFields = params.get('fields');
+        const urlDisciplines = params.get('disciplines');
         const urlSortBy = params.get('sort');
         const urlTag = params.get('tag');
         const urlPrivateTag = params.get('for');
@@ -81,23 +82,23 @@ export default function BottleneckGrid({
           setCurrentSearchQuery(urlQuery);
         }
         
-        if (urlFields) {
-          const fieldSlugs = urlFields.split(',');
+        if (urlDisciplines) {
+          const disciplineSlugs = urlDisciplines.split(',');
           
-          // Convert slugs to IDs
-          const fieldIds = fieldSlugs.map(slug => {
+          // Convert slugs to IDs using the slugUtils function
+          const disciplineIds = disciplineSlugs.map(slug => {
             const match = bottlenecks.find(b =>
-              b.field && b.field.field_name.toLowerCase().replace(/\s+/g, '-') === slug
+              b.field && createFieldSlug(b.field.field_name) === slug
             )?.field;
             return match ? match.id : null;
           }).filter(Boolean);
           
-          if (fieldIds.length > 0 && 
-              JSON.stringify(fieldIds) !== JSON.stringify(selectedFields)) {
-            setSelectedFields(fieldIds);
+          if (disciplineIds.length > 0 && 
+              JSON.stringify(disciplineIds) !== JSON.stringify(selectedFields)) {
+            setSelectedFields(disciplineIds);
           }
         }
-
+        
         // Check for sort parameter
         if (urlSortBy && ['rank', 'index', 'alpha'].includes(urlSortBy)) {
           setSortBy(urlSortBy);
@@ -117,6 +118,60 @@ export default function BottleneckGrid({
       console.error('Error loading view preference:', e);
     }
   }, []);
+
+  // Initialize search index
+  useEffect(() => {
+    if (bottlenecks.length > 0) {
+      setFuse(new Fuse(bottlenecks, fuseOptions));
+    }
+  }, [bottlenecks]);
+
+  // Listen for URL parameters on mount
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    
+    const params = new URLSearchParams(window.location.search);
+    const urlQuery = params.get('q');
+    const urlDisciplines = params.get('disciplines');
+    const urlSortBy = params.get('sort');
+    const urlTag = params.get('tag');
+    const urlPrivateTag = params.get('for');
+
+    if (urlQuery) {
+      setCurrentSearchQuery(urlQuery);
+    }
+
+    if (urlDisciplines) {
+      const disciplineSlugs = urlDisciplines.split(',');
+
+      // Convert slugs to IDs using the slugUtils function
+      const disciplineIds = disciplineSlugs.map(slug => {
+        const match = bottlenecks.find(b =>
+          b.field && createFieldSlug(b.field.field_name) === slug
+        )?.field;
+        return match ? match.id : null;
+      }).filter(Boolean);
+
+      if (disciplineIds.length > 0) {
+        setSelectedFields(disciplineIds);
+      }
+    }
+    
+    // Check for sort parameter
+    if (urlSortBy && ['rank', 'alpha'].includes(urlSortBy)) {
+      setSortBy(urlSortBy);
+    }
+    
+    // Check for tag parameter
+    if (urlTag) {
+      setSelectedTag(urlTag);
+    }
+    
+    // Check for private tag parameter
+    if (urlPrivateTag) {
+      setPrivateTag(urlPrivateTag);
+    }
+  }, [bottlenecks]);
 
   // Initialize search index
   useEffect(() => {

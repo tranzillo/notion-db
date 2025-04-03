@@ -3,6 +3,7 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
 import RankIndicator from "../../components/standalone/RankIndicator";
 import EnhancedBackButton from "../../components/standalone/EnhancedBackButton";
 import { getEnhancedData } from "../../lib/enhancedData";
+import { createCapabilitySlug } from "../../lib/slugUtils";
 
 export async function getStaticPaths() {
   // Fetch all enhanced data
@@ -96,12 +97,8 @@ const hasRank = bottleneck.bottleneck_rank !== undefined && bottleneck.bottlenec
         <h3>Potential Foundational Capabilities ({bottleneck.foundational_capabilities.length})</h3>
         <div class="bottleneck-detail__capabilities-grid">
           {bottleneck.foundational_capabilities.map((capability) => {
-            // Generate slug if missing
-            const capabilitySlug = capability.slug || 
-              capability.fc_name
-                .toLowerCase()
-                .replace(/[^\w\s-]/gi, "")
-                .replace(/\s+/g, "-");
+            // Use the slug from capability data or generate a new one if missing
+            const capabilitySlug = capability.slug || createCapabilitySlug(capability.fc_name);
                 
             return (
               <div class="capability-card">

@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import Fuse from 'fuse.js';
 import FoundationalCapabilityCard from './FoundationalCapabilityCard';
 import { scrollToSavedPosition } from '../../lib/scrollPositionUtils';
+import { createFieldSlug } from '../../lib/slugUtils';
 
 // Configure Fuse.js options for fuzzy search
 const fuseOptions = {
@@ -82,7 +83,7 @@ export default function CapabilitiesGrid({
             ).filter(Boolean);
             
             const match = matchingFields.find(f => 
-              f && f.field_name && f.field_name.toLowerCase().replace(/\s+/g, '-') === slug
+              f && f.field_name && createFieldSlug(f.field_name) === slug
             );
             
             return match ? match.id : null;

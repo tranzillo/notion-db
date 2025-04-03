@@ -1,8 +1,9 @@
 // src/lib/tagUtils.js
+import { createSlug } from './slugUtils';
 
 /**
- * Extract unique tags from bottlenecks and capabilities
- * @param {Array} items - Array of bottleneck or capability objects
+ * Extract unique tags from bottlenecks and solutions
+ * @param {Array} items - Array of bottleneck or solution objects
  * @returns {Array} - Array of unique tag strings
  */
 export function extractTags(items) {
@@ -27,6 +28,15 @@ export function extractTags(items) {
   }
   
   /**
+   * Create a slug version of a tag for URL usage
+   * @param {string} tag - Original tag string
+   * @returns {string} - URL-friendly tag slug
+   */
+  export function createTagSlug(tag) {
+    return createSlug(tag);
+  }
+  
+  /**
    * Extract tag values from URL parameters
    * @param {string} url - URL string or search params string
    * @returns {Object} - Object with tag and privateTag (for) values
@@ -46,7 +56,7 @@ export function extractTags(items) {
   /**
    * Parse query parameters from URL for server-side use, including tag parameters
    * @param {string} url - URL string
-   * @returns {Object} - Object with searchQuery, fieldSlugs, sortBy, tag, and privateTag
+   * @returns {Object} - Object with searchQuery, disciplineSlugs, sortBy, tag, and privateTag
    */
   export function parseUrlParamsWithTags(url) {
     const params = new URLSearchParams(

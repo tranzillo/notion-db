@@ -1,6 +1,7 @@
 // src/components/standalone/FieldFilter.jsx
 import React, { useState, useEffect } from 'react';
 import { saveCurrentUrlState } from '../../lib/navigationUtils';
+import { createFieldSlug } from '../../lib/slugUtils';
 
 export default function FieldFilter({
   fields = [],
@@ -20,7 +21,7 @@ export default function FieldFilter({
 
       // If not, try to find by slug
       const matchingField = fields.find(d =>
-        d.field_name.toLowerCase().replace(/\s+/g, '-') === fieldIdOrSlug
+        createFieldSlug(d.field_name) === fieldIdOrSlug
       );
 
       return matchingField ? matchingField.id : null;
@@ -39,7 +40,7 @@ export default function FieldFilter({
         // Convert slugs to IDs
         const fieldIds = fieldSlugs.map(slug => {
           const match = fields.find(d =>
-            d.field_name.toLowerCase().replace(/\s+/g, '-') === slug
+            createFieldSlug(d.field_name) === slug
           );
           return match ? match.id : null;
         }).filter(Boolean);
@@ -63,7 +64,7 @@ export default function FieldFilter({
       const slugs = selected.map(id => {
         const field = fields.find(d => d.id === id);
         return field
-          ? field.field_name.toLowerCase().replace(/\s+/g, '-')
+          ? createFieldSlug(field.field_name)
           : null;
       }).filter(Boolean);
 

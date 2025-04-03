@@ -4,6 +4,7 @@ import path from 'path';
 import { enhanceFieldsWithStaticColors } from '../lib/enhancedColorUtils';
 import { extractFields } from '../lib/dataUtils';
 import { getAllData } from '../lib/notion';
+import { createFieldSlug } from '../lib/slugUtils';
 import dotenv from 'dotenv';
 
 // Ensure environment variables are loaded
@@ -48,9 +49,15 @@ export default function fieldColorsIntegration() {
           
           logger.info(`Found ${fields.length} unique fields`);
           
+          // Process fields to ensure they have valid slugs
+          const fieldsWithSlugs = fields.map(field => ({
+            ...field,
+            slug: createFieldSlug(field.field_name)
+          }));
+          
           // Generate colors
           const { enhancedFields, css } = enhanceFieldsWithStaticColors(
-            fields,
+            fieldsWithSlugs,
             [   '#94eead', 
                 '#94ced3', 
                 '#9bb7dd', 

@@ -1,6 +1,7 @@
 import { Client } from '@notionhq/client';
 import { NotionToMarkdown } from 'notion-to-md';
 import dotenv from 'dotenv';
+import { createCapabilitySlug, createBottleneckSlug } from './slugUtils';
 
 dotenv.config();
 
@@ -87,16 +88,47 @@ function extractRankFromPage(page: any, pageName: string = 'unknown') {
   return Math.min(5, Math.max(0, rank));
 }
 
+// Function to fetch all pages from a Notion database with pagination
+async function queryDatabaseWithPagination(databaseId: string) {
+  const allResults: any[] = [];
+  let cursor: string | undefined = undefined;
+  let hasMore = true;
+  
+  console.log(`Starting pagination for database ${databaseId}`);
+  
+  while (hasMore) {
+    const response = await notion.databases.query({
+      database_id: databaseId,
+      start_cursor: cursor || undefined,
+      page_size: 100 // Maximum allowed by Notion
+    });
+    
+    allResults.push(...response.results);
+    
+    cursor = response.next_cursor || undefined;
+    hasMore = !!cursor;
+    
+    console.log(`Fetched ${response.results.length} items. Total so far: ${allResults.length}`);
+    
+    if (hasMore) {
+      console.log(`More results available. Next cursor: ${cursor}`);
+      await new Promise(resolve => setTimeout(resolve, 334)); // ~3 requests per second
+    }
+  }
+  
+  console.log(`Completed fetching all ${allResults.length} items from database ${databaseId}`);
+  
+  return allResults;
+}
+
 // Function to fetch and parse resources
 export async function getResources(): Promise<Resource[]> {
   const databaseId = process.env.NOTION_RESOURCES_DB_ID as string;
   
-  const response = await notion.databases.query({
-    database_id: databaseId,
-  });
+  const results = await queryDatabaseWithPagination(databaseId);
 
   return Promise.all(
-    response.results.map(async (page: any) => {
+    results.map(async (page: any) => {
       // Updated field names
       const resource_title = page.properties.Resource_Title.title[0]?.plain_text || 'Untitled';
       
@@ -127,6 +159,7 @@ export async function getResources(): Promise<Resource[]> {
     })
   );
 }
+
 // Function to fetch resource type options as strings
 export async function getResourceTypeOptions(): Promise<string[]> {
   const databaseId = process.env.NOTION_RESOURCES_DB_ID as string;
@@ -162,16 +195,14 @@ export async function getResourceTypeOptions(): Promise<string[]> {
   }
 }
 
-// Function to fetch and parse fields
+// Function to fetch and parse disciplines
 export async function getFields(): Promise<Field[]> {
   const databaseId = process.env.NOTION_FIELDS_DB_ID as string;
 
-  const response = await notion.databases.query({
-    database_id: databaseId,
-  });
+  const results = await queryDatabaseWithPagination(databaseId);
 
   return Promise.all(
-    response.results.map(async (page: any) => {
+    results.map(async (page: any) => {
       const field_name = page.properties.Field_Name.title[0]?.plain_text || 'Untitled';
       const mdBlocks = await n2m.pageToMarkdown(page.id);
       const field_description = n2m.toMarkdownString(mdBlocks);
@@ -185,16 +216,14 @@ export async function getFields(): Promise<Field[]> {
   );
 }
 
-// Update the getFoundationalCapabilities function
+// Update the getFoundationalCapabilities function with pagination
 export async function getFoundationalCapabilities(resources: Resource[]): Promise<FoundationalCapability[]> {
   const databaseId = process.env.NOTION_CAPABILITIES_DB_ID as string;
 
-  const response = await notion.databases.query({
-    database_id: databaseId,
-  });
+  const results = await queryDatabaseWithPagination(databaseId);
 
   return Promise.all(
-    response.results.map(async (page: any) => {
+    results.map(async (page: any) => {
       const fc_name = page.properties.FC_Name.title[0]?.plain_text || 'Untitled';
 
       // Get the resource relations with updated field name
@@ -234,8 +263,8 @@ export async function getFoundationalCapabilities(resources: Resource[]): Promis
         privateTags = page.properties.PrivateTags.multi_select.map((tag: any) => tag.name);
       }
 
-      // Generate slug if needed
-      const slug = fc_name.toLowerCase().replace(/[^\w\s]/gi, '').replace(/\s+/g, '-');
+      // Generate slug using the utility function
+      const slug = createCapabilitySlug(fc_name);
 
       return {
         id: page.id,
@@ -250,28 +279,27 @@ export async function getFoundationalCapabilities(resources: Resource[]): Promis
     })
   );
 }
-// Function to fetch and parse bottlenecks with their fields and capabilities
+
+// Function to fetch and parse bottlenecks with their disciplines and solutions - with pagination
 export async function getBottlenecks(
   fields: Field[],
   foundationalCapabilities: FoundationalCapability[]
 ): Promise<Bottleneck[]> {
   const databaseId = process.env.NOTION_BOTTLENECKS_DB_ID as string;
   
-  const response = await notion.databases.query({
-    database_id: databaseId,
-  });
+  const results = await queryDatabaseWithPagination(databaseId);
 
   return Promise.all(
-    response.results.map(async (page: any) => {
+    results.map(async (page: any) => {
       const bottleneck_name = page.properties.Bottleneck_Name.title[0]?.plain_text || 'Untitled';
 
-      // Get the field relation (previously field)
+      // Get the field relation (previously discipline)
       const fieldRelation = page.properties.Fields?.relation[0] || null;
       const bottleneckField = fieldRelation
         ? fields.find(d => d.id === fieldRelation.id)
         : null;
 
-      // Get the foundational capabilities relations
+      // Get the foundational capabilities relations (previously solutions)
       const fcRelations = page.properties.Foundational_Capabilities?.relation || [];
       const bottleneckFCs = fcRelations.map((fc: any) => {
         return foundationalCapabilities.find(s => s.id === fc.id);
@@ -312,8 +340,8 @@ export async function getBottlenecks(
         console.error(`Error extracting number from ${bottleneck_name}:`, error);
       }
 
-      // Generate a slug from the name
-      const slug = bottleneck_name.toLowerCase().replace(/[^\w\s]/gi, '').replace(/\s+/g, '-');
+      // Generate a slug from the name using the utility function
+      const slug = createBottleneckSlug(bottleneck_name);
 
       // Extract tags with updated relationship
       let tags = [];
@@ -344,18 +372,17 @@ export async function getBottlenecks(
     })
   );
 }
+
 export async function getTags(): Promise<Map<string, string>> {
   const databaseId = process.env.NOTION_TAGS_DB_ID as string;
   
   try {
-    const response = await notion.databases.query({
-      database_id: databaseId,
-    });
+    const results = await queryDatabaseWithPagination(databaseId);
     
     // Create a map of tag ID to tag name
     const tagMap = new Map<string, string>();
     
-    response.results.forEach((page: any) => {
+    results.forEach((page: any) => {
       const tagName = page.properties.Tag_Name?.title[0]?.plain_text || 'Unnamed Tag';
       tagMap.set(page.id, tagName);
     });
@@ -375,15 +402,27 @@ export async function getAllData(): Promise<{
   bottlenecks: Bottleneck[];
   resourceTypeOptions: string[];
 }> {
+  console.log("Starting data fetch from Notion with pagination support");
+  
   // Fetch data in order to maintain relationships
   const resources = await getResources();
+  console.log(`Fetched ${resources.length} resources`);
+  
   const fields = await getFields();
+  console.log(`Fetched ${fields.length} fields`);
+  
   const foundationalCapabilities = await getFoundationalCapabilities(resources);
+  console.log(`Fetched ${foundationalCapabilities.length} foundational capabilities`);
+  
   const bottlenecks = await getBottlenecks(fields, foundationalCapabilities);
+  console.log(`Fetched ${bottlenecks.length} bottlenecks`);
+  
   const resourceTypeOptions = await getResourceTypeOptions();
+  console.log(`Fetched ${resourceTypeOptions.length} resource type options`);
   
   // Get all tags
   const tagMap = await getTags();
+  console.log(`Fetched ${tagMap.size} tags`);
   
   // Replace tag IDs with tag names in bottlenecks
   bottlenecks.forEach(bottleneck => {
@@ -395,6 +434,8 @@ export async function getAllData(): Promise<{
     capability.tags = capability.tags.map(tagId => tagMap.get(tagId) || 'Unknown Tag');
   });
 
+  console.log("Data fetch complete!");
+  
   return {
     resources,
     fields,

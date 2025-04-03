@@ -3,6 +3,7 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
 import BottleneckCard from "../../components/standalone/BottleneckCard";
 import EnhancedBackButton from "../../components/standalone/EnhancedBackButton";
 import { getEnhancedData } from "../../lib/enhancedData";
+import { createCapabilitySlug } from "../../lib/slugUtils";
 
 export async function getStaticPaths() {
     // Fetch all enhanced data
@@ -10,13 +11,8 @@ export async function getStaticPaths() {
 
     // Generate paths for each capability with slugs
     return foundationalCapabilities.map((capability) => {
-        // Create a slug if it doesn't exist
-        const slug =
-            capability.slug ||
-            capability.fc_name
-                .toLowerCase()
-                .replace(/[^\w\s-]/gi, "")
-                .replace(/\s+/g, "-");
+        // Use the slug from capability or generate a new one if missing
+        const slug = capability.slug || createCapabilitySlug(capability.fc_name);
 
         return {
             params: { slug },
