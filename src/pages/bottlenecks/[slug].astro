@@ -1,111 +1,195 @@
 ---
-import BaseLayout from '../../layouts/BaseLayout.astro';
-import Search from '../../components/standalone/Search';
-import FieldFilter from '../../components/standalone/FieldFilter';
-import BottleneckGrid from '../../components/standalone/DashboardGrid';
-import ViewToggle from '../../components/standalone/ViewToggle';
-import SortControl from '../../components/standalone/SortControl';
-import PrivateTagBanner from '../../components/standalone/PrivateTagBanner';
-import { extractTags, parseUrlParamsWithTags } from '../../lib/tagUtils';
-import { getEnhancedData } from '../../lib/enhancedData';
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import RankIndicator from "../../components/standalone/RankIndicator";
+import EnhancedBackButton from "../../components/standalone/EnhancedBackButton";
+import { getEnhancedData } from "../../lib/enhancedData";
 
-// Fetch all enhanced data from Notion at build time
-const { bottlenecks, foundationalCapabilities, fields, contentAreas } = await getEnhancedData();
+export async function getStaticPaths() {
+  // Fetch all enhanced data
+  const { bottlenecks } = await getEnhancedData();
 
-// Extract all unique tags from bottlenecks
-const tags = extractTags(bottlenecks);
+  // Generate paths for each bottleneck
+  return bottlenecks.map((bottleneck) => {
+    return {
+      params: { slug: bottleneck.slug },
+      props: { bottleneck },
+    };
+  });
+}
 
-// Get URL parameters including tag parameters
-const { searchQuery, fieldSlugs, sortBy, tag, privateTag } =
-  parseUrlParamsWithTags(Astro.url.toString());
+// TypeScript type for the props
+interface Props {
+  bottleneck: any; // Type comes from getStaticPaths
+}
 
-// Calculate counts for display
-const bottleneckCount = bottlenecks.length;
-const capabilityCount = foundationalCapabilities.length;
+// Get the bottleneck from props
+const { bottleneck } = Astro.props;
 
-// Calculate field counts
-const fieldCounts = {};
-bottlenecks.forEach(bottleneck => {
-  if (bottleneck.field && bottleneck.field.id) {
-    fieldCounts[bottleneck.field.id] = (fieldCounts[bottleneck.field.id] || 0) + 1;
-  }
-});
+// 404 handling (should not happen with static paths, but just in case)
+if (!bottleneck) {
+  return Astro.redirect("/404");
+}
 
-// Get home content if available
-const homeContent = contentAreas?.home || {
-  title: "Discover Patterns among Problems",
-  content: `<p>Explore <em>${bottleneckCount} Bottlenecks</em> in scientific advancement and <em>${capabilityCount} related Foundational Capabilities</em>. Use the search and filters to discover bottlenecks relevant to your interests.</p>`
-};
+// Extract tags for display
+const publicTags = bottleneck.tags || [];
+
+// Check if we have a valid rank to display
+const hasRank = bottleneck.bottleneck_rank !== undefined && bottleneck.bottleneck_rank !== null && bottleneck.bottleneck_rank > 0;
 ---
 
-<BaseLayout title="Convergent 101">
-  <div class="dashboard-header">
-    <h1>{homeContent.title}</h1>
-    <div class="dashboard-content notion-content" set:html={homeContent.content} />
-  </div>
-
-  <div class="dashboard-layout">
-    <aside class="dashboard-layout__sidebar">
-      <FieldFilter
-        client:load
-        fields={fields}
-        initialSelectedIds={fieldSlugs}
-        fieldCounts={fieldCounts}
-      />
-    </aside>
-
-    <div class="dashboard-layout__main">
-      <!-- Private Tag Banner -->
-      <PrivateTagBanner client:load />
-      
-      <div class="dashboard-search">
-        <Search client:load initialQuery={searchQuery} />
-        <div class="dashboard-controls">
-          <SortControl client:load initialSortBy={sortBy} />
-          <ViewToggle client:load />
-        </div>
+<BaseLayout title={`${bottleneck.bottleneck_name} | Science Bottlenecks`}>
+  <EnhancedBackButton client:load path="/bottlenecks" />
+  
+  <div class="bottleneck-detail">
+    <div class="bottleneck-detail__header">
+      <div class="bottleneck-detail__meta">
+        {
+          bottleneck.field && bottleneck.field.field_name && (
+          <div class={`bottleneck-detail__field active ${bottleneck.field.colorClass || ''}`}>
+              {bottleneck.field.field_name}
+            </div>
+          )
+        }
+        
+        <!-- Show the bottleneck rank only if available -->
+        {hasRank && (
+          <div class="bottleneck-detail__rank">
+            <div class="rank-indicator-container">
+              <h3 class="title">Urgency</h3>
+              <div class="rank-indicator" title={`Rank: ${bottleneck.bottleneck_rank} out of 5`}>
+                {[1, 2, 3, 4, 5].map((blockRank) => (
+                  <div
+                    class={`rank-indicator__block ${blockRank <= bottleneck.bottleneck_rank ? 'active' : ''}`}
+                    aria-hidden="true"
+                  />
+                ))}
+                <span class="sr-only">Rank: {bottleneck.bottleneck_rank} out of 5</span>
+              </div>
+            </div>
+          </div>
+        )}
+        
+        <!-- Display bottleneck number if available and greater than 0 -->
+        {bottleneck.bottleneck_number !== undefined && bottleneck.bottleneck_number > 0 && (
+          <div class="bottleneck-detail__index">
+            <span>Index: #{bottleneck.bottleneck_number}</span>
+          </div>
+        )}
       </div>
 
-      <BottleneckGrid
-        client:load
-        bottlenecks={bottlenecks}
-        initialSearchQuery={searchQuery}
-        initialSelectedFieldIds={fieldSlugs}
-        initialSortBy={sortBy}
-        initialSelectedTag={tag}
-        initialPrivateTag={privateTag}
-      />
+      <h1 class="bottleneck-detail__title">{bottleneck.bottleneck_name}</h1>
+      
+      <!-- Display public tags if available -->
+      {publicTags.length > 0 && (
+        <div class="bottleneck-detail__tags">
+          {publicTags.map((tag) => (
+            <span class="bottleneck-detail__tag">{tag}</span>
+          ))}
+        </div>
+      )}
     </div>
+
+    <div class="bottleneck-detail__content" set:html={bottleneck.bottleneck_description} />
+
+    {bottleneck.foundational_capabilities && bottleneck.foundational_capabilities.length > 0 && (
+      <div class="bottleneck-detail__capabilities">
+        <h3>Potential Foundational Capabilities ({bottleneck.foundational_capabilities.length})</h3>
+        <div class="bottleneck-detail__capabilities-grid">
+          {bottleneck.foundational_capabilities.map((capability) => {
+            // Generate slug if missing
+            const capabilitySlug = capability.slug || 
+              capability.fc_name
+                .toLowerCase()
+                .replace(/[^\w\s-]/gi, "")
+                .replace(/\s+/g, "-");
+                
+            return (
+              <div class="capability-card">
+                <h3 class="capability-card__title">
+                  <a href={`/capabilities/${capabilitySlug}`}>{capability.fc_name}</a>
+                </h3>
+                
+                <div class="capability-card__content" set:html={capability.fc_description} />
+                
+                {capability.resources && capability.resources.length > 0 && (
+                  <div class="capability-card__resources">
+                    <h4>Resources</h4>
+                    <ul class="capability-card__resource-list">
+                      {capability.resources.map((resource) => (
+                        <li class="capability-card__resource-item">
+                          <div class="capability-card__resource-link">
+                            {resource?.resource_url ? (
+                              <a href={resource.resource_url} target="_blank" rel="noopener noreferrer">
+                                {resource.resource_title}
+                              </a>
+                            ) : (
+                              <span>{resource?.resource_title || "Untitled Resource"}</span>
+                            )}
+                            {resource?.resourceType && (
+                              <span class="capability-card__resource-type">
+                                {resource.resourceType}
+                              </span>
+                            )}
+                          </div>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    )}
   </div>
 </BaseLayout>
 
-<script>
-  import { saveCurrentUrlState } from '../../lib/navigationUtils';
-
-  // Save the current URL state for potential "back" navigation
+<script define:vars={{ bottleneckId: bottleneck.id, bottleneckSlug: bottleneck.slug }}>
+  // Save the current bottleneck info for potential scroll restoration
+  import { saveScrollPosition } from '../../lib/scrollPositionUtils';
+  
   document.addEventListener('astro:page-load', () => {
-    saveCurrentUrlState();
-  });
-
-  // Also save URL state when search or filter changes
-  window.addEventListener('search-changed', () => {
-    saveCurrentUrlState();
-  });
-
-  window.addEventListener('fields-changed', () => {
-    saveCurrentUrlState();
-  });
-
-  window.addEventListener('sort-changed', () => {
-    saveCurrentUrlState();
-  });
-
-  // Add listeners for the new tag events
-  window.addEventListener('tag-changed', () => {
-    saveCurrentUrlState();
-  });
-
-  window.addEventListener('private-tag-changed', () => {
-    saveCurrentUrlState();
+    // This runs when the page is fully loaded
+    if (bottleneckId) {
+      // Don't actually need to do anything here since we're tracking clicks in the BottleneckCard
+      // But we could manually save position for direct URL accesses
+      // saveScrollPosition(bottleneckId, bottleneckSlug);
+    }
   });
 </script>
+
+<style lang="scss">
+  .bottleneck-detail__tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+  }
+  
+  .bottleneck-detail__tag {
+    display: inline-block;
+    background-color: var(--background-color-dark);
+    color: var(--text-light);
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.875rem;
+    
+    &::before {
+      content: "#";
+      margin-right: 2px;
+      opacity: 0.7;
+    }
+  }
+
+  .bottleneck-detail__index {
+    display: flex;
+    align-items: center;
+    background-color: var(--background-color-dark);
+    border-radius: 0.25rem;
+    padding: 0.25rem 0.5rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--text-light);
+  }
+</style>
