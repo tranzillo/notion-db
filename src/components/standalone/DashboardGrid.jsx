@@ -39,7 +39,7 @@ const fuseOptions = {
 export default function BottleneckGrid({
   bottlenecks = [],
   initialSearchQuery = '',
-  initialSelectedFieldIds = [], // renamed from initialSelectedDisciplineIds
+  initialSelectedFieldIds = [],
   initialSortBy = 'rank',
   initialSelectedTag = '',
   initialPrivateTag = ''
@@ -72,7 +72,7 @@ export default function BottleneckGrid({
       if (typeof window !== 'undefined') {
         const params = new URLSearchParams(window.location.search);
         const urlQuery = params.get('q');
-        const urlDisciplines = params.get('disciplines');
+        const urlFields = params.get('fields');
         const urlSortBy = params.get('sort');
         const urlTag = params.get('tag');
         const urlPrivateTag = params.get('for');
@@ -81,23 +81,23 @@ export default function BottleneckGrid({
           setCurrentSearchQuery(urlQuery);
         }
         
-        if (urlDisciplines) {
-          const disciplineSlugs = urlDisciplines.split(',');
+        if (urlFields) {
+          const fieldSlugs = urlFields.split(',');
           
           // Convert slugs to IDs
-          const disciplineIds = disciplineSlugs.map(slug => {
+          const fieldIds = fieldSlugs.map(slug => {
             const match = bottlenecks.find(b =>
-              b.discipline && b.discipline.title.toLowerCase().replace(/\s+/g, '-') === slug
-            )?.discipline;
+              b.field && b.field.field_name.toLowerCase().replace(/\s+/g, '-') === slug
+            )?.field;
             return match ? match.id : null;
           }).filter(Boolean);
           
-          if (disciplineIds.length > 0 && 
-              JSON.stringify(disciplineIds) !== JSON.stringify(selectedDisciplines)) {
-            setSelectedDisciplines(disciplineIds);
+          if (fieldIds.length > 0 && 
+              JSON.stringify(fieldIds) !== JSON.stringify(selectedFields)) {
+            setSelectedFields(fieldIds);
           }
         }
-        
+
         // Check for sort parameter
         if (urlSortBy && ['rank', 'index', 'alpha'].includes(urlSortBy)) {
           setSortBy(urlSortBy);
@@ -131,7 +131,7 @@ export default function BottleneckGrid({
     
     const params = new URLSearchParams(window.location.search);
     const urlQuery = params.get('q');
-    const urlDisciplines = params.get('disciplines');
+    const urlFields = params.get('fields');
     const urlSortBy = params.get('sort');
     const urlTag = params.get('tag');
     const urlPrivateTag = params.get('for');
@@ -140,19 +140,19 @@ export default function BottleneckGrid({
       setCurrentSearchQuery(urlQuery);
     }
 
-    if (urlDisciplines) {
-      const disciplineSlugs = urlDisciplines.split(',');
+    if (urlFields) {
+      const fieldSlugs = urlFields.split(',');
 
       // Convert slugs to IDs
-      const disciplineIds = disciplineSlugs.map(slug => {
+      const fieldIds = fieldSlugs.map(slug => {
         const match = bottlenecks.find(b =>
-          b.discipline && b.discipline.title.toLowerCase().replace(/\s+/g, '-') === slug
-        )?.discipline;
+          b.field && b.field.title.toLowerCase().replace(/\s+/g, '-') === slug
+        )?.field;
         return match ? match.id : null;
       }).filter(Boolean);
 
-      if (disciplineIds.length > 0) {
-        setSelectedDisciplines(disciplineIds);
+      if (fieldIds.length > 0) {
+        setSelectedFields(fieldIds);
       }
     }
     
@@ -185,16 +185,16 @@ export default function BottleneckGrid({
     };
   }, []);
 
-  // Listen for discipline filter changes from other components
+  // Listen for field filter changes from other components
   useEffect(() => {
-    const handleDisciplineChange = (event) => {
-      setSelectedDisciplines(event.detail.selectedDisciplines);
+    const handleFieldChange = (event) => {
+      setSelectedFields(event.detail.selectedFields);
     };
 
-    window.addEventListener('disciplines-changed', handleDisciplineChange);
+    window.addEventListener('fields-changed', handleFieldChange);
 
     return () => {
-      window.removeEventListener('disciplines-changed', handleDisciplineChange);
+      window.removeEventListener('fields-changed', handleFieldChange);
     };
   }, []);
 
@@ -278,7 +278,7 @@ export default function BottleneckGrid({
     };
   }, []);
 
-  // Apply filtering and sorting when search, disciplines, tags, or sort method change
+  // Apply filtering and sorting when search, fields, tags, or sort method change
   useEffect(() => {
     if (!isMounted || !fuse) return;
 

@@ -62,18 +62,18 @@
         grids.forEach(grid => grid.classList.add('bottleneck-grid--list-view'));
       }
       
-      // Load discipline color CSS if not already loaded
-      if (!document.getElementById('discipline-color-styles')) {
-        const disciplineColorCssPath = '/styles/generated/discipline-colors.css';
+      // Load field color CSS if not already loaded
+      if (!document.getElementById('field-color-styles')) {
+        const fieldColorCssPath = '/styles/generated/field-colors.css';
         try {
           // Create a link element for the generated CSS
           const linkElement = document.createElement('link');
-          linkElement.id = 'discipline-color-styles';
+          linkElement.id = 'field-color-styles';
           linkElement.rel = 'stylesheet';
-          linkElement.href = disciplineColorCssPath;
+          linkElement.href = fieldColorCssPath;
           document.head.appendChild(linkElement);
         } catch (error) {
-          console.error('Error loading discipline colors CSS:', error);
+          console.error('Error loading field colors CSS:', error);
         }
       }
     }

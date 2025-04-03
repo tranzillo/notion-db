@@ -7,8 +7,6 @@
     "start": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "test": "vitest run",
-    "test:colors": "node scripts/discipline-colors.test.js",
     "functions:dev": "netlify-lambda serve netlify/functions"
   },
   "dependencies": {

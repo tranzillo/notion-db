@@ -47,7 +47,6 @@
   font-size: $font-size-md;
   color: var(--text-light);
   line-height: 1.5;
-  max-width: 100ch;
   margin-block: 0 $spacing-xxl;
   margin-inline: calc($spacing-xxl * (-1));
   padding: 0 $spacing-xxl $spacing-xxl $spacing-xxl;
@@ -63,6 +62,7 @@
   }
   p {
     margin-block-end: $spacing-md;
+    max-width: 100ch;
   }
   ul {
     margin-block-end: $spacing-md;

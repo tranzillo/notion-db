@@ -46,7 +46,7 @@ export function extractTags(items) {
   /**
    * Parse query parameters from URL for server-side use, including tag parameters
    * @param {string} url - URL string
-   * @returns {Object} - Object with searchQuery, disciplineSlugs, sortBy, tag, and privateTag
+   * @returns {Object} - Object with searchQuery, fieldSlugs, sortBy, tag, and privateTag
    */
   export function parseUrlParamsWithTags(url) {
     const params = new URLSearchParams(
@@ -54,15 +54,15 @@ export function extractTags(items) {
     );
     
     const searchQuery = params.get('q') || '';
-    const disciplinesParam = params.get('disciplines') || '';
-    const disciplineSlugs = disciplinesParam ? disciplinesParam.split(',') : [];
+    const fieldsParam = params.get('fields') || '';
+    const fieldSlugs = fieldsParam ? fieldsParam.split(',') : [];
     const sortBy = params.get('sort') || 'rank'; // Default to rank sort
     const tag = params.get('tag') || '';
     const privateTag = params.get('for') || '';
     
     return {
       searchQuery,
-      disciplineSlugs,
+      fieldSlugs,
       sortBy,
       tag,
       privateTag

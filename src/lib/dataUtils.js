@@ -58,7 +58,7 @@ export function getFieldIdsFromUrl(url, fields) {
 /**
  * Parse query parameters from URL for server-side use
  * @param {string} url - URL string
- * @returns {Object} - Object with searchQuery, disciplineSlugs, and sortBy
+ * @returns {Object} - Object with searchQuery, fieldSlugs, and sortBy
  */
 export function parseUrlParams(url) {
   const params = new URLSearchParams(
@@ -66,15 +66,15 @@ export function parseUrlParams(url) {
   );
   
   const searchQuery = params.get('q') || '';
-  const disciplinesParam = params.get('disciplines') || '';
-  const disciplineSlugs = disciplinesParam ? disciplinesParam.split(',') : [];
+  const fieldsParam = params.get('fields') || '';
+  const fieldSlugs = fieldsParam ? fieldsParam.split(',') : [];
   const sortBy = params.get('sort') || 'rank'; // Default to rank sort
   const tag = params.get('tag') || '';
   const privateTag = params.get('for') || '';
   
   return {
     searchQuery,
-    disciplineSlugs,
+    fieldSlugs,
     sortBy,
     tag,
     privateTag
