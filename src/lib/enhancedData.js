@@ -1,52 +1,52 @@
 // src/lib/enhancedData.js
 
 import { getAllData } from './notion';
-import { extractDisciplines } from './dataUtils';
+import { extractFields } from './dataUtils'; // Updated function name
+import { getAllContentAreas } from './contentUtils';
 
-// Import pre-generated discipline color data when available,
-// otherwise provide an empty array for SSG to work properly
-let enhancedDisciplines = [];
+// Import pre-generated field color data
+let enhancedFields = [];
 
 try {
   // This module is created at build time
-  const disciplineColorData = import.meta.glob('./generated/disciplineColorData.js', { eager: true });
-  if (disciplineColorData['./generated/disciplineColorData.js']) {
-    enhancedDisciplines = disciplineColorData['./generated/disciplineColorData.js'].enhancedDisciplines;
+  const fieldColorData = import.meta.glob('./generated/fieldColorData.js', { eager: true });
+  if (fieldColorData['./generated/fieldColorData.js']) {
+    enhancedFields = fieldColorData['./generated/fieldColorData.js'].enhancedFields;
   }
 } catch (error) {
-  console.error('Error loading pre-generated discipline colors', error);
+  console.error('Error loading pre-generated field colors', error);
   // Continue with empty array
 }
 
 /**
- * Match a discipline with its enhanced color data
- * @param {Object} discipline - Original discipline object
- * @returns {Object} - Discipline with color data
+ * Match a field with its enhanced color data
+ * @param {Object} field - Original field object
+ * @returns {Object} - Field with color data
  */
-function enhanceDiscipline(discipline) {
-  if (!discipline || !discipline.id) return discipline;
+function enhanceField(field) {
+  if (!field || !field.id) return field;
   
-  const enhancedDiscipline = enhancedDisciplines.find(d => d.id === discipline.id);
+  const enhancedField = enhancedFields.find(d => d.id === field.id);
   
-  if (enhancedDiscipline) {
+  if (enhancedField) {
     return {
-      ...discipline,
-      colorName: enhancedDiscipline.colorName,
-      colorClass: enhancedDiscipline.colorClass
+      ...field,
+      colorName: enhancedField.colorName,
+      colorClass: enhancedField.colorClass
     };
   }
   
   // If no pre-generated color is found, assign a default color class
-  // based on the discipline ID to ensure consistency
-  const colorId = Math.abs(discipline.id.split('').reduce((acc, char) => 
+  const colorId = Math.abs(field.id.split('').reduce((acc, char) => 
     acc + char.charCodeAt(0), 0) % 8);
   
   return {
-    ...discipline,
+    ...field,
     colorName: `gradient-${colorId}`,
-    colorClass: `discipline-gradient-${colorId}`
+    colorClass: `field-gradient-${colorId}`
   };
 }
+
 /**
  * Get all data from Notion and enhance it with pre-generated color information
  * @returns {Object} Enhanced data
@@ -55,63 +55,68 @@ export async function getEnhancedData() {
   // Fetch raw data from Notion
   const { 
     bottlenecks: originalBottlenecks,
-    solutions: originalSolutions,
-    references,
-    referenceTypeOptions
+    foundationalCapabilities: originalFCs,
+    resources,
+    resourceTypeOptions
   } = await getAllData();
   
-  // Extract disciplines without colors
-  const disciplinesWithoutColors = extractDisciplines(originalBottlenecks);
+  // Extract fields without colors
+  const fieldsWithoutColors = extractFields(originalBottlenecks);
   
-  // Enhance disciplines with pre-generated colors
-  const disciplines = disciplinesWithoutColors.map(enhanceDiscipline);
+  // Enhance fields with pre-generated colors
+  const fields = fieldsWithoutColors.map(enhanceField);
   
-  // Add color information to bottlenecks' disciplines
+  // Add color information to bottlenecks' fields
   const bottlenecks = originalBottlenecks.map(bottleneck => {
-    if (bottleneck.discipline && bottleneck.discipline.id) {
-      const enhancedDiscipline = disciplines.find(d => d.id === bottleneck.discipline.id);
-      if (enhancedDiscipline) {
+    if (bottleneck.field && bottleneck.field.id) {
+      const enhancedField = fields.find(d => d.id === bottleneck.field.id);
+      if (enhancedField) {
         return {
           ...bottleneck,
-          discipline: enhancedDiscipline
+          field: enhancedField
         };
       }
     }
     return bottleneck;
   });
   
-  // Create solutions with associated bottlenecks (but avoid circular references)
-  const solutions = originalSolutions.map(solution => {
+  // Create foundational capabilities with associated bottlenecks (but avoid circular references)
+  const foundationalCapabilities = originalFCs.map(fc => {
     // Generate slug if needed
-    const slug = solution.slug || solution.title.toLowerCase().replace(/[^\w\s]/gi, '').replace(/\s+/g, '-');
+    const slug = fc.slug || fc.fc_name.toLowerCase().replace(/[^\w\s]/gi, '').replace(/\s+/g, '-');
     
     // Find associated bottlenecks from the enhanced bottlenecks array
     const associatedBottlenecks = bottlenecks
-      .filter(bottleneck => bottleneck.solutions.some(s => s.id === solution.id))
+      .filter(bottleneck => bottleneck.foundational_capabilities.some(c => c.id === fc.id))
       .map(bottleneck => ({
         id: bottleneck.id,
-        title: bottleneck.title,
-        content: bottleneck.content,
+        bottleneck_name: bottleneck.bottleneck_name,
+        bottleneck_description: bottleneck.bottleneck_description,
         slug: bottleneck.slug,
-        discipline: bottleneck.discipline, // This has the colorClass from above
-        rank: bottleneck.rank,
+        field: bottleneck.field, // This has the colorClass from above
+        bottleneck_rank: bottleneck.bottleneck_rank,
+        bottleneck_number: bottleneck.bottleneck_number,
         tags: bottleneck.tags,
         privateTags: bottleneck.privateTags
-        // No solutions array to avoid circular references
+        // No foundational_capabilities array to avoid circular references
       }));
     
     return {
-      ...solution,
+      ...fc,
       slug,
       bottlenecks: associatedBottlenecks
     };
   });
   
+  // Get content from static Notion pages
+  const contentAreas = await getAllContentAreas();
+  
   return {
     bottlenecks,
-    solutions,
-    references,
-    disciplines,
-    referenceTypeOptions
+    foundationalCapabilities,
+    resources,
+    fields,
+    resourceTypeOptions,
+    contentAreas
   };
 }
