@@ -4,6 +4,7 @@ import Fuse from 'fuse.js';
 import BottleneckCard from './BottleneckCard';
 import { scrollToSavedPosition } from '../../lib/scrollPositionUtils';
 import { createFieldSlug } from '../../lib/slugUtils';
+import { sharedFieldStore, loadSelectedFields, updateSelectedFields } from '../../lib/sharedStore';
 
 // Configure Fuse.js options for fuzzy search
 const fuseOptions = {
@@ -63,6 +64,12 @@ export default function BottleneckGrid({
     setIsMounted(true);
     
     try {
+      // First try to load field selections from shared store
+      const sharedFields = loadSelectedFields();
+      if (sharedFields && sharedFields.length > 0) {
+        setSelectedFields(sharedFields);
+      }
+      
       // Check for global preferences
       if (typeof window !== 'undefined' && window.userPreferences) {
         setIsListView(window.userPreferences.isListView);
@@ -96,6 +103,8 @@ export default function BottleneckGrid({
           if (fieldIds.length > 0 && 
               JSON.stringify(fieldIds) !== JSON.stringify(selectedFields)) {
             setSelectedFields(fieldIds);
+            // Also update the shared store
+            updateSelectedFields(fieldIds);
           }
         }
         
@@ -154,6 +163,8 @@ export default function BottleneckGrid({
 
       if (fieldIds.length > 0) {
         setSelectedFields(fieldIds);
+        // Also update the shared store
+        updateSelectedFields(fieldIds);
       }
     }
     
@@ -190,6 +201,8 @@ export default function BottleneckGrid({
   useEffect(() => {
     const handleFieldChange = (event) => {
       setSelectedFields(event.detail.selectedFields);
+      // Also update the shared store when field selections change
+      updateSelectedFields(event.detail.selectedFields);
     };
 
     window.addEventListener('fields-changed', handleFieldChange);
@@ -198,6 +211,20 @@ export default function BottleneckGrid({
       window.removeEventListener('fields-changed', handleFieldChange);
     };
   }, []);
+
+  // Listen for changes in the shared field store
+  useEffect(() => {
+    if (!isMounted) return;
+    
+    const unsubscribe = sharedFieldStore.subscribe((state) => {
+      if (state.selectedFields && 
+          JSON.stringify(state.selectedFields) !== JSON.stringify(selectedFields)) {
+        setSelectedFields(state.selectedFields);
+      }
+    });
+    
+    return unsubscribe;
+  }, [isMounted, selectedFields]);
 
   // Listen for tag filter changes
   useEffect(() => {

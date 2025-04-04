@@ -11,6 +11,9 @@
   min-width: 0;
   display: flex;
   flex-direction: column;
+  content-visibility: auto;
+  contain-intrinsic-size: 24em;
+  contain: layout style paint;
   transition: background-color $transition,
     border $transition,
     box-shadow $transition,
@@ -132,17 +135,15 @@
       border-radius: $border-radius-sm;
     }
   }
-
+  .bottleneck-card__footer-left,
+  .bottleneck-card__footer-right {
+    position: relative;
+    z-index: 2;
+  }
   &:hover {
     box-shadow: 0 0 $spacing-md 0 var(--shadow-color);
     .bottleneck-card__title {
       color: var(--primary-color);
-    }
-
-    .bottleneck-card__footer-left,
-    .bottleneck-card__footer-right {
-      position: relative;
-      z-index: 2;
     }
   }
 }

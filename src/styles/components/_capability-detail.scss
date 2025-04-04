@@ -89,7 +89,6 @@
     &__resource-item {
       font-size: $font-size-sm;
       letter-spacing: 0.04em;
-      line-height: 1.25;
       background-color: var(--background-color-dark);
       padding: $spacing-sm;
       border-radius: $border-radius-md;
@@ -101,11 +100,7 @@
         max-width: 65ch;
         line-height: 1.1;
         letter-spacing: 0.04em;
-        &::after {
-          content: "🡥";
-          display: inline;
-          font-size: 0.85em;
-        }
+
         &:hover {
           color: var(--primary-color);
         }

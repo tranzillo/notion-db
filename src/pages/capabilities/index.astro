@@ -10,7 +10,8 @@ import { extractTags, parseUrlParamsWithTags } from "../../lib/tagUtils";
 import { getEnhancedData } from "../../lib/enhancedData";
 
 // Fetch all enhanced data from Notion at build time
-const { bottlenecks, foundationalCapabilities, fields, contentAreas } = await getEnhancedData();
+const { bottlenecks, foundationalCapabilities, fields, contentAreas } =
+  await getEnhancedData();
 
 // Extract all unique tags from capabilities
 const tags = extractTags(foundationalCapabilities);
@@ -25,11 +26,12 @@ const capabilityCount = foundationalCapabilities.length;
 
 // Calculate field counts for capabilities (aggregated from related bottlenecks)
 const fieldCounts = {};
-foundationalCapabilities.forEach(capability => {
+foundationalCapabilities.forEach((capability) => {
   if (capability.bottlenecks && Array.isArray(capability.bottlenecks)) {
-    capability.bottlenecks.forEach(bottleneck => {
+    capability.bottlenecks.forEach((bottleneck) => {
       if (bottleneck.field && bottleneck.field.id) {
-        fieldCounts[bottleneck.field.id] = (fieldCounts[bottleneck.field.id] || 0) + 1;
+        fieldCounts[bottleneck.field.id] =
+          (fieldCounts[bottleneck.field.id] || 0) + 1;
       }
     });
   }
@@ -38,14 +40,17 @@ foundationalCapabilities.forEach(capability => {
 // Get capabilities content if available
 const capabilitiesContent = contentAreas?.capabilities || {
   title: "Explore Foundational Capabilities",
-  content: `<p>Discover <em>${capabilityCount} Foundational Capabilities</em> that address <em>${bottleneckCount} Bottlenecks</em> in scientific advancement. Use the search and filters to find capabilities relevant to your interests.</p>`
+  content: `<p>Discover <em>${capabilityCount} Foundational Capabilities</em> that address <em>${bottleneckCount} Bottlenecks</em> in scientific advancement. Use the search and filters to find capabilities relevant to your interests.</p>`,
 };
 ---
 
 <BaseLayout title="Foundational Capabilities - Convergent 101">
   <div class="dashboard-header">
     <h1>{capabilitiesContent.title}</h1>
-    <div class="dashboard-content notion-content" set:html={capabilitiesContent.content} />
+    <div
+      class="dashboard-content notion-content"
+      set:html={capabilitiesContent.content}
+    />
   </div>
 
   <div class="dashboard-layout">
@@ -61,9 +66,14 @@ const capabilitiesContent = contentAreas?.capabilities || {
     <div class="dashboard-layout__main">
       <!-- Private Tag Banner -->
       <PrivateTagBanner client:load />
-      
+
       <div class="dashboard-search">
-        <Search client:load initialQuery={searchQuery} />
+        <Search
+          client:load
+          initialQuery={searchQuery}
+          bottleneckCount={bottleneckCount}
+          capabilityCount={capabilityCount}
+        />
         <div class="dashboard-controls">
           <SortControl client:load initialSortBy={sortBy} />
           <ViewToggle client:load />

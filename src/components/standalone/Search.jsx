@@ -1,3 +1,4 @@
+// Updated Search.jsx with item count in placeholder
 import React, { useState, useEffect } from 'react';
 import { saveCurrentUrlState } from '../../lib/navigationUtils';
 
@@ -7,6 +8,46 @@ export default function Search({
   capabilityCount = 0 
 }) {
   const [searchQuery, setSearchQuery] = useState(initialQuery);
+  const [placeholderText, setPlaceholderText] = useState('Search...');
+  
+  // Determine which dashboard we're viewing and set appropriate placeholder
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const isCapabilitiesView = window.location.pathname.startsWith('/capabilities');
+      
+      if (isCapabilitiesView) {
+        const count = capabilityCount || 0;
+        setPlaceholderText(`Search ${count} Foundational Capabilities...`);
+      } else {
+        const count = bottleneckCount || 0;
+        setPlaceholderText(`Search ${count} Bottlenecks...`);
+      }
+    }
+  }, [bottleneckCount, capabilityCount]);
+
+  // Listen for navigation events to update placeholder when paths change
+  useEffect(() => {
+    const updatePlaceholder = () => {
+      if (typeof window !== 'undefined') {
+        const isCapabilitiesView = window.location.pathname.startsWith('/capabilities');
+        
+        if (isCapabilitiesView) {
+          const count = capabilityCount || 0;
+          setPlaceholderText(`Search ${count} Foundational Capabilities...`);
+        } else {
+          const count = bottleneckCount || 0;
+          setPlaceholderText(`Search ${count} Bottlenecks...`);
+        }
+      }
+    };
+    
+    // Update when Astro navigation completes
+    document.addEventListener('astro:page-load', updatePlaceholder);
+    
+    return () => {
+      document.removeEventListener('astro:page-load', updatePlaceholder);
+    };
+  }, [bottleneckCount, capabilityCount]);
 
   // Handle search input change
   const handleSearchChange = (e) => {
@@ -90,7 +131,7 @@ export default function Search({
           type="text"
           name="q"
           className="search-bar__input"
-          placeholder={`Search Bottlenecks...`}
+          placeholder={placeholderText}
           value={searchQuery}
           onChange={handleSearchChange}
           autoComplete="off"

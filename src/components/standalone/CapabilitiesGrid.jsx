@@ -4,6 +4,7 @@ import Fuse from 'fuse.js';
 import FoundationalCapabilityCard from './FoundationalCapabilityCard';
 import { scrollToSavedPosition } from '../../lib/scrollPositionUtils';
 import { createFieldSlug } from '../../lib/slugUtils';
+import { sharedFieldStore, loadSelectedFields } from '../../lib/sharedStore';
 
 // Configure Fuse.js options for fuzzy search
 const fuseOptions = {
@@ -33,7 +34,7 @@ export default function CapabilitiesGrid({
   capabilities = [],
   initialSearchQuery = '',
   initialSelectedFieldIds = [],
-  initialSortBy = 'alpha',
+  initialSortBy = 'bottlenecks',
   initialSelectedTag = '',
   initialPrivateTag = ''
 }) {
@@ -54,6 +55,12 @@ export default function CapabilitiesGrid({
     setIsMounted(true);
     
     try {
+      // First try to load field selections from shared store
+      const sharedFields = loadSelectedFields();
+      if (sharedFields && sharedFields.length > 0) {
+        setSelectedFields(sharedFields);
+      }
+      
       // Check for global preferences
       if (typeof window !== 'undefined' && window.userPreferences) {
         setIsListView(window.userPreferences.isListView);
@@ -95,9 +102,17 @@ export default function CapabilitiesGrid({
           }
         }
         
-        // Check for sort parameter
+        // Check for sort parameter - default to 'bottlenecks' for capabilities view
         if (urlSortBy && ['bottlenecks', 'alpha'].includes(urlSortBy)) {
           setSortBy(urlSortBy);
+        } else if (!urlSortBy) {
+          // If no sort is specified, default to bottlenecks
+          setSortBy('bottlenecks');
+          // Update URL to match
+          const newParams = new URLSearchParams(window.location.search);
+          newParams.set('sort', 'bottlenecks');
+          const newUrl = `${window.location.pathname}?${newParams.toString()}`;
+          window.history.replaceState(null, '', newUrl);
         }
         
         // Check for tag parameter
@@ -259,8 +274,15 @@ export default function CapabilitiesGrid({
         
         return countB - countA; // Higher count first
       } else {
-        // Default to alphabetical
-        return a.fc_name.localeCompare(b.fc_name);
+        // Default to bottlenecks sorting if an invalid sort type is provided
+        const countA = a.bottlenecks?.length || 0;
+        const countB = b.bottlenecks?.length || 0;
+        
+        if (countA === countB) {
+          return a.fc_name.localeCompare(b.fc_name);
+        }
+        
+        return countB - countA; // Higher count first
       }
     });
 

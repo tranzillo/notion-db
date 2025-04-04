@@ -6,9 +6,42 @@
   background-color: var(--card-background);
   border-radius: $border-radius-lg;
   padding: $spacing-xl $spacing-xl $spacing-lg;
-  border: 1px solid var(--border-color);
+  border: 1px solid var(--border-dull);
   min-width: 0;
-  transition: background-color $transition, border-color $transition;
+  content-visibility: auto;
+  contain-intrinsic-size: 24em;
+  contain: layout style paint;
+  transition: background-color $transition, border-color $transition, box-shadow $transition;
+  &__resource-list {
+    list-style-type: none;
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-sm;
+  }
+  &__resource-type {
+    font-size: $font-size-xs;
+    color: var(--text-lighter);
+    background-color: var(--background-color);
+    padding: calc($spacing-xs * 0.5) $spacing-xs;
+    border-radius: $border-radius-sm;
+    align-self: flex-start;
+  }
+  &__resource-link {
+    display: flex;
+    flex-direction: column-reverse;
+    gap: $spacing-xs;
+    background-color: var(--background-color-dark);
+    border-radius: $border-radius-md;
+    font-size: $font-size-sm;
+    padding: $spacing-sm;
+    a {
+      text-decoration: none;
+      color: var(--text-color);
+      &:hover {
+        color: var(--primary-color);
+      }
+    }
+  }
   &__clickable {
     position: absolute;
     inset: 0;
@@ -48,6 +81,7 @@
   &__title {
     font-size: $font-size-lg;
     margin: 0;
+
     a {
       position: relative;
       z-index: 2;
@@ -58,10 +92,10 @@
 
   &__content {
     color: var(--text-light);
-    flex-grow: 1;
     line-height: 1.5;
     line-clamp: 5;
     display: -webkit-box;
+    flex-grow: 1;
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 5;
     overflow: hidden;
@@ -87,8 +121,9 @@
     border-radius: $border-radius-sm;
     font-size: $font-size-xs;
     white-space: nowrap;
-    
+
   }
+
   &__footer {
     margin-block-start: $spacing-sm;
     display: flex;
@@ -100,7 +135,10 @@
     &-right {
       display: flex;
       align-items: center;
+      position: relative;
+      z-index: 2;
     }
+
     &-left {
       display: flex;
       flex-direction: column;
@@ -121,36 +159,7 @@
 
   &--grid:hover {
     box-shadow: 0 0 $spacing-md 0 var(--shadow-color);
-    .capabilities-card__title {
-      color: var(--primary-color);
-    }
-
-    .capabilities-card__footer-left,
-    .capabilities-card__footer-right {
-      position: relative;
-      z-index: 2;
-    }
+    color: var(--primary-color);
   }
 
-  &__resource-item {
-
-    .capabilities-card__resource-link {
-      display: flex;
-      flex-direction: column;
-      gap: $spacing-xs;
-      a {
-        text-decoration: none;
-        margin-inline: $spacing-xs;
-      }
-    }
-
-    .capabilities-card__resource-type {
-      font-size: $font-size-xs;
-      color: var(--text-lighter);
-      background-color: var(--background-color-dark);
-      padding: calc($spacing-xs * 0.5) $spacing-xs;
-      border-radius: $border-radius-sm;
-      align-self: flex-start;
-    }
-  }
 }

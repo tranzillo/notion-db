@@ -52,10 +52,10 @@ export default function FoundationalCapabilityCard({
 
   // Prepare content
   const capabilityUrl = `/capabilities/${capability.slug}`;
-  
+
   // Make sure we're working with string content
   const contentString = capability.fc_description || '';
-    
+
   const truncatedContent = truncateText(contentString, truncateLength);
   const displayTitle = searchQuery ? highlightMatches(capability.fc_name, searchQuery) : capability.fc_name;
   const displayContent = searchQuery ? highlightMatches(truncatedContent, searchQuery) : truncatedContent;
@@ -115,7 +115,10 @@ export default function FoundationalCapabilityCard({
         </div>
         <div className="capability-card__footer-right">
           <div className="capability-card__bottlenecks-count">
-            {capability.bottlenecks?.length || 0} Bottlenecks
+            {(() => {
+              const count = capability.bottlenecks?.length || 0;
+              return `${count} ${count === 1 ? 'Bottleneck' : 'Bottlenecks'}`;
+            })()}
           </div>
         </div>
       </div>

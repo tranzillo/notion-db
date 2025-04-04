@@ -1,4 +1,4 @@
-// src/components/standalone/SortControl.jsx
+// Updated SortControl.jsx
 import React, { useState, useEffect } from 'react';
 import { updateUrlParamsWithoutHistory } from '../../lib/dataUtils';
 
@@ -11,7 +11,21 @@ export default function SortControl({ initialSortBy = 'rank' }) {
   useEffect(() => {
     // Check if we're in the capabilities view based on pathname
     if (typeof window !== 'undefined') {
-      setIsCapabilitiesView(window.location.pathname.startsWith('/capabilities'));
+      const isCapView = window.location.pathname.startsWith('/capabilities');
+      setIsCapabilitiesView(isCapView);
+      
+      // If we're in capabilities view and sort is 'rank', change it to 'bottlenecks'
+      // since rank doesn't apply to capabilities
+      if (isCapView && sortBy === 'rank') {
+        const newSort = 'bottlenecks';
+        setSortBy(newSort);
+        updateUrlParamsWithoutHistory({ sort: newSort });
+        
+        // Dispatch event to notify other components
+        window.dispatchEvent(new CustomEvent('sort-changed', {
+          detail: { sortBy: newSort }
+        }));
+      }
     }
   }, []);
 
@@ -21,8 +35,8 @@ export default function SortControl({ initialSortBy = 'rank' }) {
     
     // Different sort cycling based on view
     if (isCapabilitiesView) {
-      // For capabilities: alpha -> bottlenecks -> alpha
-      newSortBy = sortBy === 'alpha' ? 'bottlenecks' : 'alpha';
+      // For capabilities: bottlenecks -> alpha -> bottlenecks
+      newSortBy = sortBy === 'bottlenecks' ? 'alpha' : 'bottlenecks';
     } else {
       // For bottlenecks: rank -> alpha -> rank
       newSortBy = sortBy === 'rank' ? 'alpha' : 'rank';
@@ -55,6 +69,12 @@ export default function SortControl({ initialSortBy = 'rank' }) {
         
       if (urlSortBy && validSortOptions.includes(urlSortBy) && urlSortBy !== sortBy) {
         setSortBy(urlSortBy);
+      } else if (isCapabilitiesView && (!urlSortBy || urlSortBy === 'rank')) {
+        // Default to bottlenecks sort for capabilities if sort isn't specified
+        // or if it's mistakenly set to rank
+        const newSort = 'bottlenecks';
+        setSortBy(newSort);
+        updateUrlParamsWithoutHistory({ sort: newSort });
       }
     }
   }, [isCapabilitiesView]);
@@ -63,8 +83,8 @@ export default function SortControl({ initialSortBy = 'rank' }) {
   const getButtonLabels = () => {
     if (isCapabilitiesView) {
       return {
-        ariaLabel: sortBy === 'alpha' ? "Sort by bottleneck count" : "Sort alphabetically",
-        title: sortBy === 'alpha' ? "Sort by bottleneck count" : "Sort alphabetically"
+        ariaLabel: sortBy === 'bottlenecks' ? "Sort alphabetically" : "Sort by bottleneck count",
+        title: sortBy === 'bottlenecks' ? "Sort alphabetically" : "Sort by bottleneck count"
       };
     } else {
       return {
