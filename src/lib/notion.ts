@@ -13,7 +13,7 @@ export interface Resource {
   resource_title: string;
   resource_url: string;
   content: string;
-  resourceType: string;
+  resourceTypes: string[];
   last_edited_time?: string;
 }
 
@@ -456,10 +456,14 @@ async function processResourcePage(page: any): Promise<Resource> {
     resource_url = page.properties.Resource_URL.url;
   }
   
-  // Extract resourceType with updated field name
-  let resourceType = 'Publication'; // Default value
-  if (page.properties.Resource_Type?.select?.name) {
-    resourceType = page.properties.Resource_Type.select.name;
+  // Extract resourceTypes with updated field name - handling multi-select
+  let resourceTypes: string[] = ['Publication']; // Default value
+  if (page.properties.Resource_Type?.multi_select) {
+    // Handle multi-select property
+    resourceTypes = page.properties.Resource_Type.multi_select.map((option: any) => option.name);
+  } else if (page.properties.Resource_Type?.select?.name) {
+    // Handle legacy single-select property (for backward compatibility)
+    resourceTypes = [page.properties.Resource_Type.select.name];
   }
   
   // Get content directly (no separate cache file)
@@ -479,7 +483,7 @@ async function processResourcePage(page: any): Promise<Resource> {
     resource_title,
     resource_url,
     content,
-    resourceType,
+    resourceTypes,
     last_edited_time: page.last_edited_time
   };
 }
@@ -742,25 +746,29 @@ export async function getResourceTypeOptions(): Promise<string[]> {
       'resource-types'
     );
     
-    // Try ResourceType property first
+    // Try ResourceType property first, prioritizing multi_select
     let typeProperty = Object.values(database.properties).find(
-      (prop: any) => prop.name === 'Resource_Type' && prop.type === 'select'
+      (prop: any) => prop.name === 'Resource_Type' && prop.type === 'multi_select'
     );
     
-    // Fall back to Type property if ResourceType doesn't exist
+    // Fall back to Type property or ResourceType as select if multi_select doesn't exist
     if (!typeProperty) {
       typeProperty = Object.values(database.properties).find(
-        (prop: any) => prop.name === 'Type' && prop.type === 'select'
+        (prop: any) => 
+          (prop.name === 'Resource_Type' && prop.type === 'select') ||
+          (prop.name === 'Type' && prop.type === 'select')
       );
     }
     
-    if (!typeProperty || !typeProperty.select || !typeProperty.select.options) {
+    if (!typeProperty) {
       console.warn('No resource type options found in Notion database');
       return ['Publication']; // Default option
     }
     
-    // Extract option names
-    const options = typeProperty.select.options.map((option: any) => option.name);
+    // Extract option names - handle both multi_select and select types
+    const options = typeProperty.type === 'multi_select' 
+      ? typeProperty.multi_select.options.map((option: any) => option.name)
+      : typeProperty.select.options.map((option: any) => option.name);
     
     // Cache the options
     fs.writeFileSync(cacheFile, JSON.stringify(options, null, 2));

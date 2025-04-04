@@ -81,7 +81,11 @@
       padding: $spacing-md 0;
       align-items: flex-start;
     }
-  
+    &__resource-link {
+      display: flex;
+      flex-direction: column-reverse;
+      gap: $spacing-sm;
+    }
     &__resource-item {
       font-size: $font-size-sm;
       letter-spacing: 0.04em;
@@ -90,9 +94,6 @@
       padding: $spacing-sm;
       border-radius: $border-radius-md;
       transition: background-color $transition;
-      display: flex;
-      flex-direction: column;
-      gap: $spacing-sm;
   
       a {
         color: var(--text-color);
@@ -113,8 +114,8 @@
   
     &__resource-type {
       font-size: $font-size-xs;
-      color: var(--text-lighter);
-      background-color: var(--background-color);
+      color: var(--text-light);
+      background-color: var(--card-background);
       padding: calc($spacing-xs * 0.5) $spacing-xs;
       border-radius: $border-radius-sm;
       align-self: flex-start;

@@ -77,7 +77,7 @@ export default function CapabilitiesGrid({
           
           // Convert slugs to IDs
           const fieldIds = fieldSlugs.map(slug => {
-            // Find field by matching slug to field title
+            // Find fields by matching slug to field_name
             const matchingFields = capabilities.flatMap(capability => 
               capability.bottlenecks?.map(bottleneck => bottleneck.field) || []
             ).filter(Boolean);

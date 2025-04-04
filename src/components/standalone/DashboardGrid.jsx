@@ -11,15 +11,15 @@ const fuseOptions = {
   threshold: 0.4,
   keys: [
     {
-      name: 'bottleneck_name', // Updated field name
+      name: 'bottleneck_name',
       weight: 0.7
     },
     {
-      name: 'bottleneck_description', // Updated field name
+      name: 'bottleneck_description',
       weight: 0.5
     },
     {
-      name: 'field.field_name', // Updated field name
+      name: 'field.field_name',
       weight: 0.3
     },
     {
@@ -27,11 +27,11 @@ const fuseOptions = {
       weight: 0.4
     },
     {
-      name: 'bottleneck_rank', // Updated field name
+      name: 'bottleneck_rank',
       weight: 0.2
     },
     {
-      name: 'bottleneck_number', // Updated field name
+      name: 'bottleneck_number',
       weight: 0.2
     }
   ]
@@ -40,7 +40,7 @@ const fuseOptions = {
 export default function BottleneckGrid({
   bottlenecks = [],
   initialSearchQuery = '',
-  initialSelectedFieldIds = [], // renamed from initialSelectedDisciplineIds
+  initialSelectedFieldIds = [],
   initialSortBy = 'rank',
   initialSelectedTag = '',
   initialPrivateTag = ''
@@ -73,7 +73,7 @@ export default function BottleneckGrid({
       if (typeof window !== 'undefined') {
         const params = new URLSearchParams(window.location.search);
         const urlQuery = params.get('q');
-        const urlDisciplines = params.get('disciplines');
+        const urlFields = params.get('fields');
         const urlSortBy = params.get('sort');
         const urlTag = params.get('tag');
         const urlPrivateTag = params.get('for');
@@ -82,20 +82,20 @@ export default function BottleneckGrid({
           setCurrentSearchQuery(urlQuery);
         }
         
-        if (urlDisciplines) {
-          const disciplineSlugs = urlDisciplines.split(',');
+        if (urlFields) {
+          const fieldSlugs = urlFields.split(',');
           
           // Convert slugs to IDs using the slugUtils function
-          const disciplineIds = disciplineSlugs.map(slug => {
+          const fieldIds = fieldSlugs.map(slug => {
             const match = bottlenecks.find(b =>
               b.field && createFieldSlug(b.field.field_name) === slug
             )?.field;
             return match ? match.id : null;
           }).filter(Boolean);
           
-          if (disciplineIds.length > 0 && 
-              JSON.stringify(disciplineIds) !== JSON.stringify(selectedFields)) {
-            setSelectedFields(disciplineIds);
+          if (fieldIds.length > 0 && 
+              JSON.stringify(fieldIds) !== JSON.stringify(selectedFields)) {
+            setSelectedFields(fieldIds);
           }
         }
         
@@ -132,60 +132,6 @@ export default function BottleneckGrid({
     
     const params = new URLSearchParams(window.location.search);
     const urlQuery = params.get('q');
-    const urlDisciplines = params.get('disciplines');
-    const urlSortBy = params.get('sort');
-    const urlTag = params.get('tag');
-    const urlPrivateTag = params.get('for');
-
-    if (urlQuery) {
-      setCurrentSearchQuery(urlQuery);
-    }
-
-    if (urlDisciplines) {
-      const disciplineSlugs = urlDisciplines.split(',');
-
-      // Convert slugs to IDs using the slugUtils function
-      const disciplineIds = disciplineSlugs.map(slug => {
-        const match = bottlenecks.find(b =>
-          b.field && createFieldSlug(b.field.field_name) === slug
-        )?.field;
-        return match ? match.id : null;
-      }).filter(Boolean);
-
-      if (disciplineIds.length > 0) {
-        setSelectedFields(disciplineIds);
-      }
-    }
-    
-    // Check for sort parameter
-    if (urlSortBy && ['rank', 'alpha'].includes(urlSortBy)) {
-      setSortBy(urlSortBy);
-    }
-    
-    // Check for tag parameter
-    if (urlTag) {
-      setSelectedTag(urlTag);
-    }
-    
-    // Check for private tag parameter
-    if (urlPrivateTag) {
-      setPrivateTag(urlPrivateTag);
-    }
-  }, [bottlenecks]);
-
-  // Initialize search index
-  useEffect(() => {
-    if (bottlenecks.length > 0) {
-      setFuse(new Fuse(bottlenecks, fuseOptions));
-    }
-  }, [bottlenecks]);
-
-  // Listen for URL parameters on mount
-  useEffect(() => {
-    if (typeof window === 'undefined') return;
-    
-    const params = new URLSearchParams(window.location.search);
-    const urlQuery = params.get('q');
     const urlFields = params.get('fields');
     const urlSortBy = params.get('sort');
     const urlTag = params.get('tag');
@@ -198,10 +144,10 @@ export default function BottleneckGrid({
     if (urlFields) {
       const fieldSlugs = urlFields.split(',');
 
-      // Convert slugs to IDs
+      // Fixed: Use field_name instead of title for matching
       const fieldIds = fieldSlugs.map(slug => {
         const match = bottlenecks.find(b =>
-          b.field && b.field.title.toLowerCase().replace(/\s+/g, '-') === slug
+          b.field && createFieldSlug(b.field.field_name) === slug
         )?.field;
         return match ? match.id : null;
       }).filter(Boolean);
@@ -411,7 +357,7 @@ export default function BottleneckGrid({
     sortBy, 
     fuse, 
     bottlenecks,
-    isMounted // Add this dependency
+    isMounted
   ]);
   
   // Attempt to restore scroll position after filtered bottlenecks are updated

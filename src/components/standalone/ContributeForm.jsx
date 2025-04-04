@@ -1,4 +1,4 @@
-// ContributeForm.jsx
+// src/components/standalone/ContributeForm.jsx
 import React, { useState } from 'react';
 
 export default function ContributeForm({ fields = [], resourceTypeOptions = [] }) {
@@ -26,13 +26,19 @@ export default function ContributeForm({ fields = [], resourceTypeOptions = [] }
     title: '',
     url: '',
     content: '',
-    resourceType: resourceTypeOptions.length > 0 ? resourceTypeOptions[0] : 'Publication'
+    resourceTypes: resourceTypeOptions.length > 0 ? [resourceTypeOptions[0]] : ['Publication'] // Changed to array
   });
 
   // Handle tab change
   const handleTabChange = (tabName) => {
     setActiveTab(tabName);
     setFormError('');
+  };
+
+  // Handle multi-select change for resource types
+  const handleResourceTypeChange = (e) => {
+    const selectedOptions = Array.from(e.target.selectedOptions, option => option.value);
+    setResourceData({ ...resourceData, resourceTypes: selectedOptions });
   };
 
   // Form submission handlers
@@ -108,7 +114,7 @@ export default function ContributeForm({ fields = [], resourceTypeOptions = [] }
     }
   };
 
-  // Handle resource submission
+  // Handle resource submission - updated for multiple resource types
   const handleResourceSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
@@ -126,7 +132,7 @@ export default function ContributeForm({ fields = [], resourceTypeOptions = [] }
             resource_title: resourceData.title,
             resource_url: resourceData.url,
             content: resourceData.content,
-            resource_type: resourceData.resourceType
+            resourceTypes: resourceData.resourceTypes // Changed from resourceType to resourceTypes
           }
         }),
       });
@@ -299,7 +305,7 @@ export default function ContributeForm({ fields = [], resourceTypeOptions = [] }
           </form>
         )}
 
-        {/* Resource Form */}
+        {/* Resource Form - Updated for multi-select */}
         {activeTab === 'resource' && (
           <form onSubmit={handleResourceSubmit}>
             <div className="form-group">
@@ -314,12 +320,15 @@ export default function ContributeForm({ fields = [], resourceTypeOptions = [] }
             </div>
 
             <div className="form-group">
-              <label htmlFor="resource-type">Resource Type *</label>
+              <label htmlFor="resource-type">Resource Type(s) * (Hold Ctrl/Cmd to select multiple)</label>
               <select
                 id="resource-type"
-                value={resourceData.resourceType}
-                onChange={(e) => setResourceData({ ...resourceData, resourceType: e.target.value })}
+                multiple
+                value={resourceData.resourceTypes}
+                onChange={handleResourceTypeChange}
                 required
+                size={Math.min(5, resourceTypeOptions.length)} // Show up to 5 options at once
+                className="multi-select"
               >
                 {resourceTypeOptions.map((type) => (
                   <option key={type} value={type}>
@@ -327,6 +336,9 @@ export default function ContributeForm({ fields = [], resourceTypeOptions = [] }
                   </option>
                 ))}
               </select>
+              <div className="help-text">
+                Selected: {resourceData.resourceTypes.join(', ')}
+              </div>
             </div>
 
             <div className="form-group">
