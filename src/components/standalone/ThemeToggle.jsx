@@ -47,10 +47,17 @@ export default function ThemeToggle() {
       loadThemePreference();
     };
     
+    // Handle browser history navigation
+    const handlePopState = () => {
+      loadThemePreference();
+    };
+    
     document.addEventListener('astro:page-load', handlePageLoad);
+    window.addEventListener('popstate', handlePopState);
     
     return () => {
       document.removeEventListener('astro:page-load', handlePageLoad);
+      window.removeEventListener('popstate', handlePopState);
     };
   }, []);
   

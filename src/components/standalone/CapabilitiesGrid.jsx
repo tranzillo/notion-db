@@ -300,13 +300,18 @@ export default function CapabilitiesGrid({
   
   // Attempt to restore scroll position after filtered capabilities are updated
   useEffect(() => {
-    // Only try to restore scroll once
-    if (!hasRestoredScroll && filteredCapabilities.length > 0) {
-      // Wait a bit for the DOM to update
-      setTimeout(() => {
-        scrollToSavedPosition(filteredCapabilities);
-        setHasRestoredScroll(true);
-      }, 100);
+    // Only try to restore scroll if this is a back navigation to dashboard
+    if (filteredCapabilities.length > 0 && !hasRestoredScroll) {
+      // Import and use scrollPositionUtils directly
+      import('../../lib/scrollPositionUtils').then(({ isBackNavigationToDashboard, scrollToSavedPosition }) => {
+        if (isBackNavigationToDashboard()) {
+          // Wait a bit for the DOM to update
+          setTimeout(() => {
+            scrollToSavedPosition(filteredCapabilities);
+            setHasRestoredScroll(true);
+          }, 100);
+        }
+      });
     }
   }, [filteredCapabilities, hasRestoredScroll]);
 

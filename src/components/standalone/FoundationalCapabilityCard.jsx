@@ -62,7 +62,7 @@ export default function FoundationalCapabilityCard({
 
   // Handle click to save position
   const handleCardClick = () => {
-    saveScrollPosition(capability.id, capability.slug);
+    saveScrollPosition(capability.id, capability.slug, window.location.pathname);
   };
 
   return (

@@ -67,7 +67,10 @@ interface Tag {
 }
 
 // Cache configuration
-const CACHE_DIR = '.notion-cache';
+const CACHE_DIR = process.env.NETLIFY 
+  ? '/opt/buildhome/cache/notion-cache' 
+  : '.notion-cache';
+
 const CACHE_META_FILE = path.join(CACHE_DIR, 'meta.json');
 
 // Initialize Notion client
@@ -182,15 +185,15 @@ class RequestThrottler {
 const throttler = new RequestThrottler(3);
 
 /**
- * Initialize the cache system
+ * Initialize cache
  */
-async function initCache(): Promise<CacheMeta> {
+export async function initCache() {
   if (!fs.existsSync(CACHE_DIR)) {
     fs.mkdirSync(CACHE_DIR, { recursive: true });
   }
-
+  
   if (!fs.existsSync(CACHE_META_FILE)) {
-    const initialMeta: CacheMeta = {
+    const initialMeta = {
       lastUpdated: 0,
       databases: {}
     };

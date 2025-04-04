@@ -490,5 +490,26 @@ const {
         }
       });
     </script>
+    <script>
+      import { scrollToSavedPosition, isBackNavigationToDashboard } from "../lib/scrollPositionUtils";
+      import { initializePreferences } from "../lib/preferenceStore";
+    
+      // Handle scroll restoration for dashboard pages
+      document.addEventListener("astro:page-load", () => {
+        // Initialize preferences first
+        initializePreferences();
+        
+        // Check if we're coming back to a dashboard
+        if (isBackNavigationToDashboard()) {
+          // Wait a bit for the DOM to update
+          setTimeout(() => {
+            scrollToSavedPosition();
+          }, 100);
+        } else {
+          // For non-dashboard or direct navigation, scroll to top
+          window.scrollTo(0, 0);
+        }
+      });
+    </script>
   </body>
 </html>

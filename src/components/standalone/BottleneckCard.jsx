@@ -50,9 +50,9 @@ export default function BottleneckCard({
 
   // Handle click to save position information
   const handleCardClick = () => {
-    saveScrollPosition(bottleneck.id, bottleneck.slug);
+    saveScrollPosition(bottleneck.id, bottleneck.slug, window.location.pathname);
   };
-
+  
   // Get tags for display
   const tags = bottleneck.tags || [];
 

@@ -108,5 +108,12 @@
       const prefs = loadUserPreferences();
       applyTheme(document, prefs);
     });
+    
+    // Handle popstate events (browser back/forward navigation)
+    window.addEventListener("popstate", () => {
+      // Re-apply theme when using browser navigation
+      const prefs = loadUserPreferences();
+      applyTheme(document, prefs);
+    });
   })();
 </script>

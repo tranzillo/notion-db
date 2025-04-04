@@ -389,13 +389,18 @@ export default function BottleneckGrid({
   
   // Attempt to restore scroll position after filtered bottlenecks are updated
   useEffect(() => {
-    // Only try to restore scroll once
-    if (!hasRestoredScroll && filteredBottlenecks.length > 0) {
-      // Wait a bit for the DOM to update
-      setTimeout(() => {
-        scrollToSavedPosition(filteredBottlenecks);
-        setHasRestoredScroll(true);
-      }, 100);
+    // Only try to restore scroll if this is a back navigation to dashboard
+    if (filteredBottlenecks.length > 0 && !hasRestoredScroll) {
+      // Import and use scrollPositionUtils directly
+      import('../../lib/scrollPositionUtils').then(({ isBackNavigationToDashboard, scrollToSavedPosition }) => {
+        if (isBackNavigationToDashboard()) {
+          // Wait a bit for the DOM to update
+          setTimeout(() => {
+            scrollToSavedPosition(filteredBottlenecks);
+            setHasRestoredScroll(true);
+          }, 100);
+        }
+      });
     }
   }, [filteredBottlenecks, hasRestoredScroll]);
 
