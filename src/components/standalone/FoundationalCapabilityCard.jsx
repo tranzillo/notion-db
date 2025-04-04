@@ -1,5 +1,5 @@
 // src/components/standalone/FoundationalCapabilityCard.jsx
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { saveScrollPosition } from '../../lib/scrollPositionUtils';
 
 export default function FoundationalCapabilityCard({

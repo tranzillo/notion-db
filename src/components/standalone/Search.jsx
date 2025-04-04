@@ -1,4 +1,4 @@
-// Updated Search.jsx with item count in placeholder
+// src/components/standalone/Search.jsx
 import React, { useState, useEffect } from 'react';
 import { saveCurrentUrlState } from '../../lib/navigationUtils';
 
@@ -70,7 +70,7 @@ export default function Search({
     saveCurrentUrlState(true);
   };
 
-  // Update URL parameters
+  // Update URL parameters without creating history entries
   const updateUrlParams = (query) => {
     const params = new URLSearchParams(window.location.search);
     
@@ -81,7 +81,14 @@ export default function Search({
     }
     
     const newUrl = `${window.location.pathname}${params.toString() ? '?' + params.toString() : ''}`;
-    window.history.pushState({}, '', newUrl);
+    
+    // Use replaceState instead of pushState to avoid creating history entries
+    window.history.replaceState(
+      // Preserve any existing state (including scroll position)
+      window.history.state || {},
+      '',
+      newUrl
+    );
     
     // Dispatch a custom event to notify other components
     window.dispatchEvent(new CustomEvent('search-changed', { detail: { query } }));
@@ -94,10 +101,12 @@ export default function Search({
     }
     
     // Also check URL parameters directly on mount
-    const params = new URLSearchParams(window.location.search);
-    const urlQuery = params.get('q');
-    if (urlQuery && urlQuery !== searchQuery) {
-      setSearchQuery(urlQuery);
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      const urlQuery = params.get('q');
+      if (urlQuery && urlQuery !== searchQuery) {
+        setSearchQuery(urlQuery);
+      }
     }
   }, []);
 

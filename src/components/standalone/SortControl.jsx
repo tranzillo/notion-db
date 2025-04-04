@@ -1,4 +1,4 @@
-// Updated SortControl.jsx
+// src/components/standalone/SortControl.jsx
 import React, { useState, useEffect } from 'react';
 import { updateUrlParamsWithoutHistory } from '../../lib/dataUtils';
 

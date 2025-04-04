@@ -1,6 +1,7 @@
 // src/components/standalone/PrivateTagBanner.jsx
 import React, { useState, useEffect } from 'react';
 import { saveCurrentUrlState } from '../../lib/navigationUtils';
+import { updateUrlParamsWithoutHistory } from '../../lib/dataUtils';
 
 export default function PrivateTagBanner() {
   const [privateTag, setPrivateTag] = useState('');
@@ -47,22 +48,16 @@ export default function PrivateTagBanner() {
     setIsVisible(false);
     setPrivateTag('');
     
-    // Remove the 'for' parameter from URL
-    if (typeof window !== 'undefined') {
-      const params = new URLSearchParams(window.location.search);
-      params.delete('for');
-      
-      const newUrl = `${window.location.pathname}${params.toString() ? '?' + params.toString() : ''}`;
-      window.history.pushState({}, '', newUrl);
-      
-      // Notify other components that the private tag has been cleared
-      window.dispatchEvent(new CustomEvent('private-tag-changed', { 
-        detail: { privateTag: '' } 
-      }));
-      
-      // Save the URL state
-      saveCurrentUrlState(true);
-    }
+    // Remove the 'for' parameter from URL without creating history entry
+    updateUrlParamsWithoutHistory({ for: null });
+    
+    // Notify other components that the private tag has been cleared
+    window.dispatchEvent(new CustomEvent('private-tag-changed', { 
+      detail: { privateTag: '' } 
+    }));
+    
+    // Save the URL state
+    saveCurrentUrlState(true);
   };
 
   if (!isVisible) {

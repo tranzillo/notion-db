@@ -1,5 +1,5 @@
 // src/components/standalone/BottleneckCard.jsx
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { saveScrollPosition } from '../../lib/scrollPositionUtils';
 import RankIndicator from '../../components/standalone/RankIndicator';
 

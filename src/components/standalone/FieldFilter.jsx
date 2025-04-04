@@ -1,8 +1,9 @@
-// Modified FieldFilter.jsx
+// src/components/standalone/FieldFilter.jsx
 import React, { useState, useEffect } from 'react';
 import { saveCurrentUrlState } from '../../lib/navigationUtils';
 import { createFieldSlug } from '../../lib/slugUtils';
 import { sharedFieldStore, updateSelectedFields, loadSelectedFields } from '../../lib/sharedStore';
+import { updateUrlParamsWithoutHistory } from '../../lib/dataUtils';
 
 export default function FieldFilter({
   fields = [],
@@ -70,40 +71,23 @@ export default function FieldFilter({
   useEffect(() => {
     // Wait until fields are loaded
     if (!fields.length) return;
-
-    const params = new URLSearchParams(window.location.search);
-
+  
     if (selected.length > 0) {
       // Convert IDs to slugs for URL
       const slugs = selected.map(id => {
         const field = fields.find(d => d.id === id);
-        return field
-          ? createFieldSlug(field.field_name)
-          : null;
+        return field ? createFieldSlug(field.field_name) : null;
       }).filter(Boolean);
-
-      params.set('fields', slugs.join(','));
+  
+      updateUrlParamsWithoutHistory({ fields: slugs.join(',') });
     } else {
-      params.delete('fields');
+      updateUrlParamsWithoutHistory({ fields: null });
     }
-
-    const newUrl = `${window.location.pathname}${params.toString() ? '?' + params.toString() : ''}`;
-    window.history.pushState({}, '', newUrl);
-
-    // Dispatch event to notify other components
+  
+    // Notify other components
     window.dispatchEvent(new CustomEvent('fields-changed', {
       detail: { selectedFields: selected }
     }));
-    
-    // Update the shared store
-    updateSelectedFields(selected);
-
-    // Save the current URL state, forcing empty state save if no selections
-    if (selected.length === 0) {
-      saveCurrentUrlState(true);
-    } else {
-      saveCurrentUrlState();
-    }
   }, [selected, fields]);
 
   // Handle field checkbox change

@@ -10,17 +10,17 @@ export function extractFields(bottlenecks) {
   if (!bottlenecks || !Array.isArray(bottlenecks)) {
     return [];
   }
-  
+
   // Create a map to store unique fields by ID
   const fieldMap = new Map();
-  
+
   // Add each field to the map
   bottlenecks.forEach(bottleneck => {
     if (bottleneck.field && bottleneck.field.id) {
       fieldMap.set(bottleneck.field.id, bottleneck.field);
     }
   });
-  
+
   // Convert the map values to an array
   return Array.from(fieldMap.values());
 }
@@ -35,20 +35,20 @@ export function getFieldIdsFromUrl(url, fields) {
   if (!url || !fields || !fields.length) {
     return [];
   }
-  
+
   const urlObj = new URL(url.startsWith('http') ? url : `http://example.com${url}`);
   const fieldsParam = urlObj.searchParams.get('fields');
-  
+
   if (!fieldsParam) {
     return [];
   }
-  
+
   const fieldSlugs = fieldsParam.split(',');
-  
+
   // Convert slugs to IDs using the slugUtils function
   return fieldSlugs
     .map(slug => {
-      const field = fields.find(d => 
+      const field = fields.find(d =>
         createFieldSlug(d.field_name) === slug
       );
       return field ? field.id : null;
@@ -65,14 +65,14 @@ export function parseUrlParams(url) {
   const params = new URLSearchParams(
     url.toString().split('?')[1] || ''
   );
-  
+
   const searchQuery = params.get('q') || '';
   const disciplinesParam = params.get('disciplines') || '';
   const disciplineSlugs = disciplinesParam ? disciplinesParam.split(',') : [];
   const sortBy = params.get('sort') || 'rank'; // Default to rank sort
   const tag = params.get('tag') || '';
   const privateTag = params.get('for') || '';
-  
+
   return {
     searchQuery,
     disciplineSlugs,
@@ -86,6 +86,7 @@ export function parseUrlParams(url) {
  * Update URL parameters without creating a browser history entry
  * @param {Object} paramsObject - Key-value pairs of parameters to update
  */
+
 export function updateUrlParamsWithoutHistory(paramsObject) {
   if (typeof window === 'undefined') {
     return;
@@ -102,21 +103,13 @@ export function updateUrlParamsWithoutHistory(paramsObject) {
     }
   });
   
-  // Ensure tag and for parameters are mutually exclusive
-  if (params.has('tag') && params.has('for')) {
-    // Prioritize whatever was just added
-    if (paramsObject.tag !== undefined) {
-      params.delete('for');
-    } else if (paramsObject.for !== undefined) {
-      params.delete('tag');
-    }
-  }
-  
   // Construct the new URL
   const newUrl = `${window.location.pathname}${params.toString() ? '?' + params.toString() : ''}`;
   
-  // Use replaceState to update URL without creating a history entry
-  window.history.replaceState({}, '', newUrl);
+  // IMPORTANT: Use replaceState to update URL without creating a history entry
+  window.history.replaceState({ 
+    scrollPosition: window.scrollY,  // Save scroll position in state
+  }, '', newUrl);
   
   return newUrl;
 }

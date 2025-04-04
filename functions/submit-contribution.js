@@ -1,7 +1,4 @@
 // functions/submit-contribution.js
-const { Client } = require('@notionhq/client');
-const { createBottleneckSlug, createCapabilitySlug } = require('../src/lib/slugUtils');
-
 async function handleBottleneckSubmission(notion, data) {
   // Validate required fields
   if (!data.bottleneck_name || !data.bottleneck_description) {
@@ -12,9 +9,6 @@ async function handleBottleneckSubmission(notion, data) {
   }
 
   try {
-    // Generate a slug for the bottleneck
-    const slug = createBottleneckSlug(data.bottleneck_name);
-
     // Create page properties object
     const pageProperties = {
       Bottleneck_Name: {
@@ -38,15 +32,6 @@ async function handleBottleneckSubmission(notion, data) {
       },
       Bottleneck_Rank: {
         number: data.bottleneck_rank || 0,
-      },
-      Slug: {
-        rich_text: [
-          {
-            text: {
-              content: slug,
-            },
-          },
-        ],
       },
     };
     
@@ -111,9 +96,6 @@ async function handleCapabilitySubmission(notion, data) {
   }
 
   try {
-    // Generate a slug for the capability
-    const slug = createCapabilitySlug(data.fc_name);
-
     // Create the page properties
     const pageProperties = {
       FC_Name: {
@@ -134,15 +116,6 @@ async function handleCapabilitySubmission(notion, data) {
         select: {
           name: 'Foundational Capability',
         },
-      },
-      Slug: {
-        rich_text: [
-          {
-            text: {
-              content: slug,
-            },
-          },
-        ],
       },
     };
     
@@ -312,10 +285,10 @@ exports.handler = async function(event, context) {
       case 'bottleneck':
         result = await handleBottleneckSubmission(notion, data);
         break;
-      case 'capability': // Updated from 'solution'
+      case 'capability':
         result = await handleCapabilitySubmission(notion, data);
         break;
-      case 'resource': // Updated from 'reference'
+      case 'resource':
         result = await handleResourceSubmission(notion, data);
         break;
       default:

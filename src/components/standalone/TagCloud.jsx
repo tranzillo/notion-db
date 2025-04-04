@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { saveCurrentUrlState } from '../../lib/navigationUtils';
 import { createTagSlug } from '../../lib/tagUtils';
+import { updateUrlParamsWithoutHistory } from '../../lib/dataUtils';
 
 export default function TagCloud({ tags = [], initialSelectedTag = '' }) {
   const [selectedTag, setSelectedTag] = useState(initialSelectedTag);
@@ -43,22 +44,16 @@ export default function TagCloud({ tags = [], initialSelectedTag = '' }) {
   useEffect(() => {
     if (typeof window === 'undefined') return;
     
-    const params = new URLSearchParams(window.location.search);
-    
     if (selectedTag) {
       // Use the original tag name (not slugified) for display purposes
-      params.set('tag', selectedTag);
+      updateUrlParamsWithoutHistory({ 
+        tag: selectedTag,
+        // Remove 'for' parameter if tag is selected (mutually exclusive)
+        for: null
+      });
     } else {
-      params.delete('tag');
+      updateUrlParamsWithoutHistory({ tag: null });
     }
-    
-    // Remove 'for' parameter if tag is selected (mutually exclusive)
-    if (selectedTag && params.has('for')) {
-      params.delete('for');
-    }
-    
-    const newUrl = `${window.location.pathname}${params.toString() ? '?' + params.toString() : ''}`;
-    window.history.pushState({}, '', newUrl);
     
     // Dispatch event to notify other components
     window.dispatchEvent(new CustomEvent('tag-changed', { 

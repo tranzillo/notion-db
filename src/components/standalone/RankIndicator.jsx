@@ -1,6 +1,5 @@
 // src/components/standalone/RankIndicator.jsx
-// This component displays a visual indicator of a bottleneck's rank from 1-5
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 
 export default function RankIndicator({ rank = 0 }) {
     // Ensure rank is between 0 and 5
