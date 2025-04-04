@@ -11,6 +11,7 @@ export default function FieldFilter({
   fieldCounts = {}
 }) {
   const [selected, setSelected] = useState(initialSelectedIds);
+  const [initialized, setInitialized] = useState(false);
 
   // Process field IDs/slugs on first render
   useEffect(() => {
@@ -65,12 +66,14 @@ export default function FieldFilter({
         }
       }
     }
+    
+    setInitialized(true);
   }, [fields.length]);
 
   // Update URL when selections change
   useEffect(() => {
-    // Wait until fields are loaded
-    if (!fields.length) return;
+    // Wait until fields are loaded and component is initialized
+    if (!fields.length || !initialized) return;
   
     if (selected.length > 0) {
       // Convert IDs to slugs for URL
@@ -80,35 +83,61 @@ export default function FieldFilter({
       }).filter(Boolean);
   
       updateUrlParamsWithoutHistory({ fields: slugs.join(',') });
+      
+      // Important: Save this URL state to session storage
+      saveCurrentUrlState();
     } else {
       updateUrlParamsWithoutHistory({ fields: null });
+      
+      // Important: Save the empty state to session storage
+      saveCurrentUrlState(true);
     }
   
     // Notify other components
     window.dispatchEvent(new CustomEvent('fields-changed', {
       detail: { selectedFields: selected }
     }));
-  }, [selected, fields]);
+    
+    // Update shared store
+    updateSelectedFields(selected);
+  }, [selected, fields, initialized]);
 
   // Handle field checkbox change
   const handleFieldChange = (fieldId) => {
     setSelected(prev => {
-      if (prev.includes(fieldId)) {
-        return prev.filter(id => id !== fieldId);
-      } else {
-        return [...prev, fieldId];
-      }
+      const newSelection = prev.includes(fieldId) 
+        ? prev.filter(id => id !== fieldId)
+        : [...prev, fieldId];
+        
+      return newSelection;
     });
   };
 
   // Handle select all fields
   const handleSelectAllFields = () => {
-    setSelected(fields.map(d => d.id));
+    const allFieldIds = fields.map(d => d.id);
+    setSelected(allFieldIds);
+    
+    // Explicitly update the shared store
+    updateSelectedFields(allFieldIds);
+    
+    // Update URL params immediately
+    const slugs = fields.map(field => createFieldSlug(field.field_name));
+    updateUrlParamsWithoutHistory({ fields: slugs.join(',') });
+    
+    // Save to session storage
+    saveCurrentUrlState();
   };
 
   // Handle clear all fields
   const handleClearAllFields = () => {
     setSelected([]);
+    
+    // Explicitly update the shared store
+    updateSelectedFields([]);
+    
+    // Update URL params immediately
+    updateUrlParamsWithoutHistory({ fields: null });
 
     // Force save empty state when clearing all fields
     saveCurrentUrlState(true);
