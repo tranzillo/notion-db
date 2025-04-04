@@ -42,7 +42,7 @@
       }
     }
   }
-  &__clickable {
+  &__clickable, .clickable {
     position: absolute;
     inset: 0;
     z-index: 1;
@@ -56,6 +56,10 @@
     border-bottom: 1px solid var(--border-dull);
     transition: border-color $transition,
       background-color $transition;
+      a {
+        position: relative;
+        z-index: 2;
+      }
   }
 
   &__fields {
@@ -126,6 +130,8 @@
 
   &__footer {
     margin-block-start: $spacing-sm;
+    position: relative;
+    z-index: 2;
     display: flex;
     justify-content: space-between;
     align-items: flex-end;
@@ -157,9 +163,12 @@
     white-space: nowrap;
   }
 
-  &--grid:hover {
+  &:hover {
     box-shadow: 0 0 $spacing-md 0 var(--shadow-color);
     color: var(--primary-color);
+    .capability-card__header a {
+      color: var(--primary-color);
+    }
   }
 
 }

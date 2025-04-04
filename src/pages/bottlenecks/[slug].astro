@@ -116,9 +116,9 @@ const hasRank =
       bottleneck.foundational_capabilities &&
         bottleneck.foundational_capabilities.length > 0 && (
           <div class="bottleneck-detail__capabilities">
-            <h3>
+            <h2>
               Foundational Capabilities ({bottleneck.foundational_capabilities.length})
-            </h3>
+            </h2>
             <div class="bottleneck-detail__capabilities-grid">
               {bottleneck.foundational_capabilities.map((capability) => {
                 // Use the slug from capability data or generate a new one if missing
@@ -127,6 +127,7 @@ const hasRank =
 
                 return (
                   <div class="capability-card">
+                    <a class="clickable" href={`/capabilities/${capabilitySlug}`}/>
                     <div class="capability-card__header">
                       <h3 class="capability-card__title">
                         <a href={`/capabilities/${capabilitySlug}`}>
