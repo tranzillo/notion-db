@@ -3,11 +3,17 @@
   "type": "module",
   "version": "0.1.0",
   "scripts": {
-    "dev": "astro dev",
+    "dev": "node --import tsx scripts/prebuild.ts && astro dev",
+    "dev:full": "node --import tsx scripts/prebuild.ts --full-refresh && astro dev",
     "start": "astro dev",
-    "build": "astro build",
+    "prebuild": "node --import tsx scripts/prebuild.ts",
+    "build": "node --import tsx scripts/prebuild.ts && astro build",
+    "build:full": "node --import tsx scripts/prebuild.ts --full-refresh && astro build",
+    "build:clean": "node --import tsx scripts/prebuild.ts --clear-cache --full-refresh && astro build",
     "preview": "astro preview",
-    "functions:dev": "netlify-lambda serve netlify/functions"
+    "test": "vitest run",
+    "functions:dev": "netlify-lambda serve netlify/functions",
+    "cache:clear": "node --import tsx scripts/prebuild.ts --clear-cache"
   },
   "dependencies": {
     "@astrojs/react": "latest",
@@ -31,6 +37,10 @@
     "sass": "latest"
   },
   "devDependencies": {
+    "@types/node": "^22.14.0",
+    "ts-node": "^10.9.2",
+    "tsx": "^4.19.3",
+    "typescript": "^5.8.2",
     "vitest": "latest"
   }
 }
