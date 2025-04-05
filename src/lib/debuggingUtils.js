@@ -40,12 +40,12 @@ export function debugBottleneck(bottleneck, stage = "unknown") {
     console.log(`Has Tags: ${bottleneck.tags ? 'Yes' : 'No'}`);
     
     // Try to identify any property that might have unusual characters
-    const props = Object.entries(bottleneck);
-    for (const [key, value] of props) {
-      if (typeof value === 'string' && /[^\w\s\-\.,]/.test(value)) {
-        console.log(`⚠️ Property "${key}" contains special characters: "${value}"`);
-      }
-    }
+    // const props = Object.entries(bottleneck);
+    // for (const [key, value] of props) {
+    //   if (typeof value === 'string' && /[^\w\s\-\.,]/.test(value)) {
+    //     console.log(`⚠️ Property "${key}" contains special characters: "${value}"`);
+    //   }
+    // }
     
     console.log("=========================\n");
   }
@@ -91,12 +91,12 @@ export function debugBottleneck(bottleneck, stage = "unknown") {
     console.log(`Has Resources: ${capability.resources ? 'Yes' : 'No'}`);
     
     // Try to identify any property that might have unusual characters
-    const props = Object.entries(capability);
-    for (const [key, value] of props) {
-      if (typeof value === 'string' && /[^\w\s\-\.,]/.test(value)) {
-        console.log(`⚠️ Property "${key}" contains special characters: "${value}"`);
-      }
-    }
+    // const props = Object.entries(capability);
+    // for (const [key, value] of props) {
+    //   if (typeof value === 'string' && /[^\w\s\-\.,]/.test(value)) {
+    //     console.log(`⚠️ Property "${key}" contains special characters: "${value}"`);
+    //   }
+    // }
     
     console.log("=========================\n");
   }

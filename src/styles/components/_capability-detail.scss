@@ -1,159 +1,175 @@
 .capability-detail {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-xxl;
+  background-color: var(--card-background);
+  border: 1px solid var(--border-dull);
+  border-radius: $border-radius-lg;
+  padding: $spacing-xl;
+  transition: background-color $transition,
+    border $transition;
+
+  &--grid {
     display: flex;
     flex-direction: column;
-    gap: $spacing-xxl;
+    position: relative;
+    gap: $spacing-lg;
     background-color: var(--card-background);
     border: 1px solid var(--border-dull);
     border-radius: $border-radius-lg;
-    padding: $spacing-xl;
+    padding: $spacing-xl $spacing-xl $spacing-lg $spacing-xl;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
     transition: background-color $transition,
-      border $transition;
-  
-    &__header {
-      display: flex;
-      flex-direction: column;
-      align-items: flex-start;
-      gap: $spacing-md $spacing-xxl;
-      flex-wrap: wrap;
-      border-radius: $border-radius-lg $border-radius-lg 0 0;
-      padding: $spacing-xl;
-      margin: calc($spacing-xl * (-1)) calc($spacing-xl * (-1)) 0 calc($spacing-xl * (-1));
-      border-bottom: 1px solid var(--border-dull);
-      transition: background-color $transition,
-        border-color $transition;
-    }
-  
-    &__fields {
-      display: flex;
-      flex-wrap: wrap;
-      gap: $spacing-xs;
-      margin-bottom: $spacing-sm;
-    }
-  
-    &__field {
-      display: block;
-      margin-block-start: 0.42em;
-      padding: $spacing-xs $spacing-sm;
-      border-radius: $border-radius-md;
-      font-size: $font-size-sm;
-      border: 1px solid transparent;
-      letter-spacing: 0.04em;
-    }
-  
-    &__meta {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      justify-content: space-between;
-      width: 100%;
-      gap: $spacing-xl;
-    }
-  
-    &__content {
-      max-width: 80ch;
-      margin-top: calc($spacing-md * (-1));
-      font-size: $font-size-md;
-      color: var(--text-light);
-      line-height: 1.5;
-    }
-  
-    &__resources {
-      padding: $spacing-xl;
-      margin: 0 calc($spacing-xl * (-1)) 0 calc($spacing-xl * (-1));
-      background-color: var(--background-color);
-      border-top: 1px solid var(--border-dull);
-      transition: border $transition,
-        background-color $transition;
-  
-    }
-  
-    &__resource-list {
-      list-style: none;
-      display: flex;
-      flex-direction: column;
-      gap: $spacing-sm;
-      padding: $spacing-md 0;
-      align-items: flex-start;
-    }
-    &__resource-link {
-      display: flex;
-      flex-direction: column-reverse;
-      gap: $spacing-sm;
-    }
-    &__resource-item {
-      font-size: $font-size-sm;
-      letter-spacing: 0.04em;
-      background-color: var(--background-color-dark);
-      padding: $spacing-sm;
-      border-radius: $border-radius-md;
-      transition: background-color $transition;
-  
-      a {
-        color: var(--text-color);
-        display: inline-block;
-        max-width: 65ch;
-        line-height: 1.1;
-        letter-spacing: 0.04em;
+      border $transition,
+      box-shadow $transition,
+      scale $transition;
+  }
 
-        &:hover {
-          color: var(--primary-color);
-        }
-      }
-    }
-  
-    &__resource-type {
-      font-size: $font-size-xs;
-      color: var(--text-light);
-      background-color: var(--card-background);
-      padding: calc($spacing-xs * 0.5) $spacing-xs;
-      border-radius: $border-radius-sm;
-      align-self: flex-start;
-    }
-  
-    &__bottlenecks {
-      padding: $spacing-xxl $spacing-xl $spacing-xl;
-      margin: 0 calc($spacing-xl * (-1)) calc($spacing-xl * (-1)) calc($spacing-xl * (-1));
-      background-color: var(--background-color);
-      border-top: 1px solid var(--border-dull);
-      border-radius: 0 0 $border-radius-lg $border-radius-lg;
-      transition: border $transition,
-        background-color $transition;
-  
-    }
-  
-    &__bottlenecks-grid {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: $spacing-md;
-      margin-block-start: $spacing-lg;
-  
-      @media (min-width: $breakpoint-lg) {
-        grid-template-columns: 1fr 1fr;
-      }
-  
-      @media (min-width: $breakpoint-xxl) {
-        grid-template-columns: 1fr 1fr 1fr;
+  &__header {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: $spacing-md $spacing-xxl;
+    flex-wrap: wrap;
+    border-radius: $border-radius-lg $border-radius-lg 0 0;
+    padding: $spacing-xl;
+    margin: calc($spacing-xl * (-1)) calc($spacing-xl * (-1)) 0 calc($spacing-xl * (-1));
+    border-bottom: 1px solid var(--border-dull);
+    transition: background-color $transition,
+      border-color $transition;
+  }
+
+  &__fields {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $spacing-xs;
+    margin-bottom: $spacing-sm;
+  }
+
+  &__field {
+    display: block;
+    margin-block-start: 0.42em;
+    padding: $spacing-xs $spacing-sm;
+    border-radius: $border-radius-md;
+    font-size: $font-size-sm;
+    border: 1px solid transparent;
+    letter-spacing: 0.04em;
+  }
+
+  &__meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    gap: $spacing-xl;
+  }
+
+  &__tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $spacing-sm;
+    margin-top: $spacing-sm;
+  }
+
+  &__tag {
+    display: inline-block;
+    background-color: var(--border-dull);
+    color: var(--text-lighter);
+    padding: $spacing-xs $spacing-sm;
+    border-radius: $border-radius-md;
+    font-size: $font-size-sm;
+
+  }
+
+  &__content {
+    max-width: 80ch;
+    margin-top: calc($spacing-md * (-1));
+    font-size: $font-size-md;
+    color: var(--text-light);
+    line-height: 1.5;
+  }
+
+  &__resources {
+    padding: $spacing-xl;
+    margin: 0 calc($spacing-xl * (-1)) 0 calc($spacing-xl * (-1));
+    background-color: var(--background-color);
+    border-top: 1px solid var(--border-dull);
+    transition: border $transition,
+      background-color $transition;
+
+  }
+
+  &__resource-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-sm;
+    padding: $spacing-md 0;
+    align-items: flex-start;
+  }
+
+  &__resource-link {
+    display: flex;
+    flex-direction: column-reverse;
+    gap: $spacing-sm;
+  }
+
+  &__resource-item {
+    font-size: $font-size-sm;
+    letter-spacing: 0.04em;
+    background-color: var(--background-color-dark);
+    padding: $spacing-sm;
+    border-radius: $border-radius-md;
+    transition: background-color $transition;
+
+    a {
+      color: var(--text-color);
+      display: inline-block;
+      max-width: 65ch;
+      line-height: 1.1;
+      letter-spacing: 0.04em;
+
+      &:hover {
+        color: var(--primary-color);
       }
     }
   }
 
-  .capabilities-card {
-    &--grid {
-      display: flex;
-      flex-direction: column;
-      position: relative;
-      gap: $spacing-lg;
-      background-color: var(--card-background);
-      border: 1px solid var(--border-dull);
-      border-radius: $border-radius-lg;
-      padding: $spacing-xl $spacing-xl $spacing-lg $spacing-xl;
-      height: 100%;
-      display: flex;
-      flex-direction: column;
-      transition: background-color $transition,
-        border $transition,
-        box-shadow $transition,
-        scale $transition;
-    }
-  
+  &__resource-type {
+    font-size: $font-size-xs;
+    color: var(--text-light);
+    background-color: var(--card-background);
+    padding: calc($spacing-xs * 0.5) $spacing-xs;
+    border-radius: $border-radius-sm;
+    align-self: flex-start;
   }
+
+  &__bottlenecks {
+    padding: $spacing-xxl $spacing-xl $spacing-xl;
+    margin: 0 calc($spacing-xl * (-1)) calc($spacing-xl * (-1)) calc($spacing-xl * (-1));
+    background-color: var(--background-color);
+    border-top: 1px solid var(--border-dull);
+    border-radius: 0 0 $border-radius-lg $border-radius-lg;
+    transition: border $transition,
+      background-color $transition;
+
+  }
+
+  &__bottlenecks-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: $spacing-md;
+    margin-block-start: $spacing-lg;
+
+    @media (min-width: $breakpoint-lg) {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    @media (min-width: $breakpoint-xxl) {
+      grid-template-columns: 1fr 1fr 1fr;
+    }
+  }
+}

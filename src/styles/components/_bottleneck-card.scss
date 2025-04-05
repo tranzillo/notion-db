@@ -79,9 +79,9 @@
     margin-block-end: $spacing-sm;
   }
   &__index {
-    font-size: $font-size-sm;
+    font-size: $font-size-xs;
     color: var(--text-lighter);
-    background-color: var(--border-dull);
+    background-color: var(--background-color-dark);
     border-radius: $border-radius-md;
     padding: $spacing-sm;
     transition: background-color $transition,

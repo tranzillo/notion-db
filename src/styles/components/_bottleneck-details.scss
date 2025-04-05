@@ -10,7 +10,7 @@
     border $transition;
 
   &__header {
-    display:flex;
+    display: flex;
     flex-direction: column;
     align-items: flex-start;
     gap: $spacing-md $spacing-xxl;
@@ -20,11 +20,10 @@
     margin: calc($spacing-xl * (-1)) calc($spacing-xl * (-1)) 0 calc($spacing-xl * (-1));
     border-bottom: 1px solid var(--border-dull);
     transition: background-color $transition,
-    border-color $transition;
+      border-color $transition;
   }
 
   &__field {
-    // @extend .discipline-tag;
     display: block;
     margin-block-start: 0.42em;
     padding: $spacing-xs $spacing-sm;
@@ -43,6 +42,33 @@
     gap: $spacing-xl;
   }
 
+  &_tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $spacing-sm;
+    margin-block-start: $spacing-sm;
+  }
+
+  &__tag {
+    display: inline-block;
+    background-color: var(--border-dull);
+    color: var(--text-light);
+    padding: $spacing-sm;
+    border-radius: $border-radius-md;
+    font-size: $font-size-sm;
+  }
+
+  &__index {
+    display: flex;
+    align-items: center;
+    background-color: var(--background-color-dark);
+    border-radius: $border-radius-md;
+    padding: $spacing-sm;
+    font-size: $font-size-sm;
+    font-weight: 500;
+    color: var(--text-light);
+  }
+
   &__content {
     max-width: 80ch;
     margin-top: calc($spacing-md * (-1));
@@ -58,16 +84,19 @@
     border-top: 1px solid var(--border-dull);
     border-radius: 0 0 $border-radius-lg $border-radius-lg;
     transition: border $transition,
-    background-color $transition;
+      background-color $transition;
   }
+
   &__capabilities-grid {
     display: grid;
     grid-template-columns: 1fr;
     gap: $spacing-md;
     margin-block-start: $spacing-lg;
+
     @media (min-width: $breakpoint-lg) {
       grid-template-columns: 1fr 1fr;
     }
+
     @media (min-width: $breakpoint-xxl) {
       grid-template-columns: 1fr 1fr 1fr;
     }
@@ -81,8 +110,8 @@
   margin-bottom: $spacing-md;
   color: var(--text-lighter);
   text-decoration: none;
+
   &:hover {
     color: var(--primary-color);
-    text-decoration: underline;
   }
 }
