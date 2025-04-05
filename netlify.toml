@@ -8,10 +8,4 @@
   functions = "functions"
   publish = "dist"
 
-[redirects]
-  from = "/bottlenecks"
-  to = "/"
-  status = 200
-  force = false
-
   conditions = {Path = {exclude = ["/.netlify/functions/*"]}}

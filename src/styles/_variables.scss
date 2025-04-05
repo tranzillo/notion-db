@@ -6,7 +6,7 @@
   --text-light: #63635a;
   --text-lighter: #85857e;
   --border-color: #75b4dd;
-  --border-dull: #e0e0d5;
+  --border-dull: #ddddcd;
   --background-color: #f3f2eb;
   --background-color-dark: #e4e3d9;
   --card-background: #ecebe4;
@@ -27,7 +27,7 @@ html[data-theme="dark"],
   --text-light: #a0a094;
   --text-lighter: #82857a;
   --border-color: #2980b9;
-  --border-dull: #30343d;
+  --border-dull: #2c364b;
   --background-color: #24283a;
   --background-color-dark: #1e2535;
   --card-background: #292d3e;
@@ -77,7 +77,7 @@ $breakpoint-sm: 576px;
 $breakpoint-md: 768px;
 $breakpoint-lg: 992px;
 $breakpoint-xl: 1280px;
-$breakpoint-xxl: 1600px;
+$breakpoint-xxl: 1440px;
 $breakpoint-xxxl: 2560px;
 $breakpoint-max: 3840px;
 

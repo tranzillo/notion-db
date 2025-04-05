@@ -8,9 +8,6 @@
   padding: $spacing-xl $spacing-xl $spacing-lg;
   border: 1px solid var(--border-dull);
   min-width: 0;
-  content-visibility: auto;
-  contain-intrinsic-size: 24em;
-  contain: layout style paint;
   transition: background-color $transition, border-color $transition, box-shadow $transition;
   &__resource-list {
     list-style-type: none;
@@ -53,7 +50,6 @@
     border-radius: $border-radius-lg $border-radius-md 0 0;
     padding: $spacing-xl;
     margin: calc($spacing-xl * (-1)) calc($spacing-xl * (-1)) 0 calc($spacing-xl * (-1));
-    border-bottom: 1px solid var(--border-dull);
     transition: border-color $transition,
       background-color $transition;
       a {
@@ -120,13 +116,13 @@
   &__tag {
     display: inline-flex;
     align-items: center;
-    background-color: var(--background-color-dark);
+    background-color: var(--border-dull);
     color: var(--text-lighter);
     padding: $spacing-xs $spacing-sm;
     border-radius: $border-radius-sm;
     font-size: $font-size-xs;
-    white-space: nowrap;
-
+    transition: background-color $transition,
+      color $transition;
   }
 
   &__footer {
