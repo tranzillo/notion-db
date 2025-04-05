@@ -3,7 +3,7 @@
   grid-template-columns: repeat(1, 1fr);
   gap: $spacing-md;
 
-  @media (min-width: $breakpoint-lg) {
+  @media (min-width: $breakpoint-xl) {
     grid-template-columns: repeat(2, 1fr);
   }
 
@@ -13,6 +13,7 @@
 
   @media (min-width: $breakpoint-xxxl) {
     grid-template-columns: repeat(4, 1fr);
+    gap: $spacing-xl;
   }
 
   @media (min-width: $breakpoint-max) {

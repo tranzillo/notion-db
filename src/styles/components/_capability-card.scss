@@ -122,7 +122,7 @@
     align-items: center;
     background-color: var(--background-color-dark);
     color: var(--text-lighter);
-    padding: calc($spacing-xs * 0.5) $spacing-xs;
+    padding: $spacing-xs $spacing-sm;
     border-radius: $border-radius-sm;
     font-size: $font-size-xs;
     white-space: nowrap;
@@ -154,7 +154,7 @@
   }
 
   &__bottlenecks-count {
-    font-size: $font-size-sm;
+    font-size: $font-size-xs;
     color: var(--text-lighter);
     text-align: center;
     background-color: var(--background-color-dark);

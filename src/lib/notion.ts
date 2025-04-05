@@ -68,7 +68,7 @@ interface Tag {
 
 // Cache configuration
 const CACHE_DIR = process.env.NETLIFY 
-  ? '/opt/buildhome/cache/notion-cache' 
+  ? '/opt/build/cache/notion-cache' 
   : '.notion-cache';
 
 const CACHE_META_FILE = path.join(CACHE_DIR, 'meta.json');

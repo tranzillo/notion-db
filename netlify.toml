@@ -8,10 +8,9 @@
   functions = "functions"
   publish = "dist"
 
-# Redirect for client-side routing (SPA)
-[[redirects]]
-  from = "/*"
-  to = "/index.html"
+[redirects]
+  from = "/bottlenecks"
+  to = "/"
   status = 200
   force = false
 
