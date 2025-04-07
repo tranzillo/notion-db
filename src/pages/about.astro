@@ -7,12 +7,12 @@ const { contentAreas } = await getEnhancedData();
 
 // Get about page content
 const aboutContent = contentAreas?.about || {
-  title: "About Convergent 101",
+  title: "About The Cata-List",
   content: "Content is currently being loaded from Notion."
 };
 ---
 
-<BaseLayout title={`${aboutContent.title} - Convergent 101`}>
+<BaseLayout title={`${aboutContent.title}`}>
   <div class="about-page">
     <div class="about-header">
       <h1>{aboutContent.title}</h1>

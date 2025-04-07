@@ -41,14 +41,19 @@ svg {
 }
 
 .theme-toggle {
-  background: none;
-  border: none;
+  background: var(--card-background);
+  border: 1px solid var(--border-dull);
+  transition: background-color $transition,
+    border $transition;
   color: var(--text-light);
   cursor: pointer;
   padding: $spacing-sm;
   border-radius: 50%;
   display: flex;
   justify-content: center;
+  &:hover{
+    background-color: var(--border-dull);
+  }
 }
 
 .sort-control {

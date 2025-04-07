@@ -788,7 +788,7 @@ export default function IntegratedNetworkView({
                     .attr('stroke-width', NETWORK_STYLES.nodeStroke.width)
                     .style('cursor', 'pointer') // Add pointer cursor to indicate clickable nodes
                     .style('transition', animationsEnabled ?
-                        `opacity ${NETWORK_STYLES.text.fadeTransition}ms ease-in-out, stroke-width 200ms ease, stroke 200ms ease` : 'none')
+                        `opacity ${NETWORK_STYLES.text.fadeTransition}ms ease-in-out, stroke-width 300ms ease, stroke 300ms ease` : 'none')
                     .call(d3.drag()
                         .on('start', dragstarted)
                         .on('drag', dragged)

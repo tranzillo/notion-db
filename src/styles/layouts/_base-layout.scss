@@ -15,7 +15,7 @@
 
   &__header {
     background-color: var(--header-background);
-    padding: $spacing-xl 0;
+    padding: $spacing-lg 0;
     font-weight: 600;
     border-bottom: 1px solid var(--border-dull);
     transition: background-color $transition, border-color $transition;
@@ -57,13 +57,15 @@
   }
 
   &__nav {
+    position: relative;
     display: flex;
+    flex-direction: column-reverse;
+    gap: 2px;
     // @media (max-width: $breakpoint-sm) {
     //   display: none;
     // }
 
     &-item {
-      margin-left: $spacing-lg;
       white-space: nowrap;
 
       a {
@@ -76,7 +78,34 @@
       }
     }
   }
+  &__sub-nav {
+    // position: absolute;
+    // inset: -1.5em 0 auto auto;
+    display: flex;
+    justify-content: flex-end;
+    gap: $spacing-md;
+    font-size: $font-size-sm;
+    color: var(--text-lighter);
+    font-weight: normal;
+    .base-layout__nav-item {
+      a {
+        color: var(--text-light);
+        &:hover,
+        &.active {
+          color: var(--primary-color);
+        }
+      }
+    }
 
+    @media (max-width: $breakpoint-sm) {
+      flex-direction: column;
+    }
+  }
+  &__main-nav {
+    display: flex;
+    flex-direction: row;
+    gap: $spacing-md; // space between nav items
+  }
   &__main {
     flex-grow: 1;
     padding: $spacing-xxl 0;
