@@ -1,0 +1,315 @@
+/* src/styles/components/network-graph.css */
+
+.network-graph {
+  position: relative;
+  width: 100%;
+  height: 80vh;
+  overflow: hidden;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  
+  // Loading state
+  .network-loading {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: $font-size-md;
+    color: var(--text-light);
+  }
+  
+  // Controls and UI elements
+  .network-controls {
+    position: absolute;
+    top: 0;
+    left: 0;
+    color: var(--text-light);
+    background-color: var(--card-background);
+    border-radius: $border-radius-sm;
+    padding: $spacing-md;
+    border-radius: 0 0 $border-radius-lg 0;
+    min-width: 180px;
+    z-index: 2;
+    
+    &__title {
+      font-weight: bold;
+      margin-bottom: $spacing-xs;
+      font-size: $font-size-sm;
+      color: var(--text-color);
+    }
+    
+    &__item {
+      display: flex;
+      align-items: center;
+      margin-bottom: $spacing-xs;
+      font-size: $font-size-sm;
+      
+      input[type="checkbox"] {
+        margin-right: $spacing-xs;
+      }
+      
+      label {
+        cursor: pointer;
+      }
+    }
+    
+    &__section {
+      margin-top: $spacing-md;
+      padding-top: $spacing-sm;
+      border-top: 1px solid var(--border-dull);
+    }
+    
+    &__slider {
+      display: flex;
+      flex-direction: column;
+      margin-bottom: $spacing-xs;
+      
+      label {
+        font-size: $font-size-xs;
+        margin-bottom: $spacing-xs;
+      }
+      
+      input[type="range"] {
+        width: 100%;
+        margin-bottom: $spacing-xs;
+      }
+    }
+    
+    &__slider-label {
+      font-size: $font-size-xs;
+      text-align: center;
+    }
+    
+    &__buttons {
+      display: flex;
+      gap: $spacing-xs;
+      
+      button {
+        flex: 1;
+        background-color: var(--background-color-dark);
+        color: var(--text-color);
+        border: none;
+        padding: $spacing-xs $spacing-sm;
+        border-radius: $border-radius-sm;
+        font-size: $font-size-xs;
+        cursor: pointer;
+        
+        &.active {
+          background-color: var(--primary-color);
+          color: white;
+        }
+        
+        &:hover {
+          background-color: var(--highlight-color);
+          color: white;
+        }
+      }
+    }
+    
+    &__button {
+      width: 100%;
+      background-color: var(--background-color-dark);
+      border: none;
+      color: var(--text-bclor);
+      padding: $spacing-sm;
+      border-radius: $border-radius-sm;
+      margin-top: $spacing-xs;
+      font-size: $font-size-xs;
+      cursor: pointer;
+      
+      &:hover {
+        background-color: var(--highlight-color);
+        color: white;
+      }
+    }
+  }
+  
+  // Reset button
+  .network-reset {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    color: var(--text-light);
+    background-color: var(--card-background);
+    border: none;
+    border-radius: $border-radius-sm;
+    padding: $spacing-sm $spacing-md;
+    font-size: $font-size-sm;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    z-index: 2;
+    
+    &:hover {
+      background-color: var(--highlight-color);
+      color: white;
+    }
+  }
+  
+  // Empty state
+  .network-empty-state {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    width: 80%;
+    max-width: 500px;
+    
+    p {
+      font-size: $font-size-md;
+      color: var(--text-light);
+    }
+  }
+  
+  // Legend
+  .network-legend {
+    position: absolute;
+    bottom: 15px;
+    left: 15px;
+    background-color: var(--card-background);
+    border-radius: $border-radius-sm;
+    padding: $spacing-sm;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    z-index: 2;
+    
+    &__title {
+      font-weight: bold;
+      margin-bottom: $spacing-xs;
+      font-size: $font-size-sm;
+    }
+    
+    &__item {
+      display: flex;
+      align-items: center;
+      margin-bottom: $spacing-xs;
+      font-size: $font-size-xs;
+    }
+    
+    &__color {
+      display: inline-block;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      margin-right: $spacing-xs;
+    }
+  }
+  
+  // Stats
+  .network-stats {
+    position: absolute;
+    bottom: 15px;
+    right: 15px;
+    background-color: var(--card-background);
+    border-radius: $border-radius-sm;
+    padding: $spacing-sm;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    font-size: $font-size-xs;
+    z-index: 2;
+    
+    &__item {
+      margin-bottom: $spacing-xs;
+      
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
+    
+    &__limited {
+      font-style: italic;
+      color: var(--text-lighter);
+    }
+  }
+  
+  // Instructions
+  .network-instructions {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    color: var(--text-light);
+    transform: translateX(-50%);
+    background-color: var(--card-background);
+    border-radius:0 0 $border-radius-lg $border-radius-lg;
+    padding: $spacing-sm $spacing-md;
+    text-align: center;
+    font-size: $font-size-xs;
+    max-width: 400px;
+    z-index: 2;
+    
+    p {
+      margin-bottom: $spacing-xs;
+    }
+    
+    .zoom-indicator {
+      font-size: $font-size-xs;
+      
+      small {
+        display: block;
+        margin-bottom: $spacing-xs;
+        color: var(--text-lighter);
+      }
+      
+      .zoom-levels {
+        display: flex;
+        justify-content: space-between;
+        
+        .zoom-level {
+          flex: 1;
+          padding: $spacing-xs;
+          color: var(--text-lighter);
+          border-top: 2px solid var(--border-color);
+          
+          &.active {
+            color: var(--primary-color);
+            border-top-color: var(--primary-color);
+          }
+        }
+      }
+    }
+  }
+  
+  // Tooltip
+  .network-tooltip {
+    position: sticky;
+    inset: 0 0 auto auto;
+    background-color: var(--card-background);
+    border-radius: $border-radius-lg;
+    padding: $spacing-md;
+    font-size: $font-size-sm;
+    pointer-events: none;
+    transition: opacity $transition;
+    z-index: 2;
+    max-width: 20rem;
+    display: none;
+    
+    strong {
+      display: block;
+      margin-bottom: $spacing-xs;
+    }
+    
+    a {
+      color: var(--primary-color);
+      text-decoration: none;
+      
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+}
+
+// Dark mode adjustments
+.dark-mode {
+  .network-graph {
+    canvas {
+      // Ensure a dark background in the canvas
+      background-color: var(--card-background);
+    }
+    
+    .network-tooltip {
+      background-color: var(--card-background);
+      color: var(--text-color);
+    }
+  }
+}

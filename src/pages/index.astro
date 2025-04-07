@@ -2,7 +2,7 @@
 import BaseLayout from "../layouts/BaseLayout.astro";
 import Search from "../components/standalone/Search";
 import FieldFilter from "../components/standalone/FieldFilter";
-import BottleneckGrid from "../components/standalone/DashboardGrid";
+import DashboardGrid from "../components/standalone/DashboardGrid";
 import ViewToggle from "../components/standalone/ViewToggle";
 import SortControl from "../components/standalone/SortControl";
 import PrivateTagBanner from "../components/standalone/PrivateTagBanner";
@@ -10,7 +10,7 @@ import { extractTags, parseUrlParamsWithTags } from "../lib/tagUtils";
 import { getEnhancedData } from "../lib/enhancedData";
 
 // Fetch all enhanced data from Notion at build time
-const { bottlenecks, foundationalCapabilities, fields, contentAreas } =
+const { bottlenecks, foundationalCapabilities, fields, contentAreas, resources } =
   await getEnhancedData();
 
 // Extract all unique tags from bottlenecks
@@ -76,9 +76,13 @@ const homeContent = contentAreas?.home || {
         </div>
       </div>
 
-      <BottleneckGrid
+      <DashboardGrid
         client:load
+        viewType="bottlenecks"
         bottlenecks={bottlenecks}
+        capabilities={foundationalCapabilities}
+        resources={resources}
+        fields={fields}
         initialSearchQuery={searchQuery}
         initialSelectedFieldIds={fieldSlugs}
         initialSortBy={sortBy}

@@ -5,6 +5,7 @@ import FoundationalCapabilityCard from './FoundationalCapabilityCard';
 import { scrollToSavedPosition } from '../../lib/scrollPositionUtils';
 import { createFieldSlug } from '../../lib/slugUtils';
 import { sharedFieldStore, loadSelectedFields } from '../../lib/sharedStore';
+import IntegratedNetworkView from './IntegratedNetworkView';
 
 // Configure Fuse.js options for fuzzy search
 const fuseOptions = {
@@ -48,6 +49,7 @@ export default function CapabilitiesGrid({
   const [privateTag, setPrivateTag] = useState(initialPrivateTag);
   const [fuse, setFuse] = useState(null);
   const [hasRestoredScroll, setHasRestoredScroll] = useState(false);
+  const [viewType, setViewType] = useState('grid');
   const [isMounted, setIsMounted] = useState(false);
 
   // Initialize after mount
@@ -297,6 +299,38 @@ export default function CapabilitiesGrid({
     capabilities,
     isMounted
   ]);
+  useEffect(() => {
+    const handleViewChange = (event) => {
+      // Update view type based on the new viewType or legacy isListView value
+      if (event.detail.viewType) {
+        setViewType(event.detail.viewType);
+      } else if (event.detail.isListView !== undefined) {
+        setViewType(event.detail.isListView ? 'list' : 'grid');
+      }
+      
+      // Check for graph view specifically
+      if (event.detail.isGraphView) {
+        setViewType('graph');
+      }
+    };
+  
+    window.addEventListener('view-changed', handleViewChange);
+    
+    // Check window.userPreferences for initial value
+    if (typeof window !== 'undefined' && window.userPreferences) {
+      if (window.userPreferences.viewType) {
+        setViewType(window.userPreferences.viewType);
+      } else if (window.userPreferences.isListView) {
+        setViewType('list');
+      } else if (window.userPreferences.isGraphView) {
+        setViewType('graph');
+      }
+    }
+  
+    return () => {
+      window.removeEventListener('view-changed', handleViewChange);
+    };
+  }, []);
   
   // Attempt to restore scroll position after filtered capabilities are updated
   useEffect(() => {
@@ -315,32 +349,40 @@ export default function CapabilitiesGrid({
     }
   }, [filteredCapabilities, hasRestoredScroll]);
 
-  const gridClass = isListView ? 'bottleneck-grid bottleneck-grid--list-view' : 'bottleneck-grid';
-
-  if (filteredCapabilities.length === 0) {
-    return (
-      <div className={gridClass}>
+  return (
+    <div className={gridClass}>
+      {viewType === 'graph' ? (
+        <IntegratedNetworkView
+          bottlenecks={bottlenecks}
+          capabilities={filteredCapabilities}
+          resources={resources} // You'll need to fetch resources
+          fields={fields}
+          searchQuery={searchQuery}
+          selectedFieldIds={selectedFields}
+          selectedTag={selectedTag}
+          privateTag={privateTag}
+          viewType="capabilities"
+        />
+      ) : (
+        filteredCapabilities.map((capability) => (
+          <FoundationalCapabilityCard
+            key={capability.id}
+            capability={capability}
+            searchQuery={searchQuery}
+            selectedFields={selectedFields}
+          />
+        ))
+      )}
+      
+      {viewType !== 'graph' && filteredCapabilities.length === 0 && (
         <div className="bottleneck-grid__empty-state">
           <h3>No results found</h3>
           <p>
-            We could not find any foundational capabilities matching your search criteria.
+            We could not find any capabilities matching your search criteria.
             Try adjusting your filters or search terms.
           </p>
         </div>
-      </div>
-    );
-  }
-
-  return (
-    <div className={gridClass}>
-      {filteredCapabilities.map((capability) => (
-        <FoundationalCapabilityCard
-          key={capability.id}
-          capability={capability}
-          searchQuery={currentSearchQuery}
-          selectedFields={selectedFields}
-        />
-      ))}
+      )}
     </div>
   );
 }

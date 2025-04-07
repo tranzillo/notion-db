@@ -1,7 +1,8 @@
 :root {
   /* Light mode variables */
   --primary-color: #41a0df;
-  --secondary-color: #2ecc71;
+  --secondary-color: #c8c9b7;
+  --tertiary-color: #e9e1d0;
   --text-color: #404137;
   --text-light: #63635a;
   --text-lighter: #85857e;
@@ -22,7 +23,8 @@
 html[data-theme="dark"],
 .dark-mode {
   --primary-color: #41a0df;
-  --secondary-color: #44d581;
+  --secondary-color: #38465a;
+  --tertiary-color: #293949;
   --text-color: #d2d6b8;
   --text-light: #a0a094;
   --text-lighter: #7f8374;

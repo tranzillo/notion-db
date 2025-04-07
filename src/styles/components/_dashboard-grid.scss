@@ -20,7 +20,7 @@
     grid-template-columns: repeat(5, 1fr);
   }
 
-  &--list-view {
+  &--list-view, &--graph-view {
     grid-template-columns: 1fr;
   }
 

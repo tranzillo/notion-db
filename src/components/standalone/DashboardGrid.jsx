@@ -1,13 +1,18 @@
-// src/components/standalone/DashboardGrid.jsx
+// src/components/standalone/DashboardGrid.jsx (Astro Compatible)
 import React, { useState, useEffect } from 'react';
 import Fuse from 'fuse.js';
 import BottleneckCard from './BottleneckCard';
+import FoundationalCapabilityCard from './FoundationalCapabilityCard';
 import { scrollToSavedPosition } from '../../lib/scrollPositionUtils';
 import { createFieldSlug } from '../../lib/slugUtils';
 import { sharedFieldStore, loadSelectedFields, updateSelectedFields } from '../../lib/sharedStore';
 
-// Configure Fuse.js options for fuzzy search
-const fuseOptions = {
+// Import IntegratedNetworkView for the direct component reference
+// NetworkView will be loaded via Astro's client:only directive 
+import IntegratedNetworkView from './IntegratedNetworkView';
+
+// Configure Fuse.js options for bottlenecks search
+const bottleneckSearchOptions = {
   includeScore: true,
   threshold: 0.4,
   keys: [
@@ -38,45 +43,86 @@ const fuseOptions = {
   ]
 };
 
-export default function BottleneckGrid({
+// Configure Fuse.js options for capabilities search
+const capabilitySearchOptions = {
+  includeScore: true,
+  threshold: 0.4,
+  keys: [
+    {
+      name: 'fc_name',
+      weight: 0.7
+    },
+    {
+      name: 'fc_description',
+      weight: 0.5
+    },
+    {
+      name: 'bottlenecks.field.field_name',
+      weight: 0.3
+    },
+    {
+      name: 'tags',
+      weight: 0.4
+    }
+  ]
+};
+
+export default function DashboardGrid({
+  viewType = 'bottlenecks', // 'bottlenecks' or 'capabilities'
   bottlenecks = [],
+  capabilities = [],
+  resources = [],
+  fields = [],
   initialSearchQuery = '',
   initialSelectedFieldIds = [],
-  initialSortBy = 'rank',
+  initialSortBy = null, // Will be determined based on viewType if null
   initialSelectedTag = '',
   initialPrivateTag = ''
 }) {
-  // Always start with consistent state for SSR
-  const [filteredBottlenecks, setFilteredBottlenecks] = useState(bottlenecks);
+  // Determine default sort based on viewType if not provided
+  const defaultSortBy = initialSortBy || (viewType === 'capabilities' ? 'bottlenecks' : 'rank');
+  
+  const [filteredItems, setFilteredItems] = useState(viewType === 'bottlenecks' ? bottlenecks : capabilities);
   const [currentSearchQuery, setCurrentSearchQuery] = useState(initialSearchQuery);
   const [selectedFields, setSelectedFields] = useState(initialSelectedFieldIds);
-  const [sortBy, setSortBy] = useState(initialSortBy);
+  const [sortBy, setSortBy] = useState(defaultSortBy);
   const [isListView, setIsListView] = useState(false);
   const [selectedTag, setSelectedTag] = useState(initialSelectedTag);
   const [privateTag, setPrivateTag] = useState(initialPrivateTag);
   const [fuse, setFuse] = useState(null);
   const [hasRestoredScroll, setHasRestoredScroll] = useState(false);
+  const [viewMode, setViewMode] = useState('grid'); // 'grid', 'list', or 'graph'
   // Add this to prevent filtering until component is mounted
   const [isMounted, setIsMounted] = useState(false);
+  
+  // NetworkView will be rendered through the Astro component
+  // This keeps track of whether we need to trigger the Astro component
+  const [networkProps, setNetworkProps] = useState(null);
 
   // Initialize after mount
   useEffect(() => {
     setIsMounted(true);
-    
+
     try {
       // First try to load field selections from shared store
       const sharedFields = loadSelectedFields();
       if (sharedFields && sharedFields.length > 0) {
         setSelectedFields(sharedFields);
       }
-      
+
       // Check for global preferences
       if (typeof window !== 'undefined' && window.userPreferences) {
         setIsListView(window.userPreferences.isListView);
+        if (window.userPreferences.viewType) {
+          setViewMode(window.userPreferences.viewType);
+        } else if (window.userPreferences.isListView) {
+          setViewMode('list');
+        } else if (window.userPreferences.isGraphView) {
+          setViewMode('graph');
+        }
       }
-      
-      // Check if we're coming back from a detail page
-      // Parse URL parameters to ensure we're showing the correct filters
+
+      // Check URL parameters to ensure we're showing the correct filters
       if (typeof window !== 'undefined') {
         const params = new URLSearchParams(window.location.search);
         const urlQuery = params.get('q');
@@ -84,40 +130,63 @@ export default function BottleneckGrid({
         const urlSortBy = params.get('sort');
         const urlTag = params.get('tag');
         const urlPrivateTag = params.get('for');
-        
+
         if (urlQuery && urlQuery !== currentSearchQuery) {
           setCurrentSearchQuery(urlQuery);
         }
-        
+
         if (urlFields) {
           const fieldSlugs = urlFields.split(',');
-          
-          // Convert slugs to IDs using the slugUtils function
+
+          // Convert slugs to IDs - handle both bottlenecks and capabilities
           const fieldIds = fieldSlugs.map(slug => {
-            const match = bottlenecks.find(b =>
-              b.field && createFieldSlug(b.field.field_name) === slug
-            )?.field;
-            return match ? match.id : null;
+            if (viewType === 'bottlenecks') {
+              // For bottlenecks, find field in bottlenecks
+              const match = bottlenecks.find(b =>
+                b.field && createFieldSlug(b.field.field_name) === slug
+              )?.field;
+              return match ? match.id : null;
+            } else {
+              // For capabilities, find field in capabilities' bottlenecks
+              const matchingFields = capabilities.flatMap(capability => 
+                capability.bottlenecks?.map(bottleneck => bottleneck.field) || []
+              ).filter(Boolean);
+              
+              const match = matchingFields.find(f => 
+                f && f.field_name && createFieldSlug(f.field_name) === slug
+              );
+              
+              return match ? match.id : null;
+            }
           }).filter(Boolean);
-          
-          if (fieldIds.length > 0 && 
-              JSON.stringify(fieldIds) !== JSON.stringify(selectedFields)) {
+
+          if (fieldIds.length > 0 &&
+            JSON.stringify(fieldIds) !== JSON.stringify(selectedFields)) {
             setSelectedFields(fieldIds);
             // Also update the shared store
             updateSelectedFields(fieldIds);
           }
         }
-        
+
         // Check for sort parameter
-        if (urlSortBy && ['rank', 'index', 'alpha'].includes(urlSortBy)) {
+        const validSortOptions = viewType === 'capabilities' 
+          ? ['bottlenecks', 'alpha']
+          : ['rank', 'alpha'];
+          
+        if (urlSortBy && validSortOptions.includes(urlSortBy)) {
           setSortBy(urlSortBy);
+        } else if (viewType === 'capabilities' && (!urlSortBy || urlSortBy === 'rank')) {
+          // Default to bottlenecks sort for capabilities if sort isn't specified
+          // or if it's mistakenly set to rank
+          const newSort = 'bottlenecks';
+          setSortBy(newSort);
         }
-        
+
         // Check for tag parameter
         if (urlTag && urlTag !== selectedTag) {
           setSelectedTag(urlTag);
         }
-        
+
         // Check for private tag parameter
         if (urlPrivateTag && urlPrivateTag !== privateTag) {
           setPrivateTag(urlPrivateTag);
@@ -130,59 +199,38 @@ export default function BottleneckGrid({
 
   // Initialize search index
   useEffect(() => {
-    if (bottlenecks.length > 0) {
-      setFuse(new Fuse(bottlenecks, fuseOptions));
+    if (!isMounted) return;
+    
+    const items = viewType === 'bottlenecks' ? bottlenecks : capabilities;
+    const options = viewType === 'bottlenecks' ? bottleneckSearchOptions : capabilitySearchOptions;
+    
+    if (items && items.length > 0) {
+      setFuse(new Fuse(items, options));
     }
-  }, [bottlenecks]);
+  }, [isMounted, viewType, bottlenecks, capabilities]);
 
-  // Listen for URL parameters on mount
+  // Listen for view changes
   useEffect(() => {
-    if (typeof window === 'undefined') return;
-    
-    const params = new URLSearchParams(window.location.search);
-    const urlQuery = params.get('q');
-    const urlFields = params.get('fields');
-    const urlSortBy = params.get('sort');
-    const urlTag = params.get('tag');
-    const urlPrivateTag = params.get('for');
-
-    if (urlQuery) {
-      setCurrentSearchQuery(urlQuery);
-    }
-
-    if (urlFields) {
-      const fieldSlugs = urlFields.split(',');
-
-      // Fixed: Use field_name instead of title for matching
-      const fieldIds = fieldSlugs.map(slug => {
-        const match = bottlenecks.find(b =>
-          b.field && createFieldSlug(b.field.field_name) === slug
-        )?.field;
-        return match ? match.id : null;
-      }).filter(Boolean);
-
-      if (fieldIds.length > 0) {
-        setSelectedFields(fieldIds);
-        // Also update the shared store
-        updateSelectedFields(fieldIds);
+    const handleViewChange = (event) => {
+      // Update view type based on the new viewType or legacy isListView value
+      if (event.detail.viewType) {
+        setViewMode(event.detail.viewType);
+      } else if (event.detail.isListView !== undefined) {
+        setViewMode(event.detail.isListView ? 'list' : 'grid');
       }
-    }
-    
-    // Check for sort parameter
-    if (urlSortBy && ['rank', 'alpha'].includes(urlSortBy)) {
-      setSortBy(urlSortBy);
-    }
-    
-    // Check for tag parameter
-    if (urlTag) {
-      setSelectedTag(urlTag);
-    }
-    
-    // Check for private tag parameter
-    if (urlPrivateTag) {
-      setPrivateTag(urlPrivateTag);
-    }
-  }, [bottlenecks]);
+
+      // Check for graph view specifically
+      if (event.detail.isGraphView) {
+        setViewMode('graph');
+      }
+    };
+
+    window.addEventListener('view-changed', handleViewChange);
+
+    return () => {
+      window.removeEventListener('view-changed', handleViewChange);
+    };
+  }, []);
 
   // Listen for search changes from other components
   useEffect(() => {
@@ -215,14 +263,14 @@ export default function BottleneckGrid({
   // Listen for changes in the shared field store
   useEffect(() => {
     if (!isMounted) return;
-    
+
     const unsubscribe = sharedFieldStore.subscribe((state) => {
-      if (state.selectedFields && 
-          JSON.stringify(state.selectedFields) !== JSON.stringify(selectedFields)) {
+      if (state.selectedFields &&
+        JSON.stringify(state.selectedFields) !== JSON.stringify(selectedFields)) {
         setSelectedFields(state.selectedFields);
       }
     });
-    
+
     return unsubscribe;
   }, [isMounted, selectedFields]);
 
@@ -230,19 +278,10 @@ export default function BottleneckGrid({
   useEffect(() => {
     const handleTagChange = (event) => {
       setSelectedTag(event.detail.selectedTag);
-      
+
       // Clear private tag if public tag is selected (mutually exclusive)
       if (event.detail.selectedTag) {
         setPrivateTag('');
-        
-        // Also update URL to remove 'for' parameter
-        if (typeof window !== 'undefined') {
-          const params = new URLSearchParams(window.location.search);
-          params.delete('for');
-          
-          const newUrl = `${window.location.pathname}${params.toString() ? '?' + params.toString() : ''}`;
-          window.history.pushState({}, '', newUrl);
-        }
       }
     };
 
@@ -257,19 +296,10 @@ export default function BottleneckGrid({
   useEffect(() => {
     const handlePrivateTagChange = (event) => {
       setPrivateTag(event.detail.privateTag);
-      
+
       // Clear public tag if private tag is selected (mutually exclusive)
       if (event.detail.privateTag) {
         setSelectedTag('');
-        
-        // Also update URL to remove 'tag' parameter
-        if (typeof window !== 'undefined') {
-          const params = new URLSearchParams(window.location.search);
-          params.delete('tag');
-          
-          const newUrl = `${window.location.pathname}${params.toString() ? '?' + params.toString() : ''}`;
-          window.history.pushState({}, '', newUrl);
-        }
       }
     };
 
@@ -292,7 +322,7 @@ export default function BottleneckGrid({
       window.removeEventListener('view-changed', handleViewChange);
     };
   }, []);
-  
+
   // Listen for sort changes
   useEffect(() => {
     const handleSortChange = (event) => {
@@ -310,126 +340,216 @@ export default function BottleneckGrid({
   useEffect(() => {
     if (!isMounted || !fuse) return;
 
+    // Get the correct collection of items based on viewType
+    const items = viewType === 'bottlenecks' ? bottlenecks : capabilities;
+
     // Apply search
     let filteredResults = currentSearchQuery
       ? fuse.search(currentSearchQuery).map(result => result.item)
-      : bottlenecks;
+      : items;
 
     // Apply field filtering
     if (selectedFields.length > 0) {
-      filteredResults = filteredResults.filter(bottleneck =>
-        bottleneck.field &&
-        selectedFields.includes(bottleneck.field.id)
-      );
+      if (viewType === 'bottlenecks') {
+        // For bottlenecks, check if the bottleneck's field is selected
+        filteredResults = filteredResults.filter(bottleneck =>
+          bottleneck.field &&
+          selectedFields.includes(bottleneck.field.id)
+        );
+      } else {
+        // For capabilities, check if any of its associated bottlenecks have a selected field
+        filteredResults = filteredResults.filter(capability => {
+          return capability.bottlenecks && capability.bottlenecks.some(bottleneck => 
+            bottleneck.field && selectedFields.includes(bottleneck.field.id)
+          );
+        });
+      }
     }
-    
+
     // Apply public tag filtering
     if (selectedTag) {
-      filteredResults = filteredResults.filter(bottleneck =>
-        bottleneck.tags && bottleneck.tags.includes(selectedTag)
-      );
-    }
-    
-    // Apply private tag filtering
-    if (privateTag) {
-      filteredResults = filteredResults.filter(bottleneck =>
-        bottleneck.privateTags && bottleneck.privateTags.includes(privateTag)
+      filteredResults = filteredResults.filter(item =>
+        item.tags && item.tags.includes(selectedTag)
       );
     }
 
-    // Apply sorting
+    // Apply private tag filtering
+    if (privateTag) {
+      filteredResults = filteredResults.filter(item =>
+        item.privateTags && item.privateTags.includes(privateTag)
+      );
+    }
+
+    // Apply sorting based on viewType
     filteredResults = [...filteredResults].sort((a, b) => {
-      if (sortBy === 'alpha') {
-        // Sort alphabetically by title
-        return a.bottleneck_name.localeCompare(b.bottleneck_name);
-      } else if (sortBy === 'bottleneck_number') {
-        // Sort primarily by bottleneck_number (ascending)
-        const numberA = parseInt(a.bottleneck_number) || 0;
-        const numberB = parseInt(b.bottleneck_number) || 0;
-        
-        if (numberA === numberB) {
-          // If indices are equal, fall back to title as tiebreaker
+      if (viewType === 'bottlenecks') {
+        // Bottlenecks sorting
+        if (sortBy === 'alpha') {
+          // Sort alphabetically by title
           return a.bottleneck_name.localeCompare(b.bottleneck_name);
+        } else { // Default: 'rank'
+          // Sort by rank (descending) with bottleneck_number as tiebreaker
+          const rankA = parseInt(a.bottleneck_rank) || 0;
+          const rankB = parseInt(b.bottleneck_rank) || 0;
+
+          if (rankA === rankB) {
+            // If ranks are equal, sort by bottleneck_number (ascending)
+            const numberA = parseInt(a.bottleneck_number) || 0;
+            const numberB = parseInt(b.bottleneck_number) || 0;
+
+            if (numberA === numberB) {
+              // If both ranks and numbers are equal, fall back to alphabetical
+              return a.bottleneck_name.localeCompare(b.bottleneck_name);
+            }
+
+            return numberA - numberB; // Lower number first
+          }
+
+          return rankB - rankA; // Higher rank first
         }
-        
-        return numberA - numberB; // Lower number first
       } else {
-        // Default: sort by rank (descending) with bottleneck_number as tiebreaker
-        const rankA = parseInt(a.bottleneck_rank) || 0;
-        const rankB = parseInt(b.bottleneck_rank) || 0;
-        
-        if (rankA === rankB) {
-          // If ranks are equal, sort by bottleneck_number (ascending)
-          const numberA = parseInt(a.bottleneck_number) || 0;
-          const numberB = parseInt(b.bottleneck_number) || 0;
+        // Capabilities sorting
+        if (sortBy === 'alpha') {
+          // Sort alphabetically by fc_name
+          return a.fc_name.localeCompare(b.fc_name);
+        } else { // Default: 'bottlenecks'
+          // Sort by number of bottlenecks (descending) with alphabetical fc_name as tiebreaker
+          const countA = a.bottlenecks?.length || 0;
+          const countB = b.bottlenecks?.length || 0;
           
-          if (numberA === numberB) {
-            // If both ranks and numbers are equal, fall back to alphabetical
-            return a.bottleneck_name.localeCompare(b.bottleneck_name);
+          if (countA === countB) {
+            return a.fc_name.localeCompare(b.fc_name);
           }
           
-          return numberA - numberB; // Lower number first
+          return countB - countA; // Higher count first
         }
-        
-        return rankB - rankA; // Higher rank first
       }
     });
 
-    setFilteredBottlenecks(filteredResults);
+    setFilteredItems(filteredResults);
+    
+    // Update network props if we're in graph view
+    if (viewMode === 'graph') {
+      setNetworkProps({
+        bottlenecks: viewType === 'bottlenecks' ? filteredResults : bottlenecks,
+        capabilities: viewType === 'capabilities' ? filteredResults : capabilities,
+        resources,
+        fields,
+        searchQuery: currentSearchQuery,
+        selectedFieldIds: selectedFields,
+        selectedTag,
+        privateTag,
+        viewType
+      });
+    } else {
+      setNetworkProps(null);
+    }
   }, [
-    currentSearchQuery, 
-    selectedFields, 
-    selectedTag, 
-    privateTag, 
-    sortBy, 
-    fuse, 
+    isMounted,
+    viewType,
+    fuse,
+    currentSearchQuery,
+    selectedFields,
+    selectedTag,
+    privateTag,
+    sortBy,
     bottlenecks,
-    isMounted
+    capabilities,
+    viewMode
   ]);
-  
-  // Attempt to restore scroll position after filtered bottlenecks are updated
+
+  // Attempt to restore scroll position after filtered items are updated
   useEffect(() => {
     // Only try to restore scroll if this is a back navigation to dashboard
-    if (filteredBottlenecks.length > 0 && !hasRestoredScroll) {
+    if (filteredItems.length > 0 && !hasRestoredScroll) {
       // Import and use scrollPositionUtils directly
       import('../../lib/scrollPositionUtils').then(({ isBackNavigationToDashboard, scrollToSavedPosition }) => {
         if (isBackNavigationToDashboard()) {
           // Wait a bit for the DOM to update
           setTimeout(() => {
-            scrollToSavedPosition(filteredBottlenecks);
+            scrollToSavedPosition(filteredItems);
             setHasRestoredScroll(true);
           }, 100);
         }
       });
     }
-  }, [filteredBottlenecks, hasRestoredScroll]);
+  }, [filteredItems, hasRestoredScroll]);
 
-  const gridClass = isListView ? 'bottleneck-grid bottleneck-grid--list-view' : 'bottleneck-grid';
+  // Determine grid class based on view mode
+  const gridClass = `bottleneck-grid ${
+    viewMode === 'list' ? 'bottleneck-grid--list-view' : ''
+  } ${
+    viewMode === 'graph' ? 'bottleneck-grid--graph-view' : ''
+  }`;
 
-  if (filteredBottlenecks.length === 0) {
-    return (
-      <div className={gridClass}>
-        <div className="bottleneck-grid__empty-state">
-          <h3>No results found</h3>
-          <p>
-            We could not find any bottlenecks matching your search criteria.
-            Try adjusting your filters or search terms.
-          </p>
-        </div>
-      </div>
-    );
-  }
+  // For the graph view, we will use window.NetworkViewWrapper 
+  // This is a dynamic component that will be defined by Astro
+  useEffect(() => {
+    if (viewMode === 'graph' && networkProps && typeof window !== 'undefined') {
+      // This will be filled in by Astro's build system when using client:only="react"
+      if (window.NetworkViewWrapper) {
+        const root = document.getElementById('network-view-container');
+        if (root) {
+          window.NetworkViewWrapper(root, networkProps);
+        }
+      }
+    }
+  }, [viewMode, networkProps]);
 
   return (
     <div className={gridClass}>
-      {filteredBottlenecks.map((bottleneck) => (
-        <BottleneckCard
-          key={bottleneck.id}
-          bottleneck={bottleneck}
-          searchQuery={currentSearchQuery}
-          selectedFields={selectedFields}
-        />
-      ))}
+      {viewMode === 'graph' ? (
+        // We'll use a placeholder div that will be filled by Astro
+        <div id="network-view-container" className="network-graph">
+          {/* If using D3 directly as fallback */}
+          {isMounted && (
+            <IntegratedNetworkView
+              bottlenecks={viewType === 'bottlenecks' ? filteredItems : bottlenecks}
+              capabilities={viewType === 'capabilities' ? filteredItems : capabilities}
+              resources={resources}
+              fields={fields}
+              searchQuery={currentSearchQuery}
+              selectedFieldIds={selectedFields}
+              selectedTag={selectedTag}
+              privateTag={privateTag}
+              viewType={viewType}
+            />
+          )}
+        </div>
+      ) : (
+        // Render cards based on viewType
+        viewType === 'bottlenecks' ? (
+          // Render bottleneck cards
+          filteredItems.map((bottleneck) => (
+            <BottleneckCard
+              key={bottleneck.id}
+              bottleneck={bottleneck}
+              searchQuery={currentSearchQuery}
+              selectedFields={selectedFields}
+            />
+          ))
+        ) : (
+          // Render capability cards
+          filteredItems.map((capability) => (
+            <FoundationalCapabilityCard
+              key={capability.id}
+              capability={capability}
+              searchQuery={currentSearchQuery}
+              selectedFields={selectedFields}
+            />
+          ))
+        )
+      )}
+      
+      {viewMode !== 'graph' && filteredItems.length === 0 && (
+        <div className="bottleneck-grid__empty-state">
+          <h3>No results found</h3>
+          <p>
+            We could not find any {viewType === 'bottlenecks' ? 'bottlenecks' : 'capabilities'} matching your search criteria.
+            Try adjusting your filters or search terms.
+          </p>
+        </div>
+      )}
     </div>
   );
 }
