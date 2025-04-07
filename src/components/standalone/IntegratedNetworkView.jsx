@@ -100,7 +100,7 @@ export default function IntegratedNetworkView({
     const [clusterSeparation, setClusterSeparation] = useState(1.5);
     const [layoutStabilized, setLayoutStabilized] = useState(false);
     const [currentZoomScale, setCurrentZoomScale] = useState(1);
-    const [animationsEnabled, setAnimationsEnabled] = useState(false); // New state for animations toggle
+    const [animationsEnabled, setAnimationsEnabled] = useState(true); // New state for animations toggle
     const [hasSignaledReadiness, setHasSignaledReadiness] = useState(false);
 
     // Use refs instead of state for hover tracking to prevent render loops
