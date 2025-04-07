@@ -1,4 +1,4 @@
-// src/components/standalone/DashboardGrid.jsx (Astro Compatible)
+// src/components/standalone/DashboardGrid.jsx
 import React, { useState, useEffect } from 'react';
 import Fuse from 'fuse.js';
 import BottleneckCard from './BottleneckCard';
@@ -81,7 +81,7 @@ export default function DashboardGrid({
 }) {
   // Determine default sort based on viewType if not provided
   const defaultSortBy = initialSortBy || (viewType === 'capabilities' ? 'bottlenecks' : 'rank');
-  
+
   const [filteredItems, setFilteredItems] = useState(viewType === 'bottlenecks' ? bottlenecks : capabilities);
   const [currentSearchQuery, setCurrentSearchQuery] = useState(initialSearchQuery);
   const [selectedFields, setSelectedFields] = useState(initialSelectedFieldIds);
@@ -92,12 +92,16 @@ export default function DashboardGrid({
   const [fuse, setFuse] = useState(null);
   const [hasRestoredScroll, setHasRestoredScroll] = useState(false);
   const [viewMode, setViewMode] = useState('grid'); // 'grid', 'list', or 'graph'
-  // Add this to prevent filtering until component is mounted
+
   const [isMounted, setIsMounted] = useState(false);
-  
+
   // NetworkView will be rendered through the Astro component
   // This keeps track of whether we need to trigger the Astro component
   const [networkProps, setNetworkProps] = useState(null);
+
+  const [gridViewReady, setGridViewReady] = useState(false);
+  const [listViewReady, setListViewReady] = useState(false);
+  const [graphViewReady, setGraphViewReady] = useState(false);
 
   // Initialize after mount
   useEffect(() => {
@@ -148,14 +152,14 @@ export default function DashboardGrid({
               return match ? match.id : null;
             } else {
               // For capabilities, find field in capabilities' bottlenecks
-              const matchingFields = capabilities.flatMap(capability => 
+              const matchingFields = capabilities.flatMap(capability =>
                 capability.bottlenecks?.map(bottleneck => bottleneck.field) || []
               ).filter(Boolean);
-              
-              const match = matchingFields.find(f => 
+
+              const match = matchingFields.find(f =>
                 f && f.field_name && createFieldSlug(f.field_name) === slug
               );
-              
+
               return match ? match.id : null;
             }
           }).filter(Boolean);
@@ -169,10 +173,10 @@ export default function DashboardGrid({
         }
 
         // Check for sort parameter
-        const validSortOptions = viewType === 'capabilities' 
+        const validSortOptions = viewType === 'capabilities'
           ? ['bottlenecks', 'alpha']
           : ['rank', 'alpha'];
-          
+
         if (urlSortBy && validSortOptions.includes(urlSortBy)) {
           setSortBy(urlSortBy);
         } else if (viewType === 'capabilities' && (!urlSortBy || urlSortBy === 'rank')) {
@@ -196,18 +200,99 @@ export default function DashboardGrid({
       console.error('Error loading view preference:', e);
     }
   }, []);
+  useEffect(() => {
+    console.log("Current view mode:", viewMode);
+    console.log("View ready states:", { 
+      grid: gridViewReady, 
+      list: listViewReady, 
+      graph: graphViewReady 
+    });
+  }, [viewMode, gridViewReady, listViewReady, graphViewReady]);
+
+  // Check view readiness
+  useEffect(() => {
+    if (!isMounted) return;
+    console.log("Setting view readiness for mode:", viewMode);
+    // For grid and list views, they're ready almost immediately
+    if (viewMode === 'grid') {
+      const timer = setTimeout(() => {
+        console.log("Grid view ready");
+        setGridViewReady(true);
+      }, 50);
+      return () => clearTimeout(timer);
+    } 
+    else if (viewMode === 'list') {
+      const timer = setTimeout(() => {
+        console.log("List view ready");
+        setListViewReady(true);
+      }, 50);
+      return () => clearTimeout(timer);
+    }
+  }, [viewMode, isMounted]);
+
+  // Add a listener for graph view ready event
+// Improved graph view ready listener with fallback
+useEffect(() => {
+  console.log("Setting up graph-view-ready listener");
+  
+  const handleGraphReady = (event) => {
+    console.log("Graph ready event received!", event);
+    setGraphViewReady(true);
+  };
+  
+  // Add event listener
+  window.addEventListener('graph-view-ready', handleGraphReady);
+  
+  // Fallback mechanism - if we're in graph view and it hasn't become ready
+  let fallbackTimer;
+  if (viewMode === 'graph' && !graphViewReady) {
+    console.log("Setting fallback timer for graph readiness");
+    fallbackTimer = setTimeout(() => {
+      console.log("FALLBACK: Setting graph view ready after timeout");
+      setGraphViewReady(true);
+    }, 5000); // 5 second fallback
+  }
+  
+  return () => {
+    console.log("Cleaning up graph ready listener");
+    window.removeEventListener('graph-view-ready', handleGraphReady);
+    if (fallbackTimer) clearTimeout(fallbackTimer);
+  };
+}, [viewMode, graphViewReady]);
+  
+  // Reset ready states when changing views
+  useEffect(() => {
+    if (viewMode === 'grid') {
+      setListViewReady(false);
+      setGraphViewReady(false);
+    } 
+    else if (viewMode === 'list') {
+      setGridViewReady(false);
+      setGraphViewReady(false);
+    }
+    else if (viewMode === 'graph') {
+      setGridViewReady(false);
+      setListViewReady(false);
+    }
+  }, [viewMode]);
 
   // Initialize search index
   useEffect(() => {
     if (!isMounted) return;
-    
+
     const items = viewType === 'bottlenecks' ? bottlenecks : capabilities;
     const options = viewType === 'bottlenecks' ? bottleneckSearchOptions : capabilitySearchOptions;
-    
+
     if (items && items.length > 0) {
       setFuse(new Fuse(items, options));
     }
   }, [isMounted, viewType, bottlenecks, capabilities]);
+
+  // Determine which ready class to apply
+  const viewReadyClass =
+    viewMode === 'grid' && gridViewReady ? 'grid-view-ready' :
+      viewMode === 'list' && listViewReady ? 'list-view-ready' :
+        viewMode === 'graph' && graphViewReady ? 'graph-view-ready' : '';
 
   // Listen for view changes
   useEffect(() => {
@@ -217,11 +302,10 @@ export default function DashboardGrid({
         setViewMode(event.detail.viewType);
       } else if (event.detail.isListView !== undefined) {
         setViewMode(event.detail.isListView ? 'list' : 'grid');
-      }
-
-      // Check for graph view specifically
-      if (event.detail.isGraphView) {
-        setViewMode('graph');
+      } else if (event.detail.isGraphView !== undefined) {
+        if (event.detail.isGraphView) {
+          setViewMode('graph');
+        }
       }
     };
 
@@ -273,7 +357,22 @@ export default function DashboardGrid({
 
     return unsubscribe;
   }, [isMounted, selectedFields]);
+useEffect(() => {
+  if (!isMounted) return;
 
+  try {
+    // First check for user preferences
+    if (typeof window !== 'undefined' && window.userPreferences) {
+      const userViewType = window.userPreferences.viewType;
+      if (userViewType && userViewType !== viewMode) {
+        console.log("Initializing with saved view type:", userViewType);
+        setViewMode(userViewType);
+      }
+    }
+  } catch (e) {
+    console.error('Error loading view preference:', e);
+  }
+}, [isMounted]);
   // Listen for tag filter changes
   useEffect(() => {
     const handleTagChange = (event) => {
@@ -359,7 +458,7 @@ export default function DashboardGrid({
       } else {
         // For capabilities, check if any of its associated bottlenecks have a selected field
         filteredResults = filteredResults.filter(capability => {
-          return capability.bottlenecks && capability.bottlenecks.some(bottleneck => 
+          return capability.bottlenecks && capability.bottlenecks.some(bottleneck =>
             bottleneck.field && selectedFields.includes(bottleneck.field.id)
           );
         });
@@ -416,18 +515,18 @@ export default function DashboardGrid({
           // Sort by number of bottlenecks (descending) with alphabetical fc_name as tiebreaker
           const countA = a.bottlenecks?.length || 0;
           const countB = b.bottlenecks?.length || 0;
-          
+
           if (countA === countB) {
             return a.fc_name.localeCompare(b.fc_name);
           }
-          
+
           return countB - countA; // Higher count first
         }
       }
     });
 
     setFilteredItems(filteredResults);
-    
+
     // Update network props if we're in graph view
     if (viewMode === 'graph') {
       setNetworkProps({
@@ -480,7 +579,7 @@ export default function DashboardGrid({
     viewMode === 'list' ? 'bottleneck-grid--list-view' : ''
   } ${
     viewMode === 'graph' ? 'bottleneck-grid--graph-view' : ''
-  }`;
+  } ${viewReadyClass}`;
 
   // For the graph view, we will use window.NetworkViewWrapper 
   // This is a dynamic component that will be defined by Astro
@@ -497,59 +596,70 @@ export default function DashboardGrid({
   }, [viewMode, networkProps]);
 
   return (
-    <div className={gridClass}>
-      {viewMode === 'graph' ? (
-        // We'll use a placeholder div that will be filled by Astro
-        <div id="network-view-container" className="network-graph">
-          {/* If using D3 directly as fallback */}
-          {isMounted && (
-            <IntegratedNetworkView
-              bottlenecks={viewType === 'bottlenecks' ? filteredItems : bottlenecks}
-              capabilities={viewType === 'capabilities' ? filteredItems : capabilities}
-              resources={resources}
-              fields={fields}
-              searchQuery={currentSearchQuery}
-              selectedFieldIds={selectedFields}
-              selectedTag={selectedTag}
-              privateTag={privateTag}
-              viewType={viewType}
-            />
-          )}
-        </div>
-      ) : (
-        // Render cards based on viewType
-        viewType === 'bottlenecks' ? (
-          // Render bottleneck cards
-          filteredItems.map((bottleneck) => (
-            <BottleneckCard
-              key={bottleneck.id}
-              bottleneck={bottleneck}
-              searchQuery={currentSearchQuery}
-              selectedFields={selectedFields}
-            />
-          ))
+    <>
+      {/* Show loading indicator when view isn't ready */}
+      {((viewMode === 'grid' && !gridViewReady) ||
+        (viewMode === 'list' && !listViewReady) ||
+        (viewMode === 'graph' && !graphViewReady)) && (
+          <div className="dashboard-loading">
+            <div>Loading {viewMode} view</div>
+          </div>
+        )}
+        
+      <div className={gridClass}>
+        {viewMode === 'graph' ? (
+          // We'll use a placeholder div that will be filled by Astro
+          <div id="network-view-container" className="network-graph">
+            {/* If using D3 directly as fallback */}
+            {isMounted && (
+              <IntegratedNetworkView
+                bottlenecks={viewType === 'bottlenecks' ? filteredItems : bottlenecks}
+                capabilities={viewType === 'capabilities' ? filteredItems : capabilities}
+                resources={resources}
+                fields={fields}
+                searchQuery={currentSearchQuery}
+                selectedFieldIds={selectedFields}
+                selectedTag={selectedTag}
+                privateTag={privateTag}
+                viewType={viewType}
+              />
+            )}
+          </div>
         ) : (
-          // Render capability cards
-          filteredItems.map((capability) => (
-            <FoundationalCapabilityCard
-              key={capability.id}
-              capability={capability}
-              searchQuery={currentSearchQuery}
-              selectedFields={selectedFields}
-            />
-          ))
-        )
-      )}
-      
-      {viewMode !== 'graph' && filteredItems.length === 0 && (
-        <div className="bottleneck-grid__empty-state">
-          <h3>No results found</h3>
-          <p>
-            We could not find any {viewType === 'bottlenecks' ? 'bottlenecks' : 'capabilities'} matching your search criteria.
-            Try adjusting your filters or search terms.
-          </p>
-        </div>
-      )}
-    </div>
+          // Render cards based on viewType
+          viewType === 'bottlenecks' ? (
+            // Render bottleneck cards
+            filteredItems.map((bottleneck) => (
+              <BottleneckCard
+                key={bottleneck.id}
+                bottleneck={bottleneck}
+                searchQuery={currentSearchQuery}
+                selectedFields={selectedFields}
+              />
+            ))
+          ) : (
+            // Render capability cards
+            filteredItems.map((capability) => (
+              <FoundationalCapabilityCard
+                key={capability.id}
+                capability={capability}
+                searchQuery={currentSearchQuery}
+                selectedFields={selectedFields}
+              />
+            ))
+          )
+        )}
+
+        {viewMode !== 'graph' && filteredItems.length === 0 && (
+          <div className="bottleneck-grid__empty-state">
+            <h3>No results found</h3>
+            <p>
+              We could not find any {viewType === 'bottlenecks' ? 'bottlenecks' : 'capabilities'} matching your search criteria.
+              Try adjusting your filters or search terms.
+            </p>
+          </div>
+        )}
+      </div>
+    </>
   );
 }

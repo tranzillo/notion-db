@@ -10,46 +10,58 @@ export default function ViewToggle() {
   useEffect(() => {
     const loadViewPreference = () => {
       try {
-        // Check if the DOM already has the attribute
-        const listView = document.documentElement.dataset.listView === 'true';
-        const graphView = document.documentElement.dataset.graphView === 'true';
-
-        // Determine view mode based on data attributes
-        if (graphView) {
-          setViewMode('graph');
-        } else if (listView) {
-          setViewMode('list');
-        } else {
-          setViewMode('grid');
-        }
-
-        // Also check window.userPreferences as backup
+        // Check global preferences first
         if (typeof window !== 'undefined' && window.userPreferences) {
-          const viewType = window.userPreferences.viewType || 'grid';
-          setViewMode(viewType);
+          const savedViewType = window.userPreferences.viewType;
+          if (savedViewType) {
+            console.log("Setting view mode from userPreferences:", savedViewType);
+            setViewMode(savedViewType);
+          }
+          else if (window.userPreferences.isListView) {
+            setViewMode('list');
+          }
+          else if (window.userPreferences.isGraphView) {
+            setViewMode('graph');
+          }
+        }
+        
+        // Check localStorage as backup
+        else {
+          const savedPrefs = localStorage.getItem('userPreferences');
+          if (savedPrefs) {
+            const prefs = JSON.parse(savedPrefs);
+            const savedViewType = prefs.viewType || 
+                                 (prefs.isListView ? 'list' : 
+                                 (prefs.isGraphView ? 'graph' : 'grid'));
+            
+            setViewMode(savedViewType);
+          }
         }
       } catch (e) {
         console.error('Error loading view preference:', e);
       }
     };
-
+    
     // Load preference initially
     loadViewPreference();
-
-    // Also reload preference after navigation completes
-    const handlePageLoad = () => {
-      loadViewPreference();
+    
+    // Also reload when view-changed events occur
+    const handleViewChange = (event) => {
+      if (event.detail.viewType) {
+        setViewMode(event.detail.viewType);
+      }
     };
-
-    document.addEventListener('astro:page-load', handlePageLoad);
-
+    
+    window.addEventListener('view-changed', handleViewChange);
+    
     return () => {
-      document.removeEventListener('astro:page-load', handlePageLoad);
+      window.removeEventListener('view-changed', handleViewChange);
     };
   }, []);
 
   // Toggle the view state - now cycles through three states
   const toggleView = (newViewMode) => {
+    console.log("Toggling view to:", newViewMode);
     setViewMode(newViewMode);
     savePreference(newViewMode);
   };

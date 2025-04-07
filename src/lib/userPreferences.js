@@ -43,6 +43,9 @@ export function saveUserPreferences(preferences) {
  * @param {string} key - Preference key
  * @param {any} value - Preference value
  */
+// In src/lib/userPreferences.js
+
+// Update the updateUserPreference function:
 export function updateUserPreference(key, value) {
   if (typeof window === 'undefined') {
     return;
@@ -69,6 +72,33 @@ export function updateUserPreference(key, value) {
     } else {
       document.documentElement.classList.remove('dark-mode');
     }
+  } else if (key === 'viewType') {
+    // Apply view type changes
+    const isListView = value === 'list';
+    const isGraphView = value === 'graph';
+    
+    // Set both dataset values
+    document.documentElement.dataset.listView = isListView ? 'true' : 'false';
+    document.documentElement.dataset.graphView = isGraphView ? 'true' : 'false';
+    
+    // Also update grid elements
+    const grids = document.querySelectorAll('.bottleneck-grid');
+    grids.forEach(grid => {
+      // First remove any existing view classes
+      grid.classList.remove('bottleneck-grid--list-view');
+      grid.classList.remove('bottleneck-grid--graph-view');
+      
+      // Add the appropriate class
+      if (isListView) {
+        grid.classList.add('bottleneck-grid--list-view');
+      } else if (isGraphView) {
+        grid.classList.add('bottleneck-grid--graph-view');
+      }
+    });
+    
+    // For backward compatibility also update isListView and isGraphView
+    updateUserPreference('isListView', isListView);
+    updateUserPreference('isGraphView', isGraphView);
   } else if (key === 'isListView') {
     document.documentElement.dataset.listView = value ? 'true' : 'false';
     
@@ -78,6 +108,16 @@ export function updateUserPreference(key, value) {
       grids.forEach(grid => grid.classList.add('bottleneck-grid--list-view'));
     } else {
       grids.forEach(grid => grid.classList.remove('bottleneck-grid--list-view'));
+    }
+  } else if (key === 'isGraphView') {
+    document.documentElement.dataset.graphView = value ? 'true' : 'false';
+    
+    // Update grid elements
+    const grids = document.querySelectorAll('.bottleneck-grid');
+    if (value) {
+      grids.forEach(grid => grid.classList.add('bottleneck-grid--graph-view'));
+    } else {
+      grids.forEach(grid => grid.classList.remove('bottleneck-grid--graph-view'));
     }
   }
 }

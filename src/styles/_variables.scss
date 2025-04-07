@@ -84,7 +84,7 @@ $breakpoint-xxxl: 2560px;
 $breakpoint-max: 3840px;
 
 //Timing
-$transition: 0.3s;
+$transition: 0.3s ease-in-out;
 
 
 /* View layout styling based on data attribute */

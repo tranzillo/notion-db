@@ -1,7 +1,9 @@
 .view-toggle {
   display: flex;
 }
-
+svg {
+  transition: filter $transition;
+}
 .view-toggle__button {
   background-color: var(--card-background);
   border: none;
@@ -12,6 +14,9 @@
     background-color $transition,
     border $transition,
     color $transition;
+    &:first-child {
+      border-inline-end: 1px solid var(--border-dull);
+    }
     &.graph {
       svg {
         filter: invert(54%) sepia(14%) saturate(273%) hue-rotate(28deg) brightness(91%) contrast(89%);
@@ -63,7 +68,6 @@
       background-color $transition,
       border $transition,
       color $transition;
-
     svg {
       filter: invert(54%) sepia(14%) saturate(273%) hue-rotate(28deg) brightness(91%) contrast(89%);
     }

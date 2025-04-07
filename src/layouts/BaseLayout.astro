@@ -390,24 +390,53 @@ const {
     <script>
       // Create a global flag to track React readiness
       window.reactReady = false;
-      
+
       // This script runs when React is fully loaded
-      document.addEventListener('astro:page-load', () => {
-        // Reset React readiness flag
-        window.reactReady = false;
-        
-        // Wait for React to be available
-        const checkReactReady = () => {
-          if (window.React && window.ReactDOM) {
-            window.reactReady = true;
-            document.dispatchEvent(new CustomEvent('react-ready'));
-          } else {
-            setTimeout(checkReactReady, 10);
-          }
-        };
-        
-        checkReactReady();
-      });
+      document.addEventListener("astro:page-load", () => {
+  // Check if we're on a dashboard page
+  const isDashboard = 
+    window.location.pathname === "/" || 
+    window.location.pathname === "" ||
+    window.location.pathname === "/bottlenecks" ||
+    window.location.pathname === "/capabilities";
+  
+  if (isDashboard) {
+    // Get user preferences
+    const prefs = window.userPreferences || {};
+    const viewType = prefs.viewType || 'grid';
+    
+    console.log("Dashboard page loaded - applying view type:", viewType);
+    
+    // Apply correct view type immediately
+    document.documentElement.dataset.listView = viewType === 'list' ? 'true' : 'false';
+    document.documentElement.dataset.graphView = viewType === 'graph' ? 'true' : 'false';
+    
+    // Apply to grid elements
+    document.querySelectorAll('.bottleneck-grid').forEach(grid => {
+      // Reset existing view classes
+      grid.classList.remove('bottleneck-grid--list-view');
+      grid.classList.remove('bottleneck-grid--graph-view');
+      
+      // Add appropriate class
+      if (viewType === 'list') {
+        grid.classList.add('bottleneck-grid--list-view');
+      } else if (viewType === 'graph') {
+        grid.classList.add('bottleneck-grid--graph-view');
+      }
+    });
+    
+    // Dispatch view change event for React components
+    setTimeout(() => {
+      window.dispatchEvent(new CustomEvent('view-changed', {
+        detail: {
+          viewType,
+          isListView: viewType === 'list',
+          isGraphView: viewType === 'graph'
+        }
+      }));
+    }, 10);
+  }
+});
     </script>
     <!-- Script to handle navigation state -->
     <script>
@@ -464,7 +493,17 @@ const {
         // After each navigation, ensure all components are properly initialized
         // Dispatch events that our React components listen for
         const prefs = window.userPreferences || {};
-
+        if (prefs.viewType) {
+          window.dispatchEvent(
+            new CustomEvent("view-changed", {
+              detail: {
+                viewType: prefs.viewType,
+                isListView: prefs.viewType === "list",
+                isGraphView: prefs.viewType === "graph",
+              },
+            }),
+          );
+        }
         if (prefs.darkMode !== undefined) {
           window.dispatchEvent(
             new CustomEvent("theme-changed", {
@@ -491,14 +530,17 @@ const {
       });
     </script>
     <script>
-      import { scrollToSavedPosition, isBackNavigationToDashboard } from "../lib/scrollPositionUtils";
+      import {
+        scrollToSavedPosition,
+        isBackNavigationToDashboard,
+      } from "../lib/scrollPositionUtils";
       import { initializePreferences } from "../lib/preferenceStore";
-    
+
       // Handle scroll restoration for dashboard pages
       document.addEventListener("astro:page-load", () => {
         // Initialize preferences first
         initializePreferences();
-        
+
         // Check if we're coming back to a dashboard
         if (isBackNavigationToDashboard()) {
           // Wait a bit for the DOM to update
@@ -510,6 +552,56 @@ const {
           window.scrollTo(0, 0);
         }
       });
+      document.addEventListener("astro:before-preparation", () => {
+  // Hide all bottleneck grids before navigation to prevent flash
+  document.querySelectorAll('.bottleneck-grid').forEach(grid => {
+    grid.classList.remove('grid-view-ready', 'list-view-ready', 'graph-view-ready');
+  });
+});
+
+// After page load, prioritize applying the correct view type
+document.addEventListener("astro:page-load", () => {
+  // Check if we're on a dashboard
+  const isDashboard =
+    window.location.pathname === "/" || 
+    window.location.pathname === "" ||
+    window.location.pathname === "/bottlenecks" ||
+    window.location.pathname === "/capabilities";
+    
+  if (isDashboard) {
+    // Get the current view preference
+    const prefs = window.userPreferences || {};
+    const viewType = prefs.viewType || 'grid';
+    
+    // Apply view type immediately to minimize flashing
+    document.documentElement.dataset.listView = viewType === 'list' ? 'true' : 'false';
+    document.documentElement.dataset.graphView = viewType === 'graph' ? 'true' : 'false';
+    
+    // Apply to grid elements
+    document.querySelectorAll('.bottleneck-grid').forEach(grid => {
+      // Reset all view classes
+      grid.classList.remove('bottleneck-grid--list-view', 'bottleneck-grid--graph-view');
+      
+      // Apply appropriate class
+      if (viewType === 'list') {
+        grid.classList.add('bottleneck-grid--list-view');
+      } else if (viewType === 'graph') {
+        grid.classList.add('bottleneck-grid--graph-view');
+      }
+    });
+    
+    // Dispatch event to ensure view is updated in React components
+    window.dispatchEvent(
+      new CustomEvent("view-changed", {
+        detail: { 
+          viewType,
+          isListView: viewType === 'list',
+          isGraphView: viewType === 'graph'
+        },
+      })
+    );
+  }
+});
     </script>
   </body>
 </html>

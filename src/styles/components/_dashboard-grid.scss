@@ -1,7 +1,51 @@
+.dashboard-layout__main {
+  min-height: 500px; /* Ensure consistent height while loading */
+}
+
+// Improve loading states for different view types
+.bottleneck-grid--graph-view:not(.graph-view-ready) {
+  visibility: hidden; /* Hide graph until ready */
+  height: 0;
+  overflow: hidden;
+}
+
+.bottleneck-grid:not(.grid-view-ready):not(.list-view-ready):not(.graph-view-ready) {
+  position: absolute;
+  visibility: hidden;
+}
+
+// Loading indicator animation
+.dashboard-loading {
+  > div {
+    position: relative;
+    &:after {
+      content: "...";
+      animation: loading-dots 1.5s infinite;
+    }
+  }
+
+}
+
+@keyframes loading-dots {
+  0% { content: "."; }
+  33% { content: ".."; }
+  66% { content: "..."; }
+}
+.dashboard-loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 24em;
+  color: var(--text-lighter);
+  font-size: $font-size-md;
+}
+
 .bottleneck-grid {
+  opacity: 0;
   display: grid;
   grid-template-columns: repeat(1, 1fr);
   gap: $spacing-md;
+  transition: opacity $transition;
 
   @media (min-width: $breakpoint-xl) {
     grid-template-columns: repeat(2, 1fr);
@@ -20,7 +64,8 @@
     grid-template-columns: repeat(5, 1fr);
   }
 
-  &--list-view, &--graph-view {
+  &--list-view,
+  &--graph-view {
     grid-template-columns: 1fr;
   }
 
@@ -38,6 +83,12 @@
       letter-spacing: 0.04em;
       margin-block-start: $spacing-xs;
     }
+  }
+
+  &.grid-view-ready,
+  &.list-view-ready,
+  &.graph-view-ready {
+    opacity: 1;
   }
 }
 
@@ -58,15 +109,19 @@
     margin-inline: calc($spacing-sm * (-1));
     padding-inline: $spacing-sm;
   }
+
   h1 {
     color: var(--text-color);
   }
+
   p {
     margin-block-end: $spacing-md;
     max-width: 102ch;
   }
+
   ul {
     margin-block-end: $spacing-md;
+
     li {
       margin-inline-start: $spacing-xxl;
       margin-block-end: $spacing-xs;
@@ -115,7 +170,7 @@
   @media (max-width: $breakpoint-lg) {
     top: $spacing-md;
     box-shadow: 0 $spacing-lg $spacing-lg 0 var(--background-color),
-    0 calc(($spacing-sm) * -1) 0 $spacing-sm var(--background-color);
+      0 calc(($spacing-sm) * -1) 0 $spacing-sm var(--background-color);
   }
 
   @media (max-width: $breakpoint-sm) {

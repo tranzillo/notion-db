@@ -7,77 +7,80 @@
 
     // Function to load user preferences
     function loadUserPreferences() {
-      let darkMode = false; // Default
-      let isListView = false; // Default
+  let darkMode = false;
+  let viewType = 'grid'; // Default view type
+  
+  try {
+    // Try localStorage
+    const savedPrefs = localStorage.getItem("userPreferences");
+    if (savedPrefs) {
+      const prefs = JSON.parse(savedPrefs);
       
-      try {
-        // Try localStorage first
-        const savedPrefs = localStorage.getItem("userPreferences");
-        if (savedPrefs) {
-          const prefs = JSON.parse(savedPrefs);
-          if (typeof prefs.darkMode === "boolean") {
-            darkMode = prefs.darkMode;
-          }
-          if (typeof prefs.isListView === "boolean") {
-            isListView = prefs.isListView;
-          }
-        } else if (window.matchMedia) {
-          // Fall back to system preference if no saved preference
-          darkMode = window.matchMedia("(prefers-color-scheme: dark)").matches;
-        }
-        
-        // Create a global preferences object for later use
-        window.userPreferences = window.userPreferences || {};
-        window.userPreferences.darkMode = darkMode;
-        window.userPreferences.isListView = isListView;
-        
-        // Expose for hydration
-        window.hydrationData = window.hydrationData || {};
-        window.hydrationData.darkMode = darkMode;
-        window.hydrationData.isListView = isListView;
-        
-        return { darkMode, isListView };
-      } catch (e) {
-        console.error("Error loading user preferences:", e);
-        return { darkMode: false, isListView: false };
+      // Handle dark mode
+      if (typeof prefs.darkMode === "boolean") {
+        darkMode = prefs.darkMode;
       }
+      
+      // Handle view type with fallbacks for backward compatibility
+      if (prefs.viewType) {
+        viewType = prefs.viewType;
+      } else if (prefs.isListView) {
+        viewType = 'list';
+      } else if (prefs.isGraphView) {
+        viewType = 'graph';
+      }
+    } else if (window.matchMedia) {
+      // System dark mode preference fallback
+      darkMode = window.matchMedia("(prefers-color-scheme: dark)").matches;
     }
+    
+    // Store in global for access
+    window.userPreferences = {
+      darkMode,
+      viewType,
+      isListView: viewType === 'list',
+      isGraphView: viewType === 'graph'
+    };
+    
+    return { darkMode, viewType };
+  } catch (e) {
+    console.error("Error loading user preferences:", e);
+    return { darkMode: false, viewType: 'grid' };
+  }
+}
     
     // Function to apply theme to document
-    function applyTheme(document, { darkMode, isListView }) {
-      // Set data attributes for CSS access
-      document.documentElement.dataset.theme = darkMode ? "dark" : "light";
-      document.documentElement.dataset.listView = isListView ? "true" : "false";
+    function applyPreferences(document, { darkMode, viewType }) {
+  // Set theme
+  document.documentElement.dataset.theme = darkMode ? "dark" : "light";
+  if (darkMode) {
+    document.documentElement.classList.add("dark-mode");
+  } else {
+    document.documentElement.classList.remove("dark-mode");
+  }
+  
+  // Apply view type attributes
+  document.documentElement.dataset.listView = viewType === 'list' ? "true" : "false";
+  document.documentElement.dataset.graphView = viewType === 'graph' ? "true" : "false";
+  
+  // Set classes on grid elements if they exist
+  document.addEventListener('DOMContentLoaded', function() {
+    const grids = document.querySelectorAll('.bottleneck-grid');
+    grids.forEach(grid => {
+      // Remove any existing view classes
+      grid.classList.remove('bottleneck-grid--list-view');
+      grid.classList.remove('bottleneck-grid--graph-view');
       
-      // Apply theme classes
-      if (darkMode) {
-        document.documentElement.classList.add("dark-mode");
-      } else {
-        document.documentElement.classList.remove("dark-mode");
+      // Apply appropriate class
+      if (viewType === 'list') {
+        grid.classList.add('bottleneck-grid--list-view');
+      } else if (viewType === 'graph') {
+        grid.classList.add('bottleneck-grid--graph-view');
       }
-      
-      // Apply list view to grid elements if needed
-      if (isListView) {
-        const grids = document.querySelectorAll('.bottleneck-grid');
-        grids.forEach(grid => grid.classList.add('bottleneck-grid--list-view'));
-      }
-      
-      // Load field color CSS if not already loaded
-      if (!document.getElementById('field-color-styles')) {
-        const fieldColorCssPath = '/styles/generated/field-colors.css';
-        try {
-          // Create a link element for the generated CSS
-          const linkElement = document.createElement('link');
-          linkElement.id = 'field-color-styles';
-          linkElement.rel = 'stylesheet';
-          linkElement.href = fieldColorCssPath;
-          document.head.appendChild(linkElement);
-        } catch (error) {
-          console.error('Error loading field colors CSS:', error);
-        }
-      }
-    }
-    
+    });
+  });
+}
+
     // Don't reset the theme if we're in a view transition
     if (!isViewTransition) {
       const prefs = loadUserPreferences();
@@ -116,4 +119,28 @@
       applyTheme(document, prefs);
     });
   })();
+  const prefs = loadUserPreferences();
+applyPreferences(document, prefs);
+  document.addEventListener('DOMContentLoaded', function() {
+    // Check if we're on a dashboard page
+    const path = window.location.pathname;
+    const isDashboard = 
+      path === "/" || 
+      path === "" || 
+      path === "/bottlenecks" || 
+      path === "/capabilities";
+    
+    if (isDashboard) {
+      // Add a class to the body element
+      document.body.classList.add('on-dashboard-page');
+      
+      // Apply view preference early
+      const prefs = window.userPreferences || {};
+      const viewType = prefs.viewType || 'grid';
+      
+      // Set data attributes early
+      document.documentElement.dataset.listView = viewType === 'list' ? 'true' : 'false';
+      document.documentElement.dataset.graphView = viewType === 'graph' ? 'true' : 'false';
+    }
+  });
 </script>
