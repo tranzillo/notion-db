@@ -200,6 +200,25 @@ export default function DashboardGrid({
       console.error('Error loading view preference:', e);
     }
   }, []);
+
+  useEffect(() => {
+    if (!isMounted) return;
+    
+    try {
+      // Check for user preferences
+      if (typeof window !== 'undefined' && window.userPreferences) {
+        const userViewType = window.userPreferences.viewType;
+        if (userViewType) {
+          console.log("Loading view type from preferences:", userViewType);
+          setViewMode(userViewType);
+        }
+      }
+    } catch (e) {
+      console.error('Error loading view preference:', e);
+    }
+  }, [isMounted]);
+
+
   useEffect(() => {
     console.log("Current view mode:", viewMode);
     console.log("View ready states:", { 
@@ -575,11 +594,11 @@ useEffect(() => {
   }, [filteredItems, hasRestoredScroll]);
 
   // Determine grid class based on view mode
-  const gridClass = `bottleneck-grid ${
-    viewMode === 'list' ? 'bottleneck-grid--list-view' : ''
-  } ${
-    viewMode === 'graph' ? 'bottleneck-grid--graph-view' : ''
-  } ${viewReadyClass}`;
+const gridClass = `bottleneck-grid ${
+  isMounted && viewMode === 'list' ? 'bottleneck-grid--list-view' : ''
+} ${
+  isMounted && viewMode === 'graph' ? 'bottleneck-grid--graph-view' : ''
+} ${viewReadyClass}`;
 
   // For the graph view, we will use window.NetworkViewWrapper 
   // This is a dynamic component that will be defined by Astro
