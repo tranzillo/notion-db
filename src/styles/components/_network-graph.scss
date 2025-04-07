@@ -271,8 +271,6 @@
   
   // Tooltip
   .network-tooltip {
-    position: sticky;
-    inset: 0 0 auto auto;
     background-color: var(--card-background);
     border-radius: $border-radius-lg;
     padding: $spacing-md;
@@ -281,7 +279,6 @@
     transition: opacity $transition;
     z-index: 2;
     max-width: 20rem;
-    display: none;
     
     strong {
       display: block;

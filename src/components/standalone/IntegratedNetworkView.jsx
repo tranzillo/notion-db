@@ -36,7 +36,7 @@ const NETWORK_STYLES = {
         color: 'var(--text-color)',
         // Zoom thresholds for progressive label visibility
         zoomThresholds: {
-            bottleneck: 1.5,
+            bottleneck: 1.3,
             capability: 3,
             resource: 3.5
         },
@@ -857,19 +857,15 @@ export default function IntegratedNetworkView({
                 const tooltip = d3.select(containerElement).append('div')
                     .attr('id', tooltipId)
                     .attr('class', 'network-tooltip')
-                    .style('position', 'fixed')  // Changed from 'absolute' to 'fixed'
-                    .style('bottom', '20px')     // Position from bottom
-                    .style('right', '20px')      // Position from right
-                    .style('max-width', '300px') // Limit width
+                    .style('position', 'absolute')  // Changed from 'absolute' to 'fixed'
+                    .style('inset', 'auto 0 0 auto')     // Position from bottom
+                    .style('max-width', '22em') // Limit width
                     .style('background', NETWORK_STYLES.tooltip.background)
-                    .style('border-radius', '8px')
-                    .style('padding', '12px')    // Add padding
                     .style('opacity', 0)
                     .style('z-index', NETWORK_STYLES.tooltip.zIndex)
                     .style('pointer-events', 'none')
-                    .style('box-shadow', '0 2px 10px rgba(0,0,0,0.2)') // Add shadow for better visibility
                     .style('transition', animationsEnabled ?
-                        'opacity 200ms ease-in-out' : 'none');  // Smooth transition
+                        'opacity 300ms ease-in-out' : 'none');  // Smooth transition
 
                 // Store tooltip in ref for cleanup
                 tooltipRef.current = tooltip.node();
