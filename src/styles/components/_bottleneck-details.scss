@@ -70,7 +70,7 @@
   }
 
   &__content {
-    max-width: 80ch;
+    max-width: 100ch;
     margin-top: calc($spacing-md * (-1));
     font-size: $font-size-md;
     color: var(--text-light);
@@ -88,18 +88,22 @@
   }
 
   &__capabilities-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: $spacing-md;
+    column-count: 1;
+    column-gap: $spacing-lg;
     margin-block-start: $spacing-lg;
+    align-items: start;
 
-    @media (min-width: $breakpoint-lg) {
-      grid-template-columns: 1fr 1fr;
-    }
-
-    @media (min-width: $breakpoint-xxl) {
-      grid-template-columns: 1fr 1fr 1fr;
-    }
+      @media (min-width: $breakpoint-lg) {
+        column-count: 2;
+      }
+  
+      @media (min-width: $breakpoint-xxl) {
+        column-count: 3;
+      }
+    
+      .capability-card {
+        margin-block-end: $spacing-lg;
+      }
   }
 
 

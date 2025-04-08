@@ -15,6 +15,7 @@
 @import 'components/capability-detail';
 @import 'components/view-toggle';
 @import 'components/field-colors';
+@import 'components/resource-types';
 @import 'components/rank-components';
 @import 'components/contribute-form';
 @import 'components/tag-components';
@@ -22,3 +23,6 @@
 
 // Import layout styles
 @import 'layouts/base-layout';
+
+@import 'generated/resource-type-colors.css';
+@import 'generated/field-colors.css';

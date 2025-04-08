@@ -1,3 +1,4 @@
+<!-- src/components/InjectHydrationData.astro -->
 <script is:inline>
   // IMPORTANT: This script must run as early as possible to prevent flash
   (function () {
@@ -120,6 +121,21 @@
           console.error('Error loading field colors CSS:', error);
         }
       }
+      
+      // Load resource type color CSS if not already loaded
+      if (!document.getElementById('resource-type-color-styles')) {
+        const resourceTypeColorCssPath = '/styles/generated/resource-type-colors.css';
+        try {
+          // Create a link element for the generated CSS
+          const linkElement = document.createElement('link');
+          linkElement.id = 'resource-type-color-styles';
+          linkElement.rel = 'stylesheet';
+          linkElement.href = resourceTypeColorCssPath;
+          document.head.appendChild(linkElement);
+        } catch (error) {
+          console.error('Error loading resource type colors CSS:', error);
+        }
+      }
     }
     
     // Don't reset the theme if we're in a view transition
@@ -127,6 +143,24 @@
       const prefs = loadUserPreferences();
       applyTheme(document, prefs);
     }
+    
+    // Initialize resource type colors after DOM is loaded
+    document.addEventListener('DOMContentLoaded', function() {
+      try {
+        // Create a script element to load our utils
+        const script = document.createElement('script');
+        script.type = 'module';
+        script.innerHTML = `
+          // This script adds resource type color support
+          import { initResourceTypeColorMap } from '/src/lib/resourceTypeUtils.js';
+          window.initResourceTypeColorMap = initResourceTypeColorMap;
+          initResourceTypeColorMap();
+        `;
+        document.head.appendChild(script);
+      } catch (error) {
+        console.warn('Error initializing resource type colors:', error);
+      }
+    });
     
     // ====== Handle Astro View Transitions ======
     
@@ -153,6 +187,15 @@
       // Ensure preferences are loaded and applied after each navigation
       const prefs = loadUserPreferences();
       applyTheme(document, prefs);
+      
+      // Re-apply resource type colors after navigation
+      try {
+        if (typeof window.initResourceTypeColorMap === 'function') {
+          window.initResourceTypeColorMap();
+        }
+      } catch (error) {
+        console.warn('Error re-initializing resource type colors after navigation:', error);
+      }
     });
     
     // Handle popstate events (browser back/forward navigation)
@@ -160,6 +203,15 @@
       // Re-apply theme when using browser navigation
       const prefs = loadUserPreferences();
       applyTheme(document, prefs);
+      
+      // Re-apply resource type colors after navigation
+      try {
+        if (typeof window.initResourceTypeColorMap === 'function') {
+          window.initResourceTypeColorMap();
+        }
+      } catch (error) {
+        console.warn('Error re-initializing resource type colors after back/forward navigation:', error);
+      }
     });
   })();
 </script>

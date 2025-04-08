@@ -89,38 +89,89 @@ if (capability.bottlenecks && Array.isArray(capability.bottlenecks)) {
 
         <div class="capability-detail__content" set:html={capability.fc_description} />
 
-        {
-            capability.resources && capability.resources.length > 0 && (
-                <div class="capability-detail__resources">
-                    <h3>Resources</h3>
-                    <ul class="capability-detail__resource-list">
-                        {capability.resources.map((resource) => (
-                            <li class="capability-detail__resource-item">
-                                <div class="capability-detail__resource-link">
-                                    {resource?.resource_url ? (
-                                        <a href={resource.resource_url} target="_blank" rel="noopener noreferrer">
-                                            {resource.resource_title}
-                                        </a>
-                                    ) : (
-                                        <span>{resource?.resource_title || "Untitled Resource"}</span>
-                                    )}
-                                    {/* Update resource types display */}
-                                    {resource?.resourceTypes && resource.resourceTypes.length > 0 && (
-                                        <div class="capability-detail__resource-types">
-                                            {resource.resourceTypes.map((type, index) => (
-                                                <span class="capability-detail__resource-type">
-                                                    {type}{index < resource.resourceTypes.length - 1 ? ', ' : ''}
-                                                </span>
-                                            ))}
-                                        </div>
-                                    )}
-                                </div>
-                            </li>
-                        ))}
-                    </ul>
+<!-- Updated resources section for capabilities/[slug].astro with count-based sorting -->
+{
+    capability.resources && capability.resources.length > 0 && (
+      <div class="capability-detail__resources">
+        <h3>Resources</h3>
+        <div class="capability-detail__resource-list">
+          {(() => {
+            // Sort resources by type first, then by title
+            const sortedResources = [...capability.resources].sort((a, b) => {
+              // First sort by resource type (alphabetically)
+              const aType = a.resourceTypes?.[0] || '';
+              const bType = b.resourceTypes?.[0] || '';
+              
+              const typeComparison = aType.localeCompare(bType);
+              
+              // If types are the same, sort by title
+              if (typeComparison === 0) {
+                return a.resource_title.localeCompare(b.resource_title);
+              }
+              
+              return typeComparison;
+            });
+            
+            // Group resources by type
+            const resourcesByType = {};
+            
+            sortedResources.forEach(resource => {
+              const resourceType = resource.resourceTypes?.[0] || 'Other';
+              if (!resourcesByType[resourceType]) {
+                resourcesByType[resourceType] = [];
+              }
+              resourcesByType[resourceType].push(resource);
+            });
+            
+            // Convert to array and sort by count (descending) then by type name (alphabetical)
+            const sortedGroups = Object.entries(resourcesByType)
+              .sort(([typeA, resourcesA], [typeB, resourcesB]) => {
+                // First sort by resource count (descending)
+                const countDiff = resourcesB.length - resourcesA.length;
+                
+                // If counts are equal, sort alphabetically by type name
+                if (countDiff === 0) {
+                  return typeA.localeCompare(typeB);
+                }
+                
+                return countDiff;
+              });
+            
+            // Render each group with a wrapper
+            return sortedGroups.map(([resourceType, resources]) => (
+              <div class="capability-detail__resource-group" data-resource-type={resourceType} data-resource-count={resources.length}>
+                <div class="capability-detail__resource-group-items">
+                  {resources.map(resource => (
+                    <div class="capability-detail__resource-item">
+                      <div class="capability-detail__resource-link">
+                        {resource?.resource_url ? (
+                          <a href={resource.resource_url} target="_blank" rel="noopener noreferrer">
+                            {resource.resource_title}
+                          </a>
+                        ) : (
+                          <span>{resource?.resource_title || "Untitled Resource"}</span>
+                        )}
+                        {/* Display resource types with colorized class */}
+                        {resource?.resourceTypes && resource.resourceTypes.length > 0 && (
+                          <div class="capability-detail__resource-types">
+                            {resource.resourceTypes.map((type, index) => (
+                              <span class={`capability-detail__resource-type resource-type-gradient-${type.toLowerCase().replace(/\s+/g, '-')}`}>
+                                {type}{index < resource.resourceTypes.length - 1 ? ', ' : ''}
+                              </span>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  ))}
                 </div>
-            )
-        }
+              </div>
+            ));
+          })()}
+        </div>
+      </div>
+    )
+  }
 
         {
             capability.bottlenecks && capability.bottlenecks.length > 0 && (
@@ -153,3 +204,5 @@ if (capability.bottlenecks && Array.isArray(capability.bottlenecks)) {
         }
     });
 </script>
+
+

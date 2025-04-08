@@ -85,7 +85,7 @@
   }
 
   &__content {
-    max-width: 80ch;
+    max-width: 100ch;
     margin-top: calc($spacing-md * (-1));
     font-size: $font-size-md;
     color: var(--text-light);
@@ -96,19 +96,32 @@
     padding: $spacing-xl;
     margin: 0 calc($spacing-xl * (-1)) 0 calc($spacing-xl * (-1));
     background-color: var(--background-color);
-    border-top: 1px solid var(--border-dull);
+    border-block-start: 1px solid var(--border-dull);
     transition: border $transition,
       background-color $transition;
-
   }
-
+  &__resource-group + &__resource-group {
+    margin-block-start: $spacing-md;
+  }
+&__resource-group-items {
+  break-inside: avoid;
+  border-radius: $border-radius-lg;
+  overflow: hidden;
+  border: 1px solid var(--border-dull);
+  transition: border-color $transition;
+}
   &__resource-list {
     list-style: none;
-    display: flex;
-    flex-direction: column;
-    gap: $spacing-sm;
+    column-count: 1;
+    column-gap: $spacing-md;
     padding: $spacing-md 0;
     align-items: flex-start;
+    @media (min-width: $breakpoint-lg) {
+      column-count: 2;
+    }
+    @media (min-width: $breakpoint-xxl) {
+      column-count: 3;
+    }
   }
 
   &__resource-link {
@@ -120,11 +133,13 @@
   &__resource-item {
     font-size: $font-size-sm;
     letter-spacing: 0.04em;
+    border-block-start: 1px solid var(--border-dull);
     background-color: var(--background-color-dark);
-    padding: $spacing-sm;
-    border-radius: $border-radius-md;
-    transition: background-color $transition;
-
+    padding: $spacing-md;
+    transition: background-color $transition, color $transition, border-color $transition;
+    &:first-child {
+      border-block-start: none;
+    }
     a {
       color: var(--text-color);
       display: inline-block;
@@ -140,8 +155,6 @@
 
   &__resource-type {
     font-size: $font-size-xs;
-    color: var(--text-light);
-    background-color: var(--card-background);
     padding: calc($spacing-xs * 0.5) $spacing-xs;
     border-radius: $border-radius-sm;
     align-self: flex-start;

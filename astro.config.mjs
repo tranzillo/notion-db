@@ -2,6 +2,7 @@
 import { defineConfig } from 'astro/config';
 import react from '@astrojs/react';
 import fieldColorsIntegration from './src/integrations/fieldColors';
+import resourceColorsIntegration from './src/integrations/resourceColors';
 
 export default defineConfig({
   integrations: [
@@ -11,7 +12,8 @@ export default defineConfig({
       client: true,
       hydration: 'client:load'
     }), 
-    fieldColorsIntegration()
+    fieldColorsIntegration(),
+    resourceColorsIntegration() // Add the new integration
   ],
   output: 'static',
   vite: {

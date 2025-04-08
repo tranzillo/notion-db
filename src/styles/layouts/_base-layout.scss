@@ -104,7 +104,7 @@
   &__main-nav {
     display: flex;
     flex-direction: row;
-    gap: $spacing-md; // space between nav items
+    gap: $spacing-lg; // space between nav items
   }
   &__main {
     flex-grow: 1;

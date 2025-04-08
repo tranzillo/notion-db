@@ -1,6 +1,7 @@
 .capability-card {
   display: flex;
   position: relative;
+  break-inside: avoid;
   flex-direction: column;
   gap: $spacing-lg;
   background-color: var(--card-background);
@@ -9,28 +10,35 @@
   border: 1px solid var(--border-dull);
   min-width: 0;
   transition: background-color $transition, border-color $transition, box-shadow $transition;
-  &__resource-list {
+  &__resources {
+    width: 100%;
     list-style-type: none;
     display: flex;
+    gap: $spacing-lg;
     flex-direction: column;
-    gap: $spacing-sm;
+  }
+  &__resource-group {
+    margin:0 calc($spacing-xl * (-1)) calc($spacing-lg * (-1));
+  }
+ 
+  &__resource-item {
+    list-style-type: none;
   }
   &__resource-type {
     font-size: $font-size-xs;
-    color: var(--text-lighter);
-    background-color: var(--background-color);
     padding: calc($spacing-xs * 0.5) $spacing-xs;
-    border-radius: $border-radius-sm;
     align-self: flex-start;
   }
   &__resource-link {
     display: flex;
     flex-direction: column-reverse;
-    gap: $spacing-xs;
+    gap: $spacing-sm;
     background-color: var(--background-color-dark);
-    border-radius: $border-radius-md;
+    border-top: 1px solid var(--border-dull);
     font-size: $font-size-sm;
-    padding: $spacing-sm;
+    padding: $spacing-md $spacing-xl;
+    transition: background-color $transition,
+      border-color $transition;
     a {
       text-decoration: none;
       color: var(--text-color);
@@ -43,7 +51,11 @@
     position: absolute;
     inset: 0;
     z-index: 1;
+
   }
+&__clickable:hover + &__header h3 a {
+  color: var(--primary-color);
+}
 
   &__header {
     background-color: var(--background-color);
@@ -126,7 +138,6 @@
   }
 
   &__footer {
-    margin-block-start: $spacing-sm;
     position: relative;
     z-index: 2;
     display: flex;
@@ -163,9 +174,6 @@
   &:hover {
     box-shadow: 0 0 $spacing-md 0 var(--shadow-color);
     color: var(--primary-color);
-    .capability-card__header a {
-      color: var(--primary-color);
-    }
   }
 
 }

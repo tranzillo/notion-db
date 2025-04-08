@@ -1,0 +1,18 @@
+// src/styles/components/_resource-types.scss
+
+// Base styling for resource type labels
+.capability-card__resource-type,
+.capability-detail__resource-type,
+.bottleneck-detail__resource-type {
+  border-radius: $border-radius-sm;
+  font-size: $font-size-xs;
+  letter-spacing: 0.04em;
+  transition: all $transition;
+  border: 1px solid;
+  
+}
+
+// Basic hover effects if not provided by generated styles
+[class*="resource-type-gradient-"]:hover {
+  opacity: 0.9;
+}

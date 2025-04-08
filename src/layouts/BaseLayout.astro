@@ -607,5 +607,29 @@ document.addEventListener("astro:page-load", () => {
   }
 });
     </script>
+<!-- Add this script to your BaseLayout.astro file, just before the closing </body> tag -->
+<script>
+  // Load resource type colors on page load - function name matches what's exported
+  document.addEventListener("astro:page-load", () => {
+    // First try to load as a global function (already defined)
+    if (typeof window.initResourceTypeColorMap === 'function') {
+      window.initResourceTypeColorMap();
+    } else {
+      // Inject simple loader script
+      const scriptEl = document.createElement('script');
+      scriptEl.textContent = `
+        // Load resource type CSS
+        if (!document.getElementById('resource-type-color-styles')) {
+          const link = document.createElement('link');
+          link.id = 'resource-type-color-styles';
+          link.rel = 'stylesheet';
+          link.href = '/styles/generated/resource-type-colors.css';
+          document.head.appendChild(link);
+        }
+      `;
+      document.head.appendChild(scriptEl);
+    }
+  });
+</script>
   </body>
 </html>
