@@ -76,7 +76,7 @@ export function getSavedScrollPosition() {
 export function isDashboardPath(path) {
   return path === '/' || 
          path === '' || 
-         path === '/bottlenecks' || 
+         path === '/gaps' || 
          path === '/capabilities';
 }
 

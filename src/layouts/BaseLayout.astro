@@ -286,7 +286,7 @@ const {
               <div class="base-layout__nav-item">
                 <a
                   href="/"
-                  class={Astro.url.pathname.startsWith("/bottlenecks") ||
+                  class={Astro.url.pathname.startsWith("/gaps") ||
                   Astro.url.pathname === "/"
                     ? "active"
                     : ""}
@@ -356,7 +356,7 @@ const {
           <div class="base-layout__footer-links">
             <a
               href="/"
-              class={Astro.url.pathname.startsWith("/bottlenecks") ||
+              class={Astro.url.pathname.startsWith("/gaps") ||
               Astro.url.pathname === "/"
                 ? "active"
                 : ""}
@@ -401,7 +401,7 @@ const {
   const isDashboard = 
     window.location.pathname === "/" || 
     window.location.pathname === "" ||
-    window.location.pathname === "/bottlenecks" ||
+    window.location.pathname === "/gaps" ||
     window.location.pathname === "/capabilities";
   
   if (isDashboard) {
@@ -569,7 +569,7 @@ document.addEventListener("astro:page-load", () => {
   const isDashboard =
     window.location.pathname === "/" || 
     window.location.pathname === "" ||
-    window.location.pathname === "/bottlenecks" ||
+    window.location.pathname === "/gaps" ||
     window.location.pathname === "/capabilities";
     
   if (isDashboard) {

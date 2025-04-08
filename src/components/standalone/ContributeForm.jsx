@@ -7,7 +7,7 @@ export default function ContributeForm({ fields = [], resourceTypeOptions = [] }
   const [formError, setFormError] = useState('');
 
   // Common fields for all submission types
-  const [commonFields, setCommonFields] = useState({
+  const [commonData, setCommonData] = useState({
     name: '',
     email: '',
     comment: ''
@@ -24,9 +24,7 @@ export default function ContributeForm({ fields = [], resourceTypeOptions = [] }
   const [fcData, setFcData] = useState({
     title: '',
     content: '',
-    bottleneckTitle: '',
-    resources: '',
-    rank: 3
+    relatedGap: '',
   });
 
   const [resourceData, setResourceData] = useState({
@@ -43,9 +41,9 @@ export default function ContributeForm({ fields = [], resourceTypeOptions = [] }
   };
 
   // Handle common fields change
-  const handleCommonFieldChange = (e) => {
+  const handleCommonDataChange = (e) => {
     const { name, value } = e.target;
-    setCommonFields(prev => ({
+    setCommonData(prev => ({
       ...prev,
       [name]: value
     }));
@@ -64,16 +62,15 @@ export default function ContributeForm({ fields = [], resourceTypeOptions = [] }
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          type: 'bottleneck',
           data: {
-            bottleneck_name: bottleneckData.title,
-            bottleneck_description: bottleneckData.content,
-            fieldId: bottleneckData.fieldId,
-            bottleneck_rank: bottleneckData.rank,
-            // Add common fields
-            contributor_name: commonFields.name,
-            contributor_email: commonFields.email,
-            contributor_comment: commonFields.comment
+            name: commonData.name,
+            email: commonData.email,
+            title: bottleneckData.title,
+            contentType: 'Bottleneck',
+            field: bottleneckData.fieldId,
+            rank: bottleneckData.rank,
+            content: bottleneckData.content, // This will be handled in the function
+            comment: commonData.comment
           }
         }),
       });
@@ -104,16 +101,14 @@ export default function ContributeForm({ fields = [], resourceTypeOptions = [] }
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          type: 'capability',
           data: {
-            fc_name: fcData.title,
-            fc_description: fcData.content,
-            bottleneckTitle: fcData.bottleneckTitle,
-            resources: fcData.resources,
-            // Add common fields
-            contributor_name: commonFields.name,
-            contributor_email: commonFields.email,
-            contributor_comment: commonFields.comment
+            name: commonData.name,
+            email: commonData.email,
+            title: fcData.title,
+            contentType: 'Foundational Capability',
+            content: fcData.content, // This will be handled in the function
+            relatedGap: fcData.relatedGap,
+            comment: commonData.comment
           }
         }),
       });
@@ -145,16 +140,15 @@ export default function ContributeForm({ fields = [], resourceTypeOptions = [] }
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          type: 'resource',
           data: {
-            resource_title: resourceData.title,
-            resource_url: resourceData.url,
-            content: resourceData.content,
-            resource_type: resourceData.resourceType, // Changed from resourceTypes array to single value
-            // Add common fields
-            contributor_name: commonFields.name,
-            contributor_email: commonFields.email,
-            contributor_comment: commonFields.comment
+            name: commonData.name,
+            email: commonData.email,
+            title: resourceData.title,
+            contentType: 'Resource',
+            resourceType: resourceData.resourceType,
+            resource: resourceData.url,
+            content: resourceData.content, // This will be handled in the function
+            comment: commonData.comment
           }
         }),
       });
@@ -175,7 +169,7 @@ export default function ContributeForm({ fields = [], resourceTypeOptions = [] }
 
   // Component to render common fields
   const CommonFieldsSection = () => (
-    <div className="form-section">
+    <div className="form-section contributor-info">
       <h3>About You</h3>
       <div className="form-group">
         <label htmlFor="contributor-name">Your Name *</label>
@@ -183,8 +177,8 @@ export default function ContributeForm({ fields = [], resourceTypeOptions = [] }
           type="text"
           id="contributor-name"
           name="name"
-          value={commonFields.name}
-          onChange={handleCommonFieldChange}
+          value={commonData.name}
+          onChange={handleCommonDataChange}
           required
         />
       </div>
@@ -195,8 +189,8 @@ export default function ContributeForm({ fields = [], resourceTypeOptions = [] }
           type="email"
           id="contributor-email"
           name="email"
-          value={commonFields.email}
-          onChange={handleCommonFieldChange}
+          value={commonData.email}
+          onChange={handleCommonDataChange}
           required
         />
       </div>
@@ -207,8 +201,8 @@ export default function ContributeForm({ fields = [], resourceTypeOptions = [] }
           id="contributor-comment"
           name="comment"
           rows="3"
-          value={commonFields.comment}
-          onChange={handleCommonFieldChange}
+          value={commonData.comment}
+          onChange={handleCommonDataChange}
           placeholder="Any additional context or notes you'd like to share"
         ></textarea>
       </div>
@@ -337,12 +331,12 @@ export default function ContributeForm({ fields = [], resourceTypeOptions = [] }
             </div>
 
             <div className="form-group">
-              <label htmlFor="fc-bottleneck">Related Bottleneck *</label>
+              <label htmlFor="fc-related-gap">Related Gap/Bottleneck *</label>
               <input
                 type="text"
-                id="fc-bottleneck"
-                value={fcData.bottleneckTitle}
-                onChange={(e) => setFcData({ ...fcData, bottleneckTitle: e.target.value })}
+                id="fc-related-gap"
+                value={fcData.relatedGap}
+                onChange={(e) => setFcData({ ...fcData, relatedGap: e.target.value })}
                 placeholder="Enter the name of an existing bottleneck or suggest a new one"
                 required
               />

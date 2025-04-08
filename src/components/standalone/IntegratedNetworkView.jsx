@@ -1035,7 +1035,7 @@ export default function IntegratedNetworkView({
                 // Enable click-through to detail pages
                 nodeCircles.on('click', function (event, d) {
                     if (d.type === 'bottleneck') {
-                        window.location.href = `/bottlenecks/${d.slug}`;
+                        window.location.href = `/gaps/${d.slug}`;
                     } else if (d.type === 'capability') {
                         window.location.href = `/capabilities/${d.slug}`;
                     } else if (d.type === 'resource' && d.url) {

@@ -36,7 +36,7 @@ export default function BottleneckCard({
     selectedFields.includes(bottleneck.field.id);
 
   // Prepare the content
-  const bottleneckUrl = `/bottlenecks/${bottleneck.slug}`;
+  const bottleneckUrl = `/gaps/${bottleneck.slug}`;
   const truncatedContent = truncateText(bottleneck.bottleneck_description || '', truncateLength);
 
   // Apply highlighting if search query exists
@@ -52,7 +52,7 @@ export default function BottleneckCard({
   const handleCardClick = () => {
     saveScrollPosition(bottleneck.id, bottleneck.slug, window.location.pathname);
   };
-  
+
   // Get tags for display
   const tags = bottleneck.tags || [];
 
