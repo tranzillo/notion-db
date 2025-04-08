@@ -41,13 +41,11 @@ exports.handler = async function(event, context) {
       auth: process.env.NOTION_API_KEY
     });
     
-    console.log('Using Notion API key:', process.env.NOTION_API_KEY ? 'Exists' : 'Missing');
-    console.log('Using Notion DB ID:', process.env.NOTION_CONTRIBUTIONS_DB_ID);
-    
-    // Build the properties object for Notion
+    // Build the properties object for Notion - CORRECTED FIELD TYPES
     const properties = {
+      // CORRECTED: Name should be rich_text (not title)
       Name: {
-        title: [
+        rich_text: [
           {
             text: {
               content: data.name,
@@ -58,8 +56,9 @@ exports.handler = async function(event, context) {
       Email: {
         email: data.email,
       },
+      // CORRECTED: Title should be title (not rich_text)
       Title: {
-        rich_text: [
+        title: [
           {
             text: {
               content: data.title,

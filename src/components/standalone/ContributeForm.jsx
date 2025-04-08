@@ -1,22 +1,17 @@
 // src/components/standalone/ContributeForm.jsx
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 
 export default function ContributeForm({ fields = [], resourceTypeOptions = [] }) {
   const [activeTab, setActiveTab] = useState('bottleneck');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formError, setFormError] = useState('');
 
-  // Create refs for form sections
-  const bottleneckFormRef = useRef(null);
-  const fcFormRef = useRef(null);
-  const resourceFormRef = useRef(null);
+  // Use refs for the common input fields to avoid focus issues
+  const nameInputRef = useRef(null);
+  const emailInputRef = useRef(null);
+  const commentInputRef = useRef(null);
 
-  // Common fields for all submission types
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [comment, setComment] = useState('');
-
-  // Form data state
+  // Form data state for tab-specific fields
   const [bottleneckData, setBottleneckData] = useState({
     title: '',
     content: '',
@@ -43,11 +38,22 @@ export default function ContributeForm({ fields = [], resourceTypeOptions = [] }
     setFormError('');
   };
 
+  // Get values from refs at submission time
+  const getCommonFieldValues = () => {
+    return {
+      name: nameInputRef.current?.value || '',
+      email: emailInputRef.current?.value || '',
+      comment: commentInputRef.current?.value || '',
+    };
+  };
+
   // Form submission handlers
   const handleBottleneckSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
     setFormError('');
+
+    const commonFields = getCommonFieldValues();
 
     try {
       const response = await fetch('/.netlify/functions/submit-contribution', {
@@ -57,14 +63,14 @@ export default function ContributeForm({ fields = [], resourceTypeOptions = [] }
         },
         body: JSON.stringify({
           data: {
-            name,
-            email,
+            name: commonFields.name,
+            email: commonFields.email,
             title: bottleneckData.title,
             contentType: 'Bottleneck',
             field: bottleneckData.fieldId,
             rank: bottleneckData.rank,
             content: bottleneckData.content,
-            comment
+            comment: commonFields.comment
           }
         }),
       });
@@ -88,6 +94,8 @@ export default function ContributeForm({ fields = [], resourceTypeOptions = [] }
     setIsSubmitting(true);
     setFormError('');
 
+    const commonFields = getCommonFieldValues();
+
     try {
       const response = await fetch('/.netlify/functions/submit-contribution', {
         method: 'POST',
@@ -96,13 +104,13 @@ export default function ContributeForm({ fields = [], resourceTypeOptions = [] }
         },
         body: JSON.stringify({
           data: {
-            name,
-            email,
+            name: commonFields.name,
+            email: commonFields.email,
             title: fcData.title,
             contentType: 'Foundational Capability',
             content: fcData.content,
             relatedGap: fcData.relatedGap,
-            comment
+            comment: commonFields.comment
           }
         }),
       });
@@ -121,11 +129,12 @@ export default function ContributeForm({ fields = [], resourceTypeOptions = [] }
     }
   };
 
-  // Handle resource submission - updated for single resource type
   const handleResourceSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
     setFormError('');
+
+    const commonFields = getCommonFieldValues();
 
     try {
       const response = await fetch('/.netlify/functions/submit-contribution', {
@@ -135,14 +144,14 @@ export default function ContributeForm({ fields = [], resourceTypeOptions = [] }
         },
         body: JSON.stringify({
           data: {
-            name,
-            email,
+            name: commonFields.name,
+            email: commonFields.email,
             title: resourceData.title,
             contentType: 'Resource',
             resourceType: resourceData.resourceType,
             resource: resourceData.url,
             content: resourceData.content,
-            comment
+            comment: commonFields.comment
           }
         }),
       });
@@ -161,7 +170,7 @@ export default function ContributeForm({ fields = [], resourceTypeOptions = [] }
     }
   };
 
-  // Component to render common fields - with direct state setters to prevent focus loss
+  // Component to render common fields that won't lose focus
   const CommonFieldsSection = () => (
     <div className="form-section contributor-info">
       <h3>About You</h3>
@@ -170,8 +179,9 @@ export default function ContributeForm({ fields = [], resourceTypeOptions = [] }
         <input
           type="text"
           id="contributor-name"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
+          name="name"
+          ref={nameInputRef}
+          defaultValue=""
           required
         />
       </div>
@@ -181,8 +191,9 @@ export default function ContributeForm({ fields = [], resourceTypeOptions = [] }
         <input
           type="email"
           id="contributor-email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          name="email"
+          ref={emailInputRef}
+          defaultValue=""
           required
         />
       </div>
@@ -191,9 +202,10 @@ export default function ContributeForm({ fields = [], resourceTypeOptions = [] }
         <label htmlFor="contributor-comment">Additional Comments</label>
         <textarea
           id="contributor-comment"
+          name="comment"
           rows="3"
-          value={comment}
-          onChange={(e) => setComment(e.target.value)}
+          ref={commentInputRef}
+          defaultValue=""
           placeholder="Any additional context or notes you'd like to share"
         ></textarea>
       </div>
@@ -206,18 +218,21 @@ export default function ContributeForm({ fields = [], resourceTypeOptions = [] }
         <button
           className={`contribute-form__tab ${activeTab === 'bottleneck' ? 'active' : ''}`}
           onClick={() => handleTabChange('bottleneck')}
+          type="button"
         >
           Bottleneck
         </button>
         <button
           className={`contribute-form__tab ${activeTab === 'capability' ? 'active' : ''}`}
           onClick={() => handleTabChange('capability')}
+          type="button"
         >
           Foundational Capability
         </button>
         <button
           className={`contribute-form__tab ${activeTab === 'resource' ? 'active' : ''}`}
           onClick={() => handleTabChange('resource')}
+          type="button"
         >
           Resource
         </button>
@@ -232,7 +247,7 @@ export default function ContributeForm({ fields = [], resourceTypeOptions = [] }
       <div className="contribute-form__content">
         {/* Bottleneck Form */}
         {activeTab === 'bottleneck' && (
-          <form ref={bottleneckFormRef} onSubmit={handleBottleneckSubmit}>
+          <form onSubmit={handleBottleneckSubmit}>
             <div className="form-group">
               <label htmlFor="bottleneck-title">Bottleneck Name *</label>
               <input
@@ -309,7 +324,7 @@ export default function ContributeForm({ fields = [], resourceTypeOptions = [] }
 
         {/* Foundational Capability Form */}
         {activeTab === 'capability' && (
-          <form ref={fcFormRef} onSubmit={handleFCSubmit}>
+          <form onSubmit={handleFCSubmit}>
             <div className="form-group">
               <label htmlFor="fc-title">Foundational Capability Name *</label>
               <input
@@ -362,7 +377,7 @@ export default function ContributeForm({ fields = [], resourceTypeOptions = [] }
 
         {/* Resource Form - Updated for single select */}
         {activeTab === 'resource' && (
-          <form ref={resourceFormRef} onSubmit={handleResourceSubmit}>
+          <form onSubmit={handleResourceSubmit}>
             <div className="form-group">
               <label htmlFor="resource-title">Resource Title *</label>
               <input
