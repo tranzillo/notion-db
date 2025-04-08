@@ -12,9 +12,17 @@ export default function FieldFilter({
 }) {
   const [selected, setSelected] = useState(initialSelectedIds);
   const [initialized, setInitialized] = useState(false);
+  const [sortedFields, setSortedFields] = useState([]);
 
   // Process field IDs/slugs on first render
   useEffect(() => {
+    // Sort fields alphabetically by field_name
+    const alphabeticalFields = [...fields].sort((a, b) => 
+      (a.field_name || '').localeCompare(b.field_name || '')
+    );
+    
+    setSortedFields(alphabeticalFields);
+    
     // First try to load from shared store/session storage
     const sharedFields = loadSelectedFields();
     
@@ -167,7 +175,7 @@ export default function FieldFilter({
       </div>
 
       <div className="field-filter__list">
-        {fields.map((field) => (
+        {sortedFields.map((field) => (
           <div className="field-filter__item" key={field.id}>
             <div className={`field-filter__checkbox ${selected.includes(field.id) ? 'active' : ''} ${field.colorClass || ''}`}>
               <input

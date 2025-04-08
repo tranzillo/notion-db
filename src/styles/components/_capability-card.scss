@@ -19,6 +19,12 @@
   }
   &__resource-group {
     margin:0 calc($spacing-xl * (-1)) calc($spacing-lg * (-1));
+    &:last-child .capability-card__resource-item:last-child .capability-card__resource-link {
+      padding-block-end: $spacing-lg;
+    }
+    &:first-child .capability-card__resource-item:first-child .capability-card__resource-link {
+      padding-block-start: $spacing-lg;
+    }
   }
  
   &__resource-item {

@@ -45,17 +45,23 @@ export default function fieldColorsIntegration() {
           const { bottlenecks } = await getAllData();
           
           // Extract unique fields
-          const fields = extractFields(bottlenecks);
+          const fieldsWithoutColors = extractFields(bottlenecks);
           
-          logger.info(`Found ${fields.length} unique fields`);
+          logger.info(`Found ${fieldsWithoutColors.length} unique fields`);
+          
+          // Log the fields before alphabetization
+          logger.info('Fields before alphabetical sorting:');
+          fieldsWithoutColors.forEach((field, index) => {
+            logger.info(`${index + 1}. ${field.field_name} (${field.id})`);
+          });
           
           // Process fields to ensure they have valid slugs
-          const fieldsWithSlugs = fields.map(field => ({
+          const fieldsWithSlugs = fieldsWithoutColors.map(field => ({
             ...field,
             slug: createFieldSlug(field.field_name)
           }));
           
-          // Generate colors
+          // Generate colors - fields will be sorted alphabetically inside this function
           const { enhancedFields, css } = enhanceFieldsWithStaticColors(
             fieldsWithSlugs,
             [   '#94eead', 
@@ -67,6 +73,12 @@ export default function fieldColorsIntegration() {
                 '#e9d787',
             ] // Color range - customize as needed
           );
+          
+          // Log the fields after alphabetization and color assignment
+          logger.info('Fields after alphabetical sorting and color assignment:');
+          enhancedFields.forEach((field, index) => {
+            logger.info(`${index + 1}. ${field.field_name} (${field.id}) - Color: ${field.colorClass}`);
+          });
           
           // Ensure directories exist
           const cssDir = path.resolve('./src/styles/generated');
@@ -80,7 +92,13 @@ export default function fieldColorsIntegration() {
           
           // Generate JS module with enhanced fields
           const jsContent = `// Generated field color data - DO NOT EDIT
-export const enhancedFields = ${JSON.stringify(enhancedFields, null, 2)};`;
+export const enhancedFields = ${JSON.stringify(enhancedFields, null, 2)};
+
+// Also export a sorted version for UI components
+export const sortedEnhancedFields = ${JSON.stringify(
+  [...enhancedFields].sort((a, b) => (a.field_name || '').localeCompare(b.field_name || '')),
+  null, 2
+)};`;
           
           const jsPath = path.resolve('./src/lib/generated/fieldColorData.js');
           
@@ -92,7 +110,7 @@ export const enhancedFields = ${JSON.stringify(enhancedFields, null, 2)};`;
           
           fs.writeFileSync(jsPath, jsContent);
           
-          logger.info(`Generated field colors for ${fields.length} fields`);
+          logger.info(`Generated field colors for ${enhancedFields.length} fields`);
           logger.info(`- CSS written to: ${cssPath}`);
           logger.info(`- JS data written to: ${jsPath}`);
         } catch (error) {

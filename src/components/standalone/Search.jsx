@@ -20,7 +20,7 @@ export default function Search({
         setPlaceholderText(`Search ${count} Foundational Capabilities...`);
       } else {
         const count = bottleneckCount || 0;
-        setPlaceholderText(`Search ${count} Bottlenecks...`);
+        setPlaceholderText(`Search ${count} R&D Gaps...`);
       }
     }
   }, [bottleneckCount, capabilityCount]);
@@ -36,7 +36,7 @@ export default function Search({
           setPlaceholderText(`Search ${count} Foundational Capabilities...`);
         } else {
           const count = bottleneckCount || 0;
-          setPlaceholderText(`Search ${count} Bottlenecks...`);
+          setPlaceholderText(`Search ${count} R&D Gaps...`);
         }
       }
     };

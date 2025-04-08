@@ -181,23 +181,34 @@ export function enhanceFieldsWithStaticColors(fields, colorRange = ['#4361ee', '
         return { enhancedFields: [], css: '' };
     }
 
-    // Generate base colors from gradient
-    const baseColors = generateGradientColors(fields.length, colorRange);
+    // Sort fields alphabetically by field_name
+    const sortedFields = [...fields].sort((a, b) => 
+        (a.field_name || '').localeCompare(b.field_name || '')
+    );
+    
+    console.log('Fields sorted alphabetically for color assignment:');
+    sortedFields.forEach((field, index) => {
+        console.log(`${index + 1}. ${field.field_name}`);
+    });
+
+    // Generate base colors from gradient for sorted fields
+    const baseColors = generateGradientColors(sortedFields.length, colorRange);
 
     // Enhance fields with color information
-    const enhancedFields = fields.map((field, index) => {
+    const enhancedFields = sortedFields.map((field, index) => {
         const colorName = `gradient-${index}`;
         const colorClass = `field-gradient-${index}`;
 
         return {
             ...field,
             colorName,
-            colorClass
+            colorClass,
+            colorIndex: index // Store the index for debugging and reference
         };
     });
 
-    // Generate the CSS
-    const css = generateFieldColorCss(fields, colorRange);
+    // Generate the CSS based on the sorted fields
+    const css = generateFieldColorCss(sortedFields, colorRange);
 
     return {
         enhancedFields,

@@ -17,7 +17,20 @@ try {
   // This module is created at build time
   const fieldColorData = import.meta.glob('./generated/fieldColorData.js', { eager: true });
   if (fieldColorData['./generated/fieldColorData.js']) {
+    // Use the enhanced fields from the generated data
     enhancedFields = fieldColorData['./generated/fieldColorData.js'].enhancedFields;
+    
+    console.log(`Loaded ${enhancedFields.length} enhanced fields with color information`);
+    
+    // Sort alphabetically for debugging output (doesn't affect the actual enhancedFields)
+    const sortedForLogging = [...enhancedFields].sort((a, b) => 
+      (a.field_name || '').localeCompare(b.field_name || '')
+    );
+    
+    console.log('Fields with color information (alphabetical order):');
+    sortedForLogging.forEach((field, index) => {
+      console.log(`${index + 1}. ${field.field_name} - Color: ${field.colorClass}`);
+    });
   }
 } catch (error) {
   console.error('Error loading pre-generated field colors', error);
@@ -45,6 +58,8 @@ function enhanceField(field) {
   // If no pre-generated color is found, assign a default color class
   const colorId = Math.abs(field.id.split('').reduce((acc, char) => 
     acc + char.charCodeAt(0), 0) % 8);
+  
+  console.warn(`No color found for field "${field.field_name}" (${field.id}), assigning default color-${colorId}`);
   
   return {
     ...field,
@@ -79,6 +94,16 @@ export async function getEnhancedData() {
   // Extract fields without colors
   const fieldsWithoutColors = extractFields(originalBottlenecks);
   console.log(`DEBUG: Extracted ${fieldsWithoutColors.length} unique fields`);
+  
+  // Log fields in alphabetical order
+  const alphabeticalFieldsForLogging = [...fieldsWithoutColors].sort((a, b) => 
+    (a.field_name || '').localeCompare(b.field_name || '')
+  );
+  
+  console.log('Fields extracted from bottlenecks (alphabetical order):');
+  alphabeticalFieldsForLogging.forEach((field, index) => {
+    console.log(`${index + 1}. ${field.field_name} (${field.id})`);
+  });
   
   // Enhance fields with pre-generated colors
   const fields = fieldsWithoutColors.map(enhanceField);
@@ -125,7 +150,23 @@ export async function getEnhancedData() {
     }
   });
   
-  console.log(`DEBUG: Enhanced ${bottlenecks.length} bottlenecks`);
+  console.log(`DEBUG: Enhanced ${bottlenecks.length} bottlenecks with color information`);
+  
+  // Log color distribution for fields in bottlenecks
+  const fieldColorDistribution = new Map();
+  bottlenecks.forEach(bottleneck => {
+    if (bottleneck.field && bottleneck.field.colorClass) {
+      const colorClass = bottleneck.field.colorClass;
+      fieldColorDistribution.set(colorClass, 
+        (fieldColorDistribution.get(colorClass) || 0) + 1
+      );
+    }
+  });
+  
+  console.log('Field color distribution in bottlenecks:');
+  [...fieldColorDistribution.entries()].sort().forEach(([colorClass, count]) => {
+    console.log(`  ${colorClass}: ${count} bottlenecks`);
+  });
   
   // Create foundational capabilities with associated bottlenecks and ensure valid slugs
   const foundationalCapabilities = originalFCs.map(fc => {

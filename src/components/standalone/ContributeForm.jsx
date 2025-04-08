@@ -6,6 +6,13 @@ export default function ContributeForm({ fields = [], resourceTypeOptions = [] }
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formError, setFormError] = useState('');
 
+  // Common fields for all submission types
+  const [commonFields, setCommonFields] = useState({
+    name: '',
+    email: '',
+    comment: ''
+  });
+
   // Form data state
   const [bottleneckData, setBottleneckData] = useState({
     title: '',
@@ -26,7 +33,7 @@ export default function ContributeForm({ fields = [], resourceTypeOptions = [] }
     title: '',
     url: '',
     content: '',
-    resourceTypes: resourceTypeOptions.length > 0 ? [resourceTypeOptions[0]] : ['Publication'] // Changed to array
+    resourceType: resourceTypeOptions.length > 0 ? resourceTypeOptions[0] : 'Publication'
   });
 
   // Handle tab change
@@ -35,10 +42,13 @@ export default function ContributeForm({ fields = [], resourceTypeOptions = [] }
     setFormError('');
   };
 
-  // Handle multi-select change for resource types
-  const handleResourceTypeChange = (e) => {
-    const selectedOptions = Array.from(e.target.selectedOptions, option => option.value);
-    setResourceData({ ...resourceData, resourceTypes: selectedOptions });
+  // Handle common fields change
+  const handleCommonFieldChange = (e) => {
+    const { name, value } = e.target;
+    setCommonFields(prev => ({
+      ...prev,
+      [name]: value
+    }));
   };
 
   // Form submission handlers
@@ -59,7 +69,11 @@ export default function ContributeForm({ fields = [], resourceTypeOptions = [] }
             bottleneck_name: bottleneckData.title,
             bottleneck_description: bottleneckData.content,
             fieldId: bottleneckData.fieldId,
-            bottleneck_rank: bottleneckData.rank
+            bottleneck_rank: bottleneckData.rank,
+            // Add common fields
+            contributor_name: commonFields.name,
+            contributor_email: commonFields.email,
+            contributor_comment: commonFields.comment
           }
         }),
       });
@@ -95,7 +109,11 @@ export default function ContributeForm({ fields = [], resourceTypeOptions = [] }
             fc_name: fcData.title,
             fc_description: fcData.content,
             bottleneckTitle: fcData.bottleneckTitle,
-            resources: fcData.resources
+            resources: fcData.resources,
+            // Add common fields
+            contributor_name: commonFields.name,
+            contributor_email: commonFields.email,
+            contributor_comment: commonFields.comment
           }
         }),
       });
@@ -114,7 +132,7 @@ export default function ContributeForm({ fields = [], resourceTypeOptions = [] }
     }
   };
 
-  // Handle resource submission - updated for multiple resource types
+  // Handle resource submission - updated for single resource type
   const handleResourceSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
@@ -132,7 +150,11 @@ export default function ContributeForm({ fields = [], resourceTypeOptions = [] }
             resource_title: resourceData.title,
             resource_url: resourceData.url,
             content: resourceData.content,
-            resourceTypes: resourceData.resourceTypes // Changed from resourceType to resourceTypes
+            resource_type: resourceData.resourceType, // Changed from resourceTypes array to single value
+            // Add common fields
+            contributor_name: commonFields.name,
+            contributor_email: commonFields.email,
+            contributor_comment: commonFields.comment
           }
         }),
       });
@@ -150,6 +172,48 @@ export default function ContributeForm({ fields = [], resourceTypeOptions = [] }
       setIsSubmitting(false);
     }
   };
+
+  // Component to render common fields
+  const CommonFieldsSection = () => (
+    <div className="form-section">
+      <h3>About You</h3>
+      <div className="form-group">
+        <label htmlFor="contributor-name">Your Name *</label>
+        <input
+          type="text"
+          id="contributor-name"
+          name="name"
+          value={commonFields.name}
+          onChange={handleCommonFieldChange}
+          required
+        />
+      </div>
+
+      <div className="form-group">
+        <label htmlFor="contributor-email">Your Email *</label>
+        <input
+          type="email"
+          id="contributor-email"
+          name="email"
+          value={commonFields.email}
+          onChange={handleCommonFieldChange}
+          required
+        />
+      </div>
+
+      <div className="form-group">
+        <label htmlFor="contributor-comment">Additional Comments</label>
+        <textarea
+          id="contributor-comment"
+          name="comment"
+          rows="3"
+          value={commonFields.comment}
+          onChange={handleCommonFieldChange}
+          placeholder="Any additional context or notes you'd like to share"
+        ></textarea>
+      </div>
+    </div>
+  );
 
   return (
     <div className="contribute-form">
@@ -243,6 +307,9 @@ export default function ContributeForm({ fields = [], resourceTypeOptions = [] }
               ></textarea>
             </div>
 
+            {/* Add common fields */}
+            <CommonFieldsSection />
+
             <div className="form-actions">
               <button
                 type="submit"
@@ -293,6 +360,9 @@ export default function ContributeForm({ fields = [], resourceTypeOptions = [] }
               ></textarea>
             </div>
 
+            {/* Add common fields */}
+            <CommonFieldsSection />
+
             <div className="form-actions">
               <button
                 type="submit"
@@ -305,7 +375,7 @@ export default function ContributeForm({ fields = [], resourceTypeOptions = [] }
           </form>
         )}
 
-        {/* Resource Form - Updated for multi-select */}
+        {/* Resource Form - Updated for single select */}
         {activeTab === 'resource' && (
           <form onSubmit={handleResourceSubmit}>
             <div className="form-group">
@@ -320,15 +390,12 @@ export default function ContributeForm({ fields = [], resourceTypeOptions = [] }
             </div>
 
             <div className="form-group">
-              <label htmlFor="resource-type">Resource Type(s) * (Hold Ctrl/Cmd to select multiple)</label>
+              <label htmlFor="resource-type">Resource Type *</label>
               <select
                 id="resource-type"
-                multiple
-                value={resourceData.resourceTypes}
-                onChange={handleResourceTypeChange}
+                value={resourceData.resourceType}
+                onChange={(e) => setResourceData({ ...resourceData, resourceType: e.target.value })}
                 required
-                size={Math.min(5, resourceTypeOptions.length)} // Show up to 5 options at once
-                className="multi-select"
               >
                 {resourceTypeOptions.map((type) => (
                   <option key={type} value={type}>
@@ -336,9 +403,6 @@ export default function ContributeForm({ fields = [], resourceTypeOptions = [] }
                   </option>
                 ))}
               </select>
-              <div className="help-text">
-                Selected: {resourceData.resourceTypes.join(', ')}
-              </div>
             </div>
 
             <div className="form-group">
@@ -363,6 +427,9 @@ export default function ContributeForm({ fields = [], resourceTypeOptions = [] }
                 placeholder="Provide a brief summary of this resource and its relevance"
               ></textarea>
             </div>
+
+            {/* Add common fields */}
+            <CommonFieldsSection />
 
             <div className="form-actions">
               <button

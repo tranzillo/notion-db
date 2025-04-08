@@ -200,7 +200,7 @@ export default function FoundationalCapabilityCard({
           <div className="capability-card__bottlenecks-count">
             {(() => {
               const count = capability.bottlenecks?.length || 0;
-              return `${count} ${count === 1 ? 'Bottleneck' : 'Bottlenecks'}`;
+              return `${count} ${count === 1 ? 'R&D Gap' : 'R&D Gaps'}`;
             })()}
           </div>
         </div>

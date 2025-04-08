@@ -948,7 +948,7 @@ export default function IntegratedNetworkView({
                     let tooltipContent = `<strong>${d.name}</strong><br/>`;
 
                     if (d.type === 'bottleneck') {
-                        tooltipContent += `Field: ${d.fieldName}<br/>Type: Bottleneck`;
+                        tooltipContent += `Field: ${d.fieldName}`;
 
                         // Count connected capabilities
                         const connectedCapabilities = filteredData.links.filter(
@@ -960,7 +960,7 @@ export default function IntegratedNetworkView({
                             tooltipContent += `<br/>Connected to ${connectedCapabilities} capabilities`;
                         }
                     } else if (d.type === 'capability') {
-                        tooltipContent += `Type: Capability`;
+                        tooltipContent += `Capability`;
 
                         // Count connected resources
                         const connectedResources = filteredData.links.filter(
@@ -972,10 +972,7 @@ export default function IntegratedNetworkView({
                             tooltipContent += `<br/>Connected to ${connectedResources} resources`;
                         }
                     } else if (d.type === 'resource') {
-                        tooltipContent += `Type: Resource`;
-                        if (d.url) {
-                            tooltipContent += `<br/><a href="${d.url}" target="_blank" rel="noopener noreferrer">View Resource</a>`;
-                        }
+                        tooltipContent += `Resource`;
                     }
 
                     tooltip.transition()

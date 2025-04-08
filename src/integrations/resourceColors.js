@@ -193,10 +193,10 @@ main .resource-type-gradient-${type.slug} {
   border-color: ${type.colors.dark};
 }
   .capability-card__resource-link:has(.resource-type-gradient-${type.slug}), .capability-detail__resource-item:has(.resource-type-gradient-${type.slug}) {
-    background-color: ${type.colors.light};
+    background-color: ${type.colors.light}bb;
   }
   .dark-mode .capability-card__resource-link:has(.resource-type-gradient-${type.slug}), .dark-mode .capability-detail__resource-item:has(.resource-type-gradient-${type.slug}) {
-    background-color: ${type.colors.base}16;
+    background-color: ${type.colors.base}12;
   }
   .capability-card__resource-link:hover:has(.resource-type-gradient-${type.slug}) a, .capability-detail__resource-item:hover:has(.resource-type-gradient-${type.slug}) a {
     color: ${type.colors.dark};
