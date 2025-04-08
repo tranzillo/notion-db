@@ -2,6 +2,8 @@
 const { Client } = require('@notionhq/client');
 
 exports.handler = async function(event, context) {
+  console.log('Function invoked with body:', event.body);
+  
   // Only allow POST requests
   if (event.httpMethod !== 'POST') {
     return {
@@ -14,6 +16,9 @@ exports.handler = async function(event, context) {
     // Parse the request body
     const payload = JSON.parse(event.body);
     const { data } = payload;
+    
+    // Log what we received
+    console.log('Received data:', data);
     
     // Validate the basic request
     if (!data) {
@@ -35,6 +40,9 @@ exports.handler = async function(event, context) {
     const notion = new Client({
       auth: process.env.NOTION_API_KEY
     });
+    
+    console.log('Using Notion API key:', process.env.NOTION_API_KEY ? 'Exists' : 'Missing');
+    console.log('Using Notion DB ID:', process.env.NOTION_CONTRIBUTIONS_DB_ID);
     
     // Build the properties object for Notion
     const properties = {
@@ -162,19 +170,35 @@ exports.handler = async function(event, context) {
       });
     }
     
+    console.log('Creating page with properties:', JSON.stringify(properties, null, 2));
+    
     // Create the page in Notion
-    await notion.pages.create({
-      parent: {
-        database_id: process.env.NOTION_CONTRIBUTIONS_DB_ID,
-      },
-      properties: properties,
-      children: blocks,
-    });
-
-    return {
-      statusCode: 200,
-      body: JSON.stringify({ success: true, message: 'Contribution submitted successfully' }),
-    };
+    try {
+      const response = await notion.pages.create({
+        parent: {
+          database_id: process.env.NOTION_CONTRIBUTIONS_DB_ID,
+        },
+        properties: properties,
+        children: blocks.length > 0 ? blocks : undefined,
+      });
+      
+      console.log('Notion response:', response.id);
+      
+      return {
+        statusCode: 200,
+        body: JSON.stringify({ success: true, message: 'Contribution submitted successfully' }),
+      };
+    } catch (notionError) {
+      console.error('Notion API error:', notionError);
+      return {
+        statusCode: 500,
+        body: JSON.stringify({
+          success: false,
+          message: 'Error creating page in Notion',
+          error: notionError.message
+        }),
+      };
+    }
   } catch (error) {
     console.error('Error processing request:', error);
     return {

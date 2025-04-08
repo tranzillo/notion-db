@@ -1,17 +1,20 @@
 // src/components/standalone/ContributeForm.jsx
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 
 export default function ContributeForm({ fields = [], resourceTypeOptions = [] }) {
   const [activeTab, setActiveTab] = useState('bottleneck');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formError, setFormError] = useState('');
 
+  // Create refs for form sections
+  const bottleneckFormRef = useRef(null);
+  const fcFormRef = useRef(null);
+  const resourceFormRef = useRef(null);
+
   // Common fields for all submission types
-  const [commonData, setCommonData] = useState({
-    name: '',
-    email: '',
-    comment: ''
-  });
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [comment, setComment] = useState('');
 
   // Form data state
   const [bottleneckData, setBottleneckData] = useState({
@@ -40,15 +43,6 @@ export default function ContributeForm({ fields = [], resourceTypeOptions = [] }
     setFormError('');
   };
 
-  // Handle common fields change
-  const handleCommonDataChange = (e) => {
-    const { name, value } = e.target;
-    setCommonData(prev => ({
-      ...prev,
-      [name]: value
-    }));
-  };
-
   // Form submission handlers
   const handleBottleneckSubmit = async (e) => {
     e.preventDefault();
@@ -63,14 +57,14 @@ export default function ContributeForm({ fields = [], resourceTypeOptions = [] }
         },
         body: JSON.stringify({
           data: {
-            name: commonData.name,
-            email: commonData.email,
+            name,
+            email,
             title: bottleneckData.title,
             contentType: 'Bottleneck',
             field: bottleneckData.fieldId,
             rank: bottleneckData.rank,
-            content: bottleneckData.content, // This will be handled in the function
-            comment: commonData.comment
+            content: bottleneckData.content,
+            comment
           }
         }),
       });
@@ -102,13 +96,13 @@ export default function ContributeForm({ fields = [], resourceTypeOptions = [] }
         },
         body: JSON.stringify({
           data: {
-            name: commonData.name,
-            email: commonData.email,
+            name,
+            email,
             title: fcData.title,
             contentType: 'Foundational Capability',
-            content: fcData.content, // This will be handled in the function
+            content: fcData.content,
             relatedGap: fcData.relatedGap,
-            comment: commonData.comment
+            comment
           }
         }),
       });
@@ -141,14 +135,14 @@ export default function ContributeForm({ fields = [], resourceTypeOptions = [] }
         },
         body: JSON.stringify({
           data: {
-            name: commonData.name,
-            email: commonData.email,
+            name,
+            email,
             title: resourceData.title,
             contentType: 'Resource',
             resourceType: resourceData.resourceType,
             resource: resourceData.url,
-            content: resourceData.content, // This will be handled in the function
-            comment: commonData.comment
+            content: resourceData.content,
+            comment
           }
         }),
       });
@@ -167,7 +161,7 @@ export default function ContributeForm({ fields = [], resourceTypeOptions = [] }
     }
   };
 
-  // Component to render common fields
+  // Component to render common fields - with direct state setters to prevent focus loss
   const CommonFieldsSection = () => (
     <div className="form-section contributor-info">
       <h3>About You</h3>
@@ -176,9 +170,8 @@ export default function ContributeForm({ fields = [], resourceTypeOptions = [] }
         <input
           type="text"
           id="contributor-name"
-          name="name"
-          value={commonData.name}
-          onChange={handleCommonDataChange}
+          value={name}
+          onChange={(e) => setName(e.target.value)}
           required
         />
       </div>
@@ -188,9 +181,8 @@ export default function ContributeForm({ fields = [], resourceTypeOptions = [] }
         <input
           type="email"
           id="contributor-email"
-          name="email"
-          value={commonData.email}
-          onChange={handleCommonDataChange}
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
           required
         />
       </div>
@@ -199,10 +191,9 @@ export default function ContributeForm({ fields = [], resourceTypeOptions = [] }
         <label htmlFor="contributor-comment">Additional Comments</label>
         <textarea
           id="contributor-comment"
-          name="comment"
           rows="3"
-          value={commonData.comment}
-          onChange={handleCommonDataChange}
+          value={comment}
+          onChange={(e) => setComment(e.target.value)}
           placeholder="Any additional context or notes you'd like to share"
         ></textarea>
       </div>
@@ -241,7 +232,7 @@ export default function ContributeForm({ fields = [], resourceTypeOptions = [] }
       <div className="contribute-form__content">
         {/* Bottleneck Form */}
         {activeTab === 'bottleneck' && (
-          <form onSubmit={handleBottleneckSubmit}>
+          <form ref={bottleneckFormRef} onSubmit={handleBottleneckSubmit}>
             <div className="form-group">
               <label htmlFor="bottleneck-title">Bottleneck Name *</label>
               <input
@@ -318,7 +309,7 @@ export default function ContributeForm({ fields = [], resourceTypeOptions = [] }
 
         {/* Foundational Capability Form */}
         {activeTab === 'capability' && (
-          <form onSubmit={handleFCSubmit}>
+          <form ref={fcFormRef} onSubmit={handleFCSubmit}>
             <div className="form-group">
               <label htmlFor="fc-title">Foundational Capability Name *</label>
               <input
@@ -371,7 +362,7 @@ export default function ContributeForm({ fields = [], resourceTypeOptions = [] }
 
         {/* Resource Form - Updated for single select */}
         {activeTab === 'resource' && (
-          <form onSubmit={handleResourceSubmit}>
+          <form ref={resourceFormRef} onSubmit={handleResourceSubmit}>
             <div className="form-group">
               <label htmlFor="resource-title">Resource Title *</label>
               <input
