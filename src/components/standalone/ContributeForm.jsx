@@ -173,7 +173,6 @@ export default function ContributeForm({ fields = [], resourceTypeOptions = [] }
   // Component to render common fields that won't lose focus
   const CommonFieldsSection = () => (
     <div className="form-section contributor-info">
-      <h3>About You</h3>
       <div className="form-group">
         <label htmlFor="contributor-name">Your Name *</label>
         <input
@@ -220,7 +219,7 @@ export default function ContributeForm({ fields = [], resourceTypeOptions = [] }
           onClick={() => handleTabChange('bottleneck')}
           type="button"
         >
-          Bottleneck
+          R&D Gap
         </button>
         <button
           className={`contribute-form__tab ${activeTab === 'capability' ? 'active' : ''}`}
@@ -249,7 +248,7 @@ export default function ContributeForm({ fields = [], resourceTypeOptions = [] }
         {activeTab === 'bottleneck' && (
           <form onSubmit={handleBottleneckSubmit}>
             <div className="form-group">
-              <label htmlFor="bottleneck-title">Bottleneck Name *</label>
+              <label htmlFor="bottleneck-title">R&D Gap Name *</label>
               <input
                 type="text"
                 id="bottleneck-title"
@@ -276,7 +275,7 @@ export default function ContributeForm({ fields = [], resourceTypeOptions = [] }
               </select>
             </div>
 
-            <div className="form-group">
+            {/* <div className="form-group">
               <label htmlFor="bottleneck-rank">
                 Urgency Rank: {bottleneckData.rank}
               </label>
@@ -293,7 +292,7 @@ export default function ContributeForm({ fields = [], resourceTypeOptions = [] }
                 <span>Low</span>
                 <span>High</span>
               </div>
-            </div>
+            </div> */}
 
             <div className="form-group">
               <label htmlFor="bottleneck-content">Description *</label>
@@ -302,7 +301,7 @@ export default function ContributeForm({ fields = [], resourceTypeOptions = [] }
                 rows="8"
                 value={bottleneckData.content}
                 onChange={(e) => setBottleneckData({ ...bottleneckData, content: e.target.value })}
-                placeholder="Describe the bottleneck in detail. What makes it significant? What are the implications?"
+                placeholder="Describe the R&D gap in detail. What makes it significant? What are the implications?"
                 required
               ></textarea>
             </div>
@@ -316,7 +315,7 @@ export default function ContributeForm({ fields = [], resourceTypeOptions = [] }
                 className="submit-button"
                 disabled={isSubmitting}
               >
-                {isSubmitting ? 'Submitting...' : 'Submit Bottleneck'}
+                {isSubmitting ? 'Submitting...' : 'Submit'}
               </button>
             </div>
           </form>
@@ -337,14 +336,13 @@ export default function ContributeForm({ fields = [], resourceTypeOptions = [] }
             </div>
 
             <div className="form-group">
-              <label htmlFor="fc-related-gap">Related Gap/Bottleneck *</label>
+              <label htmlFor="fc-related-gap">Related R&D Gap</label>
               <input
                 type="text"
                 id="fc-related-gap"
                 value={fcData.relatedGap}
                 onChange={(e) => setFcData({ ...fcData, relatedGap: e.target.value })}
-                placeholder="Enter the name of an existing bottleneck or suggest a new one"
-                required
+                placeholder="Enter the name of an existing R&D gap or suggest a new one"
               />
             </div>
 
@@ -369,7 +367,7 @@ export default function ContributeForm({ fields = [], resourceTypeOptions = [] }
                 className="submit-button"
                 disabled={isSubmitting}
               >
-                {isSubmitting ? 'Submitting...' : 'Submit Foundational Capability'}
+                {isSubmitting ? 'Submitting...' : 'Submit'}
               </button>
             </div>
           </form>
@@ -437,7 +435,7 @@ export default function ContributeForm({ fields = [], resourceTypeOptions = [] }
                 className="submit-button"
                 disabled={isSubmitting}
               >
-                {isSubmitting ? 'Submitting...' : 'Submit Resource'}
+                {isSubmitting ? 'Submitting...' : 'Submit'}
               </button>
             </div>
           </form>

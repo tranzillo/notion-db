@@ -18,33 +18,86 @@
 }
 
 .contribute-content {
-    max-width: 48em;
+    max-width: 100ch;
     margin: $spacing-xxl auto 0;
-    background: var(--card-background);
-    border-radius: $border-radius-md;
-    padding: $spacing-xl;
 }
 
 
 .contribute-form {
     width: 100%;
 
+    
+    label {
+        font-weight: 500;
+    }
+
+    input[type="text"],
+    input[type="url"],
+    input[type="email"],
+    select,
+    textarea {
+        padding: 0.75rem;
+        border: 1px solid var(--border-dull);
+        border-radius: $border-radius-md;
+        font-family: inherit;
+        font-size: 1rem;
+        background-color: var(--card-background);
+        color: var(--text-color);
+        transition: border-color $transition, background-color $transition;
+
+        &:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+    }
+    input[type="text"] {
+        padding-inline-end: $spacing-md
+    }
+    input[type="range"] {
+        width: 100%;
+        margin: $spacing-sm 0 0;
+    }
+
+.contributor-info {
+    order: -1;
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-lg;
+}
+
+.range-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: $font-size-sm;
+    color: var(--text-lighter);
+}
+
     &__tabs {
         display: flex;
         margin-bottom: $spacing-xxl;
         border-bottom: 1px solid var(--border-color);
+        @media screen and (max-width: $breakpoint-lg) {
+            flex-direction: column;
+            border-color: transparent;
+            
+        }
 
         .contribute-form__tab {
             padding: $spacing-md $spacing-lg;
             background: none;
             border: none;
             border-bottom: 3px solid transparent;
+            display: flex;
+            align-items: center;
             color: var(--text-light);
             font-weight: 500;
             font-size: $font-size-md;
             cursor: pointer;
             transition: all $transition;
-
+            @media screen and (max-width: $breakpoint-lg) {
+                padding-inline-start: 0;
+                align-items: flex-start;
+            }
             &:hover {
                 color: var(--primary-color);
             }
@@ -76,43 +129,6 @@
         display: flex;
         flex-direction: column;
         gap: $spacing-sm;
-
-        label {
-            font-weight: 500;
-        }
-
-        input[type="text"],
-        input[type="url"],
-        select,
-        textarea {
-            padding: 0.75rem;
-            border: 1px solid var(--border-color);
-            border-radius: $border-radius-md;
-            font-family: inherit;
-            font-size: 1rem;
-            background-color: var(--background-color);
-            color: var(--text-color);
-            transition: border-color $transition;
-
-            &:focus {
-                outline: none;
-                border-color: var(--primary-color);
-            }
-        }
-        input[type="text"] {
-            padding-inline-end: $spacing-md
-        }
-        input[type="range"] {
-            width: 100%;
-            margin: $spacing-sm 0 0;
-        }
-
-        .range-labels {
-            display: flex;
-            justify-content: space-between;
-            font-size: $font-size-sm;
-            color: var(--text-lighter);
-        }
     }
 
     .form-actions {
@@ -146,6 +162,7 @@
 
         input[type="text"],
         input[type="url"],
+        input[type="email"],
         select,
         textarea {
             border-color: var(--border-dull);
