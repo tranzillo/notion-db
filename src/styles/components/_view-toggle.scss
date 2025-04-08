@@ -54,6 +54,9 @@ svg {
   &:hover{
     background-color: var(--border-dull);
   }
+  @media (max-width: $breakpoint-lg) {
+    margin:$spacing-sm 0 0 auto;
+  }
 }
 
 .sort-control {

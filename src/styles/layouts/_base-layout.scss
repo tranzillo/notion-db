@@ -8,6 +8,33 @@
   }
 }
 
+@media (max-width: $breakpoint-lg) {
+  .container:not(.close-nav):has(*:focus) {
+    .base-layout__controls {
+      opacity: 1;
+      pointer-events: auto;
+    }
+  }
+
+}
+
+button.mobile-nav, button.close-nav {
+  display: none;
+  position: relative;
+  color: var(--text-color);
+  margin-inline-start: auto;
+  @media (max-width: $breakpoint-lg) {
+
+
+    display: block;
+    background: none;
+    border: none;
+    cursor: pointer;
+
+
+  }
+}
+
 .base-layout {
   min-height: 100vh;
   display: flex;
@@ -24,6 +51,12 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
+      overflow-x: hidden;
+
+      @media screen and (max-width: $breakpoint-lg) {
+        background-color: var(--header-background);
+        z-index: 4;
+      }
     }
   }
 
@@ -31,6 +64,19 @@
     display: flex;
     align-items: center;
     gap: $spacing-md;
+    transition: opacity $transition;
+
+    @media screen and (max-width: $breakpoint-lg) {
+      position: absolute;
+      inset: 0 0 auto auto;
+      background-color: var(--header-background);
+      z-index: 4;
+      padding: 2.65rem $spacing-md $spacing-md $spacing-md;
+      flex-direction: column;
+      border-radius: 0 0 0 $border-radius-lg;
+      opacity: 0;
+      pointer-events: none;
+    }
   }
 
   &__logo {
@@ -40,6 +86,9 @@
     display: flex;
     align-items: center;
     gap: 0.75rem;
+    margin-inline-end: auto;
+    position: relative;
+    z-index: 5;
 
     .logo-mark {
       max-height: 3em;
@@ -49,9 +98,10 @@
     }
 
     .word-mark {
-      height: 1.75em;
+      height: 2.5rem;
       transition: filter $transition;
       filter: invert(22%) sepia(18%) saturate(363%) hue-rotate(26deg) brightness(96%) contrast(87%);
+
     }
 
   }
@@ -61,9 +111,10 @@
     display: flex;
     flex-direction: column-reverse;
     gap: 2px;
-    // @media (max-width: $breakpoint-sm) {
-    //   display: none;
-    // }
+
+    @media (max-width: $breakpoint-lg) {
+      gap: $spacing-lg;
+    }
 
     &-item {
       white-space: nowrap;
@@ -78,6 +129,7 @@
       }
     }
   }
+
   &__sub-nav {
     // position: absolute;
     // inset: -1.5em 0 auto auto;
@@ -87,9 +139,11 @@
     font-size: $font-size-sm;
     color: var(--text-lighter);
     font-weight: normal;
+
     .base-layout__nav-item {
       a {
         color: var(--text-light);
+
         &:hover,
         &.active {
           color: var(--primary-color);
@@ -97,15 +151,29 @@
       }
     }
 
-    @media (max-width: $breakpoint-sm) {
+    @media (max-width: $breakpoint-lg) {
       flex-direction: column;
+
+      .base-layout__nav-item {
+        margin-inline-start: auto;
+      }
     }
   }
+
   &__main-nav {
     display: flex;
     flex-direction: row;
-    gap: $spacing-lg; // space between nav items
+    gap: $spacing-lg;
+
+    @media (max-width: $breakpoint-lg) {
+      flex-direction: column;
+
+      .base-layout__nav-item {
+        margin-inline-start: auto;
+      }
+    }
   }
+
   &__main {
     flex-grow: 1;
     padding: $spacing-xxl 0;
@@ -135,6 +203,7 @@
     color: var(--text-light);
     font-size: $font-size-sm;
     letter-spacing: 0.04em;
+
     a {
       color: var(--text-color);
       font-size: $font-size-sm;
@@ -149,6 +218,10 @@
   &__footer-links {
     display: flex;
     gap: $spacing-md;
+    @media screen and (max-width: $breakpoint-lg) {
+      flex-direction: column;
+      align-items: center;
+    }
 
     a {
       color: var(--text-color);
