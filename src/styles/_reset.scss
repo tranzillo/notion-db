@@ -23,6 +23,12 @@
     transition: color $transition;
     text-decoration: none;
   }
+  .subtle {
+    font-weight: lighter;
+    color: var(--text-light);
+    font-style: italic;
+    margin-inline-start: $spacing-xs;
+  }
   .sr-only {
     position: absolute;
     width: 1px;

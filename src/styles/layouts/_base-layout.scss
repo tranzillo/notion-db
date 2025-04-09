@@ -8,15 +8,6 @@
   }
 }
 
-@media (max-width: $breakpoint-lg) {
-  .container:not(.close-nav):has(*:focus) {
-    .base-layout__controls {
-      opacity: 1;
-      pointer-events: auto;
-    }
-  }
-
-}
 
 button.mobile-nav, button.close-nav {
   display: none;
@@ -24,17 +15,23 @@ button.mobile-nav, button.close-nav {
   color: var(--text-color);
   margin-inline-start: auto;
   @media (max-width: $breakpoint-lg) {
-
-
     display: block;
     background: none;
     border: none;
     cursor: pointer;
-
-
   }
 }
 
+.base-layout__nav-item:has(.close-nav) {
+  display: flex;
+  justify-content: flex-end;
+  div {
+    cursor: pointer;
+  }
+  button {
+    margin: 0;
+  }
+}
 .base-layout {
   min-height: 100vh;
   display: flex;
@@ -53,29 +50,38 @@ button.mobile-nav, button.close-nav {
       align-items: center;
       overflow-x: hidden;
 
-      @media screen and (max-width: $breakpoint-lg) {
+      @media (max-width: $breakpoint-lg) {
         background-color: var(--header-background);
         z-index: 4;
+        &:not(.close-nav):has(*:focus) {
+          .base-layout__controls {
+            opacity: 1;
+            pointer-events: auto;
+          }
+        }
       }
     }
   }
 
   &__controls {
     display: flex;
-    align-items: center;
+    align-items: flex-end;
     gap: $spacing-md;
     transition: opacity $transition;
 
-    @media screen and (max-width: $breakpoint-lg) {
+    @media (max-width: $breakpoint-lg) {
       position: absolute;
-      inset: 0 0 auto auto;
+      inset: 0 0 auto 0;
       background-color: var(--header-background);
       z-index: 4;
-      padding: 2.65rem $spacing-md $spacing-md $spacing-md;
+      padding: 2.65rem $spacing-xxl $spacing-md $spacing-md;
       flex-direction: column;
-      border-radius: 0 0 0 $border-radius-lg;
       opacity: 0;
       pointer-events: none;
+      border-block-end: 1px solid var(--border-dull);
+    }
+    @media (max-width: $breakpoint-sm) {
+      padding-inline-end: $spacing-md;
     }
   }
 
@@ -163,7 +169,7 @@ button.mobile-nav, button.close-nav {
   &__main-nav {
     display: flex;
     flex-direction: row;
-    gap: $spacing-lg;
+    gap: $spacing-md;
 
     @media (max-width: $breakpoint-lg) {
       flex-direction: column;
@@ -188,9 +194,9 @@ button.mobile-nav, button.close-nav {
 
     .container {
       display: flex;
-      flex-direction: column;
+      flex-direction: column-reverse;
       align-items: center;
-      gap: $spacing-md;
+      gap: $spacing-xl;
 
       @media (min-width: $breakpoint-md) {
         flex-direction: row;
@@ -218,7 +224,7 @@ button.mobile-nav, button.close-nav {
   &__footer-links {
     display: flex;
     gap: $spacing-md;
-    @media screen and (max-width: $breakpoint-lg) {
+    @media (max-width: $breakpoint-lg) {
       flex-direction: column;
       align-items: center;
     }

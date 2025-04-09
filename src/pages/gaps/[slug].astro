@@ -117,32 +117,40 @@ const hasRank =
         bottleneck.foundational_capabilities.length > 0 && (
           <div class="bottleneck-detail__capabilities">
             <h2>
-              Foundational Capabilities ({bottleneck.foundational_capabilities.length})
+              Foundational Capabilities{" "}
+              <span class="subtle">
+                ({bottleneck.foundational_capabilities.length})
+              </span>
             </h2>
             <div class="bottleneck-detail__capabilities-grid">
               {(() => {
                 // Sort capabilities by number of resources (descending)
-                const sortedCapabilities = [...bottleneck.foundational_capabilities].sort((a, b) => {
+                const sortedCapabilities = [
+                  ...bottleneck.foundational_capabilities,
+                ].sort((a, b) => {
                   const aResourceCount = a.resources?.length || 0;
                   const bResourceCount = b.resources?.length || 0;
-                  
+
                   // If resource counts are the same, sort alphabetically by name
                   if (aResourceCount === bResourceCount) {
                     return a.fc_name.localeCompare(b.fc_name);
                   }
-                  
+
                   // Otherwise sort by resource count (descending)
                   return bResourceCount - aResourceCount;
                 });
-                
+
                 return sortedCapabilities.map((capability) => {
                   // Use the slug from capability data or generate a new one if missing
                   const capabilitySlug =
                     capability.slug || createCapabilitySlug(capability.fc_name);
-    
+
                   return (
                     <div class="capability-card">
-                      <a class="clickable" href={`/capabilities/${capabilitySlug}`}/>
+                      <a
+                        class="clickable"
+                        href={`/capabilities/${capabilitySlug}`}
+                      />
                       <div class="capability-card__header">
                         <h3 class="capability-card__title">
                           <a href={`/capabilities/${capabilitySlug}`}>
@@ -154,86 +162,103 @@ const hasRank =
                         class="capability-card__content"
                         set:html={capability.fc_description}
                       />
-    
-    {capability.resources && capability.resources.length > 0 && (
-  <div class="capability-card__footer">
-    <div class="capability-card__resources">
-      {(() => {
-        // Sort resources by type first, then by title
-        const sortedResources = [...capability.resources].sort((a, b) => {
-          // First sort by resource type (alphabetically)
-          const aType = a.resourceTypes?.[0] || '';
-          const bType = b.resourceTypes?.[0] || '';
-          
-          const typeComparison = aType.localeCompare(bType);
-          
-          // If types are the same, sort by title
-          if (typeComparison === 0) {
-            return a.resource_title.localeCompare(b.resource_title);
-          }
-          
-          return typeComparison;
-        });
-        
-        // Group resources by type
-        const resourcesByType = {};
-        
-        sortedResources.forEach(resource => {
-          const resourceType = resource.resourceTypes?.[0] || 'Other';
-          if (!resourcesByType[resourceType]) {
-            resourcesByType[resourceType] = [];
-          }
-          resourcesByType[resourceType].push(resource);
-        });
-        
-        // Render each group with a wrapper
-        return Object.entries(resourcesByType).map(([resourceType, resources]) => (
-          <div class="capability-card__resource-group" data-resource-type={resourceType}>
-            <div class="capability-card__resource-group-items">
-              {resources.map(resource => (
-                <li class="capability-card__resource-item">
-                  <div class="capability-card__resource-link">
-                    {resource?.resource_url ? (
-                      <a
-                        href={resource.resource_url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        {resource.resource_title}
-                      </a>
-                    ) : (
-                      <span>
-                        {resource?.resource_title ||
-                          "Untitled Resource"}
-                      </span>
-                    )}
-                    {/* Display resource types with updated class */}
-                    {resource?.resourceTypes &&
-                      resource.resourceTypes.length > 0 && (
-                        <div class="capability-card__resource-types">
-                          {resource.resourceTypes.map(
-                            (type, index) => (
-                              <span class={`capability-card__resource-type resource-type-gradient-${type.toLowerCase().replace(/\s+/g, '-')}`}>
-                                {type}
-                                {index <
-                                resource.resourceTypes.length - 1
-                                  ? ", "
-                                  : ""}
-                              </span>
-                            )
-                          )}
-                        </div>
-                      )}
-                  </div>
-                </li>
-              ))}
-            </div>
-          </div>
-        ));
-      })()}
-    </div>
-  </div>
-)}
+
+                      {capability.resources &&
+                        capability.resources.length > 0 && (
+                          <div class="capability-card__footer">
+                            <div class="capability-card__resources">
+                              {(() => {
+                                // Sort resources by type first, then by title
+                                const sortedResources = [
+                                  ...capability.resources,
+                                ].sort((a, b) => {
+                                  // First sort by resource type (alphabetically)
+                                  const aType = a.resourceTypes?.[0] || "";
+                                  const bType = b.resourceTypes?.[0] || "";
+
+                                  const typeComparison =
+                                    aType.localeCompare(bType);
+
+                                  // If types are the same, sort by title
+                                  if (typeComparison === 0) {
+                                    return a.resource_title.localeCompare(
+                                      b.resource_title,
+                                    );
+                                  }
+
+                                  return typeComparison;
+                                });
+
+                                // Group resources by type
+                                const resourcesByType = {};
+
+                                sortedResources.forEach((resource) => {
+                                  const resourceType =
+                                    resource.resourceTypes?.[0] || "Other";
+                                  if (!resourcesByType[resourceType]) {
+                                    resourcesByType[resourceType] = [];
+                                  }
+                                  resourcesByType[resourceType].push(resource);
+                                });
+
+                                // Render each group with a wrapper
+                                return Object.entries(resourcesByType).map(
+                                  ([resourceType, resources]) => (
+                                    <div
+                                      class="capability-card__resource-group"
+                                      data-resource-type={resourceType}
+                                    >
+                                      <div class="capability-card__resource-group-items">
+                                        {resources.map((resource) => (
+                                          <li class="capability-card__resource-item">
+                                            <div class="capability-card__resource-link">
+                                              {resource?.resource_url ? (
+                                                <a
+                                                  href={resource.resource_url}
+                                                  target="_blank"
+                                                  rel="noopener noreferrer"
+                                                >
+                                                  {resource.resource_title}
+                                                </a>
+                                              ) : (
+                                                <span>
+                                                  {resource?.resource_title ||
+                                                    "Untitled Resource"}
+                                                </span>
+                                              )}
+                                              {/* Display resource types with updated class */}
+                                              {resource?.resourceTypes &&
+                                                resource.resourceTypes.length >
+                                                  0 && (
+                                                  <div class="capability-card__resource-types">
+                                                    {resource.resourceTypes.map(
+                                                      (type, index) => (
+                                                        <span
+                                                          class={`capability-card__resource-type resource-type-gradient-${type.toLowerCase().replace(/\s+/g, "-")}`}
+                                                        >
+                                                          {type}
+                                                          {index <
+                                                          resource.resourceTypes
+                                                            .length -
+                                                            1
+                                                            ? ", "
+                                                            : ""}
+                                                        </span>
+                                                      ),
+                                                    )}
+                                                  </div>
+                                                )}
+                                            </div>
+                                          </li>
+                                        ))}
+                                      </div>
+                                    </div>
+                                  ),
+                                );
+                              })()}
+                            </div>
+                          </div>
+                        )}
                     </div>
                   );
                 });

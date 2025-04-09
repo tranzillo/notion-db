@@ -8,7 +8,10 @@
   padding: $spacing-xl;
   transition: background-color $transition,
     border $transition;
-
+  @media (max-width: $breakpoint-sm) {
+    padding-inline: $spacing-md;
+    gap: $spacing-xl;
+  }
   &__header {
     display: flex;
     flex-direction: column;
@@ -21,8 +24,11 @@
     border-bottom: 1px solid var(--border-dull);
     transition: background-color $transition,
       border-color $transition;
+      @media (max-width: $breakpoint-sm) {
+        margin-inline: calc($spacing-md * (-1));
+        padding-inline: $spacing-md;
+      }
   }
-
   &__field {
     display: block;
     margin-block-start: 0.42em;
@@ -71,7 +77,6 @@
 
   &__content {
     max-width: 100ch;
-    margin-top: calc($spacing-md * (-1));
     font-size: $font-size-md;
     color: var(--text-light);
     line-height: 1.5;
@@ -85,6 +90,16 @@
     border-radius: 0 0 $border-radius-lg $border-radius-lg;
     transition: border $transition,
       background-color $transition;
+      @media (max-width: $breakpoint-sm) {
+        margin-inline: calc($spacing-md * (-1));
+        padding-inline: $spacing-xs;
+        padding-block-end: 0;
+      }
+      h2 {
+        @media (max-width: $breakpoint-sm) {
+          margin-inline-start: $spacing-md;
+        }
+      }
   }
 
   &__capabilities-grid {
@@ -103,6 +118,11 @@
     
       .capability-card {
         margin-block-end: $spacing-lg;
+        &:last-child {
+          @media (max-width: $breakpoint-sm) {
+            margin-block-end: $spacing-xs;
+          }
+        }
       }
   }
 

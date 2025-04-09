@@ -9,8 +9,14 @@ h1, h2, h3, h4, h5, h6 {
     font-size: 2.5em;
     letter-spacing: -0.0125em;
     max-width: 42ch;
+    @media (max-width: $breakpoint-sm) {
+      font-size: $font-size-xxl;
+    }
   }
   h2 {
     font-weight: normal;
     letter-spacing: -0.01em;
+    @media (max-width: $breakpoint-sm) {
+      font-size: $font-size-lg;
+    }
   }

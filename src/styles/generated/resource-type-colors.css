@@ -15,7 +15,7 @@ main .resource-type-gradient-research-and-reviews {
   border-color: #44b772;
 }
   .capability-card__resource-link:has(.resource-type-gradient-research-and-reviews), .capability-detail__resource-item:has(.resource-type-gradient-research-and-reviews) {
-    background-color: #e4efe8bb;
+    background-color: #e4efe8;
   }
   .dark-mode .capability-card__resource-link:has(.resource-type-gradient-research-and-reviews), .dark-mode .capability-detail__resource-item:has(.resource-type-gradient-research-and-reviews) {
     background-color: #94d3ad12;
@@ -41,7 +41,7 @@ main .resource-type-gradient-whitepapers-and-essays {
   border-color: #47b2a9;
 }
   .capability-card__resource-link:has(.resource-type-gradient-whitepapers-and-essays), .capability-detail__resource-item:has(.resource-type-gradient-whitepapers-and-essays) {
-    background-color: #e2edecbb;
+    background-color: #e2edec;
   }
   .dark-mode .capability-card__resource-link:has(.resource-type-gradient-whitepapers-and-essays), .dark-mode .capability-detail__resource-item:has(.resource-type-gradient-whitepapers-and-essays) {
     background-color: #94d0cb12;
@@ -67,7 +67,7 @@ main .resource-type-gradient-fro {
   border-color: #3a8bc7;
 }
   .capability-card__resource-link:has(.resource-type-gradient-fro), .capability-detail__resource-item:has(.resource-type-gradient-fro) {
-    background-color: #eaf0f4bb;
+    background-color: #eaf0f4;
   }
   .dark-mode .capability-card__resource-link:has(.resource-type-gradient-fro), .dark-mode .capability-detail__resource-item:has(.resource-type-gradient-fro) {
     background-color: #94bddc12;
@@ -93,7 +93,7 @@ main .resource-type-gradient-fro-concept {
   border-color: #3d49c9;
 }
   .capability-card__resource-link:has(.resource-type-gradient-fro-concept), .capability-detail__resource-item:has(.resource-type-gradient-fro-concept) {
-    background-color: #eeeff6bb;
+    background-color: #eeeff6;
   }
   .dark-mode .capability-card__resource-link:has(.resource-type-gradient-fro-concept), .dark-mode .capability-detail__resource-item:has(.resource-type-gradient-fro-concept) {
     background-color: #989ede12;
@@ -119,7 +119,7 @@ main .resource-type-gradient-company {
   border-color: #6635ca;
 }
   .capability-card__resource-link:has(.resource-type-gradient-company), .capability-detail__resource-item:has(.resource-type-gradient-company) {
-    background-color: #ebe8f3bb;
+    background-color: #ebe8f3;
   }
   .dark-mode .capability-card__resource-link:has(.resource-type-gradient-company), .dark-mode .capability-detail__resource-item:has(.resource-type-gradient-company) {
     background-color: #a990dd12;
@@ -145,7 +145,7 @@ main .resource-type-gradient-initiative {
   border-color: #9842bb;
 }
   .capability-card__resource-link:has(.resource-type-gradient-initiative), .capability-detail__resource-item:has(.resource-type-gradient-initiative) {
-    background-color: #ede5f0bb;
+    background-color: #ede5f0;
   }
   .dark-mode .capability-card__resource-link:has(.resource-type-gradient-initiative), .dark-mode .capability-detail__resource-item:has(.resource-type-gradient-initiative) {
     background-color: #c294d512;
@@ -171,7 +171,7 @@ main .resource-type-gradient-technology-seed {
   border-color: #bc478f;
 }
   .capability-card__resource-link:has(.resource-type-gradient-technology-seed), .capability-detail__resource-item:has(.resource-type-gradient-technology-seed) {
-    background-color: #f5eef2bb;
+    background-color: #f5eef2;
   }
   .dark-mode .capability-card__resource-link:has(.resource-type-gradient-technology-seed), .dark-mode .capability-detail__resource-item:has(.resource-type-gradient-technology-seed) {
     background-color: #d79cc012;
@@ -197,7 +197,7 @@ main .resource-type-gradient-roadmap {
   border-color: #cc4949;
 }
   .capability-card__resource-link:has(.resource-type-gradient-roadmap), .capability-detail__resource-item:has(.resource-type-gradient-roadmap) {
-    background-color: #f6eeeebb;
+    background-color: #f6eeee;
   }
   .dark-mode .capability-card__resource-link:has(.resource-type-gradient-roadmap), .dark-mode .capability-detail__resource-item:has(.resource-type-gradient-roadmap) {
     background-color: #e3a9a912;
@@ -223,7 +223,7 @@ main .resource-type-gradient-funding-program {
   border-color: #d28a37;
 }
   .capability-card__resource-link:has(.resource-type-gradient-funding-program), .capability-detail__resource-item:has(.resource-type-gradient-funding-program) {
-    background-color: #f7f3eebb;
+    background-color: #f7f3ee;
   }
   .dark-mode .capability-card__resource-link:has(.resource-type-gradient-funding-program), .dark-mode .capability-detail__resource-item:has(.resource-type-gradient-funding-program) {
     background-color: #e3c09712;
@@ -249,7 +249,7 @@ main .resource-type-gradient-research-org {
   border-color: #ccbb32;
 }
   .capability-card__resource-link:has(.resource-type-gradient-research-org), .capability-detail__resource-item:has(.resource-type-gradient-research-org) {
-    background-color: #f2f1e6bb;
+    background-color: #f2f1e6;
   }
   .dark-mode .capability-card__resource-link:has(.resource-type-gradient-research-org), .dark-mode .capability-detail__resource-item:has(.resource-type-gradient-research-org) {
     background-color: #ded58d12;
@@ -275,7 +275,7 @@ main .resource-type-gradient-individual {
   border-color: #bde121;
 }
   .capability-card__resource-link:has(.resource-type-gradient-individual), .capability-detail__resource-item:has(.resource-type-gradient-individual) {
-    background-color: #f3f6e9bb;
+    background-color: #f3f6e9;
   }
   .dark-mode .capability-card__resource-link:has(.resource-type-gradient-individual), .dark-mode .capability-detail__resource-item:has(.resource-type-gradient-individual) {
     background-color: #d7e98712;

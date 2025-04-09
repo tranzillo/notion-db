@@ -13,6 +13,9 @@
     border $transition,
     box-shadow $transition,
     scale $transition;
+    @media (max-width: $breakpoint-sm) {
+      padding-inline: $spacing-md;
+    }
 
   &__clickable {
     position: absolute;
@@ -27,6 +30,10 @@
     margin: calc($spacing-xl * (-1)) calc($spacing-xl * (-1)) 0 calc($spacing-xl * (-1));
     transition: border-color $transition,
       background-color $transition;
+      @media (max-width: $breakpoint-sm) {
+        margin-inline: calc($spacing-md * (-1));
+        padding-inline: $spacing-md;
+      }
   }
 
   &__field {

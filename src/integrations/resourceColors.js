@@ -193,7 +193,7 @@ main .resource-type-gradient-${type.slug} {
   border-color: ${type.colors.dark};
 }
   .capability-card__resource-link:has(.resource-type-gradient-${type.slug}), .capability-detail__resource-item:has(.resource-type-gradient-${type.slug}) {
-    background-color: ${type.colors.light}bb;
+    background-color: ${type.colors.light};
   }
   .dark-mode .capability-card__resource-link:has(.resource-type-gradient-${type.slug}), .dark-mode .capability-detail__resource-item:has(.resource-type-gradient-${type.slug}) {
     background-color: ${type.colors.base}12;
