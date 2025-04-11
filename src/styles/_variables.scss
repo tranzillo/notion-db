@@ -91,5 +91,6 @@ $transition: 0.3s ease-in-out;
 html[data-list-view="true"] {
   .bottleneck-grid {
     grid-template-columns: 1fr !important;
+    column-count: 1 !important;
   }
 }

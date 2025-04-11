@@ -88,6 +88,7 @@
   &--list-view,
   &--graph-view {
     grid-template-columns: 1fr;
+    column-count: 1;
   }
   &--list-view {
     .bottleneck-card, .capability-card {

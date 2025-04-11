@@ -841,9 +841,9 @@ export default function DashboardGrid({
               />
             ))
           ) : (
-            // Render resource cards grouped by type
-            viewMode === 'list' ? (
-              // In list view, render resources without grouping
+            // Render resource cards - grouping based on sort method
+            sortBy === 'alpha' ? (
+              // When sorting alphabetically, don't group resources (regardless of view mode)
               filteredItems.map(resource => {
                 const { linkedCapabilities, linkedFields } = getResourceRelationships(resource.id);
                 
@@ -859,7 +859,7 @@ export default function DashboardGrid({
                 );
               })
             ) : (
-              // In grid view, render resources grouped by type
+              // When sorting by type, group resources by type (regardless of view mode)
               renderResourcesGroupedByType()
             )
           )

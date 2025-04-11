@@ -112,9 +112,7 @@
         padding-block-end: $spacing-xs;
       }
   }
-  &__resource-group + &__resource-group {
-    margin-block-start: $spacing-md;
-  }
+
 &__resource-group-items {
   break-inside: avoid;
   border-radius: $border-radius-lg;
