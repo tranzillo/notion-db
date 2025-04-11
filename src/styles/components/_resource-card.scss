@@ -1,9 +1,12 @@
-// src/styles/components/_resource-card.scss
+.dark-mode .resource-card:has(.resource-card__capabilities-expanded) {
+    .resource-card__capabilities-button {
+        background-color: #ffffff08;
+    }
+}
 .resource-card:has(.resource-card__capabilities-expanded) {
     margin-block-end: $spacing-md;
     .resource-card__capabilities-button {
-        background-color: #ffffff07;
-        border-color: var(--tertiary-color);
+        background-color: #ffffff88;
         color: var(--text-light);
         border-radius: 0 0 $border-radius-md $border-radius-md;
     }
@@ -83,7 +86,7 @@
       display: flex;
       flex-wrap: wrap;
       gap: $spacing-xs;
-      margin-top: $spacing-sm;
+      margin-block-start: $spacing-sm;
     }
   
     &__field {
@@ -103,7 +106,6 @@
       align-items: flex-end;
       justify-content: flex-end;
       gap: $spacing-xl;
-      background-color: #00000010;
   
       &-left,
       &-right {
@@ -135,7 +137,7 @@
       justify-content: flex-end;
       gap: $spacing-xs;
       cursor: pointer;
-      background-color: transparent;
+      background-color: #00000010;
       color: var(--text-lighter);
       border: none;
       border-radius: $border-radius-md;
@@ -209,7 +211,7 @@
       display: flex;
       flex-wrap: wrap;
       gap: $spacing-xs;
-      margin-top: $spacing-xs;
+      margin-block-start: $spacing-sm;
     }
   
     &:hover {
