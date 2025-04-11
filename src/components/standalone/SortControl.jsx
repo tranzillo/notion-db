@@ -9,19 +9,32 @@ export default function SortControl({ initialSortBy = 'rank' }) {
   const [isCapabilitiesView, setIsCapabilitiesView] = useState(false);
 
   useEffect(() => {
-    // Check if we're in the capabilities view based on pathname
+    // Check if we're in the capabilities or resources view based on pathname
     if (typeof window !== 'undefined') {
-      const isCapView = window.location.pathname.startsWith('/capabilities');
+      const path = window.location.pathname;
+      const isCapView = path.startsWith('/capabilities');
+      const isResourceView = path.startsWith('/resources');
+      
       setIsCapabilitiesView(isCapView);
       
-      // If we're in capabilities view and sort is 'rank', change it to 'bottlenecks'
-      // since rank doesn't apply to capabilities
-      if (isCapView && sortBy === 'rank') {
+      // Set the appropriate sort options based on view
+      if (isResourceView) {
+        // For resources: type -> alpha -> type
+        if (sortBy !== 'type' && sortBy !== 'alpha') {
+          const newSort = 'type';
+          setSortBy(newSort);
+          updateUrlParamsWithoutHistory({ sort: newSort });
+          
+          window.dispatchEvent(new CustomEvent('sort-changed', {
+            detail: { sortBy: newSort }
+          }));
+        }
+      } else if (isCapView && sortBy === 'rank') {
+        // For capabilities: bottlenecks -> alpha -> bottlenecks
         const newSort = 'bottlenecks';
         setSortBy(newSort);
         updateUrlParamsWithoutHistory({ sort: newSort });
         
-        // Dispatch event to notify other components
         window.dispatchEvent(new CustomEvent('sort-changed', {
           detail: { sortBy: newSort }
         }));
@@ -37,6 +50,9 @@ export default function SortControl({ initialSortBy = 'rank' }) {
     if (isCapabilitiesView) {
       // For capabilities: bottlenecks -> alpha -> bottlenecks
       newSortBy = sortBy === 'bottlenecks' ? 'alpha' : 'bottlenecks';
+    } else if (window.location.pathname.startsWith('/resources')) {
+      // For resources: type -> alpha -> type
+      newSortBy = sortBy === 'type' ? 'alpha' : 'type';
     } else {
       // For bottlenecks: rank -> alpha -> rank
       newSortBy = sortBy === 'rank' ? 'alpha' : 'rank';

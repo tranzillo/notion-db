@@ -63,12 +63,59 @@
   @media (min-width: $breakpoint-max) {
     grid-template-columns: repeat(5, 1fr);
   }
-
+  &:has(.resource-group) {
+    display: block;
+    column-count: 1;
+    column-gap: $spacing-md;
+    
+    @media (min-width: $breakpoint-xl) {
+      column-count: 2;
+    }
+  
+    @media (min-width: $breakpoint-xxl) {
+      column-count: 3;
+    }
+  
+    @media (min-width: $breakpoint-xxxl) {
+      column-count: 4;
+      column-gap: $spacing-xl;
+    }
+  
+    @media (min-width: $breakpoint-max) {
+      column-count: 5;
+    }
+  }
   &--list-view,
   &--graph-view {
     grid-template-columns: 1fr;
   }
-
+  &--list-view {
+    .bottleneck-card, .capability-card {
+      flex-direction: row;
+      max-width: unset;
+      gap: 0 $spacing-md;
+      padding: $spacing-md $spacing-lg;
+      &__header {
+        padding: 0;
+        margin: auto 0;
+        background-color: transparent;
+      }
+      &__content {
+        height: 0;
+        flex-basis: 0;
+        flex-shrink: 1;
+      }
+      &__footer {
+        align-items: center;
+        margin: 0 0 0 auto;
+        flex-shrink: 0;
+        gap: $spacing-md;
+      }
+      @media (max-width: $breakpoint-md) {
+        flex-direction: column;
+      }
+    }
+  }
   &__empty-state {
     grid-column: 1 / -1;
     text-align: center;

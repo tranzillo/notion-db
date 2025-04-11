@@ -5,7 +5,8 @@ import { saveCurrentUrlState } from '../../lib/navigationUtils';
 export default function Search({ 
   initialQuery = '', 
   bottleneckCount = 0, 
-  capabilityCount = 0 
+  capabilityCount = 0,
+  resourceCount = 0
 }) {
   const [searchQuery, setSearchQuery] = useState(initialQuery);
   const [placeholderText, setPlaceholderText] = useState('Search...');
@@ -29,11 +30,14 @@ export default function Search({
   useEffect(() => {
     const updatePlaceholder = () => {
       if (typeof window !== 'undefined') {
-        const isCapabilitiesView = window.location.pathname.startsWith('/capabilities');
+        const path = window.location.pathname;
         
-        if (isCapabilitiesView) {
+        if (path.startsWith('/capabilities')) {
           const count = capabilityCount || 0;
           setPlaceholderText(`Search ${count} Foundational Capabilities...`);
+        } else if (path.startsWith('/resources')) {
+          const count = resourceCount || 0;
+          setPlaceholderText(`Search ${count} Resources...`);
         } else {
           const count = bottleneckCount || 0;
           setPlaceholderText(`Search ${count} R&D Gaps...`);
@@ -47,7 +51,7 @@ export default function Search({
     return () => {
       document.removeEventListener('astro:page-load', updatePlaceholder);
     };
-  }, [bottleneckCount, capabilityCount]);
+  }, [bottleneckCount, capabilityCount, resourceCount]);
 
   // Handle search input change
   const handleSearchChange = (e) => {

@@ -179,19 +179,19 @@ function generateCss(resourceTypes) {
   // Add selectors for each resource type
   resourceTypes.forEach(type => {
     css += `
-/* ${type.name} */
-main .resource-type-gradient-${type.slug} {
-  background-color: ${type.colors.light};
-  color: #404137;
-  border-color: ${type.colors.base};
-}
+  /* ${type.name} */
+  main .resource-type-gradient-${type.slug} {
+    background-color: ${type.colors.light};
+    color: #404137;
+    border-color: ${type.colors.base};
+  }
 
-/* Dark mode styles */
-.dark-mode .resource-type-gradient-${type.slug} {
-  background-color: transparent;
-  color: #a0a094;
-  border-color: ${type.colors.dark};
-}
+  /* Dark mode styles */
+  .dark-mode .resource-type-gradient-${type.slug} {
+    background-color: transparent;
+    color: #a0a094;
+    border-color: ${type.colors.dark};
+  }
   .capability-card__resource-link:has(.resource-type-gradient-${type.slug}), .capability-detail__resource-item:has(.resource-type-gradient-${type.slug}) {
     background-color: ${type.colors.light};
   }
@@ -202,6 +202,19 @@ main .resource-type-gradient-${type.slug} {
     color: ${type.colors.dark};
   }
   .dark-mode .capability-card__resource-link:hover:has(.resource-type-gradient-${type.slug}) a, .dark-mode .capability-detail__resource-item:hover:has(.resource-type-gradient-${type.slug}) a {
+    color: ${type.colors.base};
+  }
+
+  .resource-card:has(.resource-type-gradient-${type.slug}) {
+    background-color: ${type.colors.light};
+  }
+  .dark-mode .resource-card:has(.resource-type-gradient-${type.slug}) {
+    background-color: ${type.colors.base}12;
+  }
+  .resource-card:hover:has(.resource-type-gradient-${type.slug}) a {
+    color: ${type.colors.dark};
+  }
+  .dark-mode .resource-card:hover:has(.resource-type-gradient-${type.slug}) a {
     color: ${type.colors.base};
   }
 `;

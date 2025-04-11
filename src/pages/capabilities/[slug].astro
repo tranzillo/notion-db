@@ -176,7 +176,7 @@ if (capability.bottlenecks && Array.isArray(capability.bottlenecks)) {
         {
             capability.bottlenecks && capability.bottlenecks.length > 0 && (
                 <div class="capability-detail__bottlenecks">
-                    <h2>Related R&D Gaps <span class="subtle">({capability.bottlenecks.length})</span></h2>
+                    <h2 class="indent">Related R&D Gaps <span class="subtle">({capability.bottlenecks.length})</span></h2>
                     <div class="capability-detail__bottlenecks-grid">
                         {capability.bottlenecks.map((bottleneck) => (
                             <BottleneckCard

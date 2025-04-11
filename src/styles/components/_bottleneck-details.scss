@@ -76,14 +76,14 @@
   }
 
   &__content {
-    max-width: 100ch;
+    max-width: 112ch;
     font-size: $font-size-md;
     color: var(--text-light);
     line-height: 1.5;
   }
 
   &__capabilities {
-    padding: $spacing-xxl $spacing-xl $spacing-xl;
+    padding: $spacing-xxl $spacing-md $spacing-md;
     margin: 0 calc($spacing-xl * (-1)) calc($spacing-xl * (-1)) calc($spacing-xl * (-1));
     background-color: var(--background-color);
     border-top: 1px solid var(--border-dull);
@@ -104,7 +104,7 @@
 
   &__capabilities-grid {
     column-count: 1;
-    column-gap: $spacing-lg;
+    column-gap: $spacing-md;
     margin-block-start: $spacing-lg;
     align-items: start;
 
@@ -117,7 +117,7 @@
       }
     
       .capability-card {
-        margin-block-end: $spacing-lg;
+        margin-block-end: $spacing-md;
         &:last-child {
           @media (max-width: $breakpoint-sm) {
             margin-block-end: $spacing-xs;

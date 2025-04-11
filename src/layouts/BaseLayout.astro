@@ -306,6 +306,17 @@ const {
                   Foundational Capabilities
                 </a>
               </div>
+              <div class="base-layout__nav-item">
+                <a
+                  href="/resources"
+                  class={Astro.url.pathname.startsWith("/resources")
+                    ? "active"
+                    : ""}
+                  target="_self"
+                >
+                  Resources
+                </a>
+              </div>
             </div>
               <div class="base-layout__sub-nav">
               <div class="base-layout__nav-item">
@@ -376,6 +387,15 @@ const {
             >
               Foundational Capabilities
             </a>
+            <a
+            href="/resources"
+            class={Astro.url.pathname.startsWith("/resources")
+              ? "active"
+              : ""}
+            target="_self"
+          >
+            Resources
+          </a>
             <a
               href="/about"
               class={Astro.url.pathname === "/about" ? "active" : ""}

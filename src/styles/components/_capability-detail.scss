@@ -12,9 +12,7 @@
       padding-inline: $spacing-md;
       gap: $spacing-xl;
     }
-    h2 {
-      margin-inline-start: $spacing-md;
-    }
+    
   &--grid {
     display: flex;
     flex-direction: column;
@@ -95,14 +93,14 @@
   }
 
   &__content {
-    max-width: 100ch;
+    max-width: 112ch;
     font-size: $font-size-md;
     color: var(--text-light);
     line-height: 1.5;
   }
 
   &__resources {
-    padding: $spacing-xl;
+    padding: $spacing-xxl $spacing-xl $spacing-xl;
     margin: 0 calc($spacing-xl * (-1)) 0 calc($spacing-xl * (-1));
     background-color: var(--background-color);
     border-block-start: 1px solid var(--border-dull);
@@ -128,7 +126,7 @@
     list-style: none;
     column-count: 1;
     column-gap: $spacing-md;
-    padding: $spacing-md 0;
+    padding: $spacing-lg 0 $spacing-md;
     align-items: flex-start;
 
     @media (min-width: $breakpoint-lg) {
@@ -176,7 +174,7 @@
   }
 
   &__bottlenecks {
-    padding: $spacing-xxl $spacing-xl $spacing-xl;
+    padding: $spacing-xxl $spacing-md $spacing-md;
     margin: 0 calc($spacing-xl * (-1)) calc($spacing-xl * (-1)) calc($spacing-xl * (-1));
     background-color: var(--background-color);
     border-top: 1px solid var(--border-dull);

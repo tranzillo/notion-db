@@ -1,0 +1,138 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Search from "../../components/standalone/Search";
+import FieldFilter from "../../components/standalone/FieldFilter";
+import DashboardGrid from "../../components/standalone/DashboardGrid";
+import ViewToggle from "../../components/standalone/ViewToggle";
+import SortControl from "../../components/standalone/SortControl";
+import PrivateTagBanner from "../../components/standalone/PrivateTagBanner";
+import { extractTags, parseUrlParamsWithTags } from "../../lib/tagUtils";
+import { getEnhancedData } from "../../lib/enhancedData";
+
+// Fetch all enhanced data from Notion at build time
+const { bottlenecks, foundationalCapabilities, fields, contentAreas, resources } =
+  await getEnhancedData();
+
+// Extract all unique tags from resources
+const tags = extractTags(resources);
+
+// Get URL parameters including tag parameters
+const { searchQuery, fieldSlugs, sortBy, tag, privateTag } =
+  parseUrlParamsWithTags(Astro.url.toString());
+
+// Calculate counts for display
+const bottleneckCount = bottlenecks.length;
+const capabilityCount = foundationalCapabilities.length;
+const resourceCount = resources.length;
+
+// Calculate field counts for resources (derived from connected capabilities and bottlenecks)
+const fieldCounts = {};
+resources.forEach((resource) => {
+  // Get capabilities that reference this resource
+  const linkedCapabilities = foundationalCapabilities.filter(capability => 
+    capability.resources && capability.resources.some(r => r.id === resource.id)
+  );
+
+  // Get all bottlenecks linked to those capabilities
+  linkedCapabilities.forEach(capability => {
+    if (capability.bottlenecks) {
+      capability.bottlenecks.forEach(bottleneck => {
+        if (bottleneck.field && bottleneck.field.id) {
+          fieldCounts[bottleneck.field.id] = (fieldCounts[bottleneck.field.id] || 0) + 1;
+        }
+      });
+    }
+  });
+});
+
+// Get resources content if available, or create a default one
+const resourcesContent = contentAreas?.resources || {
+  title: "Browse Resources",
+  content: `<p>Explore <em>${resourceCount} Resources</em> related to <em>${capabilityCount} Foundational Capabilities</em> and <em>${bottleneckCount} R&D Gaps</em>. Use the search and filters to find resources relevant to your interests.</p>`,
+};
+---
+
+<BaseLayout title="Resources - The Cata-List">
+  <div class="dashboard-header">
+    <h1>{resourcesContent.title}</h1>
+    <div
+      class="dashboard-content notion-content"
+      set:html={resourcesContent.content}
+    />
+  </div>
+
+  <div class="dashboard-layout">
+    <aside class="dashboard-layout__sidebar">
+      <FieldFilter
+        client:load
+        fields={fields}
+        initialSelectedIds={fieldSlugs}
+        fieldCounts={fieldCounts}
+      />
+    </aside>
+
+    <div class="dashboard-layout__main">
+      <!-- Private Tag Banner -->
+      <PrivateTagBanner client:load />
+
+      <div class="dashboard-search">
+        <Search
+          client:load
+          initialQuery={searchQuery}
+          bottleneckCount={bottleneckCount}
+          capabilityCount={capabilityCount}
+          resourceCount={resourceCount}
+        />
+        <div class="dashboard-controls">
+          <SortControl client:load initialSortBy={sortBy || "type"} />
+          <ViewToggle client:load />
+        </div>
+      </div>
+
+      <DashboardGrid
+        client:load
+        viewType="resources"
+        resources={resources}
+        capabilities={foundationalCapabilities}
+        bottlenecks={bottlenecks}
+        fields={fields}
+        initialSearchQuery={searchQuery}
+        initialSelectedFieldIds={fieldSlugs}
+        initialSortBy={sortBy || "type"}
+        initialSelectedTag={tag}
+        initialPrivateTag={privateTag}
+      />
+    </div>
+  </div>
+</BaseLayout>
+
+<script>
+  import { saveCurrentUrlState } from "../../lib/navigationUtils";
+
+  // Save the current URL state for potential "back" navigation
+  document.addEventListener("astro:page-load", () => {
+    saveCurrentUrlState();
+  });
+
+  // Also save URL state when search or filter changes
+  window.addEventListener("search-changed", () => {
+    saveCurrentUrlState();
+  });
+
+  window.addEventListener("fields-changed", () => {
+    saveCurrentUrlState();
+  });
+
+  window.addEventListener("sort-changed", () => {
+    saveCurrentUrlState();
+  });
+
+  // Add listeners for the tag events
+  window.addEventListener("tag-changed", () => {
+    saveCurrentUrlState();
+  });
+
+  window.addEventListener("private-tag-changed", () => {
+    saveCurrentUrlState();
+  });
+</script>

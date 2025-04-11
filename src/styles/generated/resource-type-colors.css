@@ -1,19 +1,19 @@
 /* Generated resource type color styles */
 
 
-/* Research and Reviews */
-main .resource-type-gradient-research-and-reviews {
-  background-color: #e4efe8;
-  color: #404137;
-  border-color: #94d3ad;
-}
+  /* Research and Reviews */
+  main .resource-type-gradient-research-and-reviews {
+    background-color: #e4efe8;
+    color: #404137;
+    border-color: #94d3ad;
+  }
 
-/* Dark mode styles */
-.dark-mode .resource-type-gradient-research-and-reviews {
-  background-color: transparent;
-  color: #a0a094;
-  border-color: #44b772;
-}
+  /* Dark mode styles */
+  .dark-mode .resource-type-gradient-research-and-reviews {
+    background-color: transparent;
+    color: #a0a094;
+    border-color: #44b772;
+  }
   .capability-card__resource-link:has(.resource-type-gradient-research-and-reviews), .capability-detail__resource-item:has(.resource-type-gradient-research-and-reviews) {
     background-color: #e4efe8;
   }
@@ -27,19 +27,32 @@ main .resource-type-gradient-research-and-reviews {
     color: #94d3ad;
   }
 
-/* Whitepapers and Essays */
-main .resource-type-gradient-whitepapers-and-essays {
-  background-color: #e2edec;
-  color: #404137;
-  border-color: #94d0cb;
-}
+  .resource-card:has(.resource-type-gradient-research-and-reviews) {
+    background-color: #e4efe8;
+  }
+  .dark-mode .resource-card:has(.resource-type-gradient-research-and-reviews) {
+    background-color: #94d3ad12;
+  }
+  .resource-card:hover:has(.resource-type-gradient-research-and-reviews) a {
+    color: #44b772;
+  }
+  .dark-mode .resource-card:hover:has(.resource-type-gradient-research-and-reviews) a {
+    color: #94d3ad;
+  }
 
-/* Dark mode styles */
-.dark-mode .resource-type-gradient-whitepapers-and-essays {
-  background-color: transparent;
-  color: #a0a094;
-  border-color: #47b2a9;
-}
+  /* Whitepapers and Essays */
+  main .resource-type-gradient-whitepapers-and-essays {
+    background-color: #e2edec;
+    color: #404137;
+    border-color: #94d0cb;
+  }
+
+  /* Dark mode styles */
+  .dark-mode .resource-type-gradient-whitepapers-and-essays {
+    background-color: transparent;
+    color: #a0a094;
+    border-color: #47b2a9;
+  }
   .capability-card__resource-link:has(.resource-type-gradient-whitepapers-and-essays), .capability-detail__resource-item:has(.resource-type-gradient-whitepapers-and-essays) {
     background-color: #e2edec;
   }
@@ -53,19 +66,32 @@ main .resource-type-gradient-whitepapers-and-essays {
     color: #94d0cb;
   }
 
-/* FRO */
-main .resource-type-gradient-fro {
-  background-color: #eaf0f4;
-  color: #404137;
-  border-color: #94bddc;
-}
+  .resource-card:has(.resource-type-gradient-whitepapers-and-essays) {
+    background-color: #e2edec;
+  }
+  .dark-mode .resource-card:has(.resource-type-gradient-whitepapers-and-essays) {
+    background-color: #94d0cb12;
+  }
+  .resource-card:hover:has(.resource-type-gradient-whitepapers-and-essays) a {
+    color: #47b2a9;
+  }
+  .dark-mode .resource-card:hover:has(.resource-type-gradient-whitepapers-and-essays) a {
+    color: #94d0cb;
+  }
 
-/* Dark mode styles */
-.dark-mode .resource-type-gradient-fro {
-  background-color: transparent;
-  color: #a0a094;
-  border-color: #3a8bc7;
-}
+  /* FRO */
+  main .resource-type-gradient-fro {
+    background-color: #eaf0f4;
+    color: #404137;
+    border-color: #94bddc;
+  }
+
+  /* Dark mode styles */
+  .dark-mode .resource-type-gradient-fro {
+    background-color: transparent;
+    color: #a0a094;
+    border-color: #3a8bc7;
+  }
   .capability-card__resource-link:has(.resource-type-gradient-fro), .capability-detail__resource-item:has(.resource-type-gradient-fro) {
     background-color: #eaf0f4;
   }
@@ -79,19 +105,32 @@ main .resource-type-gradient-fro {
     color: #94bddc;
   }
 
-/* FRO Concept */
-main .resource-type-gradient-fro-concept {
-  background-color: #eeeff6;
-  color: #404137;
-  border-color: #989ede;
-}
+  .resource-card:has(.resource-type-gradient-fro) {
+    background-color: #eaf0f4;
+  }
+  .dark-mode .resource-card:has(.resource-type-gradient-fro) {
+    background-color: #94bddc12;
+  }
+  .resource-card:hover:has(.resource-type-gradient-fro) a {
+    color: #3a8bc7;
+  }
+  .dark-mode .resource-card:hover:has(.resource-type-gradient-fro) a {
+    color: #94bddc;
+  }
 
-/* Dark mode styles */
-.dark-mode .resource-type-gradient-fro-concept {
-  background-color: transparent;
-  color: #a0a094;
-  border-color: #3d49c9;
-}
+  /* FRO Concept */
+  main .resource-type-gradient-fro-concept {
+    background-color: #eeeff6;
+    color: #404137;
+    border-color: #989ede;
+  }
+
+  /* Dark mode styles */
+  .dark-mode .resource-type-gradient-fro-concept {
+    background-color: transparent;
+    color: #a0a094;
+    border-color: #3d49c9;
+  }
   .capability-card__resource-link:has(.resource-type-gradient-fro-concept), .capability-detail__resource-item:has(.resource-type-gradient-fro-concept) {
     background-color: #eeeff6;
   }
@@ -105,19 +144,32 @@ main .resource-type-gradient-fro-concept {
     color: #989ede;
   }
 
-/* Company */
-main .resource-type-gradient-company {
-  background-color: #ebe8f3;
-  color: #404137;
-  border-color: #a990dd;
-}
+  .resource-card:has(.resource-type-gradient-fro-concept) {
+    background-color: #eeeff6;
+  }
+  .dark-mode .resource-card:has(.resource-type-gradient-fro-concept) {
+    background-color: #989ede12;
+  }
+  .resource-card:hover:has(.resource-type-gradient-fro-concept) a {
+    color: #3d49c9;
+  }
+  .dark-mode .resource-card:hover:has(.resource-type-gradient-fro-concept) a {
+    color: #989ede;
+  }
 
-/* Dark mode styles */
-.dark-mode .resource-type-gradient-company {
-  background-color: transparent;
-  color: #a0a094;
-  border-color: #6635ca;
-}
+  /* Company */
+  main .resource-type-gradient-company {
+    background-color: #ebe8f3;
+    color: #404137;
+    border-color: #a990dd;
+  }
+
+  /* Dark mode styles */
+  .dark-mode .resource-type-gradient-company {
+    background-color: transparent;
+    color: #a0a094;
+    border-color: #6635ca;
+  }
   .capability-card__resource-link:has(.resource-type-gradient-company), .capability-detail__resource-item:has(.resource-type-gradient-company) {
     background-color: #ebe8f3;
   }
@@ -131,19 +183,32 @@ main .resource-type-gradient-company {
     color: #a990dd;
   }
 
-/* Initiative */
-main .resource-type-gradient-initiative {
-  background-color: #ede5f0;
-  color: #404137;
-  border-color: #c294d5;
-}
+  .resource-card:has(.resource-type-gradient-company) {
+    background-color: #ebe8f3;
+  }
+  .dark-mode .resource-card:has(.resource-type-gradient-company) {
+    background-color: #a990dd12;
+  }
+  .resource-card:hover:has(.resource-type-gradient-company) a {
+    color: #6635ca;
+  }
+  .dark-mode .resource-card:hover:has(.resource-type-gradient-company) a {
+    color: #a990dd;
+  }
 
-/* Dark mode styles */
-.dark-mode .resource-type-gradient-initiative {
-  background-color: transparent;
-  color: #a0a094;
-  border-color: #9842bb;
-}
+  /* Initiative */
+  main .resource-type-gradient-initiative {
+    background-color: #ede5f0;
+    color: #404137;
+    border-color: #c294d5;
+  }
+
+  /* Dark mode styles */
+  .dark-mode .resource-type-gradient-initiative {
+    background-color: transparent;
+    color: #a0a094;
+    border-color: #9842bb;
+  }
   .capability-card__resource-link:has(.resource-type-gradient-initiative), .capability-detail__resource-item:has(.resource-type-gradient-initiative) {
     background-color: #ede5f0;
   }
@@ -157,19 +222,32 @@ main .resource-type-gradient-initiative {
     color: #c294d5;
   }
 
-/* Technology Seed */
-main .resource-type-gradient-technology-seed {
-  background-color: #f5eef2;
-  color: #404137;
-  border-color: #d79cc0;
-}
+  .resource-card:has(.resource-type-gradient-initiative) {
+    background-color: #ede5f0;
+  }
+  .dark-mode .resource-card:has(.resource-type-gradient-initiative) {
+    background-color: #c294d512;
+  }
+  .resource-card:hover:has(.resource-type-gradient-initiative) a {
+    color: #9842bb;
+  }
+  .dark-mode .resource-card:hover:has(.resource-type-gradient-initiative) a {
+    color: #c294d5;
+  }
 
-/* Dark mode styles */
-.dark-mode .resource-type-gradient-technology-seed {
-  background-color: transparent;
-  color: #a0a094;
-  border-color: #bc478f;
-}
+  /* Technology Seed */
+  main .resource-type-gradient-technology-seed {
+    background-color: #f5eef2;
+    color: #404137;
+    border-color: #d79cc0;
+  }
+
+  /* Dark mode styles */
+  .dark-mode .resource-type-gradient-technology-seed {
+    background-color: transparent;
+    color: #a0a094;
+    border-color: #bc478f;
+  }
   .capability-card__resource-link:has(.resource-type-gradient-technology-seed), .capability-detail__resource-item:has(.resource-type-gradient-technology-seed) {
     background-color: #f5eef2;
   }
@@ -183,19 +261,32 @@ main .resource-type-gradient-technology-seed {
     color: #d79cc0;
   }
 
-/* Roadmap */
-main .resource-type-gradient-roadmap {
-  background-color: #f6eeee;
-  color: #404137;
-  border-color: #e3a9a9;
-}
+  .resource-card:has(.resource-type-gradient-technology-seed) {
+    background-color: #f5eef2;
+  }
+  .dark-mode .resource-card:has(.resource-type-gradient-technology-seed) {
+    background-color: #d79cc012;
+  }
+  .resource-card:hover:has(.resource-type-gradient-technology-seed) a {
+    color: #bc478f;
+  }
+  .dark-mode .resource-card:hover:has(.resource-type-gradient-technology-seed) a {
+    color: #d79cc0;
+  }
 
-/* Dark mode styles */
-.dark-mode .resource-type-gradient-roadmap {
-  background-color: transparent;
-  color: #a0a094;
-  border-color: #cc4949;
-}
+  /* Roadmap */
+  main .resource-type-gradient-roadmap {
+    background-color: #f6eeee;
+    color: #404137;
+    border-color: #e3a9a9;
+  }
+
+  /* Dark mode styles */
+  .dark-mode .resource-type-gradient-roadmap {
+    background-color: transparent;
+    color: #a0a094;
+    border-color: #cc4949;
+  }
   .capability-card__resource-link:has(.resource-type-gradient-roadmap), .capability-detail__resource-item:has(.resource-type-gradient-roadmap) {
     background-color: #f6eeee;
   }
@@ -209,19 +300,32 @@ main .resource-type-gradient-roadmap {
     color: #e3a9a9;
   }
 
-/* Funding Program */
-main .resource-type-gradient-funding-program {
-  background-color: #f7f3ee;
-  color: #404137;
-  border-color: #e3c097;
-}
+  .resource-card:has(.resource-type-gradient-roadmap) {
+    background-color: #f6eeee;
+  }
+  .dark-mode .resource-card:has(.resource-type-gradient-roadmap) {
+    background-color: #e3a9a912;
+  }
+  .resource-card:hover:has(.resource-type-gradient-roadmap) a {
+    color: #cc4949;
+  }
+  .dark-mode .resource-card:hover:has(.resource-type-gradient-roadmap) a {
+    color: #e3a9a9;
+  }
 
-/* Dark mode styles */
-.dark-mode .resource-type-gradient-funding-program {
-  background-color: transparent;
-  color: #a0a094;
-  border-color: #d28a37;
-}
+  /* Funding Program */
+  main .resource-type-gradient-funding-program {
+    background-color: #f7f3ee;
+    color: #404137;
+    border-color: #e3c097;
+  }
+
+  /* Dark mode styles */
+  .dark-mode .resource-type-gradient-funding-program {
+    background-color: transparent;
+    color: #a0a094;
+    border-color: #d28a37;
+  }
   .capability-card__resource-link:has(.resource-type-gradient-funding-program), .capability-detail__resource-item:has(.resource-type-gradient-funding-program) {
     background-color: #f7f3ee;
   }
@@ -235,19 +339,32 @@ main .resource-type-gradient-funding-program {
     color: #e3c097;
   }
 
-/* Research Org */
-main .resource-type-gradient-research-org {
-  background-color: #f2f1e6;
-  color: #404137;
-  border-color: #ded58d;
-}
+  .resource-card:has(.resource-type-gradient-funding-program) {
+    background-color: #f7f3ee;
+  }
+  .dark-mode .resource-card:has(.resource-type-gradient-funding-program) {
+    background-color: #e3c09712;
+  }
+  .resource-card:hover:has(.resource-type-gradient-funding-program) a {
+    color: #d28a37;
+  }
+  .dark-mode .resource-card:hover:has(.resource-type-gradient-funding-program) a {
+    color: #e3c097;
+  }
 
-/* Dark mode styles */
-.dark-mode .resource-type-gradient-research-org {
-  background-color: transparent;
-  color: #a0a094;
-  border-color: #ccbb32;
-}
+  /* Research Org */
+  main .resource-type-gradient-research-org {
+    background-color: #f2f1e6;
+    color: #404137;
+    border-color: #ded58d;
+  }
+
+  /* Dark mode styles */
+  .dark-mode .resource-type-gradient-research-org {
+    background-color: transparent;
+    color: #a0a094;
+    border-color: #ccbb32;
+  }
   .capability-card__resource-link:has(.resource-type-gradient-research-org), .capability-detail__resource-item:has(.resource-type-gradient-research-org) {
     background-color: #f2f1e6;
   }
@@ -261,19 +378,32 @@ main .resource-type-gradient-research-org {
     color: #ded58d;
   }
 
-/* Individual */
-main .resource-type-gradient-individual {
-  background-color: #f3f6e9;
-  color: #404137;
-  border-color: #d7e987;
-}
+  .resource-card:has(.resource-type-gradient-research-org) {
+    background-color: #f2f1e6;
+  }
+  .dark-mode .resource-card:has(.resource-type-gradient-research-org) {
+    background-color: #ded58d12;
+  }
+  .resource-card:hover:has(.resource-type-gradient-research-org) a {
+    color: #ccbb32;
+  }
+  .dark-mode .resource-card:hover:has(.resource-type-gradient-research-org) a {
+    color: #ded58d;
+  }
 
-/* Dark mode styles */
-.dark-mode .resource-type-gradient-individual {
-  background-color: transparent;
-  color: #a0a094;
-  border-color: #bde121;
-}
+  /* Individual */
+  main .resource-type-gradient-individual {
+    background-color: #f3f6e9;
+    color: #404137;
+    border-color: #d7e987;
+  }
+
+  /* Dark mode styles */
+  .dark-mode .resource-type-gradient-individual {
+    background-color: transparent;
+    color: #a0a094;
+    border-color: #bde121;
+  }
   .capability-card__resource-link:has(.resource-type-gradient-individual), .capability-detail__resource-item:has(.resource-type-gradient-individual) {
     background-color: #f3f6e9;
   }
@@ -284,5 +414,18 @@ main .resource-type-gradient-individual {
     color: #bde121;
   }
   .dark-mode .capability-card__resource-link:hover:has(.resource-type-gradient-individual) a, .dark-mode .capability-detail__resource-item:hover:has(.resource-type-gradient-individual) a {
+    color: #d7e987;
+  }
+
+  .resource-card:has(.resource-type-gradient-individual) {
+    background-color: #f3f6e9;
+  }
+  .dark-mode .resource-card:has(.resource-type-gradient-individual) {
+    background-color: #d7e98712;
+  }
+  .resource-card:hover:has(.resource-type-gradient-individual) a {
+    color: #bde121;
+  }
+  .dark-mode .resource-card:hover:has(.resource-type-gradient-individual) a {
     color: #d7e987;
   }
