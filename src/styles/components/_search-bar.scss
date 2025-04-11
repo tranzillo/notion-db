@@ -1,3 +1,9 @@
+.search-highlight {
+  background-color: var(--highlight-bg);
+  color: var(--primary-color);
+  border-radius: $border-radius-sm;
+}
+
 .search-bar {
   &__form {
     position: relative;
@@ -48,11 +54,4 @@
       color: var(--text-color);
     }
   }
-}
-
-
-.search-highlight {
-  background-color: var(--highlight-bg);
-  color: var(--highlight-color);
-  border-radius: $border-radius-sm;
 }

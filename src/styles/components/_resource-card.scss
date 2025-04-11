@@ -55,7 +55,7 @@
 
     &__type {
         display: inline-block;
-        padding: $spacing-xs $spacing-sm;
+        padding: calc($spacing-xs * 0.5) $spacing-xs;
         border: 1px solid transparent;
         border-radius: $border-radius-md;
         font-size: $font-size-xs;
