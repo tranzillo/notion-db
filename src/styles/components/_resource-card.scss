@@ -13,7 +13,7 @@
 }
 .resource-group {
     .resource-card + .resource-card {
-        margin-block-start: $spacing-md;
+        margin-block-start: $spacing-sm;
     }
 }
 .resource-card {
@@ -46,7 +46,7 @@
       display: inline-block;
       padding: 0.125rem $spacing-xs;
       border: 1px solid transparent;
-      border-radius: $border-radius-md;
+      border-radius: $border-radius-sm;
       font-size: $font-size-xs;
       letter-spacing: 0.04em;
     }
