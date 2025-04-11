@@ -1,3 +1,6 @@
+.capability-detail__resource-group + .capability-detail__resource-group {
+  margin-block-start: $spacing-md;
+}
 .capability-detail {
   display: flex;
   flex-direction: column;

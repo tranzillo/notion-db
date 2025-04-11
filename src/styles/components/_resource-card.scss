@@ -11,8 +11,10 @@
 .resource-group + .resource-group {
     margin-block-start: $spacing-xl;
 }
-.resource-card + .resource-card {
-    margin-block-start: $spacing-sm;
+.resource-group {
+    .resource-card + .resource-card {
+        margin-block-start: $spacing-md;
+    }
 }
 .resource-card {
     break-inside: avoid;
