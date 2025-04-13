@@ -61,13 +61,24 @@ export function generateColorFamily(baseColor) {
     const lightHsl = d3.hsl(hsl.h, Math.min(hsl.s * 0.8, 1), Math.min(hsl.l * 1.2, 0.95));
     const darkHsl = d3.hsl(hsl.h, Math.min(hsl.s * 1.1, 1), Math.max(hsl.l * 0.7, 0.15));
     const hoverHsl = d3.hsl(hsl.h, Math.min(hsl.s * 0.9, 1), Math.min(hsl.l * 1.1, 0.9));
+    
+    const bgColorHsl = d3.hsl(hsl);
+    
+    // Convert to RGB to properly support opacity
+    const bgDarkColorRgb = d3.rgb(bgColorHsl);
+    bgDarkColorRgb.opacity = 0.04; 
+
+    const bgLightColorRgb = d3.rgb(bgColorHsl);
+    bgLightColorRgb.opacity = 0.07; 
 
     return {
         base: color.formatHex(),
         light: lightHsl.formatHex(),
         dark: darkHsl.formatHex(),
         hover: hoverHsl.formatHex(),
-        border: darkHsl.formatHex()
+        border: darkHsl.formatHex(),
+        bgDark: bgDarkColorRgb.formatRgb(),
+        bgLight: bgLightColorRgb.formatRgb()
     };
 }
 
@@ -84,7 +95,9 @@ export function generateColorCssVariables(colorFamilies) {
   ${prefix}-light: ${family.light};
   ${prefix}-dark: ${family.dark};
   ${prefix}-hover: ${family.hover};
-  ${prefix}-border: ${family.border};`;
+  ${prefix}-border: ${family.border};
+  ${prefix}-bgDark: ${family.bgDark};
+  ${prefix}-bgLight: ${family.bgLight};`
     }).join('\n');
 }
 
@@ -114,8 +127,11 @@ export function generateFieldColorClasses(count) {
                 background-color: var(--field-color-${i}-light) !important;
                 border-color: var(--field-color-${i}-dark) !important;
             }
-            
-            
+
+            .bottleneck-card:has(.field-gradient-${i}) {
+                background-color: var(--field-color-${i}-bgLight);
+            }
+
             .dark-mode .field-gradient-${i} {
                 border-color: var(--field-color-${i}-dark) !important;
                 color: #818374 !important;
@@ -135,7 +151,12 @@ export function generateFieldColorClasses(count) {
             .dark-mode .field-gradient-${i}.active input + label {
                 color: var(--field-color-${i}-light) !important;
                 background-color: transparent !important;
-            }`;
+            }
+
+            .dark-mode .bottleneck-card:has(.field-gradient-${i}) {
+                background-color: var(--field-color-${i}-bgDark);
+            }   
+            `;
     }
 
     return css;

@@ -1,106 +1,3 @@
-:root {
-  // Blue 
-  --field-blue-primary: #8ab4f8;
-  --field-blue-bg: #174ea6;
-  --field-blue-text: #c3dbff;
-  --field-blue-border: #8ab4f8;
-
-  // Green
-  --field-green-primary: #81c995;
-  --field-green-bg: #1e4620;
-  --field-green-text: #ceead6;
-  --field-green-border: #81c995;
-
-  // Yellow
-  --field-yellow-primary: #fdd663;
-  --field-yellow-bg: #664d00;
-  --field-yellow-text: #feefc3;
-  --field-yellow-border: #fdd663;
-
-  // Red
-  --field-red-primary: #f28b82;
-  --field-red-bg: #5c0f0c;
-  --field-red-text: #fad2cf;
-  --field-red-border: #f28b82;
-
-  // Purple
-  --field-purple-primary: #d7aefb;
-  --field-purple-bg: #48217e;
-  --field-purple-text: #ead6fd;
-  --field-purple-border: #d7aefb;
-
-  // Teal
-  --field-teal-primary: #86fbfb;
-  --field-teal-bg: #05505c;
-  --field-teal-text: #cbf0f8;
-  --field-teal-border: #86fbfb;
-
-  // Orange
-  --field-orange-primary: #fab980;
-  --field-orange-bg: #653200;
-  --field-orange-text: #fde0c2;
-  --field-orange-border: #fab980;
-
-  // Pink
-  --field-pink-primary: #ff8bcb;
-  --field-pink-bg: #68024c;
-  --field-pink-text: #ffd7eb;
-  --field-pink-border: #ff8bcb;
-}
-
-// Dark theme variables
-html[data-theme="dark"],
-.dark-mode {
-  // Blue 
-  --field-blue-primary: #4f8ddf;
-  --field-blue-bg: #e8f0fe;
-  --field-blue-text: #1a5cb8;
-  --field-blue-border: #4285f4;
-
-  // Green
-  --field-green-primary: #4ab96b;
-  --field-green-bg: #e6f4ea;
-  --field-green-text: #137333;
-  --field-green-border: #34a853;
-
-  // Yellow
-  --field-yellow-primary: #e7cb4c;
-  --field-yellow-bg: #fef7e0;
-  --field-yellow-text: #ea8600;
-  --field-yellow-border: #fbbc04;
-
-  // Red
-  --field-red-primary: #d44240;
-  --field-red-bg: #fce8e6;
-  --field-red-text: #a50e0e;
-  --field-red-border: #ea4335;
-
-  // Purple
-  --field-purple-primary: #7627bb;
-  --field-purple-bg: #f3e8fd;
-  --field-purple-text: #681da8;
-  --field-purple-border: #a142f4;
-
-  // Teal
-  --field-teal-primary: #2b919b;
-  --field-teal-bg: #e4f7fb;
-  --field-teal-text: #07565f;
-  --field-teal-border: #12b5cb;
-
-  // Orange  
-  --field-orange-primary: #e79843;
-  --field-orange-bg: #feefe3;
-  --field-orange-text: #b06000;
-  --field-orange-border: #fa903e;
-
-  // Pink
-  --field-pink-primary: #d01884;
-  --field-pink-bg: #fde7f3;
-  --field-pink-text: #b80672;
-  --field-pink-border: #f439a0;
-
-}
-
 // src/styles/field-colors.scss
 
 // Import the generated CSS file with field color variables and classes
@@ -137,6 +34,7 @@ html[data-theme="dark"],
   @else {
     @return var(--field-color-#{$index});
   }
+
 }
 
 // Mixin to apply all field color properties
@@ -155,6 +53,8 @@ html[data-theme="dark"],
     border-color: var(--field-color-#{$index}-dark);
   }
 }
+
+
 
 cheater {
   background-color: gradient(#94eead,
