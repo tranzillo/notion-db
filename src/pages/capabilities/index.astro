@@ -8,6 +8,8 @@ import SortControl from "../../components/standalone/SortControl";
 import PrivateTagBanner from "../../components/standalone/PrivateTagBanner";
 import { extractTags, parseUrlParamsWithTags } from "../../lib/tagUtils";
 import { getEnhancedData } from "../../lib/enhancedData";
+import ContentTypeNav from '../../components/standalone/ContentTypeNav';
+
 
 // Fetch all enhanced data from Notion at build time
 const { bottlenecks, foundationalCapabilities, fields, contentAreas, resources } =
@@ -74,9 +76,12 @@ const capabilitiesContent = contentAreas?.capabilities || {
           bottleneckCount={bottleneckCount}
           capabilityCount={capabilityCount}
         />
+
+
         <div class="dashboard-controls">
           <SortControl client:load initialSortBy={sortBy} />
           <ViewToggle client:load />
+          <ContentTypeNav />
         </div>
       </div>
 

@@ -12,6 +12,10 @@
     padding-inline: $spacing-md;
     gap: $spacing-xl;
   }
+  .capability-card__footer {
+    margin-inline: 0;
+    margin-block-end: $spacing-md;
+  }
   &__header {
     display: flex;
     flex-direction: column;
