@@ -1,10 +1,6 @@
 .view-toggle {
   display: flex;
   gap: $spacing-xs;
-  @media (max-width: $breakpoint-sm) {
-    margin-inline-start: auto;
-
-  }
 }
 svg {
   transition: filter $transition;
