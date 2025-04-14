@@ -211,12 +211,6 @@ function generateCss(resourceTypes) {
   .dark-mode .resource-card:has(.resource-type-gradient-${type.slug}) {
     background-color: ${type.colors.base}12;
   }
-  .resource-card:hover:has(.resource-type-gradient-${type.slug}) a {
-    color: ${type.colors.dark};
-  }
-  .dark-mode .resource-card:hover:has(.resource-type-gradient-${type.slug}) a {
-    color: ${type.colors.base};
-  }
 `;
   });
   

@@ -1,4 +1,4 @@
-// src/components/standalone/FoundationalCapabilityCard.jsx (updated version)
+// src/components/standalone/FoundationalCapabilityCard.jsx
 import React, { useState, useCallback, useEffect } from 'react';
 import { saveScrollPosition } from '../../lib/scrollPositionUtils';
 import cardHeightManager from '../../lib/cardHeightManager';
@@ -15,6 +15,45 @@ export default function FoundationalCapabilityCard({
   
   // Create a unique card ID for height tracking
   const cardId = `capability-card-${capability.id}`;
+  
+  // Function to check if search query matches any content in the expanded section
+  const shouldAutoExpand = useCallback(() => {
+    if (!searchQuery || !capability.bottlenecks) return false;
+    
+    // Don't re-check if already expanded
+    if (isExpanded) return true;
+
+    const lowerCaseQuery = searchQuery.toLowerCase();
+    
+    // Check if query matches any bottleneck name or description
+    return capability.bottlenecks.some(bottleneck => {
+      // Check bottleneck name
+      if (bottleneck.bottleneck_name && bottleneck.bottleneck_name.toLowerCase().includes(lowerCaseQuery)) {
+        return true;
+      }
+      
+      // Check bottleneck description
+      if (bottleneck.bottleneck_description && bottleneck.bottleneck_description.toLowerCase().includes(lowerCaseQuery)) {
+        return true;
+      }
+      
+      // Check bottleneck field
+      if (bottleneck.field && bottleneck.field.field_name && 
+          bottleneck.field.field_name.toLowerCase().includes(lowerCaseQuery)) {
+        return true;
+      }
+      
+      return false;
+    });
+  }, [searchQuery, capability.bottlenecks, isExpanded]);
+
+  // Auto-expand when search query matches expanded content
+  useEffect(() => {
+    if (searchQuery && shouldAutoExpand() && !isExpanded) {
+      setIsExpanded(true);
+      cardHeightManager.expandCard(cardId);
+    }
+  }, [searchQuery, shouldAutoExpand, isExpanded, cardId]);
   
   // Function to highlight search matches in text
   const highlightMatches = (text, query) => {
@@ -142,13 +181,6 @@ export default function FoundationalCapabilityCard({
         <div dangerouslySetInnerHTML={{ __html: displayContent }} />
       </div>
 
-      {/* Resources section - unchanged */}
-      {showResources && sortedResources.length > 0 && (
-        <div className="capability-card__resources">
-          {/* Existing resources code remains unchanged */}
-        </div>
-      )}
-
       <div className="capability-card__footer">
         <div className="capability-card__footer-left">
           {/* Display public tags */}
@@ -202,9 +234,15 @@ export default function FoundationalCapabilityCard({
             <ul className="capability-card__bottlenecks-list">
               {capability.bottlenecks.map(bottleneck => (
                 <li key={bottleneck.id} className="capability-card__bottleneck-item">
-                  <a href={`/gaps/${bottleneck.slug}`} className="capability-card__bottleneck-link">
-                    {bottleneck.bottleneck_name}
-                  </a>
+                  <a 
+                    href={`/gaps/${bottleneck.slug}`} 
+                    className="capability-card__bottleneck-link"
+                    dangerouslySetInnerHTML={{ 
+                      __html: searchQuery ? 
+                        highlightMatches(bottleneck.bottleneck_name, searchQuery) : 
+                        bottleneck.bottleneck_name 
+                    }}
+                  />
                   {/* Show field information */}
                   {bottleneck.field && (
                     <div 

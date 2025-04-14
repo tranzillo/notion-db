@@ -41,6 +41,15 @@ const bottleneckSearchOptions = {
     {
       name: 'bottleneck_number',
       weight: 0.2
+    },
+    // Add search in foundational capabilities
+    {
+      name: 'foundational_capabilities.fc_name',
+      weight: 0.4
+    },
+    {
+      name: 'foundational_capabilities.fc_description',
+      weight: 0.3
     }
   ]
 };
@@ -65,6 +74,15 @@ const capabilitySearchOptions = {
     {
       name: 'tags',
       weight: 0.4
+    },
+    // Add search in related bottlenecks
+    {
+      name: 'bottlenecks.bottleneck_name',
+      weight: 0.4
+    },
+    {
+      name: 'bottlenecks.bottleneck_description',
+      weight: 0.3
     }
   ]
 };
@@ -89,6 +107,15 @@ const resourceSearchOptions = {
     {
       name: 'resource_url',
       weight: 0.2
+    },
+    // Add search in linked capabilities
+    {
+      name: 'linkedCapabilities.fc_name',
+      weight: 0.4
+    },
+    {
+      name: 'linkedCapabilities.fc_description',
+      weight: 0.3
     }
   ]
 };

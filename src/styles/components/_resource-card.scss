@@ -27,6 +27,11 @@
           }
     }
 }
+
+.resource-card:hover:not(:has(.resource-card__footer:hover, .resource-card__capabilities-expanded:hover)) {
+  color: var(--primary-color);
+}
+
 .resource-card {
     break-inside: avoid;
     display: flex;
@@ -213,6 +218,9 @@
       font-size: $font-size-md;
       text-decoration: none;
       margin-block-end: $spacing-sm;
+      &:hover {
+        color: var(--primary-color);
+      }
     }
     
     &__capability-fields {
@@ -221,8 +229,5 @@
       gap: $spacing-xs;
       margin-block-start: $spacing-sm;
     }
-  
-    &:hover {
 
-    }
   }

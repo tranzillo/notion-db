@@ -1,4 +1,4 @@
-// src/components/standalone/BottleneckCard.jsx (updated version)
+// src/components/standalone/BottleneckCard.jsx
 import React, { useState, useCallback, useEffect } from 'react';
 import { saveScrollPosition } from '../../lib/scrollPositionUtils';
 import RankIndicator from './RankIndicator';
@@ -15,6 +15,47 @@ export default function BottleneckCard({
 
   // Create a unique card ID for height tracking
   const cardId = `bottleneck-card-${bottleneck.id}`;
+
+  // Function to check if search query matches any content in the expanded section
+  const shouldAutoExpand = useCallback(() => {
+    if (!searchQuery || !bottleneck.foundational_capabilities) return false;
+    
+    // Don't re-check if already expanded
+    if (isExpanded) return true;
+
+    const lowerCaseQuery = searchQuery.toLowerCase();
+    
+    // Check if query matches any capability name or description
+    return bottleneck.foundational_capabilities.some(capability => {
+      // Check capability name
+      if (capability.fc_name && capability.fc_name.toLowerCase().includes(lowerCaseQuery)) {
+        return true;
+      }
+      
+      // Check capability description
+      if (capability.fc_description && capability.fc_description.toLowerCase().includes(lowerCaseQuery)) {
+        return true;
+      }
+      
+      // Check related resources if they exist
+      if (capability.resources && Array.isArray(capability.resources)) {
+        return capability.resources.some(resource => 
+          (resource.resource_title && resource.resource_title.toLowerCase().includes(lowerCaseQuery)) ||
+          (resource.content && resource.content.toLowerCase().includes(lowerCaseQuery))
+        );
+      }
+      
+      return false;
+    });
+  }, [searchQuery, bottleneck.foundational_capabilities, isExpanded]);
+
+  // Auto-expand when search query matches expanded content
+  useEffect(() => {
+    if (searchQuery && shouldAutoExpand() && !isExpanded) {
+      setIsExpanded(true);
+      cardHeightManager.expandCard(cardId);
+    }
+  }, [searchQuery, shouldAutoExpand, isExpanded, cardId]);
 
   // Function to highlight search matches in text
   const highlightMatches = (text, query) => {
@@ -109,7 +150,7 @@ export default function BottleneckCard({
               id={`card-title-${bottleneck.id}`}
             />
           </h2>
-            {bottleneck.field && bottleneck.field.field_name && (
+          {bottleneck.field && bottleneck.field.field_name && (
               <div className={`bottleneck-card__field hide-list ${isFieldSelected ? 'active' : ''} ${bottleneck.field.colorClass || ''}`}>
                 {bottleneck.field.field_name}
               </div>
@@ -176,9 +217,15 @@ export default function BottleneckCard({
               <ul className="bottleneck-card__capabilities-list">
                 {bottleneck.foundational_capabilities.map(capability => (
                   <li key={capability.id} className="bottleneck-card__capability-item">
-                    <a href={`/capabilities/${capability.slug}`} className="bottleneck-card__capability-link">
-                      {capability.fc_name}
-                    </a>
+                    <a 
+                      href={`/capabilities/${capability.slug}`} 
+                      className="bottleneck-card__capability-link"
+                      dangerouslySetInnerHTML={{ 
+                        __html: searchQuery ? 
+                          highlightMatches(capability.fc_name, searchQuery) : 
+                          capability.fc_name 
+                      }}
+                    />
                     {/* Show resource count if available */}
                     {capability.resources && capability.resources.length > 0 && (
                       <div className="bottleneck-card__capability-resources">

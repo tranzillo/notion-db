@@ -87,8 +87,8 @@ const resourcesContent = contentAreas?.resources || {
         />
 
         <div class="dashboard-controls">
-          <SortControl client:load initialSortBy={sortBy || "type"} />
           <ViewToggle client:load />
+          <SortControl client:load initialSortBy={sortBy || "type"} />
           <ContentTypeNav />
         </div>
       </div>

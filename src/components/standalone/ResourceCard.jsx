@@ -1,5 +1,5 @@
-// src/components/standalone/ResourceCard.jsx (updated version)
-import React, { useState, useCallback, memo } from 'react';
+// src/components/standalone/ResourceCard.jsx
+import React, { useState, useCallback, useEffect, memo } from 'react';
 import { saveScrollPosition } from '../../lib/scrollPositionUtils';
 import cardHeightManager from '../../lib/cardHeightManager';
 
@@ -17,16 +17,59 @@ const ResourceCard = memo(function ResourceCard({
   // Create a unique card ID for height tracking
   const cardId = `resource-card-${resource.id}`;
 
+  // Function to check if search query matches any content in the expanded section
+  const shouldAutoExpand = useCallback(() => {
+    if (!searchQuery || !linkedCapabilities || linkedCapabilities.length === 0) return false;
+    
+    // Don't re-check if already expanded
+    if (isExpanded) return true;
+
+    const lowerCaseQuery = searchQuery.toLowerCase();
+    
+    // Check if query matches any capability name
+    return linkedCapabilities.some(capability => {
+      // Check capability name
+      if (capability.fc_name && capability.fc_name.toLowerCase().includes(lowerCaseQuery)) {
+        return true;
+      }
+      
+      // Check capability's related bottlenecks if available
+      if (capability.bottlenecks && Array.isArray(capability.bottlenecks)) {
+        return capability.bottlenecks.some(bottleneck => 
+          (bottleneck.bottleneck_name && bottleneck.bottleneck_name.toLowerCase().includes(lowerCaseQuery)) ||
+          (bottleneck.field && bottleneck.field.field_name && 
+           bottleneck.field.field_name.toLowerCase().includes(lowerCaseQuery))
+        );
+      }
+      
+      return false;
+    });
+  }, [searchQuery, linkedCapabilities, isExpanded]);
+
+  // Auto-expand when search query matches expanded content
+  useEffect(() => {
+    if (searchQuery && shouldAutoExpand() && !isExpanded) {
+      setIsExpanded(true);
+      cardHeightManager.expandCard(cardId);
+    }
+  }, [searchQuery, shouldAutoExpand, isExpanded, cardId]);
+
   // Function to highlight search matches in text - memoize to avoid recalculation
+  const highlightMatches = useCallback((text, query) => {
+    if (!query || !text) return text;
+    try {
+      const regex = new RegExp(`(${query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
+      return text.replace(regex, '<mark class="search-highlight">$1</mark>');
+    } catch (e) {
+      return text;
+    }
+  }, []);
+
+  // Memoize title highlighting
   const highlightedTitle = React.useMemo(() => {
     if (!searchQuery || !resource.resource_title) return resource.resource_title;
-    try {
-      const regex = new RegExp(`(${searchQuery.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
-      return resource.resource_title.replace(regex, '<mark class="search-highlight">$1</mark>');
-    } catch (e) {
-      return resource.resource_title;
-    }
-  }, [searchQuery, resource.resource_title]);
+    return highlightMatches(resource.resource_title, searchQuery);
+  }, [searchQuery, resource.resource_title, highlightMatches]);
 
   // Memoize content preparation
   const processedContent = React.useMemo(() => {
@@ -40,13 +83,8 @@ const ResourceCard = memo(function ResourceCard({
     // Add highlighting if needed
     if (!searchQuery) return truncated;
     
-    try {
-      const regex = new RegExp(`(${searchQuery.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
-      return truncated.replace(regex, '<mark class="search-highlight">$1</mark>');
-    } catch (e) {
-      return truncated;
-    }
-  }, [resource.content, searchQuery]);
+    return highlightMatches(truncated, searchQuery);
+  }, [resource.content, searchQuery, highlightMatches]);
 
   // Toggle expanded state - use callback to ensure stable reference
   const toggleExpand = useCallback((e) => {
@@ -141,9 +179,15 @@ const ResourceCard = memo(function ResourceCard({
                 
                 return (
                   <li key={capability.id} className="resource-card__capability-item">
-                    <a href={`/capabilities/${capability.slug}`} className="resource-card__capability-link">
-                      {capability.fc_name}
-                    </a>
+                    <a 
+                      href={`/capabilities/${capability.slug}`} 
+                      className="resource-card__capability-link"
+                      dangerouslySetInnerHTML={{ 
+                        __html: searchQuery ? 
+                          highlightMatches(capability.fc_name, searchQuery) : 
+                          capability.fc_name 
+                      }}
+                    />
                     {fieldsForCapability.length > 0 && (
                       <div className="resource-card__capability-fields">
                         {fieldsForCapability.map(field => (

@@ -79,8 +79,8 @@ const capabilitiesContent = contentAreas?.capabilities || {
 
 
         <div class="dashboard-controls">
-          <SortControl client:load initialSortBy={sortBy} />
           <ViewToggle client:load />
+          <SortControl client:load initialSortBy={sortBy || "type"} />
           <ContentTypeNav />
         </div>
       </div>

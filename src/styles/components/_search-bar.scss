@@ -84,7 +84,7 @@
   position: sticky;
   top: $spacing-xxl;
   display: grid;
-  grid-template-columns: 1fr auto;
+  grid-template-columns: 1fr;
   overflow: hidden;
   z-index: 3;
   transition: box-shadow $transition,

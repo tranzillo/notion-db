@@ -33,12 +33,6 @@
   .dark-mode .resource-card:has(.resource-type-gradient-research-and-reviews) {
     background-color: #94d3ad12;
   }
-  .resource-card:hover:has(.resource-type-gradient-research-and-reviews) a {
-    color: #44b772;
-  }
-  .dark-mode .resource-card:hover:has(.resource-type-gradient-research-and-reviews) a {
-    color: #94d3ad;
-  }
 
   /* Whitepapers and Essays */
   main .resource-type-gradient-whitepapers-and-essays {
@@ -71,12 +65,6 @@
   }
   .dark-mode .resource-card:has(.resource-type-gradient-whitepapers-and-essays) {
     background-color: #94d0cb12;
-  }
-  .resource-card:hover:has(.resource-type-gradient-whitepapers-and-essays) a {
-    color: #47b2a9;
-  }
-  .dark-mode .resource-card:hover:has(.resource-type-gradient-whitepapers-and-essays) a {
-    color: #94d0cb;
   }
 
   /* FRO */
@@ -111,12 +99,6 @@
   .dark-mode .resource-card:has(.resource-type-gradient-fro) {
     background-color: #94bddc12;
   }
-  .resource-card:hover:has(.resource-type-gradient-fro) a {
-    color: #3a8bc7;
-  }
-  .dark-mode .resource-card:hover:has(.resource-type-gradient-fro) a {
-    color: #94bddc;
-  }
 
   /* FRO Concept */
   main .resource-type-gradient-fro-concept {
@@ -149,12 +131,6 @@
   }
   .dark-mode .resource-card:has(.resource-type-gradient-fro-concept) {
     background-color: #989ede12;
-  }
-  .resource-card:hover:has(.resource-type-gradient-fro-concept) a {
-    color: #3d49c9;
-  }
-  .dark-mode .resource-card:hover:has(.resource-type-gradient-fro-concept) a {
-    color: #989ede;
   }
 
   /* Company */
@@ -189,12 +165,6 @@
   .dark-mode .resource-card:has(.resource-type-gradient-company) {
     background-color: #a990dd12;
   }
-  .resource-card:hover:has(.resource-type-gradient-company) a {
-    color: #6635ca;
-  }
-  .dark-mode .resource-card:hover:has(.resource-type-gradient-company) a {
-    color: #a990dd;
-  }
 
   /* Initiative */
   main .resource-type-gradient-initiative {
@@ -227,12 +197,6 @@
   }
   .dark-mode .resource-card:has(.resource-type-gradient-initiative) {
     background-color: #c294d512;
-  }
-  .resource-card:hover:has(.resource-type-gradient-initiative) a {
-    color: #9842bb;
-  }
-  .dark-mode .resource-card:hover:has(.resource-type-gradient-initiative) a {
-    color: #c294d5;
   }
 
   /* Technology Seed */
@@ -267,12 +231,6 @@
   .dark-mode .resource-card:has(.resource-type-gradient-technology-seed) {
     background-color: #d79cc012;
   }
-  .resource-card:hover:has(.resource-type-gradient-technology-seed) a {
-    color: #bc478f;
-  }
-  .dark-mode .resource-card:hover:has(.resource-type-gradient-technology-seed) a {
-    color: #d79cc0;
-  }
 
   /* Roadmap */
   main .resource-type-gradient-roadmap {
@@ -305,12 +263,6 @@
   }
   .dark-mode .resource-card:has(.resource-type-gradient-roadmap) {
     background-color: #e3a9a912;
-  }
-  .resource-card:hover:has(.resource-type-gradient-roadmap) a {
-    color: #cc4949;
-  }
-  .dark-mode .resource-card:hover:has(.resource-type-gradient-roadmap) a {
-    color: #e3a9a9;
   }
 
   /* Funding Program */
@@ -345,12 +297,6 @@
   .dark-mode .resource-card:has(.resource-type-gradient-funding-program) {
     background-color: #e3c09712;
   }
-  .resource-card:hover:has(.resource-type-gradient-funding-program) a {
-    color: #d28a37;
-  }
-  .dark-mode .resource-card:hover:has(.resource-type-gradient-funding-program) a {
-    color: #e3c097;
-  }
 
   /* Research Org */
   main .resource-type-gradient-research-org {
@@ -384,12 +330,6 @@
   .dark-mode .resource-card:has(.resource-type-gradient-research-org) {
     background-color: #ded58d12;
   }
-  .resource-card:hover:has(.resource-type-gradient-research-org) a {
-    color: #ccbb32;
-  }
-  .dark-mode .resource-card:hover:has(.resource-type-gradient-research-org) a {
-    color: #ded58d;
-  }
 
   /* Individual */
   main .resource-type-gradient-individual {
@@ -422,10 +362,4 @@
   }
   .dark-mode .resource-card:has(.resource-type-gradient-individual) {
     background-color: #d7e98712;
-  }
-  .resource-card:hover:has(.resource-type-gradient-individual) a {
-    color: #bde121;
-  }
-  .dark-mode .resource-card:hover:has(.resource-type-gradient-individual) a {
-    color: #d7e987;
   }
