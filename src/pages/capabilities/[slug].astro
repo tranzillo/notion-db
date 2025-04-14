@@ -6,24 +6,24 @@ import { getEnhancedData } from "../../lib/enhancedData";
 import { createCapabilitySlug } from "../../lib/slugUtils";
 
 export async function getStaticPaths() {
-    // Fetch all enhanced data
-    const { foundationalCapabilities } = await getEnhancedData();
+  // Fetch all enhanced data
+  const { foundationalCapabilities } = await getEnhancedData();
 
-    // Generate paths for each capability with slugs
-    return foundationalCapabilities.map((capability) => {
-        // Use the slug from capability or generate a new one if missing
-        const slug = capability.slug || createCapabilitySlug(capability.fc_name);
+  // Generate paths for each capability with slugs
+  return foundationalCapabilities.map((capability) => {
+    // Use the slug from capability or generate a new one if missing
+    const slug = capability.slug || createCapabilitySlug(capability.fc_name);
 
-        return {
-            params: { slug },
-            props: { capability },
-        };
-    });
+    return {
+      params: { slug },
+      props: { capability },
+    };
+  });
 }
 
 // TypeScript type for the props
 interface Props {
-    capability: any; // Type comes from getStaticPaths
+  capability: any; // Type comes from getStaticPaths
 }
 
 // Get the capability from props
@@ -31,7 +31,7 @@ const { capability } = Astro.props;
 
 // 404 handling (should not happen with static paths, but just in case)
 if (!capability) {
-    return Astro.redirect("/404");
+  return Astro.redirect("/404");
 }
 
 // Extract tags for display
@@ -42,167 +42,191 @@ const uniqueFields = [];
 const fieldMap = new Map();
 
 if (capability.bottlenecks && Array.isArray(capability.bottlenecks)) {
-    capability.bottlenecks.forEach((bottleneck) => {
-        if (bottleneck.field && bottleneck.field.id) {
-            fieldMap.set(bottleneck.field.id, bottleneck.field);
-        }
-    });
+  capability.bottlenecks.forEach((bottleneck) => {
+    if (bottleneck.field && bottleneck.field.id) {
+      fieldMap.set(bottleneck.field.id, bottleneck.field);
+    }
+  });
 
-    uniqueFields.push(...Array.from(fieldMap.values()));
+  uniqueFields.push(...Array.from(fieldMap.values()));
 }
 ---
 
-<BaseLayout title={`${capability.fc_name} - The Gap Map`}>
-    <EnhancedBackButton client:load path="/capabilities" />
+<BaseLayout title={`${capability.fc_name} - Gap Map`}>
+  <EnhancedBackButton client:load path="/capabilities" />
 
-    <div class="capability-detail">
-        <div class="capability-detail__header">
-            <div class="capability-detail__meta">
-                {
-                    uniqueFields.length > 0 && (
-                        <div class="capability-detail__fields">
-                            {uniqueFields.map((field) => (
-                                <div
-                                    class={`capability-detail__field ${field.colorClass || ""}`}
-                                >
-                                    {field.field_name}
-                                </div>
-                            ))}
-                        </div>
-                    )
-                }
-            </div>
-
-            <h1 class="capability-detail__title">{capability.fc_name}</h1>
-
-            <!-- Display public tags if available -->
-            {
-                publicTags.length > 0 && (
-                    <div class="capability-detail__tags">
-                        {publicTags.map((tag) => (
-                            <span class="capability-detail__tag">{tag}</span>
-                        ))}
-                    </div>
-                )
-            }
-        </div>
-
-        <div class="capability-detail__content" set:html={capability.fc_description} />
-
-<!-- Updated resources section for capabilities/[slug].astro with count-based sorting -->
-{
-    capability.resources && capability.resources.length > 0 && (
-      <div class="capability-detail__resources">
-        <h2>Resources <span class="subtle">({capability.resources.length})</span></h2>
-        <div class="capability-detail__resource-list">
-          {(() => {
-            // Sort resources by type first, then by title
-            const sortedResources = [...capability.resources].sort((a, b) => {
-              // First sort by resource type (alphabetically)
-              const aType = a.resourceTypes?.[0] || '';
-              const bType = b.resourceTypes?.[0] || '';
-              
-              const typeComparison = aType.localeCompare(bType);
-              
-              // If types are the same, sort by title
-              if (typeComparison === 0) {
-                return a.resource_title.localeCompare(b.resource_title);
-              }
-              
-              return typeComparison;
-            });
-            
-            // Group resources by type
-            const resourcesByType = {};
-            
-            sortedResources.forEach(resource => {
-              const resourceType = resource.resourceTypes?.[0] || 'Other';
-              if (!resourcesByType[resourceType]) {
-                resourcesByType[resourceType] = [];
-              }
-              resourcesByType[resourceType].push(resource);
-            });
-            
-            // Convert to array and sort by count (descending) then by type name (alphabetical)
-            const sortedGroups = Object.entries(resourcesByType)
-              .sort(([typeA, resourcesA], [typeB, resourcesB]) => {
-                // First sort by resource count (descending)
-                const countDiff = resourcesB.length - resourcesA.length;
-                
-                // If counts are equal, sort alphabetically by type name
-                if (countDiff === 0) {
-                  return typeA.localeCompare(typeB);
-                }
-                
-                return countDiff;
-              });
-            
-            // Render each group with a wrapper
-            return sortedGroups.map(([resourceType, resources]) => (
-              <div class="capability-detail__resource-group" data-resource-type={resourceType} data-resource-count={resources.length}>
-                <div class="capability-detail__resource-group-items">
-                  {resources.map(resource => (
-                    <div class="capability-detail__resource-item">
-                      <div class="capability-detail__resource-link">
-                        {resource?.resource_url ? (
-                          <a href={resource.resource_url} target="_blank" rel="noopener noreferrer">
-                            {resource.resource_title}
-                          </a>
-                        ) : (
-                          <span>{resource?.resource_title || "Untitled Resource"}</span>
-                        )}
-                        {/* Display resource types with colorized class */}
-                        {resource?.resourceTypes && resource.resourceTypes.length > 0 && (
-                          <div class="capability-detail__resource-types">
-                            {resource.resourceTypes.map((type, index) => (
-                              <span class={`capability-detail__resource-type resource-type-gradient-${type.toLowerCase().replace(/\s+/g, '-')}`}>
-                                {type}{index < resource.resourceTypes.length - 1 ? ', ' : ''}
-                              </span>
-                            ))}
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            ));
-          })()}
-        </div>
-      </div>
-    )
-  }
-
+  <div class="capability-detail">
+    <div class="capability-detail__header">
+      <div class="capability-detail__meta">
         {
-            capability.bottlenecks && capability.bottlenecks.length > 0 && (
-                <div class="capability-detail__bottlenecks">
-                    <h2 class="indent">Related R&D Gaps <span class="subtle">({capability.bottlenecks.length})</span></h2>
-                    <div class="capability-detail__bottlenecks-grid">
-                        {capability.bottlenecks.map((bottleneck) => (
-                            <BottleneckCard
-                                bottleneck={bottleneck}
-                                client:load
-                                truncateLength={300}
-                            />
-                        ))}
-                    </div>
+          uniqueFields.length > 0 && (
+            <div class="capability-detail__fields">
+              {uniqueFields.map((field) => (
+                <div
+                  class={`capability-detail__field ${field.colorClass || ""}`}
+                >
+                  {field.field_name}
                 </div>
-            )
+              ))}
+            </div>
+          )
         }
+      </div>
+
+      <h1 class="capability-detail__title">{capability.fc_name}</h1>
+
+      <!-- Display public tags if available -->
+      {
+        publicTags.length > 0 && (
+          <div class="capability-detail__tags">
+            {publicTags.map((tag) => (
+              <span class="capability-detail__tag">{tag}</span>
+            ))}
+          </div>
+        )
+      }
     </div>
+
+    <div
+      class="capability-detail__content"
+      set:html={capability.fc_description}
+    />
+    {
+      capability.resources && capability.resources.length > 0 && (
+        <div class="capability-detail__resources">
+          <h2 class="indent">
+            Resources{" "}
+            <span class="subtle">({capability.resources.length})</span>
+          </h2>
+          <div class="capability-detail__resource-list">
+            {(() => {
+              // Sort resources by type first, then by title
+              const sortedResources = [...capability.resources].sort((a, b) => {
+                // First sort by resource type (alphabetically)
+                const aType = a.resourceTypes?.[0] || "";
+                const bType = b.resourceTypes?.[0] || "";
+
+                const typeComparison = aType.localeCompare(bType);
+
+                // If types are the same, sort by title
+                if (typeComparison === 0) {
+                  return a.resource_title.localeCompare(b.resource_title);
+                }
+
+                return typeComparison;
+              });
+
+              // Group resources by type
+              const resourcesByType = {};
+
+              sortedResources.forEach((resource) => {
+                const resourceType = resource.resourceTypes?.[0] || "Other";
+                if (!resourcesByType[resourceType]) {
+                  resourcesByType[resourceType] = [];
+                }
+                resourcesByType[resourceType].push(resource);
+              });
+
+              // Convert to array and sort by count (descending) then by type name (alphabetical)
+              const sortedGroups = Object.entries(resourcesByType).sort(
+                ([typeA, resourcesA], [typeB, resourcesB]) => {
+                  // First sort by resource count (descending)
+                  const countDiff = resourcesB.length - resourcesA.length;
+
+                  // If counts are equal, sort alphabetically by type name
+                  if (countDiff === 0) {
+                    return typeA.localeCompare(typeB);
+                  }
+
+                  return countDiff;
+                },
+              );
+
+              // Render each group with a wrapper
+              return sortedGroups.map(([resourceType, resources]) => (
+                <div
+                  class="capability-detail__resource-group"
+                  data-resource-type={resourceType}
+                  data-resource-count={resources.length}
+                >
+                  <div class="capability-detail__resource-group-items">
+                    {resources.map((resource) => (
+                      <div class="capability-detail__resource-item">
+                        <div class="capability-detail__resource-link">
+                          {resource?.resource_url ? (
+                            <a
+                              href={resource.resource_url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            >
+                              {resource.resource_title}
+                            </a>
+                          ) : (
+                            <span>
+                              {resource?.resource_title || "Untitled Resource"}
+                            </span>
+                          )}
+                          {/* Display resource types with colorized class */}
+                          {resource?.resourceTypes &&
+                            resource.resourceTypes.length > 0 && (
+                              <div class="capability-detail__resource-types">
+                                {resource.resourceTypes.map((type, index) => (
+                                  <span
+                                    class={`capability-detail__resource-type resource-type-gradient-${type.toLowerCase().replace(/\s+/g, "-")}`}
+                                  >
+                                    {type}
+                                    {index < resource.resourceTypes.length - 1
+                                      ? ", "
+                                      : ""}
+                                  </span>
+                                ))}
+                              </div>
+                            )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ));
+            })()}
+          </div>
+        </div>
+      )
+    }
+
+    {
+      capability.bottlenecks && capability.bottlenecks.length > 0 && (
+        <div class="capability-detail__bottlenecks">
+          <h2 class="indent">
+            R&D Gaps{" "}
+            <span class="subtle">({capability.bottlenecks.length})</span>
+          </h2>
+          <div class="capability-detail__bottlenecks-grid">
+            {capability.bottlenecks.map((bottleneck) => (
+              <BottleneckCard
+                bottleneck={bottleneck}
+                client:load
+                truncateLength={300}
+              />
+            ))}
+          </div>
+        </div>
+      )
+    }
+  </div>
 </BaseLayout>
 
-<script define:vars={{ capabilityId: capability.id, capabilitySlug: capability.slug }}>
-    // Save the current capability info for potential scroll restoration
-    import { saveScrollPosition } from "../../lib/scrollPositionUtils";
+<script
+  define:vars={{ capabilityId: capability.id, capabilitySlug: capability.slug }}
+>
+  // Save the current capability info for potential scroll restoration
+  import { saveScrollPosition } from "../../lib/scrollPositionUtils";
 
-    document.addEventListener("astro:page-load", () => {
-        // This runs when the page is fully loaded
-        if (capabilityId) {
-            // Could manually save position for direct URL accesses if needed
-            // saveScrollPosition(capabilityId, capabilitySlug);
-        }
-    });
+  document.addEventListener("astro:page-load", () => {
+    // This runs when the page is fully loaded
+    if (capabilityId) {
+      // Could manually save position for direct URL accesses if needed
+      // saveScrollPosition(capabilityId, capabilitySlug);
+    }
+  });
 </script>
-
-

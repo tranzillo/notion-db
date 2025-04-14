@@ -1,5 +1,9 @@
 .capability-detail__resource-group + .capability-detail__resource-group {
   margin-block-start: $spacing-md;
+  @media (max-width: $breakpoint-sm) {
+    margin-block-start: $spacing-xs;
+  }
+
 }
 .capability-detail {
   display: flex;
@@ -127,7 +131,7 @@
     list-style: none;
     column-count: 1;
     column-gap: $spacing-md;
-    padding: $spacing-lg 0 $spacing-md;
+    padding: $spacing-lg 0 0;
     align-items: flex-start;
 
     @media (min-width: $breakpoint-lg) {
