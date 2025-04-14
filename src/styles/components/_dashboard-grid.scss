@@ -254,16 +254,18 @@
 
   p {
     margin-block-end: $spacing-md;
-    max-width: 102ch;
   }
 
   ul {
-    margin-block-end: $spacing-md;
+    margin-block: $spacing-xl;
 
     li {
       margin-inline-start: $spacing-xxl;
-      margin-block-end: $spacing-xs;
+      margin-block-end: $spacing-md;
     }
+  }
+  .dashboard-content {
+    max-width: 110ch;
   }
 }
 
