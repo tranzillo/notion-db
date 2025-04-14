@@ -133,7 +133,9 @@
     
     &.active {
       color: var(--primary-color);
-      font-weight: 600;
+    }
+    & + .content-type-nav__link {
+      padding-inline-start: 0;
     }
   }
 }
@@ -145,27 +147,6 @@
     
     &__link {
       padding: $spacing-xs;
-    }
-  }
-}
-
-// Dark mode adjustments
-.dark-mode {
-  .content-type-nav {
-    &__link {
-      color: var(--text-lighter);
-      
-      &:hover {
-        color: var(--highlight-color);
-      }
-      
-      &.active {
-        color: var(--highlight-color);
-        
-        &:after {
-          background-color: var(--highlight-color);
-        }
-      }
     }
   }
 }
