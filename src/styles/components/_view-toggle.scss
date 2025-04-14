@@ -1,6 +1,5 @@
 .view-toggle {
   display: flex;
-  margin-inline-start: $spacing-xl;
   gap: $spacing-xs;
   @media (max-width: $breakpoint-sm) {
     margin-inline-start: auto;
@@ -59,14 +58,13 @@ svg {
     background-color: var(--border-dull);
   }
   @media (max-width: $breakpoint-lg) {
-    margin:$spacing-sm 0 0 auto;
+    margin: $spacing-sm 0 0 auto;
   }
 }
 
 .sort-control {
   display: flex;
-  border-inline-end: 1px solid var(--border-dull);
-  padding-inline-end: 1.8rem;
+  margin-inline-end: $spacing-xs;
   transition: border-color $transition;
   @media (max-width: $breakpoint-sm) {
     border: none;
