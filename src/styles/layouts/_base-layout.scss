@@ -52,7 +52,7 @@ button.mobile-nav, button.close-nav {
 
       @media (max-width: $breakpoint-lg) {
         background-color: var(--header-background);
-        z-index: 4;
+        z-index: 5;
         &:not(.close-nav):has(*:focus) {
           .base-layout__controls {
             opacity: 1;
@@ -73,7 +73,7 @@ button.mobile-nav, button.close-nav {
       position: absolute;
       inset: 0 0 auto 0;
       background-color: var(--header-background);
-      z-index: 4;
+      z-index: 5;
       padding: 2.65rem $spacing-xxl $spacing-md $spacing-md;
       flex-direction: column;
       opacity: 0;
@@ -94,7 +94,7 @@ button.mobile-nav, button.close-nav {
     gap: 0.75rem;
     margin-inline-end: auto;
     position: relative;
-    z-index: 5;
+    z-index: 6;
 
     .logo-mark {
       max-height: 3em;
