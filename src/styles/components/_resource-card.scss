@@ -19,6 +19,14 @@
         margin-block-start: $spacing-sm;
     }
 }
+.bottleneck-grid--list-view {
+    .resource-card__title {
+        @media (min-width: $breakpoint-xl) {
+            font-size: $font-size-lg;
+            margin-block-start: $spacing-md;
+          }
+    }
+}
 .resource-card {
     break-inside: avoid;
     display: flex;

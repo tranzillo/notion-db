@@ -66,7 +66,7 @@ export function generateColorFamily(baseColor) {
     
     // Convert to RGB to properly support opacity
     const bgDarkColorRgb = d3.rgb(bgColorHsl);
-    bgDarkColorRgb.opacity = 0.04; 
+    bgDarkColorRgb.opacity = 0.06; 
 
     const bgLightColorRgb = d3.rgb(bgColorHsl);
     bgLightColorRgb.opacity = 0.07; 
@@ -128,7 +128,7 @@ export function generateFieldColorClasses(count) {
                 border-color: var(--field-color-${i}-dark) !important;
             }
 
-            .bottleneck-card:has(.field-gradient-${i}) {
+            .bottleneck-card:has(.field-gradient-${i}):before {
                 background-color: var(--field-color-${i}-bgLight);
             }
 
@@ -153,7 +153,7 @@ export function generateFieldColorClasses(count) {
                 background-color: transparent !important;
             }
 
-            .dark-mode .bottleneck-card:has(.field-gradient-${i}) {
+            .dark-mode .bottleneck-card:has(.field-gradient-${i}):before {
                 background-color: var(--field-color-${i}-bgDark);
             }   
             `;

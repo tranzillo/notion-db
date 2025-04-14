@@ -17,6 +17,7 @@
   --highlight-bg: rgba(52, 152, 219, 0.2);
   --highlight-color: #2980b9;
   --pure-white: #f3f2eb;
+  --background-color-tint: #f3f2eb86;
 }
 
 /* Dark mode variables */
@@ -39,6 +40,8 @@ html[data-theme="dark"],
   --highlight-bg: rgba(104, 179, 223, 0.2);
   --highlight-color: #2980b9;
   --pure-white: #e0e0e0;
+  --background-color-tint: #24283a69;
+
 
   .base-layout__logo {
     .word-mark {
@@ -84,7 +87,7 @@ $breakpoint-xxxl: 2560px;
 $breakpoint-max: 3840px;
 
 //Timing
-$transition: 0.3s ease-in-out;
+$transition: 0.2s ease-in-out;
 
 
 /* View layout styling based on data attribute */
@@ -93,4 +96,19 @@ html[data-list-view="true"] {
     grid-template-columns: 1fr !important;
     column-count: 1 !important;
   }
+}
+
+
+.field-tag {
+  display: inline-block;
+  color: var(--text-light);
+  padding: $spacing-xs $spacing-sm;
+  border: 1px solid transparent;
+  border-radius: $border-radius-md;
+  font-size: $font-size-sm;
+  letter-spacing: 0.04em;
+  transition: background-color $transition,
+    color $transition,
+    border-color $transition;
+
 }

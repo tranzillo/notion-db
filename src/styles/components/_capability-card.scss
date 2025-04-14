@@ -1,18 +1,52 @@
-.capability-card {
-  display: flex;
-  position: relative;
-  break-inside: avoid;
-  flex-direction: column;
-  gap: $spacing-lg;
-  background-color: var(--card-background);
+.capability-card__outer-wrap {
   border-radius: $border-radius-lg;
-  padding: $spacing-xl $spacing-xl $spacing-lg;
+  align-self: flex-start;
+  position: relative;
+  min-width: 0;
+  height: 100%;
+
+
+  &:before {
+    content: "";
+    opacity: 0.75;
+    position: absolute;
+    inset: 0;
+    border-radius: $border-radius-lg;
+    border: 8px solid var(--card-background);
+    background: repeating-linear-gradient(-45deg, var(--card-background), var(--card-background) 4px, var(--background-color) 4px, var(--background-color) 25px);
+    z-index: 0;
+  }
+}
+.capability-card:has(.capability-card__bottlenecks-expanded) {
+  padding-block-end: 0;
+
+  .capability-card__footer {
+    margin-block-end: calc($spacing-lg * -1);
+  }
+}
+
+.capability-card:hover:not(:has(.capability-card__footer:hover, .capability-card__bottlenecks-expanded:hover)) {
+  color: var(--primary-color);
+}
+
+.capability-card {
+  padding: $spacing-xl $spacing-xl 0 $spacing-xl;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
+  gap: $spacing-lg;
   border: 1px solid var(--border-dull);
+  height: 100%;
+  border-radius: $border-radius-lg;
+  background-color: var(--card-background);
   min-width: 0;
   transition: background-color $transition, border-color $transition, box-shadow $transition;
   @media (max-width: $breakpoint-sm) {
     padding-inline: $spacing-md;
   }
+
   &__resources {
     width: 100%;
     list-style-type: none;
@@ -66,9 +100,6 @@
     z-index: 1;
 
   }
-&__clickable:hover + &__header h3 a {
-  color: var(--primary-color);
-}
 
   &__header {
     background-color: var(--background-color);
@@ -95,16 +126,7 @@
   }
 
   &__field {
-    display: inline-block;
-    color: var(--text-light);
-    padding: $spacing-xs $spacing-sm;
-    border: 1px solid transparent;
-    border-radius: $border-radius-md;
-    font-size: $font-size-sm;
-    letter-spacing: 0.04em;
-    transition: background-color $transition,
-      color $transition,
-      border-color $transition;
+    @extend .field-tag;
   }
 
   &__title {
@@ -155,42 +177,187 @@
   }
 
   &__footer {
-    position: relative;
-    z-index: 2;
+    margin-block-start: $spacing-sm;
     display: flex;
+    flex-direction: column;
     justify-content: space-between;
     align-items: flex-end;
-    gap: $spacing-xl;
+    gap: $spacing-md;
+    margin: 0 calc($spacing-xl * (-1)) 0 calc($spacing-xl * (-1));
+
+    @media (max-width: $breakpoint-sm) {
+      margin-inline: calc($spacing-md * (-1));
+      padding-inline: 0;
+    }
 
     &-left,
     &-right {
       display: flex;
       align-items: center;
-      position: relative;
+      width: 100%;
+      margin-block-start: auto;
       z-index: 2;
     }
 
     &-left {
       display: flex;
       flex-direction: column;
+      justify-content: space-between;
       align-items: flex-start;
+      padding-inline: $spacing-xl;
+      @media (max-width: $breakpoint-sm) {
+        padding-inline: $spacing-md;
+      }
     }
-  }
 
-  &__bottlenecks-count {
-    font-size: $font-size-xs;
-    color: var(--text-lighter);
-    text-align: center;
-    background-color: var(--background-color-dark);
-    padding: $spacing-sm;
-    border-radius: $border-radius-md;
-    transition: background-color $transition;
-    white-space: nowrap;
+    &-right {
+      display: flex;
+      align-items: center;
+      position: relative;
+
+      &-container {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        gap: $spacing-xs;
+        width: 100%;
+      }
+    }
+
   }
 
   &:hover {
     box-shadow: 0 0 $spacing-md 0 var(--shadow-color);
-    color: var(--primary-color);
+  }
+  &__bottlenecks-button {
+    padding: $spacing-sm;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: $spacing-xs;
+    cursor: pointer;
+    background-color: #00000006;
+    color: var(--text-lighter);
+    border: none;
+    border-radius: 0 0 $border-radius-md $border-radius-md;
+    font-size: $font-size-xs;
+    margin-top: $spacing-sm;
+    width: 100%;
+    transition: color $transition, background-color $transition;
+    &:hover {
+      background-color: #00000010;
+    }
+    @media (max-width: $breakpoint-sm) {
+      padding-inline: $spacing-md;
+    }
+  }
+  
+  &__bottlenecks-count {
+    white-space: nowrap;
+  }
+  
+  &__bottlenecks-icon {
+    font-size: $font-size-xxs;
+  }
+  
+  &__bottlenecks-expanded {
+    margin: 0 calc($spacing-xl * (-1)) 0 calc($spacing-xl * (-1));
+    position: relative;
+    z-index: 1;
+    transition: border-color $transition,
+      background-color $transition;
+  
+    @media (max-width: $breakpoint-sm) {
+      margin-inline: calc($spacing-md * (-1));
+      padding-inline: $spacing-md;
+    }
+  
+    &-container {
+      border-radius: $border-radius-md;
+      padding: $spacing-lg;
+      border: 1px solid var(--border-dull);
+  
+    }
+  
+  }
+  
+  &__bottlenecks-container {
+    background-color: var(--background-color);
+    border-radius: $border-radius-md;
+    border: 1px solid var(--border-dull);
+    border-block-start: none;
+    margin: -1px;
+  }
+  
+  &__bottlenecks-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  &__bottleneck-item {
+    background-color: var(--background-color);
+    border-bottom: 1px solid var(--border-dull);
+    padding: $spacing-md $spacing-xl;
+  
+    &:first-child {
+      padding-block-start: $spacing-lg;
+      border-block-start: 1px solid var(--border-dull);
+    }
+  
+    &:last-child {
+      border-block-end: none;
+      border-radius: 0 0 $border-radius-md $border-radius-md;
+    }
+  
+    @media (max-width: $breakpoint-sm) {
+      margin-inline: calc($spacing-md * (-1));
+      padding-inline: $spacing-md;
+    }
+  }
+  &__bottleneck-field {
+    @extend .field-tag;
+    font-size: $font-size-xs;
+    padding: 0.125rem 0.25rem;
+    border-radius: $border-radius-sm;
+  }
+  &__bottleneck-link {
+    display: block;
+    font-weight: 500;
+    line-height: 1.2;
+    color: var(--text-light);
+    font-size: $font-size-md;
+    text-decoration: none;
+    margin-block-end: $spacing-sm;
+  
+    &:hover {
+      color: var(--primary-color);
+    }
+  }
+  
+}
+.dark-mode .capability-card {
+  &__bottlenecks-button {
+    background-color: #00000010;
+
+    &:hover {
+      background-color: #00000016;
+    }
   }
 
+}
+.dark-mode .capability-card:has(.capability-card__bottlenecks-expanded) {
+  .capability-card__bottlenecks-button {
+    background-color: #ffffff06;
+  }
+}
+
+.capability-card:has(.capability-card__bottlenecks-expanded) {
+  .capability-card__bottlenecks-button {
+    background-color: var(--background-color-dark);
+    color: var(--text-light);
+    border-radius: 0 0 $border-radius-md $border-radius-md;
+  }
 }

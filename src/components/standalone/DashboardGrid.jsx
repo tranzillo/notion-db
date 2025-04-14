@@ -8,6 +8,7 @@ import { scrollToSavedPosition } from '../../lib/scrollPositionUtils';
 import { createFieldSlug } from '../../lib/slugUtils';
 import { sharedFieldStore, loadSelectedFields, updateSelectedFields } from '../../lib/sharedStore';
 import { updateUrlParamsWithoutHistory } from '../../lib/dataUtils';
+import cardHeightManager from '../../lib/cardHeightManager';
 
 // Import IntegratedNetworkView for the direct component reference
 import IntegratedNetworkView from './IntegratedNetworkView';
@@ -424,6 +425,37 @@ export default function DashboardGrid({
     };
   }, []);
 
+    // Initialize card height management
+    useEffect(() => {
+      if (!isMounted) return;
+      
+      // Initialize card height management after grid is ready
+      const initCardHeights = () => {
+        // Don't initialize in list or graph view modes
+        if (viewMode === 'list' || viewMode === 'graph') return;
+        
+        // Initialize based on view type
+        if (viewType === 'bottlenecks') {
+          cardHeightManager.initializeCardHeights('.bottleneck-card', '.bottleneck-grid');
+        } else if (viewType === 'capabilities') {
+          cardHeightManager.initializeCardHeights('.capability-card', '.bottleneck-grid');
+        } else if (viewType === 'resources') {
+          cardHeightManager.initializeCardHeights('.resource-card', '.bottleneck-grid');
+        }
+      };
+      
+      // Wait for grid to be ready
+      if (gridViewReady) {
+        // Small delay to ensure all content is rendered
+        setTimeout(initCardHeights, 200);
+      }
+      
+      // Cleanup and reinitialize on relevant changes
+      return () => {
+        // No explicit cleanup needed, handled by event listeners
+      };
+    }, [isMounted, viewType, viewMode, gridViewReady]);
+    
   // Listen for search changes from other components
   useEffect(() => {
     const handleSearchChange = (event) => {

@@ -1,6 +1,7 @@
-// src/components/standalone/ResourceCard.jsx
+// src/components/standalone/ResourceCard.jsx (updated version)
 import React, { useState, useCallback, memo } from 'react';
 import { saveScrollPosition } from '../../lib/scrollPositionUtils';
+import cardHeightManager from '../../lib/cardHeightManager';
 
 // Use memo to prevent unnecessary re-renders
 const ResourceCard = memo(function ResourceCard({
@@ -12,6 +13,9 @@ const ResourceCard = memo(function ResourceCard({
 }) {
   // State to track expanded/collapsed view
   const [isExpanded, setIsExpanded] = useState(false);
+  
+  // Create a unique card ID for height tracking
+  const cardId = `resource-card-${resource.id}`;
 
   // Function to highlight search matches in text - memoize to avoid recalculation
   const highlightedTitle = React.useMemo(() => {
@@ -48,8 +52,20 @@ const ResourceCard = memo(function ResourceCard({
   const toggleExpand = useCallback((e) => {
     e.preventDefault();
     e.stopPropagation();
-    setIsExpanded(prev => !prev);
-  }, []);
+    
+    setIsExpanded(prev => {
+      const newExpandedState = !prev;
+      
+      // Use cardHeightManager to handle height changes
+      if (newExpandedState) {
+        cardHeightManager.expandCard(cardId);
+      } else {
+        cardHeightManager.collapseCard(cardId);
+      }
+      
+      return newExpandedState;
+    });
+  }, [cardId]);
 
   // Get primary resource type once
   const primaryResourceType = resource.resourceTypes && resource.resourceTypes.length > 0
@@ -64,7 +80,7 @@ const ResourceCard = memo(function ResourceCard({
   }, [resource.id]);
 
   return (
-    <div className="resource-card" id={`resource-card-${resource.id}`}>
+    <div className="resource-card" id={cardId}>
       <div className="resource-card__header">
         <div className={`resource-card__type ${resourceTypeClass}`}>
           {primaryResourceType}

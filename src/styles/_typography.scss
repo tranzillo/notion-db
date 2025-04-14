@@ -6,8 +6,10 @@ h1, h2, h3, h4, h5, h6 {
   h1 {
     font-family: "Shippori Mincho", serif;
     font-weight: 500;
-    font-size: 2.5em;
-    letter-spacing: -0.0125em;
+    font-size: clamp(2.5em, 3.6vw, 92px);
+    line-height: 1.125;
+    margin-block-end: 0.15em;
+    letter-spacing: -0.0075em;
     max-width: 42ch;
     @media (max-width: $breakpoint-sm) {
       font-size: $font-size-xxl;

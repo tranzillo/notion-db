@@ -5,7 +5,7 @@
   --field-color-0-dark: #27e75d;
   --field-color-0-hover: #b8f0c8;
   --field-color-0-border: #27e75d;
-  --field-color-0-bgDark: rgba(148, 238, 173, 0.04);
+  --field-color-0-bgDark: rgba(148, 238, 173, 0.06);
   --field-color-0-bgLight: rgba(148, 238, 173, 0.07);
 
   --field-color-1: #94e4b9;
@@ -13,7 +13,7 @@
   --field-color-1-dark: #33d57e;
   --field-color-1-hover: #b5e9cd;
   --field-color-1-border: #33d57e;
-  --field-color-1-bgDark: rgba(148, 228, 185, 0.04);
+  --field-color-1-bgDark: rgba(148, 228, 185, 0.06);
   --field-color-1-bgLight: rgba(148, 228, 185, 0.07);
 
   --field-color-2: #94dac4;
@@ -21,7 +21,7 @@
   --field-color-2-dark: #3cc499;
   --field-color-2-hover: #b2e1d2;
   --field-color-2-border: #3cc499;
-  --field-color-2-bgDark: rgba(148, 218, 196, 0.04);
+  --field-color-2-bgDark: rgba(148, 218, 196, 0.06);
   --field-color-2-bgLight: rgba(148, 218, 196, 0.07);
 
   --field-color-3: #95d1cd;
@@ -29,7 +29,7 @@
   --field-color-3-dark: #47b4ac;
   --field-color-3-hover: #b0dad7;
   --field-color-3-border: #47b4ac;
-  --field-color-3-bgDark: rgba(149, 209, 205, 0.04);
+  --field-color-3-bgDark: rgba(149, 209, 205, 0.06);
   --field-color-3-bgLight: rgba(149, 209, 205, 0.07);
 
   --field-color-4: #96c9d4;
@@ -37,7 +37,7 @@
   --field-color-4-dark: #44a4b9;
   --field-color-4-hover: #b2d5dc;
   --field-color-4-border: #44a4b9;
-  --field-color-4-bgDark: rgba(150, 201, 212, 0.04);
+  --field-color-4-bgDark: rgba(150, 201, 212, 0.06);
   --field-color-4-bgLight: rgba(150, 201, 212, 0.07);
 
   --field-color-5: #99c0d8;
@@ -45,7 +45,7 @@
   --field-color-5-dark: #4390bf;
   --field-color-5-hover: #b6d0e0;
   --field-color-5-border: #4390bf;
-  --field-color-5-bgDark: rgba(153, 192, 216, 0.04);
+  --field-color-5-bgDark: rgba(153, 192, 216, 0.06);
   --field-color-5-bgLight: rgba(153, 192, 216, 0.07);
 
   --field-color-6: #9db8db;
@@ -53,7 +53,7 @@
   --field-color-6-dark: #457bc2;
   --field-color-6-hover: #bbcce3;
   --field-color-6-border: #457bc2;
-  --field-color-6-bgDark: rgba(157, 184, 219, 0.04);
+  --field-color-6-bgDark: rgba(157, 184, 219, 0.06);
   --field-color-6-bgLight: rgba(157, 184, 219, 0.07);
 
   --field-color-7: #a4afdc;
@@ -61,7 +61,7 @@
   --field-color-7-dark: #4b63c1;
   --field-color-7-hover: #c2c9e5;
   --field-color-7-border: #4b63c1;
-  --field-color-7-bgDark: rgba(164, 175, 220, 0.04);
+  --field-color-7-bgDark: rgba(164, 175, 220, 0.06);
   --field-color-7-bgLight: rgba(164, 175, 220, 0.07);
 
   --field-color-8: #ada6db;
@@ -69,7 +69,7 @@
   --field-color-8-dark: #5d4fbf;
   --field-color-8-hover: #c8c3e4;
   --field-color-8-border: #5d4fbf;
-  --field-color-8-bgDark: rgba(173, 166, 219, 0.04);
+  --field-color-8-bgDark: rgba(173, 166, 219, 0.06);
   --field-color-8-bgLight: rgba(173, 166, 219, 0.07);
 
   --field-color-9: #b89fd7;
@@ -77,7 +77,7 @@
   --field-color-9-dark: #7d4bbb;
   --field-color-9-hover: #ccbbe0;
   --field-color-9-border: #7d4bbb;
-  --field-color-9-bgDark: rgba(184, 159, 215, 0.04);
+  --field-color-9-bgDark: rgba(184, 159, 215, 0.06);
   --field-color-9-bgLight: rgba(184, 159, 215, 0.07);
 
   --field-color-10: #c39bcd;
@@ -85,7 +85,7 @@
   --field-color-10-dark: #9a50ac;
   --field-color-10-hover: #d0b5d7;
   --field-color-10-border: #9a50ac;
-  --field-color-10-bgDark: rgba(195, 155, 205, 0.04);
+  --field-color-10-bgDark: rgba(195, 155, 205, 0.06);
   --field-color-10-bgLight: rgba(195, 155, 205, 0.07);
 
   --field-color-11: #cf9bbe;
@@ -93,7 +93,7 @@
   --field-color-11-dark: #b04e90;
   --field-color-11-hover: #d9b5cd;
   --field-color-11-border: #b04e90;
-  --field-color-11-bgDark: rgba(207, 155, 190, 0.04);
+  --field-color-11-bgDark: rgba(207, 155, 190, 0.06);
   --field-color-11-bgLight: rgba(207, 155, 190, 0.07);
 
   --field-color-12: #da9eae;
@@ -101,7 +101,7 @@
   --field-color-12-dark: #c04767;
   --field-color-12-hover: #e2bbc6;
   --field-color-12-border: #c04767;
-  --field-color-12-bgDark: rgba(218, 158, 174, 0.04);
+  --field-color-12-bgDark: rgba(218, 158, 174, 0.06);
   --field-color-12-bgLight: rgba(218, 158, 174, 0.07);
 
   --field-color-13: #e1a3a1;
@@ -109,7 +109,7 @@
   --field-color-13-dark: #cb4743;
   --field-color-13-hover: #e8c2c0;
   --field-color-13-border: #cb4743;
-  --field-color-13-bgDark: rgba(225, 163, 161, 0.04);
+  --field-color-13-bgDark: rgba(225, 163, 161, 0.06);
   --field-color-13-bgLight: rgba(225, 163, 161, 0.07);
 
   --field-color-14: #e4aa99;
@@ -117,7 +117,7 @@
   --field-color-14-dark: #d35b38;
   --field-color-14-hover: #e9c5ba;
   --field-color-14-border: #d35b38;
-  --field-color-14-bgDark: rgba(228, 170, 153, 0.04);
+  --field-color-14-bgDark: rgba(228, 170, 153, 0.06);
   --field-color-14-bgLight: rgba(228, 170, 153, 0.07);
 
   --field-color-15: #e5b293;
@@ -125,7 +125,7 @@
   --field-color-15-dark: #d76f31;
   --field-color-15-hover: #e9c8b4;
   --field-color-15-border: #d76f31;
-  --field-color-15-bgDark: rgba(229, 178, 147, 0.04);
+  --field-color-15-bgDark: rgba(229, 178, 147, 0.06);
   --field-color-15-bgLight: rgba(229, 178, 147, 0.07);
 
   --field-color-16: #e5bb8f;
@@ -133,7 +133,7 @@
   --field-color-16-dark: #d8842d;
   --field-color-16-hover: #e9cdb0;
   --field-color-16-border: #d8842d;
-  --field-color-16-bgDark: rgba(229, 187, 143, 0.04);
+  --field-color-16-bgDark: rgba(229, 187, 143, 0.06);
   --field-color-16-bgLight: rgba(229, 187, 143, 0.07);
 
   --field-color-17: #e6c48c;
@@ -141,7 +141,7 @@
   --field-color-17-dark: #da9729;
   --field-color-17-hover: #e9d3ae;
   --field-color-17-border: #da9729;
-  --field-color-17-bgDark: rgba(230, 196, 140, 0.04);
+  --field-color-17-bgDark: rgba(230, 196, 140, 0.06);
   --field-color-17-bgLight: rgba(230, 196, 140, 0.07);
 
   --field-color-18: #e7ce8a;
@@ -149,7 +149,7 @@
   --field-color-18-dark: #dcab26;
   --field-color-18-hover: #ead9ac;
   --field-color-18-border: #dcab26;
-  --field-color-18-bgDark: rgba(231, 206, 138, 0.04);
+  --field-color-18-bgDark: rgba(231, 206, 138, 0.06);
   --field-color-18-bgLight: rgba(231, 206, 138, 0.07);
 
   --field-color-19: #e9d787;
@@ -157,7 +157,7 @@
   --field-color-19-dark: #e1bd21;
   --field-color-19-hover: #ebdfaa;
   --field-color-19-border: #e1bd21;
-  --field-color-19-bgDark: rgba(233, 215, 135, 0.04);
+  --field-color-19-bgDark: rgba(233, 215, 135, 0.06);
   --field-color-19-bgLight: rgba(233, 215, 135, 0.07);
 }
 
@@ -179,7 +179,7 @@
                 border-color: var(--field-color-0-dark) !important;
             }
 
-            .bottleneck-card:has(.field-gradient-0) {
+            .bottleneck-card:has(.field-gradient-0):before {
                 background-color: var(--field-color-0-bgLight);
             }
 
@@ -204,7 +204,7 @@
                 background-color: transparent !important;
             }
 
-            .dark-mode .bottleneck-card:has(.field-gradient-0) {
+            .dark-mode .bottleneck-card:has(.field-gradient-0):before {
                 background-color: var(--field-color-0-bgDark);
             }   
             
@@ -225,7 +225,7 @@
                 border-color: var(--field-color-1-dark) !important;
             }
 
-            .bottleneck-card:has(.field-gradient-1) {
+            .bottleneck-card:has(.field-gradient-1):before {
                 background-color: var(--field-color-1-bgLight);
             }
 
@@ -250,7 +250,7 @@
                 background-color: transparent !important;
             }
 
-            .dark-mode .bottleneck-card:has(.field-gradient-1) {
+            .dark-mode .bottleneck-card:has(.field-gradient-1):before {
                 background-color: var(--field-color-1-bgDark);
             }   
             
@@ -271,7 +271,7 @@
                 border-color: var(--field-color-2-dark) !important;
             }
 
-            .bottleneck-card:has(.field-gradient-2) {
+            .bottleneck-card:has(.field-gradient-2):before {
                 background-color: var(--field-color-2-bgLight);
             }
 
@@ -296,7 +296,7 @@
                 background-color: transparent !important;
             }
 
-            .dark-mode .bottleneck-card:has(.field-gradient-2) {
+            .dark-mode .bottleneck-card:has(.field-gradient-2):before {
                 background-color: var(--field-color-2-bgDark);
             }   
             
@@ -317,7 +317,7 @@
                 border-color: var(--field-color-3-dark) !important;
             }
 
-            .bottleneck-card:has(.field-gradient-3) {
+            .bottleneck-card:has(.field-gradient-3):before {
                 background-color: var(--field-color-3-bgLight);
             }
 
@@ -342,7 +342,7 @@
                 background-color: transparent !important;
             }
 
-            .dark-mode .bottleneck-card:has(.field-gradient-3) {
+            .dark-mode .bottleneck-card:has(.field-gradient-3):before {
                 background-color: var(--field-color-3-bgDark);
             }   
             
@@ -363,7 +363,7 @@
                 border-color: var(--field-color-4-dark) !important;
             }
 
-            .bottleneck-card:has(.field-gradient-4) {
+            .bottleneck-card:has(.field-gradient-4):before {
                 background-color: var(--field-color-4-bgLight);
             }
 
@@ -388,7 +388,7 @@
                 background-color: transparent !important;
             }
 
-            .dark-mode .bottleneck-card:has(.field-gradient-4) {
+            .dark-mode .bottleneck-card:has(.field-gradient-4):before {
                 background-color: var(--field-color-4-bgDark);
             }   
             
@@ -409,7 +409,7 @@
                 border-color: var(--field-color-5-dark) !important;
             }
 
-            .bottleneck-card:has(.field-gradient-5) {
+            .bottleneck-card:has(.field-gradient-5):before {
                 background-color: var(--field-color-5-bgLight);
             }
 
@@ -434,7 +434,7 @@
                 background-color: transparent !important;
             }
 
-            .dark-mode .bottleneck-card:has(.field-gradient-5) {
+            .dark-mode .bottleneck-card:has(.field-gradient-5):before {
                 background-color: var(--field-color-5-bgDark);
             }   
             
@@ -455,7 +455,7 @@
                 border-color: var(--field-color-6-dark) !important;
             }
 
-            .bottleneck-card:has(.field-gradient-6) {
+            .bottleneck-card:has(.field-gradient-6):before {
                 background-color: var(--field-color-6-bgLight);
             }
 
@@ -480,7 +480,7 @@
                 background-color: transparent !important;
             }
 
-            .dark-mode .bottleneck-card:has(.field-gradient-6) {
+            .dark-mode .bottleneck-card:has(.field-gradient-6):before {
                 background-color: var(--field-color-6-bgDark);
             }   
             
@@ -501,7 +501,7 @@
                 border-color: var(--field-color-7-dark) !important;
             }
 
-            .bottleneck-card:has(.field-gradient-7) {
+            .bottleneck-card:has(.field-gradient-7):before {
                 background-color: var(--field-color-7-bgLight);
             }
 
@@ -526,7 +526,7 @@
                 background-color: transparent !important;
             }
 
-            .dark-mode .bottleneck-card:has(.field-gradient-7) {
+            .dark-mode .bottleneck-card:has(.field-gradient-7):before {
                 background-color: var(--field-color-7-bgDark);
             }   
             
@@ -547,7 +547,7 @@
                 border-color: var(--field-color-8-dark) !important;
             }
 
-            .bottleneck-card:has(.field-gradient-8) {
+            .bottleneck-card:has(.field-gradient-8):before {
                 background-color: var(--field-color-8-bgLight);
             }
 
@@ -572,7 +572,7 @@
                 background-color: transparent !important;
             }
 
-            .dark-mode .bottleneck-card:has(.field-gradient-8) {
+            .dark-mode .bottleneck-card:has(.field-gradient-8):before {
                 background-color: var(--field-color-8-bgDark);
             }   
             
@@ -593,7 +593,7 @@
                 border-color: var(--field-color-9-dark) !important;
             }
 
-            .bottleneck-card:has(.field-gradient-9) {
+            .bottleneck-card:has(.field-gradient-9):before {
                 background-color: var(--field-color-9-bgLight);
             }
 
@@ -618,7 +618,7 @@
                 background-color: transparent !important;
             }
 
-            .dark-mode .bottleneck-card:has(.field-gradient-9) {
+            .dark-mode .bottleneck-card:has(.field-gradient-9):before {
                 background-color: var(--field-color-9-bgDark);
             }   
             
@@ -639,7 +639,7 @@
                 border-color: var(--field-color-10-dark) !important;
             }
 
-            .bottleneck-card:has(.field-gradient-10) {
+            .bottleneck-card:has(.field-gradient-10):before {
                 background-color: var(--field-color-10-bgLight);
             }
 
@@ -664,7 +664,7 @@
                 background-color: transparent !important;
             }
 
-            .dark-mode .bottleneck-card:has(.field-gradient-10) {
+            .dark-mode .bottleneck-card:has(.field-gradient-10):before {
                 background-color: var(--field-color-10-bgDark);
             }   
             
@@ -685,7 +685,7 @@
                 border-color: var(--field-color-11-dark) !important;
             }
 
-            .bottleneck-card:has(.field-gradient-11) {
+            .bottleneck-card:has(.field-gradient-11):before {
                 background-color: var(--field-color-11-bgLight);
             }
 
@@ -710,7 +710,7 @@
                 background-color: transparent !important;
             }
 
-            .dark-mode .bottleneck-card:has(.field-gradient-11) {
+            .dark-mode .bottleneck-card:has(.field-gradient-11):before {
                 background-color: var(--field-color-11-bgDark);
             }   
             
@@ -731,7 +731,7 @@
                 border-color: var(--field-color-12-dark) !important;
             }
 
-            .bottleneck-card:has(.field-gradient-12) {
+            .bottleneck-card:has(.field-gradient-12):before {
                 background-color: var(--field-color-12-bgLight);
             }
 
@@ -756,7 +756,7 @@
                 background-color: transparent !important;
             }
 
-            .dark-mode .bottleneck-card:has(.field-gradient-12) {
+            .dark-mode .bottleneck-card:has(.field-gradient-12):before {
                 background-color: var(--field-color-12-bgDark);
             }   
             
@@ -777,7 +777,7 @@
                 border-color: var(--field-color-13-dark) !important;
             }
 
-            .bottleneck-card:has(.field-gradient-13) {
+            .bottleneck-card:has(.field-gradient-13):before {
                 background-color: var(--field-color-13-bgLight);
             }
 
@@ -802,7 +802,7 @@
                 background-color: transparent !important;
             }
 
-            .dark-mode .bottleneck-card:has(.field-gradient-13) {
+            .dark-mode .bottleneck-card:has(.field-gradient-13):before {
                 background-color: var(--field-color-13-bgDark);
             }   
             
@@ -823,7 +823,7 @@
                 border-color: var(--field-color-14-dark) !important;
             }
 
-            .bottleneck-card:has(.field-gradient-14) {
+            .bottleneck-card:has(.field-gradient-14):before {
                 background-color: var(--field-color-14-bgLight);
             }
 
@@ -848,7 +848,7 @@
                 background-color: transparent !important;
             }
 
-            .dark-mode .bottleneck-card:has(.field-gradient-14) {
+            .dark-mode .bottleneck-card:has(.field-gradient-14):before {
                 background-color: var(--field-color-14-bgDark);
             }   
             
@@ -869,7 +869,7 @@
                 border-color: var(--field-color-15-dark) !important;
             }
 
-            .bottleneck-card:has(.field-gradient-15) {
+            .bottleneck-card:has(.field-gradient-15):before {
                 background-color: var(--field-color-15-bgLight);
             }
 
@@ -894,7 +894,7 @@
                 background-color: transparent !important;
             }
 
-            .dark-mode .bottleneck-card:has(.field-gradient-15) {
+            .dark-mode .bottleneck-card:has(.field-gradient-15):before {
                 background-color: var(--field-color-15-bgDark);
             }   
             
@@ -915,7 +915,7 @@
                 border-color: var(--field-color-16-dark) !important;
             }
 
-            .bottleneck-card:has(.field-gradient-16) {
+            .bottleneck-card:has(.field-gradient-16):before {
                 background-color: var(--field-color-16-bgLight);
             }
 
@@ -940,7 +940,7 @@
                 background-color: transparent !important;
             }
 
-            .dark-mode .bottleneck-card:has(.field-gradient-16) {
+            .dark-mode .bottleneck-card:has(.field-gradient-16):before {
                 background-color: var(--field-color-16-bgDark);
             }   
             
@@ -961,7 +961,7 @@
                 border-color: var(--field-color-17-dark) !important;
             }
 
-            .bottleneck-card:has(.field-gradient-17) {
+            .bottleneck-card:has(.field-gradient-17):before {
                 background-color: var(--field-color-17-bgLight);
             }
 
@@ -986,7 +986,7 @@
                 background-color: transparent !important;
             }
 
-            .dark-mode .bottleneck-card:has(.field-gradient-17) {
+            .dark-mode .bottleneck-card:has(.field-gradient-17):before {
                 background-color: var(--field-color-17-bgDark);
             }   
             
@@ -1007,7 +1007,7 @@
                 border-color: var(--field-color-18-dark) !important;
             }
 
-            .bottleneck-card:has(.field-gradient-18) {
+            .bottleneck-card:has(.field-gradient-18):before {
                 background-color: var(--field-color-18-bgLight);
             }
 
@@ -1032,7 +1032,7 @@
                 background-color: transparent !important;
             }
 
-            .dark-mode .bottleneck-card:has(.field-gradient-18) {
+            .dark-mode .bottleneck-card:has(.field-gradient-18):before {
                 background-color: var(--field-color-18-bgDark);
             }   
             
@@ -1053,7 +1053,7 @@
                 border-color: var(--field-color-19-dark) !important;
             }
 
-            .bottleneck-card:has(.field-gradient-19) {
+            .bottleneck-card:has(.field-gradient-19):before {
                 background-color: var(--field-color-19-bgLight);
             }
 
@@ -1078,7 +1078,7 @@
                 background-color: transparent !important;
             }
 
-            .dark-mode .bottleneck-card:has(.field-gradient-19) {
+            .dark-mode .bottleneck-card:has(.field-gradient-19):before {
                 background-color: var(--field-color-19-bgDark);
             }   
             

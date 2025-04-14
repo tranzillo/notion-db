@@ -1,10 +1,12 @@
 .dashboard-layout__main {
-  min-height: 24em; /* Ensure consistent height while loading */
+  min-height: 24em;
+  /* Ensure consistent height while loading */
 }
 
 // Improve loading states for different view types
 .bottleneck-grid--graph-view:not(.graph-view-ready) {
-  visibility: hidden; /* Hide graph until ready */
+  visibility: hidden;
+  /* Hide graph until ready */
   height: 0;
   overflow: hidden;
 }
@@ -16,8 +18,9 @@
 
 // Loading indicator animation
 .dashboard-loading {
-  > div {
+  >div {
     position: relative;
+
     &:after {
       content: "...";
       animation: loading-dots 1.5s infinite;
@@ -27,10 +30,19 @@
 }
 
 @keyframes loading-dots {
-  0% { content: "."; }
-  33% { content: ".."; }
-  66% { content: "..."; }
+  0% {
+    content: ".";
+  }
+
+  33% {
+    content: "..";
+  }
+
+  66% {
+    content: "...";
+  }
 }
+
 .dashboard-loading {
   display: flex;
   justify-content: center;
@@ -63,60 +75,136 @@
   @media (min-width: $breakpoint-max) {
     grid-template-columns: repeat(5, 1fr);
   }
+
   &:has(.resource-group) {
     display: block;
     column-count: 1;
     column-gap: $spacing-md;
-    
+
     @media (min-width: $breakpoint-xl) {
       column-count: 2;
     }
-  
+
     @media (min-width: $breakpoint-xxl) {
       column-count: 3;
     }
-  
+
     @media (min-width: $breakpoint-xxxl) {
       column-count: 4;
       column-gap: $spacing-xl;
     }
-  
+
     @media (min-width: $breakpoint-max) {
       column-count: 5;
     }
   }
+
   &--list-view,
   &--graph-view {
     grid-template-columns: 1fr;
     column-count: 1;
   }
+
   &--list-view {
-    .bottleneck-card, .capability-card {
-      flex-direction: row;
+    .hide-grid {
+      display: none;
+    }
+
+    .hide-list {
+      display: initial;
+    }
+
+    .bottleneck-card,
+    .capability-card {
+      flex-direction: column;
+      flex-wrap: wrap;
       max-width: unset;
       gap: 0 $spacing-md;
-      padding: $spacing-md $spacing-lg;
+      padding: $spacing-md $spacing-lg 0 $spacing-lg;
+      @media (max-width: $breakpoint-sm) {
+        padding-inline: $spacing-md;
+      }
+
       &__header {
+        display: flex;
+        align-items: center;
         padding: 0;
         margin: auto 0;
+        border-color: transparent;
+        gap: $spacing-xl;
         background-color: transparent;
+        max-width: calc(100% + ($spacing-lg * 2));
+        @media (max-width: $breakpoint-md) {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 0.75rem;
+        }
+
+        h2 {
+          flex-grow: 1;
+        }
+
+        .bottleneck-card__field {
+          flex-shrink: 0;
+          margin-inline-end: calc($spacing-md * -1);
+        }
       }
+
       &__content {
         height: 0;
         flex-basis: 0;
         flex-shrink: 1;
       }
+
       &__footer {
         align-items: center;
-        margin: 0 0 0 auto;
+        margin: 0 calc($spacing-lg * -1);
         flex-shrink: 0;
-        gap: $spacing-md;
+        gap: $spacing-sm;
+        max-width: calc(100% + ($spacing-lg * 2));
       }
+
+      &__footer-left {
+        margin: auto;
+        padding: 0;
+        width: auto;
+      }
+      &__footer-right {
+        width: 100%;
+      }
+      &__bottlenecks-expanded {
+        margin-inline: calc($spacing-lg * -1);
+      }
+
+      &__capabilities-expanded {
+        margin-inline: calc($spacing-lg * -1);
+        max-width: calc(100% + ($spacing-lg * 2));
+      }
+
       @media (max-width: $breakpoint-md) {
         flex-direction: column;
       }
     }
+
+    .bottleneck-card:has(.bottleneck-card__capabilities-expanded) .bottleneck-card__footer,
+    .capability-card:has(.capability-card__bottlenecks-expanded) .capability-card__footer {
+      margin-block: 0;
+    }
+
+    .capability-card {
+      &__footer-left {
+        margin-inline: 0 auto;
+        padding-inline-start: $spacing-lg;
+        margin-block-start: $spacing-sm;
+
+      }
+
+      &__fields {
+        margin-block-start: 0.5rem;
+      }
+    }
   }
+
   &__empty-state {
     grid-column: 1 / -1;
     text-align: center;

@@ -1,21 +1,62 @@
+.bottleneck-card__outer-wrap {
+  border-radius: $border-radius-lg;
+  align-self: flex-start;
+  position: relative;
+  min-width: 0;
+  height: 100%;
+
+
+
+  &:before {
+    content: "";
+    opacity: 0.65;
+    position: absolute;
+    inset: 0;
+    border-radius: $border-radius-lg;
+    border: 8px solid var(--card-background);
+    background: repeating-linear-gradient(-45deg, var(--card-background), var(--card-background) 4px, var(--background-color) 4px, var(--background-color) 25px);
+    z-index: 0;
+  }
+}
+
+.bottleneck-card:has(.bottleneck-card__capabilities-expanded) {
+  padding-block-end: 0;
+
+  .bottleneck-card__footer {
+    margin-block-end: calc($spacing-lg * -1);
+  }
+}
+
+.bottleneck-card:hover:not(:has(.bottleneck-card__footer:hover, .bottleneck-card__capabilities-expanded:hover)) {
+  color: var(--primary-color);
+}
+
 .bottleneck-card {
+  padding: $spacing-xl $spacing-xl 0 $spacing-xl;
   display: flex;
   flex-direction: column;
   position: relative;
+  overflow: hidden;
+  z-index: 1;
   gap: $spacing-lg;
-  background-color: var(--card-background);
   border: 1px solid var(--border-dull);
-  border-radius: $border-radius-lg;
-  padding: $spacing-xl $spacing-xl $spacing-lg $spacing-xl;
   height: 100%;
+  border-radius: $border-radius-lg;
+  background-color: var(--background-color);
   min-width: 0;
   transition: background-color $transition,
     border $transition,
-    box-shadow $transition,
-    scale $transition;
+    box-shadow $transition;
     @media (max-width: $breakpoint-sm) {
       padding-inline: $spacing-md;
     }
+  &:before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-color: var(--background-color);
+    z-index: -1;
+  }
 
   &__clickable {
     position: absolute;
@@ -24,38 +65,29 @@
   }
 
   &__header {
-    background-color: var(--background-color);
+    background-color: var(--background-color-tint);
     border-radius: $border-radius-lg $border-radius-md 0 0;
+    border-block-end: 1px solid var(--border-dull);
     padding: $spacing-xl;
     margin: calc($spacing-xl * (-1)) calc($spacing-xl * (-1)) 0 calc($spacing-xl * (-1));
     transition: border-color $transition,
       background-color $transition;
-      @media (max-width: $breakpoint-sm) {
-        margin-inline: calc($spacing-md * (-1));
-        padding-inline: $spacing-md;
-      }
+
+    @media (max-width: $breakpoint-sm) {
+      margin-inline: calc($spacing-md * (-1));
+      padding-inline: $spacing-md;
+    }
   }
 
   &__field {
-    // @extend .discipline-tag;
-    display: inline-block;
-    // background-color: var(--background-color);
-    color: var(--text-light);
-    padding: $spacing-xs $spacing-sm;
-    border: 1px solid transparent;
-    border-radius: $border-radius-md;
-    font-size: $font-size-sm;
-    letter-spacing: 0.04em;
-    transition: background-color $transition,
-      color $transition,
-      border-color $transition;
-
+     @extend .field-tag;
   }
 
   &__title {
     font-size: $font-size-lg;
     font-weight: 500;
     margin: 0 !important;
+
     a {
       position: relative;
       z-index: 2;
@@ -79,21 +111,29 @@
       clip-path: inset(0);
     }
   }
+
   &__tags {
     display: flex;
     flex-wrap: wrap;
     gap: $spacing-xs;
     margin-block-end: $spacing-sm;
   }
+
   &__index {
+    display: none;
     font-size: $font-size-xs;
+    position: absolute;
+    top: 0;
+    right: 0;
     color: var(--text-lighter);
-    background-color: var(--background-color-dark);
-    border-radius: $border-radius-md;
-    padding: $spacing-sm;
+    background-color: #00000010;
+    border-radius: 0 $border-radius-md;
+    padding: $spacing-xs $spacing-sm;
+    opacity: 0.5;
     transition: background-color $transition,
       color $transition;
   }
+
   &__tag {
     display: inline-flex;
     align-items: center;
@@ -103,47 +143,193 @@
     border-radius: $border-radius-sm;
     font-size: $font-size-xs;
     white-space: nowrap;
-    
+
   }
+
   &__footer {
     margin-block-start: $spacing-sm;
     display: flex;
+    flex-direction: column;
     justify-content: space-between;
     align-items: flex-end;
-    gap: $spacing-xl;
+    gap: $spacing-md;
+    margin: 0 calc($spacing-xl * (-1)) 0 calc($spacing-xl * (-1));
+
+    @media (max-width: $breakpoint-sm) {
+      margin-inline: calc($spacing-md * (-1));
+      padding-inline: 0;
+    }
 
     &-left,
     &-right {
       display: flex;
       align-items: center;
+      width: 100%;
+      margin-block-start: auto;
+      z-index: 2;
     }
+
     &-left {
       display: flex;
-      flex-direction: column;
+      flex-direction: row;
+      justify-content: space-between;
       align-items: flex-start;
+      padding-inline: $spacing-xl;
+      @media (max-width: $breakpoint-sm) {
+        padding-inline: $spacing-md;
+      }
     }
+
     &-right {
       display: flex;
       align-items: center;
-      
+      position: relative;
+
       &-container {
         display: flex;
         flex-direction: column;
         align-items: flex-end;
         gap: $spacing-xs;
+        width: 100%;
       }
     }
 
   }
-  .bottleneck-card__footer-left,
-  .bottleneck-card__footer-right {
-    position: relative;
-    z-index: 2;
-  }
+
   &:hover {
     box-shadow: 0 0 $spacing-md 0 var(--shadow-color);
-    .bottleneck-card__title {
+  }
+
+  &__capabilities-button {
+    padding: $spacing-sm;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: $spacing-xs;
+    cursor: pointer;
+    background-color: #00000006;
+    color: var(--text-lighter);
+    border: none;
+    border-radius: 0 0 $border-radius-md $border-radius-md;
+    font-size: $font-size-xs;
+    margin-top: $spacing-sm;
+    width: 100%;
+    transition: color $transition, background-color $transition;
+    &:hover {
+      background-color: #00000010;
+    }
+    @media (max-width: $breakpoint-sm) {
+      padding-inline: $spacing-md;
+    }
+  }
+
+  &__capabilities-count {
+    white-space: nowrap;
+  }
+
+  &__capabilities-icon {
+    font-size: $font-size-xxs;
+  }
+
+  &__capabilities-expanded {
+    margin: 0 calc($spacing-xl * (-1)) 0 calc($spacing-xl * (-1));
+    position: relative;
+    z-index: 1;
+    transition: border-color $transition,
+      background-color $transition;
+
+    @media (max-width: $breakpoint-sm) {
+      margin-inline: calc($spacing-md * (-1));
+      padding-inline: $spacing-md;
+    }
+
+    &-container {
+      border-radius: $border-radius-md;
+      padding: $spacing-lg;
+      border: 1px solid var(--border-dull);
+
+    }
+
+  }
+
+  &__capabilities-container {
+    background-color: var(--background-color);
+    border-radius: $border-radius-md;
+    border: 1px solid var(--border-dull);
+    border-block-start: none;
+    margin: -1px;
+  }
+
+  &__capabilities-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+  }
+
+  &__capability-item {
+    background-color: var(--background-color);
+    border-bottom: 1px solid var(--border-dull);
+    padding: $spacing-md $spacing-xl;
+
+    &:first-child {
+      padding-block-start: $spacing-lg;
+      border-block-start: 1px solid var(--border-dull);
+    }
+
+    &:last-child {
+      border-block-end: none;
+      border-radius: 0 0 $border-radius-md $border-radius-md;
+    }
+
+    @media (max-width: $breakpoint-sm) {
+      margin-inline: calc($spacing-md * (-1));
+      padding-inline: $spacing-md;
+    }
+  }
+
+  &__capability-link {
+    display: block;
+    font-weight: 500;
+    line-height: 1.2;
+    color: var(--text-light);
+    font-size: $font-size-md;
+    text-decoration: none;
+    margin-block-end: $spacing-xs;
+
+    &:hover {
       color: var(--primary-color);
     }
+  }
+
+  &__capability-resources {
+    font-size: $font-size-xs;
+    color: var(--text-lighter);
+  }
+}
+
+.dark-mode .bottleneck-card {
+  &__capabilities-button {
+    background-color: #00000010;
+
+    &:hover {
+      background-color: #00000020;
+    }
+  }
+
+}
+
+.dark-mode .bottleneck-card:has(.bottleneck-card__capabilities-expanded) {
+  .bottleneck-card__capabilities-button {
+    background-color: #ffffff06;
+  }
+}
+
+.bottleneck-card:has(.bottleneck-card__capabilities-expanded) {
+  .bottleneck-card__capabilities-button {
+    background-color: var(--background-color-dark);
+    color: var(--text-light);
+    border-radius: 0 0 $border-radius-md $border-radius-md;
   }
 }
