@@ -8,7 +8,7 @@ export default function FoundationalCapabilityCard({
   capability,
   searchQuery = '',
   selectedFields = [],
-  truncateLength = 500,
+  truncateLength = 1000,
   showResources = false
 }) {
   // State for expanded/collapsed view

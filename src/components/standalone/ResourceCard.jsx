@@ -77,8 +77,8 @@ const ResourceCard = memo(function ResourceCard({
     if (!resource.content) return '';
     
     // Truncate text
-    const truncated = resource.content.length > 300 
-      ? resource.content.substring(0, 300) + '...'
+    const truncated = resource.content.length > 500 
+      ? resource.content.substring(0, 500) + '...'
       : resource.content;
     
     // Add highlighting if needed

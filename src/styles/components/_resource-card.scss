@@ -15,7 +15,7 @@
     margin-block-start: $spacing-xl;
 }
 .resource-group {
-    .resource-card__outer-wrap + .resource-card__outer-wrap {
+    .resource-card + .resource-card {
         margin-block-start: $spacing-sm;
     }
 }

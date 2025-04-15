@@ -9,7 +9,7 @@ export default function BottleneckCard({
   bottleneck,
   searchQuery = '',
   selectedFields = [],
-  truncateLength = 500
+  truncateLength = 1000
 }) {
   // State for tracking expanded/collapsed view
   const [isExpanded, setIsExpanded] = useState(false);
