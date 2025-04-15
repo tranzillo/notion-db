@@ -180,6 +180,12 @@
         margin-inline: calc($spacing-lg * -1);
         max-width: calc(100% + ($spacing-lg * 2));
       }
+      &__capability-item {
+        padding: $spacing-md $spacing-lg;
+        &:first-child {
+          padding-block-start: $spacing-lg;
+        }
+      }
 
       @media (max-width: $breakpoint-md) {
         flex-direction: column;

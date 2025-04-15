@@ -1,14 +1,14 @@
 .view-toggle {
   display: flex;
-  gap: $spacing-xs;
+  gap: 0;
 }
 svg {
   transition: filter $transition;
 }
 .view-toggle__button {
   background-color: var(--card-background);
-  border: 1px solid var(--border-dull);
-  border-radius: $border-radius-md;
+  border: none;
+  border-inline-start: 1px solid var(--border-dull);
   padding: $spacing-sm $spacing-md;
   cursor: pointer;
   color: var(--text-lighter);
@@ -60,7 +60,6 @@ svg {
 
 .sort-control {
   display: flex;
-  margin-inline-end: $spacing-xs;
   transition: border-color $transition;
   @media (max-width: $breakpoint-sm) {
     border: none;
@@ -72,8 +71,8 @@ svg {
 
   &__button {
     background-color: var(--card-background);
-    border: 1px solid var(--border-dull);
-    border-radius: $border-radius-md;
+    border: none;
+    border-inline-start: 1px solid var(--border-dull);
     padding: $spacing-sm $spacing-md;
     cursor: pointer;
     color: var(--text-lighter);

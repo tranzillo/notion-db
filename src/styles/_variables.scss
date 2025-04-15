@@ -72,7 +72,7 @@ $font-size-xxl: 2rem;
 // Border radius
 $border-radius-sm: 2px;
 $border-radius-md: 4px;
-$border-radius-lg: 4px;
+$border-radius-lg: 8px;
 
 // Breakpoints
 $breakpoint-min: 250px;
@@ -87,7 +87,7 @@ $breakpoint-xxxl: 2560px;
 $breakpoint-max: 3840px;
 
 //Timing
-$transition: 0.2s ease-in-out;
+$transition: 0.2s ease-out;
 
 
 /* View layout styling based on data attribute */
