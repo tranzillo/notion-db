@@ -193,7 +193,7 @@ function generateCss(resourceTypes) {
     border-color: ${type.colors.dark};
   }
   .capability-card__resource-link:has(.resource-type-gradient-${type.slug}), .capability-detail__resource-item:has(.resource-type-gradient-${type.slug}) {
-    background-color: ${type.colors.base}24;
+    background-color: ${type.colors.base}18;
   }
   .dark-mode .capability-card__resource-link:has(.resource-type-gradient-${type.slug}), .dark-mode .capability-detail__resource-item:has(.resource-type-gradient-${type.slug}) {
     background-color: ${type.colors.base}12;
@@ -206,7 +206,7 @@ function generateCss(resourceTypes) {
   }
 
   .resource-card:has(.resource-type-gradient-${type.slug}) {
-    background-color: ${type.colors.base}24;
+    background-color: ${type.colors.base}18;
   }
   .dark-mode .resource-card:has(.resource-type-gradient-${type.slug}) {
     background-color: ${type.colors.base}12;

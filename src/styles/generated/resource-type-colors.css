@@ -15,7 +15,7 @@
     border-color: #44b772;
   }
   .capability-card__resource-link:has(.resource-type-gradient-research-and-reviews), .capability-detail__resource-item:has(.resource-type-gradient-research-and-reviews) {
-    background-color: #94d3ad24;
+    background-color: #94d3ad18;
   }
   .dark-mode .capability-card__resource-link:has(.resource-type-gradient-research-and-reviews), .dark-mode .capability-detail__resource-item:has(.resource-type-gradient-research-and-reviews) {
     background-color: #94d3ad12;
@@ -28,7 +28,7 @@
   }
 
   .resource-card:has(.resource-type-gradient-research-and-reviews) {
-    background-color: #94d3ad24;
+    background-color: #94d3ad18;
   }
   .dark-mode .resource-card:has(.resource-type-gradient-research-and-reviews) {
     background-color: #94d3ad12;
@@ -48,7 +48,7 @@
     border-color: #47b2a9;
   }
   .capability-card__resource-link:has(.resource-type-gradient-whitepapers-and-essays), .capability-detail__resource-item:has(.resource-type-gradient-whitepapers-and-essays) {
-    background-color: #94d0cb24;
+    background-color: #94d0cb18;
   }
   .dark-mode .capability-card__resource-link:has(.resource-type-gradient-whitepapers-and-essays), .dark-mode .capability-detail__resource-item:has(.resource-type-gradient-whitepapers-and-essays) {
     background-color: #94d0cb12;
@@ -61,7 +61,7 @@
   }
 
   .resource-card:has(.resource-type-gradient-whitepapers-and-essays) {
-    background-color: #94d0cb24;
+    background-color: #94d0cb18;
   }
   .dark-mode .resource-card:has(.resource-type-gradient-whitepapers-and-essays) {
     background-color: #94d0cb12;
@@ -81,7 +81,7 @@
     border-color: #3a8bc7;
   }
   .capability-card__resource-link:has(.resource-type-gradient-fro), .capability-detail__resource-item:has(.resource-type-gradient-fro) {
-    background-color: #94bddc24;
+    background-color: #94bddc18;
   }
   .dark-mode .capability-card__resource-link:has(.resource-type-gradient-fro), .dark-mode .capability-detail__resource-item:has(.resource-type-gradient-fro) {
     background-color: #94bddc12;
@@ -94,7 +94,7 @@
   }
 
   .resource-card:has(.resource-type-gradient-fro) {
-    background-color: #94bddc24;
+    background-color: #94bddc18;
   }
   .dark-mode .resource-card:has(.resource-type-gradient-fro) {
     background-color: #94bddc12;
@@ -114,7 +114,7 @@
     border-color: #3d49c9;
   }
   .capability-card__resource-link:has(.resource-type-gradient-fro-concept), .capability-detail__resource-item:has(.resource-type-gradient-fro-concept) {
-    background-color: #989ede24;
+    background-color: #989ede18;
   }
   .dark-mode .capability-card__resource-link:has(.resource-type-gradient-fro-concept), .dark-mode .capability-detail__resource-item:has(.resource-type-gradient-fro-concept) {
     background-color: #989ede12;
@@ -127,7 +127,7 @@
   }
 
   .resource-card:has(.resource-type-gradient-fro-concept) {
-    background-color: #989ede24;
+    background-color: #989ede18;
   }
   .dark-mode .resource-card:has(.resource-type-gradient-fro-concept) {
     background-color: #989ede12;
@@ -147,7 +147,7 @@
     border-color: #6635ca;
   }
   .capability-card__resource-link:has(.resource-type-gradient-company), .capability-detail__resource-item:has(.resource-type-gradient-company) {
-    background-color: #a990dd24;
+    background-color: #a990dd18;
   }
   .dark-mode .capability-card__resource-link:has(.resource-type-gradient-company), .dark-mode .capability-detail__resource-item:has(.resource-type-gradient-company) {
     background-color: #a990dd12;
@@ -160,7 +160,7 @@
   }
 
   .resource-card:has(.resource-type-gradient-company) {
-    background-color: #a990dd24;
+    background-color: #a990dd18;
   }
   .dark-mode .resource-card:has(.resource-type-gradient-company) {
     background-color: #a990dd12;
@@ -180,7 +180,7 @@
     border-color: #9842bb;
   }
   .capability-card__resource-link:has(.resource-type-gradient-initiative), .capability-detail__resource-item:has(.resource-type-gradient-initiative) {
-    background-color: #c294d524;
+    background-color: #c294d518;
   }
   .dark-mode .capability-card__resource-link:has(.resource-type-gradient-initiative), .dark-mode .capability-detail__resource-item:has(.resource-type-gradient-initiative) {
     background-color: #c294d512;
@@ -193,7 +193,7 @@
   }
 
   .resource-card:has(.resource-type-gradient-initiative) {
-    background-color: #c294d524;
+    background-color: #c294d518;
   }
   .dark-mode .resource-card:has(.resource-type-gradient-initiative) {
     background-color: #c294d512;
@@ -213,7 +213,7 @@
     border-color: #bc478f;
   }
   .capability-card__resource-link:has(.resource-type-gradient-technology-seed), .capability-detail__resource-item:has(.resource-type-gradient-technology-seed) {
-    background-color: #d79cc024;
+    background-color: #d79cc018;
   }
   .dark-mode .capability-card__resource-link:has(.resource-type-gradient-technology-seed), .dark-mode .capability-detail__resource-item:has(.resource-type-gradient-technology-seed) {
     background-color: #d79cc012;
@@ -226,7 +226,7 @@
   }
 
   .resource-card:has(.resource-type-gradient-technology-seed) {
-    background-color: #d79cc024;
+    background-color: #d79cc018;
   }
   .dark-mode .resource-card:has(.resource-type-gradient-technology-seed) {
     background-color: #d79cc012;
@@ -246,7 +246,7 @@
     border-color: #cc4949;
   }
   .capability-card__resource-link:has(.resource-type-gradient-roadmap), .capability-detail__resource-item:has(.resource-type-gradient-roadmap) {
-    background-color: #e3a9a924;
+    background-color: #e3a9a918;
   }
   .dark-mode .capability-card__resource-link:has(.resource-type-gradient-roadmap), .dark-mode .capability-detail__resource-item:has(.resource-type-gradient-roadmap) {
     background-color: #e3a9a912;
@@ -259,7 +259,7 @@
   }
 
   .resource-card:has(.resource-type-gradient-roadmap) {
-    background-color: #e3a9a924;
+    background-color: #e3a9a918;
   }
   .dark-mode .resource-card:has(.resource-type-gradient-roadmap) {
     background-color: #e3a9a912;
@@ -279,7 +279,7 @@
     border-color: #d28a37;
   }
   .capability-card__resource-link:has(.resource-type-gradient-funding-program), .capability-detail__resource-item:has(.resource-type-gradient-funding-program) {
-    background-color: #e3c09724;
+    background-color: #e3c09718;
   }
   .dark-mode .capability-card__resource-link:has(.resource-type-gradient-funding-program), .dark-mode .capability-detail__resource-item:has(.resource-type-gradient-funding-program) {
     background-color: #e3c09712;
@@ -292,7 +292,7 @@
   }
 
   .resource-card:has(.resource-type-gradient-funding-program) {
-    background-color: #e3c09724;
+    background-color: #e3c09718;
   }
   .dark-mode .resource-card:has(.resource-type-gradient-funding-program) {
     background-color: #e3c09712;
@@ -312,7 +312,7 @@
     border-color: #ccbb32;
   }
   .capability-card__resource-link:has(.resource-type-gradient-research-org), .capability-detail__resource-item:has(.resource-type-gradient-research-org) {
-    background-color: #ded58d24;
+    background-color: #ded58d18;
   }
   .dark-mode .capability-card__resource-link:has(.resource-type-gradient-research-org), .dark-mode .capability-detail__resource-item:has(.resource-type-gradient-research-org) {
     background-color: #ded58d12;
@@ -325,7 +325,7 @@
   }
 
   .resource-card:has(.resource-type-gradient-research-org) {
-    background-color: #ded58d24;
+    background-color: #ded58d18;
   }
   .dark-mode .resource-card:has(.resource-type-gradient-research-org) {
     background-color: #ded58d12;
@@ -345,7 +345,7 @@
     border-color: #bde121;
   }
   .capability-card__resource-link:has(.resource-type-gradient-individual), .capability-detail__resource-item:has(.resource-type-gradient-individual) {
-    background-color: #d7e98724;
+    background-color: #d7e98718;
   }
   .dark-mode .capability-card__resource-link:has(.resource-type-gradient-individual), .dark-mode .capability-detail__resource-item:has(.resource-type-gradient-individual) {
     background-color: #d7e98712;
@@ -358,7 +358,7 @@
   }
 
   .resource-card:has(.resource-type-gradient-individual) {
-    background-color: #d7e98724;
+    background-color: #d7e98718;
   }
   .dark-mode .resource-card:has(.resource-type-gradient-individual) {
     background-color: #d7e98712;

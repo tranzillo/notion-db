@@ -129,7 +129,8 @@ export const enhancedFields = [
   {
     "id": "1b6cb37e-2a00-8000-adc6-f1fe226a4b22",
     "field_name": "Neuroscience",
-    "last_edited_time": "2025-04-02T18:58:00.000Z",
+    "field_description": "\nThe brain is responsible for an enormous portion of human disease burden.\n\nWe need new tools to access the brain more broadly and deeply to illuminate the molecular, cellular and circuit mechanisms underlying the brain’s functions and its disorders.\n\n> “To understand in depth what is going on in a brain, we need tools that can fit inside or between neurons and transmit reports of neural events to receivers outside. We need observing instruments that are local, non-destructive and non-invasive, with rapid response, high band-width and high spatial resolution… There is no law of physics that declares such an observational tool to be impossible.” – _Freeman Dyson, Imagined Worlds, 1997_\n",
+    "last_edited_time": "2025-04-14T14:55:00.000Z",
     "slug": "neuroscience",
     "colorName": "gradient-14",
     "colorClass": "field-gradient-14",
@@ -313,7 +314,8 @@ export const sortedEnhancedFields = [
   {
     "id": "1b6cb37e-2a00-8000-adc6-f1fe226a4b22",
     "field_name": "Neuroscience",
-    "last_edited_time": "2025-04-02T18:58:00.000Z",
+    "field_description": "\nThe brain is responsible for an enormous portion of human disease burden.\n\nWe need new tools to access the brain more broadly and deeply to illuminate the molecular, cellular and circuit mechanisms underlying the brain’s functions and its disorders.\n\n> “To understand in depth what is going on in a brain, we need tools that can fit inside or between neurons and transmit reports of neural events to receivers outside. We need observing instruments that are local, non-destructive and non-invasive, with rapid response, high band-width and high spatial resolution… There is no law of physics that declares such an observational tool to be impossible.” – _Freeman Dyson, Imagined Worlds, 1997_\n",
+    "last_edited_time": "2025-04-14T14:55:00.000Z",
     "slug": "neuroscience",
     "colorName": "gradient-14",
     "colorClass": "field-gradient-14",
