@@ -146,18 +146,7 @@ const ResourceCard = memo(function ResourceCard({
       )}
 
       <div className="resource-card__footer">
-        {/* Display linked fields if available */}
-        {linkedFields && linkedFields.length > 0 && (
-          <div className="resource-card__fields">
-            {linkedFields.map(field => (
-              <FieldLabel
-                key={field.id}
-                field={field}
-                isSelected={selectedFields.includes(field.id)}
-              />
-            ))}
-          </div>
-        )}
+
         <div className="resource-card__footer-right">
           {linkedCapabilities.length > 0 && (
             <button 

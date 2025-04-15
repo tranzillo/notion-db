@@ -39,8 +39,12 @@ const cardHeightManager = {
     }, 250));
     
     // Setup view change listener
-    window.addEventListener('view-changed', this.debounce(() => {
-      if (this.shouldProcessGridView()) {
+    window.addEventListener('view-changed', this.debounce((event) => {
+      // When view changes, we need to reset all height constraints if we're entering list view
+      if (event.detail && (event.detail.isListView || event.detail.viewType === 'list')) {
+        this.resetHeightConstraints(selector, containerSelector);
+      } else if (this.shouldProcessGridView()) {
+        // If switching to grid view, recalculate
         setTimeout(() => {
           this.recalculateHeights(selector, containerSelector);
         }, 50);
@@ -74,6 +78,24 @@ const cardHeightManager = {
     this.setupMutationObserver(selector, containerSelector);
   },
   
+  // NEW METHOD: Reset height constraints for all cards (useful when switching to list view)
+  resetHeightConstraints(selector, containerSelector) {
+    const container = document.querySelector(containerSelector);
+    if (!container) return;
+    
+    const cards = container.querySelectorAll(selector);
+    cards.forEach(card => {
+      if (!card.id) return;
+      
+      // Remove any height constraints
+      card.style.maxHeight = '';
+      card.style.height = '';
+      card.style.overflow = '';
+    });
+    
+    console.log(`Reset height constraints for ${cards.length} cards`);
+  },
+  
   // NEW METHOD: Synchronize expandedCards with what's actually in the DOM
   syncExpandedCardsWithDOM(selector, containerSelector) {
     const container = document.querySelector(containerSelector);
@@ -105,8 +127,26 @@ const cardHeightManager = {
   
   // Check if we should process (only in grid view)
   shouldProcessGridView() {
-    return document.documentElement.dataset.listView !== 'true' && 
-           document.documentElement.dataset.graphView !== 'true';
+    // Check both data attributes and classes to be thorough
+    const isListView = 
+      document.documentElement.dataset.listView === 'true' || 
+      document.documentElement.classList.contains('list-view') ||
+      document.querySelector('.bottleneck-grid--list-view') !== null;
+      
+    const isGraphView = 
+      document.documentElement.dataset.graphView === 'true' || 
+      document.documentElement.classList.contains('graph-view') ||
+      document.querySelector('.bottleneck-grid--graph-view') !== null;
+    
+    // We should only process in grid view (not list or graph)
+    return !isListView && !isGraphView;
+  },
+  
+  // Check if we're in list view
+  isListView() {
+    return document.documentElement.dataset.listView === 'true' || 
+           document.documentElement.classList.contains('list-view') ||
+           document.querySelector('.bottleneck-grid--list-view') !== null;
   },
   
   // Set up minimal mutation observer as safety net
@@ -176,6 +216,13 @@ const cardHeightManager = {
     try {
       const container = document.querySelector(containerSelector);
       if (!container) {
+        this.isCalculating = false;
+        return;
+      }
+      
+      // IMPORTANT: Check if we're in list view - if so, remove all height constraints and exit
+      if (this.isListView()) {
+        this.resetHeightConstraints(selector, containerSelector);
         this.isCalculating = false;
         return;
       }
@@ -265,7 +312,12 @@ const cardHeightManager = {
         
         // Get max height in this row
         const maxHeight = Math.max(...heights);
-        rowMaxHeights.set(rowIndex, maxHeight);
+        
+        // Add padding to the max height to ensure content isn't cut off
+        // This is especially important for resource cards
+        const paddedMaxHeight = maxHeight;
+        
+        rowMaxHeights.set(rowIndex, paddedMaxHeight);
       });
       
       // Apply the max heights based on row position

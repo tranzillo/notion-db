@@ -41,4 +41,5 @@
 }
 .hide-list {
   display: none;
+  margin-inline-end: calc($spacing-md * -1);
 }
