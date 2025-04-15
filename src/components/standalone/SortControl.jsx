@@ -4,60 +4,81 @@ import { updateUrlParamsWithoutHistory } from '../../lib/dataUtils';
 
 export default function SortControl({ initialSortBy = 'rank' }) {
   const [sortBy, setSortBy] = useState(initialSortBy);
+  const [viewType, setViewType] = useState('bottlenecks'); // Default to bottlenecks view
 
-  // Determine if we're in capabilities view
-  const [isCapabilitiesView, setIsCapabilitiesView] = useState(false);
-
+  // Initialize and determine the current view type
   useEffect(() => {
-    // Check if we're in the capabilities or resources view based on pathname
     if (typeof window !== 'undefined') {
       const path = window.location.pathname;
-      const isCapView = path.startsWith('/capabilities');
-      const isResourceView = path.startsWith('/resources');
-      
-      setIsCapabilitiesView(isCapView);
-      
-      // Set the appropriate sort options based on view
-      if (isResourceView) {
-        // For resources: type -> alpha -> type
-        if (sortBy !== 'type' && sortBy !== 'alpha') {
-          const newSort = 'type';
-          setSortBy(newSort);
-          updateUrlParamsWithoutHistory({ sort: newSort });
+      let currentViewType = 'bottlenecks'; // default
+      let defaultSort = 'rank';
+
+      if (path.startsWith('/capabilities')) {
+        currentViewType = 'capabilities';
+        defaultSort = 'bottlenecks';
+      } else if (path.startsWith('/resources')) {
+        currentViewType = 'resources';
+        defaultSort = 'type';
+      }
+
+      setViewType(currentViewType);
+
+      // Check URL parameters for sort value
+      const params = new URLSearchParams(window.location.search);
+      const urlSortBy = params.get('sort');
+
+      // Get valid sort options based on view type
+      const validSortOptions = getValidSortOptions(currentViewType);
+
+      // If URL has a valid sort param, use it
+      if (urlSortBy && validSortOptions.includes(urlSortBy)) {
+        setSortBy(urlSortBy);
+      } else {
+        // Otherwise use the appropriate default for this view type
+        setSortBy(defaultSort);
+        
+        // Update URL to match the default sort if needed
+        if (!urlSortBy || !validSortOptions.includes(urlSortBy)) {
+          updateUrlParamsWithoutHistory({ sort: defaultSort });
           
+          // Also dispatch the event to notify other components
           window.dispatchEvent(new CustomEvent('sort-changed', {
-            detail: { sortBy: newSort }
+            detail: { sortBy: defaultSort }
           }));
         }
-      } else if (isCapView && sortBy === 'rank') {
-        // For capabilities: bottlenecks -> alpha -> bottlenecks
-        const newSort = 'bottlenecks';
-        setSortBy(newSort);
-        updateUrlParamsWithoutHistory({ sort: newSort });
-        
-        window.dispatchEvent(new CustomEvent('sort-changed', {
-          detail: { sortBy: newSort }
-        }));
       }
     }
   }, []);
 
-  // Handle toggle between sorting options
-  const toggleSort = () => {
-    let newSortBy;
+  // Get valid sort options for the current view type
+  const getValidSortOptions = (type) => {
+    switch (type) {
+      case 'capabilities':
+        return ['bottlenecks', 'alpha'];
+      case 'resources':
+        return ['type', 'alpha'];
+      default: // bottlenecks
+        return ['rank', 'alpha'];
+    }
+  };
+
+  // Get the next sort value when toggling
+  const getNextSortValue = (currentSort) => {
+    const options = getValidSortOptions(viewType);
+    const currentIndex = options.indexOf(currentSort);
     
-    // Different sort cycling based on view
-    if (isCapabilitiesView) {
-      // For capabilities: bottlenecks -> alpha -> bottlenecks
-      newSortBy = sortBy === 'bottlenecks' ? 'alpha' : 'bottlenecks';
-    } else if (window.location.pathname.startsWith('/resources')) {
-      // For resources: type -> alpha -> type
-      newSortBy = sortBy === 'type' ? 'alpha' : 'type';
-    } else {
-      // For bottlenecks: rank -> alpha -> rank
-      newSortBy = sortBy === 'rank' ? 'alpha' : 'rank';
+    if (currentIndex === -1) {
+      // If current sort is invalid, use first option
+      return options[0];
     }
     
+    // Get next option, or loop back to first
+    return options[(currentIndex + 1) % options.length];
+  };
+
+  // Handle toggle between sorting options
+  const toggleSort = () => {
+    const newSortBy = getNextSortValue(sortBy);
     setSortBy(newSortBy);
 
     // Update URL without creating history entry
@@ -69,38 +90,20 @@ export default function SortControl({ initialSortBy = 'rank' }) {
     }));
   };
 
-  // Apply initial sort method on first render
-  useEffect(() => {
-    if (initialSortBy) {
-      setSortBy(initialSortBy);
-    }
-
-    // Also check URL parameters directly on mount
-    if (typeof window !== 'undefined') {
-      const params = new URLSearchParams(window.location.search);
-      const urlSortBy = params.get('sort');
-      const validSortOptions = isCapabilitiesView 
-        ? ['bottlenecks', 'alpha']
-        : ['rank', 'alpha'];
-        
-      if (urlSortBy && validSortOptions.includes(urlSortBy) && urlSortBy !== sortBy) {
-        setSortBy(urlSortBy);
-      } else if (isCapabilitiesView && (!urlSortBy || urlSortBy === 'rank')) {
-        // Default to bottlenecks sort for capabilities if sort isn't specified
-        // or if it's mistakenly set to rank
-        const newSort = 'bottlenecks';
-        setSortBy(newSort);
-        updateUrlParamsWithoutHistory({ sort: newSort });
-      }
-    }
-  }, [isCapabilitiesView]);
+  // Get active status for display (based on whether alpha sort is active)
+  const isAlphaSortActive = sortBy === 'alpha';
 
   // Get appropriate aria-label and title based on view and current sort
   const getButtonLabels = () => {
-    if (isCapabilitiesView) {
+    if (viewType === 'capabilities') {
       return {
         ariaLabel: sortBy === 'bottlenecks' ? "Sort alphabetically" : "Sort by bottleneck count",
         title: sortBy === 'bottlenecks' ? "Sort alphabetically" : "Sort by bottleneck count"
+      };
+    } else if (viewType === 'resources') {
+      return {
+        ariaLabel: sortBy === 'type' ? "Sort alphabetically" : "Sort by resource type",
+        title: sortBy === 'type' ? "Sort alphabetically" : "Sort by resource type"
       };
     } else {
       return {
@@ -115,7 +118,7 @@ export default function SortControl({ initialSortBy = 'rank' }) {
   return (
     <div className="sort-control">
       <button
-        className={`sort-control__button ${sortBy === 'alpha' ? 'active' : ''}`}
+        className={`sort-control__button ${isAlphaSortActive ? 'active' : ''}`}
         onClick={toggleSort}
         aria-label={ariaLabel}
         title={title}

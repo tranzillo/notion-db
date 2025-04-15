@@ -70,7 +70,7 @@ $font-size-xl: 1.5rem;
 $font-size-xxl: 2rem;
 
 // Border radius
-$border-radius-sm: 2px;
+$border-radius-sm: 3px;
 $border-radius-md: 4px;
 $border-radius-lg: 8px;
 
@@ -101,6 +101,8 @@ html[data-list-view="true"] {
 
 .field-tag {
   display: inline-block;
+  position: relative;
+  z-index: 2;
   color: var(--text-light);
   padding: $spacing-xs $spacing-sm;
   border: 1px solid transparent;

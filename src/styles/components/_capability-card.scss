@@ -181,6 +181,8 @@
     flex-direction: column;
     justify-content: space-between;
     align-items: flex-end;
+    position: relative;
+    z-index: 2;
     gap: $spacing-md;
     margin: 0 calc($spacing-xl * (-1)) 0 calc($spacing-xl * (-1));
 
@@ -300,7 +302,7 @@
     background-color: var(--background-color);
     border-bottom: 1px solid var(--border-dull);
     padding: $spacing-md $spacing-xl;
-  
+
     &:first-child {
       padding-block-start: $spacing-lg;
       border-block-start: 1px solid var(--border-dull);
@@ -310,7 +312,13 @@
       border-block-end: none;
       border-radius: 0 0 $border-radius-md $border-radius-md;
     }
-  
+
+    .field-label {
+      font-size: $font-size-xs;
+      padding: 0.125rem $spacing-xs ;
+      border-radius: $border-radius-sm;
+    }
+
     @media (max-width: $breakpoint-sm) {
       margin-inline: calc($spacing-md * (-1));
       padding-inline: $spacing-md;

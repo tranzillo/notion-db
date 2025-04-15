@@ -27,7 +27,7 @@
   }
 }
 
-.bottleneck-card:hover:not(:has(.bottleneck-card__footer:hover, .bottleneck-card__capabilities-expanded:hover)) {
+.bottleneck-card:hover:not(:has(.bottleneck-card__footer:hover, .bottleneck-card__capabilities-expanded:hover, .field-label:hover)) {
   color: var(--primary-color);
 }
 

@@ -15,7 +15,7 @@
     margin-block-start: $spacing-xl;
 }
 .resource-group {
-    .resource-card + .resource-card {
+    .resource-card__outer-wrap + .resource-card__outer-wrap {
         margin-block-start: $spacing-sm;
     }
 }
@@ -37,6 +37,7 @@
     display: flex;
     flex-direction: column;
     position: relative;
+    z-index: 2;
     background-color: var(--card-background);
     border: 1px solid var(--border-dull);
     border-radius: $border-radius-lg;
@@ -167,7 +168,11 @@
     }
 
     &__capabilities-expanded {
-      
+      .field-label {
+        font-size: $font-size-xs;
+        padding: 0.125rem $spacing-xs ;
+        border-radius: $border-radius-sm;
+      }
       &-container {
         border-radius: $border-radius-md;
         padding: $spacing-lg;
