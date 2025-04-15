@@ -196,18 +196,13 @@ button.mobile-nav, button.close-nav {
       display: flex;
       flex-direction: column-reverse;
       align-items: center;
-      gap: $spacing-xl;
-
-      @media (min-width: $breakpoint-md) {
-        flex-direction: row;
-        justify-content: space-between;
-      }
+      gap: $spacing-md;
     }
   }
 
   &__footer-text {
     color: var(--text-light);
-    font-size: $font-size-sm;
+    font-size: $font-size-xs;
     letter-spacing: 0.04em;
 
     a {
@@ -219,12 +214,15 @@ button.mobile-nav, button.close-nav {
         color: var(--primary-color);
       }
     }
+    @media (max-width: $breakpoint-md) {
+      margin-block-start: $spacing-sm;
+    }
   }
 
   &__footer-links {
     display: flex;
     gap: $spacing-md;
-    @media (max-width: $breakpoint-lg) {
+    @media (max-width: $breakpoint-md) {
       flex-direction: column;
       align-items: center;
     }

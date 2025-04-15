@@ -1,0 +1,151 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import BottleneckCard from "../../components/standalone/BottleneckCard";
+import EnhancedBackButton from "../../components/standalone/EnhancedBackButton";
+import { getEnhancedData } from "../../lib/enhancedData";
+import { createFieldSlug } from "../../lib/slugUtils";
+import { marked } from 'marked';
+
+export async function getStaticPaths() {
+  // Fetch all enhanced data
+  const { fields, bottlenecks } = await getEnhancedData();
+
+  // Generate paths for each field with slugs
+  return fields.map((field) => {
+    // Use the slug from field or generate a new one if missing
+    const slug = field.slug || createFieldSlug(field.field_name);
+
+    // Convert any Markdown in field_description to HTML
+    let htmlDescription = '';
+    if (field.field_description) {
+      try {
+        htmlDescription = marked.parse(field.field_description);
+      } catch (e) {
+        console.error('Error parsing markdown:', e);
+        htmlDescription = field.field_description;
+      }
+    }
+
+    // Create a new field object with the HTML description
+    const enhancedField = {
+      ...field,
+      htmlDescription
+    };
+
+    // Find all bottlenecks related to this field
+    const relatedBottlenecks = bottlenecks.filter(
+      bottleneck => bottleneck.field && bottleneck.field.id === field.id
+    );
+
+    return {
+      params: { slug },
+      props: { field: enhancedField, relatedBottlenecks },
+    };
+  });
+}
+
+// Get the field and related bottlenecks from props
+const { field, relatedBottlenecks } = Astro.props;
+
+// Sort bottlenecks by rank (descending), then by number (ascending)
+const sortedBottlenecks = [...relatedBottlenecks].sort((a, b) => {
+  const rankA = parseInt(a.bottleneck_rank) || 0;
+  const rankB = parseInt(b.bottleneck_rank) || 0;
+  
+  if (rankA === rankB) {
+    // If ranks are equal, sort by bottleneck_number
+    const numA = parseInt(a.bottleneck_number) || 0;
+    const numB = parseInt(b.bottleneck_number) || 0;
+    
+    return numA - numB; // Ascending by number
+  }
+  
+  return rankB - rankA; // Descending by rank
+});
+---
+
+<BaseLayout title={`${field.field_name} - Gap Map`}>
+  <EnhancedBackButton client:load path="/" />
+
+  <div class="field-detail" data-field-id={field.id} data-field-slug={field.slug || createFieldSlug(field.field_name)}>
+    <div class="field-detail__header">
+      <h1 class="field-detail__title">
+        <!-- Use the colorClass that comes from the field object -->
+        <span class={`field-detail__color-marker ${field.colorClass || ''}`}></span>
+        {field.field_name}
+      </h1>
+    </div>
+
+    {field.field_description && (
+      <div class="field-detail__content notion-content">
+        <!-- Use the HTML version of the description -->
+        <div set:html={field.htmlDescription} />
+      </div>
+    )}
+
+    {relatedBottlenecks && relatedBottlenecks.length > 0 && (
+      <div class="field-detail__bottlenecks">
+        <h2 class="indent">
+          R&D Gaps {" "}
+          <span class="subtle">({relatedBottlenecks.length})</span>
+        </h2>
+        
+        <!-- The grid with bottleneck cards -->
+        <div class="field-detail__bottlenecks-grid bottleneck-grid grid-view-ready">
+          {sortedBottlenecks.map((bottleneck) => (
+            <BottleneckCard
+              bottleneck={bottleneck}
+              client:load
+              truncateLength={300}
+            />
+          ))}
+        </div>
+      </div>
+    )}
+  </div>
+</BaseLayout>
+
+<script>
+  import { saveScrollPosition } from "../../lib/scrollPositionUtils";
+  import cardHeightManager from "../../lib/cardHeightManager";
+
+  // Initialize card heights when the page loads
+  function initializeCardHeights() {
+    // Get field ID and slug from the field-detail element
+    const fieldDetailElement = document.querySelector('.field-detail');
+    const fieldId = fieldDetailElement?.dataset.fieldId || '';
+    const fieldSlug = fieldDetailElement?.dataset.fieldSlug || '';
+    
+    // Save position for direct URL accesses if we have the ID and slug
+    if (fieldId && fieldSlug) {
+      saveScrollPosition(fieldId, fieldSlug, window.location.pathname);
+    }
+
+    // Find the grid element
+    const bottleneckGrid = document.querySelector('.bottleneck-grid');
+    
+    // Initialize card heights if the grid exists
+    if (bottleneckGrid) {
+      cardHeightManager.initializeCardHeights('.bottleneck-card', '.bottleneck-grid');
+    }
+  }
+
+  // Run on page load
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initializeCardHeights);
+  } else {
+    initializeCardHeights();
+  }
+  
+  // Handle window resize for card heights
+  let resizeTimeout;
+  window.addEventListener('resize', () => {
+    clearTimeout(resizeTimeout);
+    resizeTimeout = setTimeout(() => {
+      const bottleneckGrid = document.querySelector('.bottleneck-grid');
+      if (bottleneckGrid) {
+        cardHeightManager.initializeCardHeights('.bottleneck-card', '.bottleneck-grid');
+      }
+    }, 200);
+  });
+</script>

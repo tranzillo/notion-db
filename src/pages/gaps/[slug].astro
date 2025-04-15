@@ -2,6 +2,7 @@
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import RankIndicator from "../../components/standalone/RankIndicator";
 import EnhancedBackButton from "../../components/standalone/EnhancedBackButton";
+import FieldLabel from "../../components/standalone/FieldLabel"; // Add this import
 import { getEnhancedData } from "../../lib/enhancedData";
 import { createCapabilitySlug } from "../../lib/slugUtils";
 
@@ -48,11 +49,12 @@ const hasRank =
     <div class="bottleneck-detail__header">
       <div class="bottleneck-detail__meta">
         {
-          bottleneck.field && bottleneck.field.field_name && (
-            <div
-              class={`bottleneck-detail__field active ${bottleneck.field.colorClass || ""}`}
-            >
-              {bottleneck.field.field_name}
+          bottleneck.field && (
+            <div class="bottleneck-detail__field">
+              <FieldLabel
+                field={bottleneck.field}
+                client:load
+              />
             </div>
           )
         }

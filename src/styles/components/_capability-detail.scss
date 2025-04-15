@@ -5,7 +5,7 @@
   }
 
 }
-.capability-detail {
+.capability-detail, .field-detail {
   display: flex;
   flex-direction: column;
   gap: $spacing-xxl;
@@ -201,7 +201,7 @@
       }
   }
 
-  &__bottlenecks-grid {
+  &__bottlenecks-grid, .fields-grid {
     display: grid;
     grid-template-columns: 1fr;
     gap: $spacing-md;

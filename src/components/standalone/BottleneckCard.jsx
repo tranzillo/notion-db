@@ -3,6 +3,7 @@ import React, { useState, useCallback, useEffect } from 'react';
 import { saveScrollPosition } from '../../lib/scrollPositionUtils';
 import RankIndicator from './RankIndicator';
 import cardHeightManager from '../../lib/cardHeightManager';
+import FieldLabel from './FieldLabel'; // Import the new FieldLabel component
 
 export default function BottleneckCard({
   bottleneck,
@@ -83,17 +84,27 @@ export default function BottleneckCard({
   const toggleExpand = useCallback((e) => {
     e.preventDefault();
     e.stopPropagation();
-
+  
     setIsExpanded(prev => {
       const newExpandedState = !prev;
-
+  
       // Use cardHeightManager to handle height changes
       if (newExpandedState) {
         cardHeightManager.expandCard(cardId);
+        
+        // Dispatch event to notify parent components that this card expanded
+        window.dispatchEvent(new CustomEvent('card-expanded', {
+          detail: { cardId }
+        }));
       } else {
         cardHeightManager.collapseCard(cardId);
+        
+        // Dispatch event to notify parent components that this card collapsed
+        window.dispatchEvent(new CustomEvent('card-collapsed', {
+          detail: { cardId }
+        }));
       }
-
+  
       return newExpandedState;
     });
   }, [cardId]);
@@ -130,7 +141,7 @@ export default function BottleneckCard({
   const capabilityCount = bottleneck.foundational_capabilities?.length || 0;
 
   return (
-    <div class="bottleneck-card__outer-wrap">
+    <div className="bottleneck-card__outer-wrap">
       <div
         className="bottleneck-card"
         id={cardId}
@@ -150,11 +161,14 @@ export default function BottleneckCard({
               id={`card-title-${bottleneck.id}`}
             />
           </h2>
-          {bottleneck.field && bottleneck.field.field_name && (
-              <div className={`bottleneck-card__field hide-list ${isFieldSelected ? 'active' : ''} ${bottleneck.field.colorClass || ''}`}>
-                {bottleneck.field.field_name}
-              </div>
-            )}
+          {bottleneck.field && (
+            <div className="hide-list">
+              <FieldLabel 
+                field={bottleneck.field}
+                isSelected={isFieldSelected}
+              />
+            </div>
+          )}
         </div>
 
         <div className="bottleneck-card__content">
@@ -173,9 +187,12 @@ export default function BottleneckCard({
                 ))}
               </div>
             )}
-            {bottleneck.field && bottleneck.field.field_name && (
-              <div className={`bottleneck-card__field hide-grid ${isFieldSelected ? 'active' : ''} ${bottleneck.field.colorClass || ''}`}>
-                {bottleneck.field.field_name}
+            {bottleneck.field && (
+              <div className="hide-grid">
+                <FieldLabel 
+                  field={bottleneck.field}
+                  isSelected={isFieldSelected}
+                />
               </div>
             )}
             {/* Only render the rank indicator if there's a valid rank */}

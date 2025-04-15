@@ -2,6 +2,7 @@
 import React, { useState, useCallback, useEffect, memo } from 'react';
 import { saveScrollPosition } from '../../lib/scrollPositionUtils';
 import cardHeightManager from '../../lib/cardHeightManager';
+import FieldLabel from './FieldLabel'; // Import the new FieldLabel component
 
 // Use memo to prevent unnecessary re-renders
 const ResourceCard = memo(function ResourceCard({
@@ -145,6 +146,18 @@ const ResourceCard = memo(function ResourceCard({
       )}
 
       <div className="resource-card__footer">
+        {/* Display linked fields if available */}
+        {linkedFields && linkedFields.length > 0 && (
+          <div className="resource-card__fields">
+            {linkedFields.map(field => (
+              <FieldLabel
+                key={field.id}
+                field={field}
+                isSelected={selectedFields.includes(field.id)}
+              />
+            ))}
+          </div>
+        )}
         <div className="resource-card__footer-right">
           {linkedCapabilities.length > 0 && (
             <button 
@@ -191,12 +204,11 @@ const ResourceCard = memo(function ResourceCard({
                     {fieldsForCapability.length > 0 && (
                       <div className="resource-card__capability-fields">
                         {fieldsForCapability.map(field => (
-                          <div
+                          <FieldLabel
                             key={field.id}
-                            className={`resource-card__field ${selectedFields.includes(field.id) ? 'active' : ''} ${field.colorClass || ''}`}
-                          >
-                            {field.field_name}
-                          </div>
+                            field={field}
+                            isSelected={selectedFields.includes(field.id)}
+                          />
                         ))}
                       </div>
                     )}

@@ -587,18 +587,47 @@ async function processResourcePage(page: any): Promise<Resource> {
  * This unified approach extracts description directly while processing the page
  */
 async function processFieldPage(page: any): Promise<Field> {
+  console.log(`NOTION_TS: Processing field page ${page.id}`);
 
   const field_name = concatenateRichText(page.properties.Field_Name?.title) || 'Untitled';
+  console.log(`NOTION_TS: Field name is "${field_name}"`);
 
   // Get field description directly (no separate cache file)
   let field_description = '';
   try {
+    console.log(`NOTION_TS: Getting description for field "${field_name}"`);
+    
     const n2m = getN2M();
+    console.log(`NOTION_TS: NotionToMarkdown initialized`);
+    
     const mdBlocks = await throttler.add(() => n2m.pageToMarkdown(page.id), `description-${page.id}`);
+    console.log(`NOTION_TS: Got markdown blocks`, { 
+      blockCount: mdBlocks.length,
+      sampleBlock: mdBlocks.length > 0 ? JSON.stringify(mdBlocks[0]).substring(0, 100) + "..." : "No blocks" 
+    });
+    
     const mdString = n2m.toMarkdownString(mdBlocks);
+    console.log(`NOTION_TS: Converted blocks to markdown string`, {
+      parentLength: mdString.parent ? mdString.parent.length : 0,
+      childrenCount: mdString.children ? mdString.children.length : 0,
+      sampleContent: mdString.parent ? mdString.parent.substring(0, 100) + "..." : "No content"
+    });
+    
     field_description = mdString.parent;
+    
+    console.log(`NOTION_TS: Final field_description type:`, typeof field_description);
+    console.log(`NOTION_TS: Final field_description content:`, field_description ? field_description.substring(0, 100) + "..." : "Empty");
+    console.log(`NOTION_TS: Contains markdown markers:`, {
+      blockquote: field_description.includes('>'),
+      italic: field_description.includes('*'),
+      list: field_description.includes('-') || field_description.includes('1.')
+    });
+    
+    // Log if there's a getPageContent function available
+    console.log(`NOTION_TS: Is getPageContent function available:`, typeof getPageContent !== 'undefined');
+    
   } catch (error) {
-    console.error(`Error fetching description for field ${field_name}:`, error);
+    console.error(`NOTION_TS: Error fetching description for field ${field_name}:`, error);
     field_description = '';
   }
 
@@ -609,7 +638,6 @@ async function processFieldPage(page: any): Promise<Field> {
     last_edited_time: page.last_edited_time
   };
 }
-
 /**
  * Function to safely extract rank from Notion property
  */

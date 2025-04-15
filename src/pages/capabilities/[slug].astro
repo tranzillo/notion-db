@@ -2,6 +2,7 @@
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import BottleneckCard from "../../components/standalone/BottleneckCard";
 import EnhancedBackButton from "../../components/standalone/EnhancedBackButton";
+import FieldLabel from "../../components/standalone/FieldLabel"; // Import the FieldLabel component
 import { getEnhancedData } from "../../lib/enhancedData";
 import { createCapabilitySlug } from "../../lib/slugUtils";
 
@@ -62,11 +63,10 @@ if (capability.bottlenecks && Array.isArray(capability.bottlenecks)) {
           uniqueFields.length > 0 && (
             <div class="capability-detail__fields">
               {uniqueFields.map((field) => (
-                <div
-                  class={`capability-detail__field ${field.colorClass || ""}`}
-                >
-                  {field.field_name}
-                </div>
+                <FieldLabel
+                  field={field}
+                  client:load
+                />
               ))}
             </div>
           )

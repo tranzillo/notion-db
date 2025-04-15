@@ -1,0 +1,64 @@
+.field-label {
+    @extend .field-tag;
+    text-decoration: none;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: filter $transition;
+    
+    // &:hover {
+    //   text-decoration: none;
+    //   background-color: var(--background-hover);
+    // }
+    
+    // &.active {
+    //   border-color: var(--primary-color);
+    //   background-color: var(--primary-light);
+    //   color: var(--primary-dark);
+    // }
+  }
+
+  
+  /* For the color marker in field detail page */
+  .field-detail__color-marker {
+    background-color: var(--primary-color);
+  }
+  
+  .field-label[class*="field-gradient-"]:hover {
+    filter: brightness(0.95);
+    color: var(--text-color);
+  }
+  
+  
+  /* Dark mode styles */
+  .dark-mode {
+    .field-label[class*="field-gradient-"]:hover {
+        filter: brightness(1.5);
+      }
+    .field-label {
+      background-color: var(--card-background);
+      color: var(--text-light);
+      border-color: var(--border-dull);
+      
+      &.active {
+        background-color: var(--primary-dark);
+        color: var(--text-on-primary);
+        border-color: var(--primary-color);
+      }
+    }
+    
+    .field-label[class*="field-gradient-"] {
+      background-color: transparent;
+      border-color: var(--field-color-dark, var(--border-dull));
+      color: var(--text-light);
+    }
+    
+    .field-label[class*="field-gradient-"]:hover {
+      background-color: rgba(255, 255, 255, 0.05);
+    }
+    
+    .field-label[class*="field-gradient-"].active {
+      background-color: rgba(255, 255, 255, 0.1);
+      border-color: var(--field-color-light, var(--primary-color));
+      color: var(--field-color-light, var(--text-light));
+    }
+  }

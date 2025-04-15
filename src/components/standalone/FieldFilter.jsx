@@ -4,6 +4,7 @@ import { saveCurrentUrlState } from '../../lib/navigationUtils';
 import { createFieldSlug } from '../../lib/slugUtils';
 import { sharedFieldStore, updateSelectedFields, loadSelectedFields } from '../../lib/sharedStore';
 import { updateUrlParamsWithoutHistory } from '../../lib/dataUtils';
+import FieldLabel from './FieldLabel'; // Import the FieldLabel component
 
 export default function FieldFilter({
   fields = [],
@@ -188,7 +189,9 @@ export default function FieldFilter({
                 tabIndex="0"
               />
               <label htmlFor={`field-${field.id}`}>
-                {field.field_name}
+                <span className="field-filter__field-name">
+                  {field.field_name}
+                </span>
                 <span className="field-count">
                   {fieldCounts[field.id] ? ` (${fieldCounts[field.id]})` : ''}
                 </span>

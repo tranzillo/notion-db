@@ -2,6 +2,7 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { saveScrollPosition } from '../../lib/scrollPositionUtils';
 import cardHeightManager from '../../lib/cardHeightManager';
+import FieldLabel from './FieldLabel'; // Import the new FieldLabel component
 
 export default function FoundationalCapabilityCard({
   capability,
@@ -108,11 +109,6 @@ export default function FoundationalCapabilityCard({
   // Get all fields
   const allFields = getAllFields();
 
-  // Check if any field is selected
-  const hasFieldSelected = allFields.some(field =>
-    selectedFields.includes(field.id)
-  );
-
   // Get tags for display
   const tags = capability.tags || [];
 
@@ -158,7 +154,7 @@ export default function FoundationalCapabilityCard({
   };
 
   return (
-    <div class="capability-card__outer-wrap">
+    <div className="capability-card__outer-wrap">
     <div className="capability-card capability-card--grid" id={cardId}>
       <a
         href={capabilityUrl}
@@ -196,12 +192,11 @@ export default function FoundationalCapabilityCard({
           {allFields.length > 0 && (
             <div className="capability-card__fields">
               {allFields.map(field => (
-                <div
+                <FieldLabel
                   key={field.id}
-                  className={`capability-card__field ${selectedFields.includes(field.id) ? 'active' : ''} ${field.colorClass || ''}`}
-                >
-                  {field.field_name}
-                </div>
+                  field={field}
+                  isSelected={selectedFields.includes(field.id)}
+                />
               ))}
             </div>
           )}
@@ -245,11 +240,10 @@ export default function FoundationalCapabilityCard({
                   />
                   {/* Show field information */}
                   {bottleneck.field && (
-                    <div 
-                      className={`capability-card__bottleneck-field ${bottleneck.field.colorClass || ''}`}
-                    >
-                      {bottleneck.field.field_name}
-                    </div>
+                    <FieldLabel
+                      field={bottleneck.field}
+                      isSelected={selectedFields.includes(bottleneck.field.id)}
+                    />
                   )}
                   {/* Add rank if available */}
                   {bottleneck.bottleneck_rank > 0 && (

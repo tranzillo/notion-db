@@ -1,4 +1,4 @@
-.bottleneck-detail {
+.bottleneck-detail, .field-detail {
   display: flex;
   flex-direction: column;
   gap: $spacing-xxl;
@@ -89,7 +89,7 @@
     }
   }
 
-  &__capabilities {
+  &__capabilities, &__bottlenecks {
     padding: $spacing-xxl $spacing-md $spacing-md;
     margin: 0 calc($spacing-xl * (-1)) calc($spacing-xl * (-1)) calc($spacing-xl * (-1));
     background-color: var(--background-color);
@@ -144,5 +144,27 @@
 
   &:hover {
     color: var(--primary-color);
+  }
+}
+
+.field-detail {
+  &__header {
+    h1 {
+      padding-block-start: $spacing-sm;
+    }
+  }
+  &__content {
+    p + p, blockquote {
+      margin-block-start: $spacing-lg;
+    }
+    blockquote {
+      padding-inline-start: $spacing-lg;
+      border-inline-start: $spacing-xs solid var(--secondary-color);
+      margin-inline-start: $spacing-xs;
+      font-size: 85%;
+    }
+    em {
+      font-weight: bold;
+    }
   }
 }
