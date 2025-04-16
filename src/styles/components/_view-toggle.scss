@@ -61,9 +61,8 @@ svg {
 
 .sort-control {
   display: flex;
-  margin-inline-end: auto;
   transition: border-color $transition;
-  @media (max-width: $breakpoint-sm) {
+  @media (min-width: $breakpoint-sm) {
     border: none;
     border-inline-end: 1px solid var(--border-dull);
   }
