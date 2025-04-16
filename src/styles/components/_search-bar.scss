@@ -74,7 +74,7 @@
   flex-wrap: wrap;
   transition: background-color $transition, border-color $transition;
   @media (max-width: $breakpoint-sm) {
-    gap: $spacing-sm 0;
+    gap: 0;
   }
 }
 
@@ -92,11 +92,6 @@
   box-shadow: calc((($spacing-sm) * -1)) $spacing-md $spacing-lg $spacing-sm var(--background-color),
     0 calc((($spacing-xl) * -1)) 0 $spacing-md var(--background-color);
 
-  @media (max-width: $breakpoint-lg) {
-    top: $spacing-md;
-    box-shadow: calc((($spacing-sm) * -1)) $spacing-md $spacing-lg $spacing-sm,
-      0 calc(($spacing-sm) * -1) 0 $spacing-sm var(--background-color);
-  }
 
   @media (max-width: $breakpoint-sm) {
     position: relative;
@@ -115,6 +110,8 @@
   @media (max-width: $breakpoint-sm) {
     flex-shrink: 0;
     gap: $spacing-sm;
+    width: 100%;
+    border-block-start: 1px solid var(--border-dull);
   }
 
   &__link {
@@ -137,6 +134,12 @@
     & + .content-type-nav__link {
       padding-inline-start: 0;
     }
+    &:first-child {
+      margin-inline-start: $spacing-xs;
+    }
+    &:last-child {
+      margin-inline-end: auto;
+    }
   }
 }
 
@@ -146,7 +149,7 @@
     justify-content: center;
     
     &__link {
-      padding: $spacing-xs;
+      padding: $spacing-sm;
     }
   }
 }

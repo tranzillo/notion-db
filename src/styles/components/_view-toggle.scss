@@ -9,7 +9,7 @@ svg {
   background-color: var(--card-background);
   border: none;
   border-inline-start: 1px solid var(--border-dull);
-  padding: $spacing-sm $spacing-md;
+  padding: 0.8rem $spacing-md;
   cursor: pointer;
   color: var(--text-lighter);
   transition:
@@ -43,7 +43,7 @@ svg {
   background: var(--card-background);
   border: 1px solid var(--border-dull);
   transition: background-color $transition,
-    border $transition;
+  border $transition;
   color: var(--text-light);
   cursor: pointer;
   padding: $spacing-sm;
@@ -56,10 +56,12 @@ svg {
   @media (max-width: $breakpoint-lg) {
     margin: $spacing-sm 0 0 auto;
   }
+  
 }
 
 .sort-control {
   display: flex;
+  margin-inline-start: auto;
   transition: border-color $transition;
   @media (max-width: $breakpoint-sm) {
     border: none;
