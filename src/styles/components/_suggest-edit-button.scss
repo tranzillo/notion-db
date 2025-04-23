@@ -39,7 +39,11 @@
       
     }
   }
-  
+  .capability-detail__meta {
+.suggest-edit-button {
+    margin-block-end: $spacing-sm;
+}
+  }
 //   // Dark mode adjustments
 //   .dark-mode {
 //     .suggest-edit-button {

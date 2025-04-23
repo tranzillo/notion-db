@@ -1,11 +1,12 @@
 ---
+// src/pages/gaps/[slug].astro - Fixed to resolve initialization error
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import RankIndicator from "../../components/standalone/RankIndicator";
 import EnhancedBackButton from "../../components/standalone/EnhancedBackButton";
-import FieldLabel from "../../components/standalone/FieldLabel"; // Add this import
+import FieldLabel from "../../components/standalone/FieldLabel";
+import SuggestEditButton from "../../components/standalone/SuggestEditButton";
 import { getEnhancedData } from "../../lib/enhancedData";
 import { createCapabilitySlug } from "../../lib/slugUtils";
-import SuggestEditButton from "../../components/standalone/SuggestEditButton";
 
 export async function getStaticPaths() {
   // Fetch all enhanced data
@@ -25,7 +26,7 @@ interface Props {
   bottleneck: any; // Type comes from getStaticPaths
 }
 
-// Get the bottleneck from props
+// Get the bottleneck from props - IMPORTANT: Declare this before using it below
 const { bottleneck } = Astro.props;
 
 // 404 handling (should not happen with static paths, but just in case)
@@ -52,10 +53,7 @@ const hasRank =
         {
           bottleneck.field && (
             <div class="bottleneck-detail__field">
-              <FieldLabel
-                field={bottleneck.field}
-                client:load
-              />
+              <FieldLabel field={bottleneck.field} client:load />
             </div>
           )
         }
@@ -94,15 +92,15 @@ const hasRank =
               </div>
             )
         } -->
-        <SuggestEditButton 
+          <SuggestEditButton
           contentType="Bottleneck"
           contentId={bottleneck.id}
           contentTitle={bottleneck.bottleneck_name}
           contentDescription={bottleneck.bottleneck_description}
           contentField={bottleneck.field?.id}
           client:load
-        />
-      </div>
+        />  
+    </div>
 
       <h1 class="bottleneck-detail__title">{bottleneck.bottleneck_name}</h1>
 

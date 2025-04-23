@@ -1,11 +1,12 @@
 ---
+// src/pages/capabilities/[slug].astro - Fixed to resolve initialization error
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import BottleneckCard from "../../components/standalone/BottleneckCard";
 import EnhancedBackButton from "../../components/standalone/EnhancedBackButton";
-import FieldLabel from "../../components/standalone/FieldLabel"; // Import the FieldLabel component
+import FieldLabel from "../../components/standalone/FieldLabel";
+import SuggestEditButton from "../../components/standalone/SuggestEditButton";
 import { getEnhancedData } from "../../lib/enhancedData";
 import { createCapabilitySlug } from "../../lib/slugUtils";
-import SuggestEditButton from "../../components/standalone/SuggestEditButton";
 
 export async function getStaticPaths() {
   // Fetch all enhanced data
@@ -23,15 +24,12 @@ export async function getStaticPaths() {
   });
 }
 
-const relatedGaps = capability.bottlenecks ? 
-  capability.bottlenecks.map(b => ({ id: b.id, name: b.bottleneck_name })) : 
-  [];
 // TypeScript type for the props
 interface Props {
   capability: any; // Type comes from getStaticPaths
 }
 
-// Get the capability from props
+// Get the capability from props - IMPORTANT: Declare this before using it below
 const { capability } = Astro.props;
 
 // 404 handling (should not happen with static paths, but just in case)
@@ -41,6 +39,11 @@ if (!capability) {
 
 // Extract tags for display
 const publicTags = capability.tags || [];
+
+// Get related bottleneck titles (for pre-filling the form)
+const relatedGaps = capability.bottlenecks
+  ? capability.bottlenecks.map((b) => ({ id: b.id, name: b.bottleneck_name }))
+  : [];
 
 // Get all unique fields from associated bottlenecks
 const uniqueFields = [];
@@ -67,19 +70,24 @@ if (capability.bottlenecks && Array.isArray(capability.bottlenecks)) {
           uniqueFields.length > 0 && (
             <div class="capability-detail__fields">
               {uniqueFields.map((field) => (
-                <FieldLabel
-                  field={field}
-                  client:load
-                />
+                <FieldLabel field={field} client:load />
               ))}
             </div>
           )
         }
+        <SuggestEditButton
+          contentType="Foundational Capability"
+          contentId={capability.id}
+          contentTitle={capability.fc_name}
+          contentDescription={capability.fc_description}
+          relatedGaps={relatedGaps}
+          client:load
+        />
       </div>
 
       <h1 class="capability-detail__title">{capability.fc_name}</h1>
 
-      <!-- Display public tags if available -->
+      <!-- Display public tags -->
       {
         publicTags.length > 0 && (
           <div class="capability-detail__tags">
@@ -89,14 +97,6 @@ if (capability.bottlenecks && Array.isArray(capability.bottlenecks)) {
           </div>
         )
       }
-       <SuggestEditButton 
-        contentType="Foundational Capability"
-        contentId={capability.id}
-        contentTitle={capability.fc_name}
-        contentDescription={capability.fc_description}
-        relatedGaps={relatedGaps}
-        client:load
-      />
     </div>
 
     <div
@@ -215,10 +215,7 @@ if (capability.bottlenecks && Array.isArray(capability.bottlenecks)) {
           </h2>
           <div class="capability-detail__bottlenecks-grid">
             {capability.bottlenecks.map((bottleneck) => (
-              <BottleneckCard
-                bottleneck={bottleneck}
-                client:load
-              />
+              <BottleneckCard bottleneck={bottleneck} client:load />
             ))}
           </div>
         </div>
