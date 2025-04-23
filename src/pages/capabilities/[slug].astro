@@ -5,6 +5,7 @@ import EnhancedBackButton from "../../components/standalone/EnhancedBackButton";
 import FieldLabel from "../../components/standalone/FieldLabel"; // Import the FieldLabel component
 import { getEnhancedData } from "../../lib/enhancedData";
 import { createCapabilitySlug } from "../../lib/slugUtils";
+import SuggestEditButton from "../../components/standalone/SuggestEditButton";
 
 export async function getStaticPaths() {
   // Fetch all enhanced data
@@ -22,6 +23,9 @@ export async function getStaticPaths() {
   });
 }
 
+const relatedGaps = capability.bottlenecks ? 
+  capability.bottlenecks.map(b => ({ id: b.id, name: b.bottleneck_name })) : 
+  [];
 // TypeScript type for the props
 interface Props {
   capability: any; // Type comes from getStaticPaths
@@ -85,6 +89,14 @@ if (capability.bottlenecks && Array.isArray(capability.bottlenecks)) {
           </div>
         )
       }
+       <SuggestEditButton 
+        contentType="Foundational Capability"
+        contentId={capability.id}
+        contentTitle={capability.fc_name}
+        contentDescription={capability.fc_description}
+        relatedGaps={relatedGaps}
+        client:load
+      />
     </div>
 
     <div

@@ -3,8 +3,13 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 import ContributeForm from "../components/standalone/ContributeForm";
 import { getEnhancedData } from "../lib/enhancedData";
 
-// Fetch fields for the form dropdown
-const { fields, resourceTypeOptions } = await getEnhancedData();
+// Fetch all needed data for the form
+const { 
+  fields, 
+  resourceTypeOptions, 
+  bottlenecks, 
+  foundationalCapabilities
+} = await getEnhancedData();
 ---
 
 <BaseLayout title="Contribute - Gap Map">
@@ -18,7 +23,13 @@ const { fields, resourceTypeOptions } = await getEnhancedData();
     </div>
     
     <div class="contribute-content">
-      <ContributeForm client:load fields={fields} resourceTypeOptions={resourceTypeOptions} />
+      <ContributeForm 
+        client:load 
+        fields={fields} 
+        resourceTypeOptions={resourceTypeOptions}
+        bottlenecks={bottlenecks}
+        capabilities={foundationalCapabilities}
+      />
     </div>
   </div>
 </BaseLayout>

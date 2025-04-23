@@ -1,15 +1,26 @@
 // src/components/standalone/ContributeForm.jsx
 import React, { useState, useRef, useEffect } from 'react';
+import AutocompleteInput from './AutocompleteInput';
 
-export default function ContributeForm({ fields = [], resourceTypeOptions = [] }) {
+export default function ContributeForm({
+  fields = [],
+  resourceTypeOptions = [],
+  bottlenecks = [],
+  capabilities = []
+}) {
   const [activeTab, setActiveTab] = useState('bottleneck');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formError, setFormError] = useState('');
+  const [userData, setUserData] = useState({
+    name: '',
+    email: '',
+    comment: ''
+  });
 
-  // Use refs for the common input fields to avoid focus issues
-  const nameInputRef = useRef(null);
-  const emailInputRef = useRef(null);
-  const commentInputRef = useRef(null);
+  // Extract names for autocomplete
+  const bottleneckNames = bottlenecks.map(b => b.bottleneck_name || '').filter(Boolean);
+  const capabilityNames = capabilities.map(c => c.fc_name || '').filter(Boolean);
+  const resourceNames = [];
 
   // Form data state for tab-specific fields
   const [bottleneckData, setBottleneckData] = useState({
@@ -32,19 +43,71 @@ export default function ContributeForm({ fields = [], resourceTypeOptions = [] }
     resourceType: resourceTypeOptions.length > 0 ? resourceTypeOptions[0] : 'Publication'
   });
 
+  // Check URL for edit data on mount
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    const params = new URLSearchParams(window.location.search);
+    const editData = params.get('edit');
+
+    if (editData) {
+      try {
+        const decodedData = JSON.parse(decodeURIComponent(editData));
+
+        // Set the active tab based on content type
+        if (decodedData.contentType === 'Bottleneck') {
+          setActiveTab('bottleneck');
+          setBottleneckData({
+            title: decodedData.contentTitle || '',
+            content: decodedData.contentDescription || '',
+            fieldId: decodedData.contentField || '',
+            rank: 3
+          });
+        }
+        else if (decodedData.contentType === 'Foundational Capability') {
+          setActiveTab('capability');
+
+          // Find the first related gap name if available
+          let relatedGapName = '';
+          if (decodedData.relatedGaps && decodedData.relatedGaps.length > 0) {
+            const firstGap = decodedData.relatedGaps[0];
+            relatedGapName = firstGap.name || '';
+          }
+
+          setFcData({
+            title: decodedData.contentTitle || '',
+            content: decodedData.contentDescription || '',
+            relatedGap: relatedGapName
+          });
+        }
+        else if (decodedData.contentType === 'Resource') {
+          setActiveTab('resource');
+          setResourceData({
+            title: decodedData.contentTitle || '',
+            url: decodedData.contentUrl || '',
+            content: decodedData.contentDescription || '',
+            resourceType: decodedData.resourceType || resourceTypeOptions[0]
+          });
+        }
+      } catch (error) {
+        console.error('Error parsing edit data:', error);
+      }
+    }
+  }, []);
+
   // Handle tab change
   const handleTabChange = (tabName) => {
     setActiveTab(tabName);
     setFormError('');
   };
 
-  // Get values from refs at submission time
-  const getCommonFieldValues = () => {
-    return {
-      name: nameInputRef.current?.value || '',
-      email: emailInputRef.current?.value || '',
-      comment: commentInputRef.current?.value || '',
-    };
+  // Update user data fields
+  const handleUserDataChange = (e) => {
+    const { name, value } = e.target;
+    setUserData(prev => ({
+      ...prev,
+      [name]: value
+    }));
   };
 
   // Form submission handlers
@@ -52,8 +115,6 @@ export default function ContributeForm({ fields = [], resourceTypeOptions = [] }
     e.preventDefault();
     setIsSubmitting(true);
     setFormError('');
-
-    const commonFields = getCommonFieldValues();
 
     try {
       const response = await fetch('/.netlify/functions/submit-contribution', {
@@ -63,14 +124,14 @@ export default function ContributeForm({ fields = [], resourceTypeOptions = [] }
         },
         body: JSON.stringify({
           data: {
-            name: commonFields.name,
-            email: commonFields.email,
+            name: userData.name,
+            email: userData.email,
             title: bottleneckData.title,
             contentType: 'Bottleneck',
             field: bottleneckData.fieldId,
             rank: bottleneckData.rank,
             content: bottleneckData.content,
-            comment: commonFields.comment
+            comment: userData.comment
           }
         }),
       });
@@ -94,8 +155,6 @@ export default function ContributeForm({ fields = [], resourceTypeOptions = [] }
     setIsSubmitting(true);
     setFormError('');
 
-    const commonFields = getCommonFieldValues();
-
     try {
       const response = await fetch('/.netlify/functions/submit-contribution', {
         method: 'POST',
@@ -104,13 +163,13 @@ export default function ContributeForm({ fields = [], resourceTypeOptions = [] }
         },
         body: JSON.stringify({
           data: {
-            name: commonFields.name,
-            email: commonFields.email,
+            name: userData.name,
+            email: userData.email,
             title: fcData.title,
             contentType: 'Foundational Capability',
             content: fcData.content,
             relatedGap: fcData.relatedGap,
-            comment: commonFields.comment
+            comment: userData.comment
           }
         }),
       });
@@ -134,8 +193,6 @@ export default function ContributeForm({ fields = [], resourceTypeOptions = [] }
     setIsSubmitting(true);
     setFormError('');
 
-    const commonFields = getCommonFieldValues();
-
     try {
       const response = await fetch('/.netlify/functions/submit-contribution', {
         method: 'POST',
@@ -144,14 +201,14 @@ export default function ContributeForm({ fields = [], resourceTypeOptions = [] }
         },
         body: JSON.stringify({
           data: {
-            name: commonFields.name,
-            email: commonFields.email,
+            name: userData.name,
+            email: userData.email,
             title: resourceData.title,
             contentType: 'Resource',
             resourceType: resourceData.resourceType,
             resource: resourceData.url,
             content: resourceData.content,
-            comment: commonFields.comment
+            comment: userData.comment
           }
         }),
       });
@@ -170,49 +227,49 @@ export default function ContributeForm({ fields = [], resourceTypeOptions = [] }
     }
   };
 
-  // Component to render common fields that won't lose focus
-  const CommonFieldsSection = () => (
-    <div className="form-section contributor-info">
-      <div className="form-group">
-        <label htmlFor="contributor-name">Your Name *</label>
-        <input
-          type="text"
-          id="contributor-name"
-          name="name"
-          ref={nameInputRef}
-          defaultValue=""
-          required
-        />
-      </div>
-
-      <div className="form-group">
-        <label htmlFor="contributor-email">Your Email *</label>
-        <input
-          type="email"
-          id="contributor-email"
-          name="email"
-          ref={emailInputRef}
-          defaultValue=""
-          required
-        />
-      </div>
-
-      <div className="form-group">
-        <label htmlFor="contributor-comment">Additional Comments</label>
-        <textarea
-          id="contributor-comment"
-          name="comment"
-          rows="3"
-          ref={commentInputRef}
-          defaultValue=""
-          placeholder="Any additional context or notes you'd like to share"
-        ></textarea>
-      </div>
-    </div>
-  );
-
   return (
     <div className="contribute-form">
+      {/* User info section - always visible regardless of active tab */}
+      <div className="contribute-form__user-info">
+        <div className="contribute-form__user-info-fields">
+          <div className="form-group">
+            <label htmlFor="contributor-name">Your Name *</label>
+            <input
+              type="text"
+              id="contributor-name"
+              name="name"
+              value={userData.name}
+              onChange={handleUserDataChange}
+              required
+            />
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="contributor-email">Your Email *</label>
+            <input
+              type="email"
+              id="contributor-email"
+              name="email"
+              value={userData.email}
+              onChange={handleUserDataChange}
+              required
+            />
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="contributor-comment">Comments</label>
+            <textarea
+              id="contributor-comment"
+              name="comment"
+              rows="2"
+              value={userData.comment}
+              onChange={handleUserDataChange}
+              placeholder="Any additional context or notes you'd like to share"
+            ></textarea>
+          </div>
+        </div>
+      </div>
+
       <div className="contribute-form__tabs">
         <button
           className={`contribute-form__tab ${activeTab === 'bottleneck' ? 'active' : ''}`}
@@ -248,12 +305,12 @@ export default function ContributeForm({ fields = [], resourceTypeOptions = [] }
         {activeTab === 'bottleneck' && (
           <form onSubmit={handleBottleneckSubmit}>
             <div className="form-group">
-              <label htmlFor="bottleneck-title">R&D Gap Name *</label>
-              <input
-                type="text"
+              <AutocompleteInput
                 id="bottleneck-title"
+                label="R&D Gap Name"
                 value={bottleneckData.title}
                 onChange={(e) => setBottleneckData({ ...bottleneckData, title: e.target.value })}
+                suggestions={bottleneckNames}
                 required
               />
             </div>
@@ -274,8 +331,8 @@ export default function ContributeForm({ fields = [], resourceTypeOptions = [] }
                 ))}
               </select>
             </div>
-
-            {/* <div className="form-group">
+{/* 
+            <div className="form-group">
               <label htmlFor="bottleneck-rank">
                 Urgency Rank: {bottleneckData.rank}
               </label>
@@ -306,9 +363,6 @@ export default function ContributeForm({ fields = [], resourceTypeOptions = [] }
               ></textarea>
             </div>
 
-            {/* Add common fields */}
-            <CommonFieldsSection />
-
             <div className="form-actions">
               <button
                 type="submit"
@@ -325,23 +379,23 @@ export default function ContributeForm({ fields = [], resourceTypeOptions = [] }
         {activeTab === 'capability' && (
           <form onSubmit={handleFCSubmit}>
             <div className="form-group">
-              <label htmlFor="fc-title">Foundational Capability Name *</label>
-              <input
-                type="text"
+              <AutocompleteInput
                 id="fc-title"
+                label="Foundational Capability Name"
                 value={fcData.title}
                 onChange={(e) => setFcData({ ...fcData, title: e.target.value })}
+                suggestions={capabilityNames}
                 required
               />
             </div>
 
             <div className="form-group">
-              <label htmlFor="fc-related-gap">Related R&D Gap</label>
-              <input
-                type="text"
+              <AutocompleteInput
                 id="fc-related-gap"
+                label="Related R&D Gap"
                 value={fcData.relatedGap}
                 onChange={(e) => setFcData({ ...fcData, relatedGap: e.target.value })}
+                suggestions={bottleneckNames}
                 placeholder="Enter the name of an existing R&D gap or suggest a new one"
               />
             </div>
@@ -358,9 +412,6 @@ export default function ContributeForm({ fields = [], resourceTypeOptions = [] }
               ></textarea>
             </div>
 
-            {/* Add common fields */}
-            <CommonFieldsSection />
-
             <div className="form-actions">
               <button
                 type="submit"
@@ -373,16 +424,16 @@ export default function ContributeForm({ fields = [], resourceTypeOptions = [] }
           </form>
         )}
 
-        {/* Resource Form - Updated for single select */}
+        {/* Resource Form */}
         {activeTab === 'resource' && (
           <form onSubmit={handleResourceSubmit}>
             <div className="form-group">
-              <label htmlFor="resource-title">Resource Title *</label>
-              <input
-                type="text"
+              <AutocompleteInput
                 id="resource-title"
+                label="Resource Title"
                 value={resourceData.title}
                 onChange={(e) => setResourceData({ ...resourceData, title: e.target.value })}
+                suggestions={resourceNames}
                 required
               />
             </div>
@@ -425,9 +476,6 @@ export default function ContributeForm({ fields = [], resourceTypeOptions = [] }
                 placeholder="Provide a brief summary of this resource and its relevance"
               ></textarea>
             </div>
-
-            {/* Add common fields */}
-            <CommonFieldsSection />
 
             <div className="form-actions">
               <button

@@ -12,9 +12,15 @@
         text-align: center;
         margin: auto;
     }
+
     p {
         color: var(--text-light);
     }
+
+    @media (max-width: $breakpoint-sm) {
+        margin-inline: calc($spacing-md * -1);
+
+      }
 }
 
 .contribute-content {
@@ -25,8 +31,8 @@
 
 .contribute-form {
     width: 100%;
+    overflow: hidden;
 
-    
     label {
         font-weight: 500;
     }
@@ -36,6 +42,7 @@
     input[type="email"],
     select,
     textarea {
+        width: 100%;
         padding: 0.75rem;
         border: 1px solid var(--border-dull);
         border-radius: $border-radius-md;
@@ -50,36 +57,45 @@
             border-color: var(--primary-color);
         }
     }
+
     input[type="text"] {
         padding-inline-end: $spacing-md
     }
+
     input[type="range"] {
         width: 100%;
         margin: $spacing-sm 0 0;
     }
 
-.contributor-info {
-    order: -1;
-    display: flex;
-    flex-direction: column;
-    gap: $spacing-lg;
-}
+    &__user-info-fields {
+        .form-group+.form-group {
+            margin-block-start: $spacing-md;
+        }
+    }
 
-.range-labels {
-    display: flex;
-    justify-content: space-between;
-    font-size: $font-size-sm;
-    color: var(--text-lighter);
-}
+    .contributor-info {
+        order: -1;
+        display: flex;
+        flex-direction: column;
+        gap: $spacing-lg;
+    }
+
+    .range-labels {
+        display: flex;
+        justify-content: space-between;
+        font-size: $font-size-sm;
+        color: var(--text-lighter);
+    }
 
     &__tabs {
         display: flex;
-        margin-bottom: $spacing-xxl;
+        margin-block: $spacing-xxl;
         border-bottom: 1px solid var(--border-color);
+
         @media screen and (max-width: $breakpoint-lg) {
             flex-direction: column;
             border-color: transparent;
-            
+
         }
 
         .contribute-form__tab {
@@ -94,10 +110,12 @@
             font-size: $font-size-md;
             cursor: pointer;
             transition: all $transition;
+
             @media screen and (max-width: $breakpoint-lg) {
                 padding-inline-start: 0;
                 align-items: flex-start;
             }
+
             &:hover {
                 color: var(--primary-color);
             }
@@ -125,7 +143,8 @@
         }
     }
 
-    .form-group {
+    .form-group,
+    .autocomplete-input {
         display: flex;
         flex-direction: column;
         gap: $spacing-sm;
@@ -156,7 +175,40 @@
     }
 }
 
-// Dark mode adjustments
+.autocomplete-input {
+    &__container {
+        position: relative;
+    }
+
+    &__suggestions {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background-color: var(--background-color-dark);
+        border: 1px solid var(--border-dull);
+        border-radius: $border-radius-md;
+        z-index: 1000;
+        max-height: 24rem;
+        overflow-y: auto;
+    }
+
+    &__suggestion {
+        padding: 0.75rem;
+        cursor: pointer;
+        transition: color $transition;
+        
+        &:hover {
+            color: var(--primary-color);
+        }
+    }
+
+    &__no-suggestions {
+        padding: $spacing-md;
+        color: var(--text-light);
+    }
+}
+
 .dark-mode {
     .contribute-form {
 
