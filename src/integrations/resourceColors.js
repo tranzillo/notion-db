@@ -181,7 +181,6 @@ function generateCss(resourceTypes) {
     css += `
   /* ${type.name} */
   main .resource-type-gradient-${type.slug} {
-    background-color: ${type.colors.light};
     color: #404137;
     border-color: ${type.colors.base};
   }
@@ -189,7 +188,7 @@ function generateCss(resourceTypes) {
   /* Dark mode styles */
   .dark-mode .resource-type-gradient-${type.slug} {
     background-color: transparent;
-    color: #a0a094;
+    color: #848879;
     border-color: ${type.colors.dark};
   }
   .capability-card__resource-link:has(.resource-type-gradient-${type.slug}), .capability-detail__resource-item:has(.resource-type-gradient-${type.slug}) {

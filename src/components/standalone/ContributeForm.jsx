@@ -382,7 +382,7 @@ export default function ContributeForm({
                 rows="8"
                 value={bottleneckData.content}
                 onChange={(e) => setBottleneckData({ ...bottleneckData, content: e.target.value })}
-                placeholder="Describe the R&D gap in detail. What makes it significant? What are the implications?"
+                placeholder="Describe the R&D Gap in detail. What makes it significant? What are the implications?"
                 required
               ></textarea>
             </div>
@@ -420,7 +420,7 @@ export default function ContributeForm({
                 value={fcData.relatedGap}
                 onChange={(e) => setFcData({ ...fcData, relatedGap: e.target.value })}
                 suggestions={bottleneckNames}
-                placeholder="Enter the name of an existing R&D gap or suggest a new one"
+                placeholder="Enter the name of an existing R&D Gap or suggest a new one"
               />
             </div>
 
@@ -431,7 +431,7 @@ export default function ContributeForm({
                 rows="8"
                 value={fcData.content}
                 onChange={(e) => setFcData({ ...fcData, content: e.target.value })}
-                placeholder="Describe the proposed foundational capability. How would it address the bottleneck? What makes it feasible?"
+                placeholder="Describe the proposed Foundational Capability. How would it address the R&D Gap? What makes it feasible?"
                 required
               ></textarea>
             </div>
@@ -496,7 +496,7 @@ export default function ContributeForm({
                 value={resourceData.relatedCapability}
                 onChange={(e) => setResourceData({ ...resourceData, relatedCapability: e.target.value })}
                 suggestions={capabilityNames}
-                placeholder="Enter the name of a related foundational capability"
+                placeholder="Enter the name of an existing Foundational Capability or suggest a new one"
               />
             </div>
             <div className="form-group">

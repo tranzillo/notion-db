@@ -44,16 +44,16 @@
     }
   }
   
-  // Private Tag Banner Styling
   .private-tag-banner {
     position: relative;
-    margin-block-end: calc(-1 * $spacing-xl); // Pull it up to overlap with the tag cloud
+    margin-block-end: calc(-1 * $spacing-xl);
     z-index: 4;
     
     &__content {
       background-color: var(--highlight-bg);
       border-radius: $border-radius-md $border-radius-md 0 0;
-      padding: $spacing-md $spacing-lg;
+      margin-inline: $spacing-xs;
+      padding: $spacing-md 0.75rem 0.85rem;
       display: flex;
       justify-content: space-between;
       align-items: center;

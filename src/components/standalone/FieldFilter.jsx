@@ -162,6 +162,8 @@ export default function FieldFilter({
         <button
           type="button"
           className="field-filter__button"
+          title='Select all fields'
+          aria-label='Select all fields'
           onClick={handleSelectAllFields}
         >
           All
@@ -169,6 +171,8 @@ export default function FieldFilter({
         <button
           type="button"
           className="field-filter__button"
+          title='Clear all selections'
+          aria-label='Clear all selections'
           onClick={handleClearAllFields}
         >
           None

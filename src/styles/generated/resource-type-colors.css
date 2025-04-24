@@ -3,7 +3,6 @@
 
   /* Research and Reviews */
   main .resource-type-gradient-research-and-reviews {
-    background-color: #e4efe8;
     color: #404137;
     border-color: #94d3ad;
   }
@@ -11,7 +10,7 @@
   /* Dark mode styles */
   .dark-mode .resource-type-gradient-research-and-reviews {
     background-color: transparent;
-    color: #a0a094;
+    color: #848879;
     border-color: #44b772;
   }
   .capability-card__resource-link:has(.resource-type-gradient-research-and-reviews), .capability-detail__resource-item:has(.resource-type-gradient-research-and-reviews) {
@@ -36,7 +35,6 @@
 
   /* Whitepapers and Essays */
   main .resource-type-gradient-whitepapers-and-essays {
-    background-color: #e2edec;
     color: #404137;
     border-color: #94d0cb;
   }
@@ -44,7 +42,7 @@
   /* Dark mode styles */
   .dark-mode .resource-type-gradient-whitepapers-and-essays {
     background-color: transparent;
-    color: #a0a094;
+    color: #848879;
     border-color: #47b2a9;
   }
   .capability-card__resource-link:has(.resource-type-gradient-whitepapers-and-essays), .capability-detail__resource-item:has(.resource-type-gradient-whitepapers-and-essays) {
@@ -69,7 +67,6 @@
 
   /* FRO */
   main .resource-type-gradient-fro {
-    background-color: #eaf0f4;
     color: #404137;
     border-color: #94bddc;
   }
@@ -77,7 +74,7 @@
   /* Dark mode styles */
   .dark-mode .resource-type-gradient-fro {
     background-color: transparent;
-    color: #a0a094;
+    color: #848879;
     border-color: #3a8bc7;
   }
   .capability-card__resource-link:has(.resource-type-gradient-fro), .capability-detail__resource-item:has(.resource-type-gradient-fro) {
@@ -102,7 +99,6 @@
 
   /* FRO Concept */
   main .resource-type-gradient-fro-concept {
-    background-color: #eeeff6;
     color: #404137;
     border-color: #989ede;
   }
@@ -110,7 +106,7 @@
   /* Dark mode styles */
   .dark-mode .resource-type-gradient-fro-concept {
     background-color: transparent;
-    color: #a0a094;
+    color: #848879;
     border-color: #3d49c9;
   }
   .capability-card__resource-link:has(.resource-type-gradient-fro-concept), .capability-detail__resource-item:has(.resource-type-gradient-fro-concept) {
@@ -135,7 +131,6 @@
 
   /* Company */
   main .resource-type-gradient-company {
-    background-color: #ebe8f3;
     color: #404137;
     border-color: #a990dd;
   }
@@ -143,7 +138,7 @@
   /* Dark mode styles */
   .dark-mode .resource-type-gradient-company {
     background-color: transparent;
-    color: #a0a094;
+    color: #848879;
     border-color: #6635ca;
   }
   .capability-card__resource-link:has(.resource-type-gradient-company), .capability-detail__resource-item:has(.resource-type-gradient-company) {
@@ -168,7 +163,6 @@
 
   /* Initiative */
   main .resource-type-gradient-initiative {
-    background-color: #ede5f0;
     color: #404137;
     border-color: #c294d5;
   }
@@ -176,7 +170,7 @@
   /* Dark mode styles */
   .dark-mode .resource-type-gradient-initiative {
     background-color: transparent;
-    color: #a0a094;
+    color: #848879;
     border-color: #9842bb;
   }
   .capability-card__resource-link:has(.resource-type-gradient-initiative), .capability-detail__resource-item:has(.resource-type-gradient-initiative) {
@@ -201,7 +195,6 @@
 
   /* Technology Seed */
   main .resource-type-gradient-technology-seed {
-    background-color: #f5eef2;
     color: #404137;
     border-color: #d79cc0;
   }
@@ -209,7 +202,7 @@
   /* Dark mode styles */
   .dark-mode .resource-type-gradient-technology-seed {
     background-color: transparent;
-    color: #a0a094;
+    color: #848879;
     border-color: #bc478f;
   }
   .capability-card__resource-link:has(.resource-type-gradient-technology-seed), .capability-detail__resource-item:has(.resource-type-gradient-technology-seed) {
@@ -234,7 +227,6 @@
 
   /* Roadmap */
   main .resource-type-gradient-roadmap {
-    background-color: #f6eeee;
     color: #404137;
     border-color: #e3a9a9;
   }
@@ -242,7 +234,7 @@
   /* Dark mode styles */
   .dark-mode .resource-type-gradient-roadmap {
     background-color: transparent;
-    color: #a0a094;
+    color: #848879;
     border-color: #cc4949;
   }
   .capability-card__resource-link:has(.resource-type-gradient-roadmap), .capability-detail__resource-item:has(.resource-type-gradient-roadmap) {
@@ -267,7 +259,6 @@
 
   /* Funding Program */
   main .resource-type-gradient-funding-program {
-    background-color: #f7f3ee;
     color: #404137;
     border-color: #e3c097;
   }
@@ -275,7 +266,7 @@
   /* Dark mode styles */
   .dark-mode .resource-type-gradient-funding-program {
     background-color: transparent;
-    color: #a0a094;
+    color: #848879;
     border-color: #d28a37;
   }
   .capability-card__resource-link:has(.resource-type-gradient-funding-program), .capability-detail__resource-item:has(.resource-type-gradient-funding-program) {
@@ -300,7 +291,6 @@
 
   /* Research Org */
   main .resource-type-gradient-research-org {
-    background-color: #f2f1e6;
     color: #404137;
     border-color: #ded58d;
   }
@@ -308,7 +298,7 @@
   /* Dark mode styles */
   .dark-mode .resource-type-gradient-research-org {
     background-color: transparent;
-    color: #a0a094;
+    color: #848879;
     border-color: #ccbb32;
   }
   .capability-card__resource-link:has(.resource-type-gradient-research-org), .capability-detail__resource-item:has(.resource-type-gradient-research-org) {
@@ -333,7 +323,6 @@
 
   /* Individual */
   main .resource-type-gradient-individual {
-    background-color: #f3f6e9;
     color: #404137;
     border-color: #d7e987;
   }
@@ -341,7 +330,7 @@
   /* Dark mode styles */
   .dark-mode .resource-type-gradient-individual {
     background-color: transparent;
-    color: #a0a094;
+    color: #848879;
     border-color: #bde121;
   }
   .capability-card__resource-link:has(.resource-type-gradient-individual), .capability-detail__resource-item:has(.resource-type-gradient-individual) {
