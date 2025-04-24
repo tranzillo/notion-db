@@ -1,0 +1,11 @@
+[build]
+  command = "npm run build"
+  publish = "dist"
+  functions = "functions"
+
+[dev]
+  command = "npm run dev"
+  functions = "functions"
+  publish = "dist"
+
+  conditions = {Path = {exclude = ["/.netlify/functions/*"]}}
