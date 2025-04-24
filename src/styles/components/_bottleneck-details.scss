@@ -1,3 +1,4 @@
+
 .bottleneck-detail, .field-detail {
   display: flex;
   flex-direction: column;
@@ -36,7 +37,19 @@
   &__field {
 
   }
-
+  &__mark {
+    display: flex;
+    gap: 0.75rem;
+    span {
+      display: inline-block;
+      background-color: var(--border-dull);
+      color: var(--text-light);
+      padding: clamp($font-size-xs, 0.9vw, $spacing-lg);
+      border-radius: 50%;
+      transition: border $transition,
+        background-color $transition;
+    }
+  }
   &__meta {
     display: flex;
     flex-wrap: wrap;
@@ -147,6 +160,14 @@
 
 .field-detail {
   &__header {
+    flex-direction: row !important;
+    align-items: baseline !important;
+    gap: 2vw !important;
+    @media screen and (max-width: $breakpoint-sm) {
+      flex-direction: column !important;
+      align-items: flex-start !important;
+      gap: $spacing-xs !important;
+    }
     h1 {
       padding-block-start: $spacing-sm;
     }

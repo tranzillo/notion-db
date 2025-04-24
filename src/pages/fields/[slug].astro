@@ -74,6 +74,11 @@ const sortedBottlenecks = [...relatedBottlenecks].sort((a, b) => {
         <span class={`field-detail__color-marker ${field.colorClass || ''}`}></span>
         {field.field_name}
       </h1>
+      <div class="field-detail__mark">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
     </div>
 
     {field.field_description && (

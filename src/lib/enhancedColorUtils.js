@@ -155,7 +155,16 @@ export function generateFieldColorClasses(count) {
 
             .dark-mode .bottleneck-card:has(.field-gradient-${i}):before {
                 background-color: var(--field-color-${i}-bgDark);
-            }   
+            }
+            .field-detail:has(.field-gradient-${i}) .field-detail__header .field-detail__mark span:nth-child(1) {
+                background-color: var(--field-color-${i}-dark);
+            }
+            .field-detail:has(.field-gradient-${i}) .field-detail__header .field-detail__mark span:nth-child(2) {
+                background-color: var(--field-color-${i});
+            }
+            .field-detail:has(.field-gradient-${i}) .field-detail__header .field-detail__mark span:nth-child(3) {
+                background-color: var(--field-color-${i}-light);
+            }
             `;
     }
 

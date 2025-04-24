@@ -6,7 +6,8 @@
     padding-inline: $spacing-xxl;
     padding-block-end: $spacing-xxl;
     border-bottom: 1px solid var(--border-dull);
-
+    transition: border-color $transition,
+        background-color $transition;
     @media screen and (max-width: $breakpoint-sm) {
         margin-inline: calc($spacing-md * -1);
         padding-inline: $spacing-md;
@@ -147,6 +148,8 @@
             margin-inline: calc($spacing-xl * (-1));
             border: 1px solid var(--border-dull);
             border-radius: $border-radius-lg;
+            transition: border-color $transition,
+            background-color $transition;
             @media screen and (max-width: $breakpoint-sm) {
                 margin-inline: calc($spacing-sm * (-1));
                 padding: $spacing-xl $spacing-sm 0;
