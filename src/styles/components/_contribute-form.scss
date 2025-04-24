@@ -3,8 +3,14 @@
     flex-direction: column;
     gap: $spacing-md;
     margin-inline: calc($spacing-xxl * -1);
+    padding-inline: $spacing-xxl;
     padding-block-end: $spacing-xxl;
     border-bottom: 1px solid var(--border-dull);
+
+    @media screen and (max-width: $breakpoint-sm) {
+        margin-inline: calc($spacing-md * -1);
+        padding-inline: $spacing-md;
+    }
 
     h1,
     p {
@@ -26,12 +32,14 @@
 .contribute-content {
     max-width: 100ch;
     margin: $spacing-xxl auto 0;
+    @media screen and (max-width: $breakpoint-sm) {
+        margin: $spacing-xl auto 0;
+    }
 }
 
 
 .contribute-form {
     width: 100%;
-    overflow: hidden;
 
     label {
         font-weight: 500;
@@ -89,40 +97,34 @@
 
     &__tabs {
         display: flex;
-        margin-block: $spacing-xxl;
-        border-bottom: 1px solid var(--border-color);
+        margin-block-start: $spacing-xxl;
 
-        @media screen and (max-width: $breakpoint-lg) {
-            flex-direction: column;
-            border-color: transparent;
-
+        .contribute-form__tab + .contribute-form__tab {
+            border-inline-start: none;
         }
-
         .contribute-form__tab {
-            padding: $spacing-md $spacing-lg;
-            background: none;
-            border: none;
-            border-bottom: 3px solid transparent;
-            display: flex;
-            align-items: center;
+            padding: 0.75rem $spacing-md;
+            background: var(--card-background);
+            border: 1px solid var(--border-dull);
+            border-block-end: none;
             color: var(--text-light);
-            font-weight: 500;
-            font-size: $font-size-md;
+            font-weight: 600;
             cursor: pointer;
             transition: all $transition;
-
-            @media screen and (max-width: $breakpoint-lg) {
-                padding-inline-start: 0;
-                align-items: flex-start;
-            }
 
             &:hover {
                 color: var(--primary-color);
             }
 
             &.active {
-                color: var(--primary-color);
-                border-bottom-color: var(--primary-color);
+                color: var(--pure-white);
+                background-color: var(--primary-color);
+            }
+            &:first-child {
+                border-radius: $border-radius-md 0 0 0;
+            }
+            &:last-child {
+                border-radius: 0 $border-radius-md 0 0;           
             }
         }
     }
@@ -137,9 +139,19 @@
 
     &__content {
         form {
+            overflow: hidden;
             display: flex;
             flex-direction: column;
             gap: $spacing-xl;
+            padding: $spacing-xl;
+            padding-block-end: 0;
+            margin-inline: calc($spacing-xl * (-1));
+            border: 1px solid var(--border-dull);
+            border-radius: $border-radius-lg;
+            @media screen and (max-width: $breakpoint-sm) {
+                margin-inline: calc($spacing-sm * (-1));
+                padding: $spacing-xl $spacing-sm 0;
+            }
         }
     }
 
@@ -152,13 +164,18 @@
 
     .form-actions {
         margin-top: 1rem;
-
+        display: flex;
+        flex-direction: column;
+        justify-content: stretch;
+        @media screen and (max-width: $breakpoint-sm) {
+            margin: 0;
+        }
         .submit-button {
-            padding: $spacing-md $spacing-lg;
+            margin-inline: calc($spacing-xl * (-1));
+            padding: $spacing-md $spacing-xl;
             background-color: var(--primary-color);
             color: white;
             border: none;
-            border-radius: $border-radius-md;
             font-weight: 500;
             cursor: pointer;
             transition: background-color $transition;

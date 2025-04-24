@@ -44,3 +44,8 @@
   display: none;
   margin-inline-end: calc($spacing-md * -1);
 }
+.hide-sm {
+  @media (max-width: $breakpoint-sm) {
+    display: none;
+  }
+}

@@ -307,7 +307,7 @@ export default function ContributeForm({
           onClick={() => handleTabChange('capability')}
           type="button"
         >
-          Foundational Capability
+          <span className='hide-sm'>Foundational </span>Capability
         </button>
         <button
           className={`contribute-form__tab ${activeTab === 'resource' ? 'active' : ''}`}
@@ -393,8 +393,8 @@ export default function ContributeForm({
                 className="submit-button"
                 disabled={isSubmitting}
               >
-                {isSubmitting ? 'Submitting...' : 'Submit'}
-              </button>
+                {isSubmitting ? 'Submitting...' : 'Submit for Review'}
+                </button>
             </div>
           </form>
         )}
@@ -442,8 +442,8 @@ export default function ContributeForm({
                 className="submit-button"
                 disabled={isSubmitting}
               >
-                {isSubmitting ? 'Submitting...' : 'Submit'}
-              </button>
+                {isSubmitting ? 'Submitting...' : 'Submit for Review'}
+                </button>
             </div>
           </form>
         )}
@@ -516,7 +516,7 @@ export default function ContributeForm({
                 className="submit-button"
                 disabled={isSubmitting}
               >
-                {isSubmitting ? 'Submitting...' : 'Submit'}
+                {isSubmitting ? 'Submitting...' : 'Submit for Review'}
               </button>
             </div>
           </form>
