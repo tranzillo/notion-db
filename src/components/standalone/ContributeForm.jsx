@@ -215,7 +215,7 @@ export default function ContributeForm({
     e.preventDefault();
     setIsSubmitting(true);
     setFormError('');
-
+  
     try {
       const response = await fetch('/.netlify/functions/submit-contribution', {
         method: 'POST',
@@ -228,20 +228,20 @@ export default function ContributeForm({
             email: userData.email,
             title: resourceData.title,
             contentType: 'Resource',
-            relatedCapability: resourceData.relatedCapability,
             resourceType: resourceData.resourceType,
             resource: resourceData.url,
             content: resourceData.content,
+            relatedCapability: resourceData.relatedCapability,
             comment: userData.comment
           }
         }),
       });
-
+  
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.message || 'Failed to submit');
       }
-
+  
       // Redirect to success page
       window.location.href = '/success';
     } catch (error) {

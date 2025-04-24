@@ -1,9 +1,9 @@
 // functions/submit-contribution.js
 const { Client } = require('@notionhq/client');
 
-exports.handler = async function(event, context) {
+exports.handler = async function (event, context) {
   console.log('Function invoked with body:', event.body);
-  
+
   // Only allow POST requests
   if (event.httpMethod !== 'POST') {
     return {
@@ -11,15 +11,15 @@ exports.handler = async function(event, context) {
       body: JSON.stringify({ message: 'Method not allowed' }),
     };
   }
-  
+
   try {
     // Parse the request body
     const payload = JSON.parse(event.body);
     const { data } = payload;
-    
+
     // Log what we received
     console.log('Received data:', data);
-    
+
     // Validate the basic request
     if (!data) {
       return {
@@ -27,7 +27,7 @@ exports.handler = async function(event, context) {
         body: JSON.stringify({ message: 'Invalid request: Missing data' }),
       };
     }
-    
+
     // Validate required fields
     if (!data.name || !data.email || !data.title) {
       return {
@@ -40,7 +40,7 @@ exports.handler = async function(event, context) {
     const notion = new Client({
       auth: process.env.NOTION_API_KEY
     });
-    
+
     // Build the properties object for Notion - CORRECTED FIELD TYPES
     const properties = {
       // CORRECTED: Name should be rich_text (not title)
@@ -72,7 +72,7 @@ exports.handler = async function(event, context) {
         },
       },
     };
-    
+
     // Add ContentType if present
     if (data.contentType) {
       properties.ContentType = {
@@ -81,7 +81,7 @@ exports.handler = async function(event, context) {
         },
       };
     }
-    
+
     // Add ResourceType if present
     if (data.resourceType) {
       properties.ResourceType = {
@@ -90,7 +90,7 @@ exports.handler = async function(event, context) {
         },
       };
     }
-    
+
     // Add Field relation if present
     if (data.field) {
       properties.Field = {
@@ -101,7 +101,7 @@ exports.handler = async function(event, context) {
         ],
       };
     }
-    
+
     // Add Resource (URL) if present
     if (data.resource) {
       properties.Resource = {
@@ -114,19 +114,19 @@ exports.handler = async function(event, context) {
         ],
       };
     }
-    
-// Add Related Capability if present
-if (data.relatedCapability) {
-  properties["Related Capability"] = {
-    rich_text: [
-      {
-        text: {
-          content: data.relatedCapability,
-        },
-      },
-    ],
-  };
-}
+
+    // Add Related Capability if present
+    if (data.relatedCapability) {
+      properties["Related Capability"] = {
+        rich_text: [
+          {
+            text: {
+              content: data.relatedCapability,
+            },
+          },
+        ],
+      };
+    }
 
 
     // Add Rank if present
@@ -135,7 +135,7 @@ if (data.relatedCapability) {
         number: parseInt(data.rank, 10) || 0,
       };
     }
-    
+
     // Add Related Gap if present
     if (data.relatedGap) {
       properties["Related Gap"] = {
@@ -148,7 +148,7 @@ if (data.relatedCapability) {
         ],
       };
     }
-    
+
     // Add Comment if present
     if (data.comment) {
       properties.Comment = {
@@ -161,10 +161,10 @@ if (data.relatedCapability) {
         ],
       };
     }
-    
+
     // Create blocks for content
     const blocks = [];
-    
+
     // Add content as blocks if present
     if (data.content) {
       blocks.push({
@@ -182,9 +182,9 @@ if (data.relatedCapability) {
         },
       });
     }
-    
+
     console.log('Creating page with properties:', JSON.stringify(properties, null, 2));
-    
+
     // Create the page in Notion
     try {
       const response = await notion.pages.create({
@@ -194,9 +194,9 @@ if (data.relatedCapability) {
         properties: properties,
         children: blocks.length > 0 ? blocks : undefined,
       });
-      
+
       console.log('Notion response:', response.id);
-      
+
       return {
         statusCode: 200,
         body: JSON.stringify({ success: true, message: 'Contribution submitted successfully' }),
@@ -216,10 +216,10 @@ if (data.relatedCapability) {
     console.error('Error processing request:', error);
     return {
       statusCode: 500,
-      body: JSON.stringify({ 
+      body: JSON.stringify({
         success: false,
         message: 'Error processing request',
-        error: error.message 
+        error: error.message
       }),
     };
   }
