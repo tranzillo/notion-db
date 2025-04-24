@@ -139,7 +139,6 @@
 
     &__content {
         form {
-            overflow: hidden;
             display: flex;
             flex-direction: column;
             gap: $spacing-xl;
@@ -174,6 +173,7 @@
             margin-inline: calc($spacing-xl * (-1));
             padding: $spacing-md $spacing-xl;
             background-color: var(--primary-color);
+            border-radius: 0 0 $border-radius-lg $border-radius-lg;
             color: white;
             border: none;
             font-weight: 500;

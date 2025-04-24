@@ -17,6 +17,7 @@ export default function AutocompleteInput({
   const [filteredSuggestions, setFilteredSuggestions] = useState([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [activeSuggestionIndex, setActiveSuggestionIndex] = useState(0);
+  const [isFocused, setIsFocused] = useState(false); // Track focus state
   const inputRef = useRef(null);
   const suggestionsRef = useRef(null);
 
@@ -41,10 +42,9 @@ export default function AutocompleteInput({
       suggestion => suggestion.toLowerCase() === inputValue.toLowerCase()
     );
     
-    // Show suggestions if we have any matches AND there's no exact match
-    setShowSuggestions(filtered.length > 0 && !hasExactMatch);
-    setActiveSuggestionIndex(0);
-  }, [inputValue, suggestions, maxSuggestions]);
+    // Show suggestions if we have any matches AND there's no exact match AND the input is focused
+    setShowSuggestions(filtered.length > 0 && !hasExactMatch && isFocused);
+  }, [inputValue, suggestions, maxSuggestions, isFocused]);
 
   // Update local state when value prop changes
   useEffect(() => {
@@ -84,7 +84,7 @@ export default function AutocompleteInput({
     );
     
     // Show suggestions if we have any matches AND there's no exact match
-    setShowSuggestions(filtered.length > 0 && !hasExactMatch);
+    setShowSuggestions(filtered.length > 0 && !hasExactMatch && isFocused);
   };
 
   // Handle suggestion selection
@@ -95,6 +95,14 @@ export default function AutocompleteInput({
     // Call the parent onSuggestionSelect handler if provided
     if (onSuggestionSelect) {
       onSuggestionSelect(suggestion);
+    }
+    
+    // Create a synthetic event to pass to parent onChange
+    if (onChange) {
+      const syntheticEvent = {
+        target: { value: suggestion }
+      };
+      onChange(syntheticEvent);
     }
     
     // Focus back on the input
@@ -135,6 +143,57 @@ export default function AutocompleteInput({
     }
   };
 
+  // Handle focus state
+  const handleFocus = () => {
+    setIsFocused(true);
+    
+    // Check if there are suggestions to show
+    if (inputValue.trim() !== "") {
+      // Check if there's an exact match with the current input
+      const hasExactMatch = filteredSuggestions.some(
+        suggestion => suggestion.toLowerCase() === inputValue.trim().toLowerCase()
+      );
+      
+      // Only show suggestions if we have matches AND there's no exact match
+      if (filteredSuggestions.length > 0 && !hasExactMatch) {
+        setShowSuggestions(true);
+      }
+    }
+  };
+
+  // Handle blur state
+  const handleBlur = (e) => {
+    // Don't immediately blur if clicking on suggestions list
+    if (suggestionsRef.current && suggestionsRef.current.contains(e.relatedTarget)) {
+      return;
+    }
+    
+    // Wait a bit before hiding suggestions to allow click events to complete
+    setTimeout(() => {
+      setIsFocused(false);
+      
+      // Check if there's now an exact match after input blur
+      const currentValue = inputValue.trim().toLowerCase();
+      const exactMatch = filteredSuggestions.find(
+        suggestion => suggestion.toLowerCase() === currentValue
+      );
+      
+      if (exactMatch && exactMatch.toLowerCase() !== inputValue.toLowerCase()) {
+        // Update with the properly cased version of the match
+        setInputValue(exactMatch);
+        if (onChange) {
+          // Create a synthetic event to pass to parent onChange
+          const syntheticEvent = {
+            target: { value: exactMatch }
+          };
+          onChange(syntheticEvent);
+        }
+      }
+      
+      setShowSuggestions(false);
+    }, 100);
+  };
+
   // Handle click outside to close suggestions
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -145,24 +204,6 @@ export default function AutocompleteInput({
         !inputRef.current.contains(event.target)
       ) {
         setShowSuggestions(false);
-        
-        // Check if there's now an exact match after input blur
-        const currentValue = inputValue.trim().toLowerCase();
-        const exactMatch = filteredSuggestions.find(
-          suggestion => suggestion.toLowerCase() === currentValue
-        );
-        
-        if (exactMatch) {
-          // Update with the properly cased version of the match
-          setInputValue(exactMatch);
-          if (onChange) {
-            // Create a synthetic event to pass to parent onChange
-            const syntheticEvent = {
-              target: { value: exactMatch }
-            };
-            onChange(syntheticEvent);
-          }
-        }
       }
     };
 
@@ -170,7 +211,7 @@ export default function AutocompleteInput({
     return () => {
       document.removeEventListener('click', handleClickOutside);
     };
-  }, [inputValue, filteredSuggestions, onChange]);
+  }, []);
 
   return (
     <div className={`autocomplete-input ${className}`}>
@@ -186,18 +227,8 @@ export default function AutocompleteInput({
           value={inputValue}
           onChange={handleChange}
           onKeyDown={handleKeyDown}
-          onFocus={() => {
-            // Check if there's an exact match with the current input
-            const currentValue = inputValue.trim().toLowerCase();
-            const hasExactMatch = filteredSuggestions.some(
-              suggestion => suggestion.toLowerCase() === currentValue
-            );
-            
-            // Only show suggestions if we have matches AND there's no exact match
-            if (filteredSuggestions.length > 0 && !hasExactMatch) {
-              setShowSuggestions(true);
-            }
-          }}
+          onFocus={handleFocus}
+          onBlur={handleBlur}
           placeholder={placeholder}
           required={required}
           autoComplete="off"
