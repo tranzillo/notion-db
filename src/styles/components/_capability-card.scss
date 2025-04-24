@@ -28,7 +28,9 @@
 .capability-card:hover:not(:has(.capability-card__footer:hover, .capability-card__bottlenecks-expanded:hover)) {
   color: var(--primary-color);
 }
-
+.capability-card:has(.capability-card__resource-link) {
+  border-radius: $border-radius-lg $border-radius-lg $border-radius-md $border-radius-md;
+}
 .capability-card {
   padding: $spacing-xl $spacing-xl 0 $spacing-xl;
   display: flex;
@@ -56,6 +58,9 @@
   }
   &__resource-group {
     margin:0 calc($spacing-xl * (-1)) calc($spacing-lg * (-1));
+    &:last-child {
+      margin-block-end: calc($spacing-md * (-1))
+    }
     &:last-child .capability-card__resource-item:last-child .capability-card__resource-link {
       padding-block-end: $spacing-lg;
     }
