@@ -68,8 +68,8 @@
     }
 
     &__user-info-fields {
-        .form-group+.form-group {
-            margin-block-start: $spacing-md;
+        .form-group + .form-group {
+            margin-block-start: $spacing-xl;
         }
     }
 

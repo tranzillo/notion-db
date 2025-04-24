@@ -115,6 +115,20 @@ exports.handler = async function(event, context) {
       };
     }
     
+// Add Related Capability if present
+if (data.relatedCapability) {
+  properties["Related Capability"] = {
+    rich_text: [
+      {
+        text: {
+          content: data.relatedCapability,
+        },
+      },
+    ],
+  };
+}
+
+
     // Add Rank if present
     if (data.rank) {
       properties.Rank = {

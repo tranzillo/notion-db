@@ -79,7 +79,11 @@
     align-items: center;
     justify-content: space-between;
     width: 100%;
-    gap: $spacing-lg;
+    gap: $spacing-xs $spacing-lg;
+    @media (max-width: $breakpoint-sm) {
+      flex-direction: column;
+      align-items: flex-start;
+    }
   }
 
   &__tags {

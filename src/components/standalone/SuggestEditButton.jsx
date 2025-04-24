@@ -1,4 +1,4 @@
-// src/components/standalone/SuggestEditButton.jsx
+// src/components/standalone/SuggestEditButton.jsx - Simple fix version
 import React from 'react';
 
 export default function SuggestEditButton({ 
@@ -11,12 +11,16 @@ export default function SuggestEditButton({
 }) {
   // Function to prepare and encode the data to pass via URL
   const handleClick = () => {
-    // Create a data object with all necessary information
+    // Store the description in sessionStorage (which has much higher limits)
+    if (contentDescription) {
+      sessionStorage.setItem(`edit_description_${contentId}`, contentDescription);
+    }
+    
+    // Create a data object with all necessary information except description
     const data = {
       contentType,
       contentId,
       contentTitle,
-      contentDescription: contentDescription?.substring(0, 500), // Limit length to avoid URL issues
       contentField,
       relatedGaps
     };

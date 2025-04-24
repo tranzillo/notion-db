@@ -3,15 +3,18 @@
 .suggest-edit-button {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: $spacing-sm;
     background-color: var(--background-color-dark);
     color: var(--text-color-light);
     border: none;
     border-radius: $border-radius-md;
-    padding: 0.5rem 1rem;
+    padding: $spacing-sm;
     font-size: $font-size-sm;
     cursor: pointer;
-    transition: all $transition;
+    transition: background-color $transition, color $transition;
+    @media (max-width: $breakpoint-sm) {
+        order: -1;
+      }
     
     svg {
       transition: transform $transition;

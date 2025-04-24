@@ -40,6 +40,7 @@ export default function ContributeForm({
     title: '',
     url: '',
     content: '',
+    relatedCapability: '',
     resourceType: resourceTypeOptions.length > 0 ? resourceTypeOptions[0] : 'Publication'
   });
 
@@ -57,15 +58,25 @@ export default function ContributeForm({
         // Set the active tab based on content type
         if (decodedData.contentType === 'Bottleneck') {
           setActiveTab('bottleneck');
+
+          // Retrieve description from sessionStorage
+          const description = sessionStorage.getItem(`edit_description_${decodedData.contentId}`) || '';
+
           setBottleneckData({
             title: decodedData.contentTitle || '',
-            content: decodedData.contentDescription || '',
+            content: description,
             fieldId: decodedData.contentField || '',
             rank: 3
           });
+
+          // Clear from sessionStorage after use
+          sessionStorage.removeItem(`edit_description_${decodedData.contentId}`);
         }
         else if (decodedData.contentType === 'Foundational Capability') {
           setActiveTab('capability');
+
+          // Retrieve description from sessionStorage
+          const description = sessionStorage.getItem(`edit_description_${decodedData.contentId}`) || '';
 
           // Find the first related gap name if available
           let relatedGapName = '';
@@ -76,19 +87,31 @@ export default function ContributeForm({
 
           setFcData({
             title: decodedData.contentTitle || '',
-            content: decodedData.contentDescription || '',
+            content: description,
             relatedGap: relatedGapName
           });
+
+          // Clear from sessionStorage after use
+          sessionStorage.removeItem(`edit_description_${decodedData.contentId}`);
         }
         else if (decodedData.contentType === 'Resource') {
           setActiveTab('resource');
+          
+          // Retrieve description from sessionStorage
+          const description = sessionStorage.getItem(`edit_description_${decodedData.contentId}`) || '';
+          
           setResourceData({
             title: decodedData.contentTitle || '',
             url: decodedData.contentUrl || '',
-            content: decodedData.contentDescription || '',
+            content: description,
+            relatedCapability: decodedData.relatedCapability || '',
             resourceType: decodedData.resourceType || resourceTypeOptions[0]
           });
+          
+          // Clear from sessionStorage after use
+          sessionStorage.removeItem(`edit_description_${decodedData.contentId}`);
         }
+        // Handle Resource type similarly
       } catch (error) {
         console.error('Error parsing edit data:', error);
       }
@@ -205,6 +228,7 @@ export default function ContributeForm({
             email: userData.email,
             title: resourceData.title,
             contentType: 'Resource',
+            relatedCapability: resourceData.relatedCapability,
             resourceType: resourceData.resourceType,
             resource: resourceData.url,
             content: resourceData.content,
@@ -331,7 +355,7 @@ export default function ContributeForm({
                 ))}
               </select>
             </div>
-{/* 
+            {/* 
             <div className="form-group">
               <label htmlFor="bottleneck-rank">
                 Urgency Rank: {bottleneckData.rank}
@@ -465,7 +489,16 @@ export default function ContributeForm({
                 required
               />
             </div>
-
+            <div className="form-group">
+              <AutocompleteInput
+                id="related-capability"
+                label="Related Foundational Capability"
+                value={resourceData.relatedCapability}
+                onChange={(e) => setResourceData({ ...resourceData, relatedCapability: e.target.value })}
+                suggestions={capabilityNames}
+                placeholder="Enter the name of a related foundational capability"
+              />
+            </div>
             <div className="form-group">
               <label htmlFor="resource-content">Summary</label>
               <textarea
