@@ -165,7 +165,6 @@
     }
 
     .form-actions {
-        margin-top: 1rem;
         display: flex;
         flex-direction: column;
         justify-content: stretch;
@@ -190,6 +189,10 @@
             &:disabled {
                 background-color: var(--border-dull);
                 cursor: not-allowed;
+            }
+            @media screen and (max-width: $breakpoint-sm) {
+                margin-inline: calc($spacing-sm * (-1));
+
             }
         }
     }

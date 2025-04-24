@@ -238,3 +238,27 @@ button.mobile-nav, button.close-nav {
     }
   }
 }
+
+
+.download-button {
+  display: flex;
+  flex-direction: row-reverse;
+  align-items: center;
+  gap: $spacing-xs;
+  color: var(--text-lighter);
+  text-decoration: none;
+  font-weight: 400;
+  font-size: $font-size-sm;
+  transition: color $transition;
+  
+  &:hover {
+    color: var(--primary-color);
+    text-decoration: none;
+  }
+  
+  svg {
+    width: 1rem;
+    height: 1rem;
+  }
+
+}

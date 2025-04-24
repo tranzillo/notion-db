@@ -101,6 +101,7 @@ export default function ThemeToggle() {
     <button 
       className="theme-toggle" 
       onClick={toggleTheme}
+      title={isDarkMode ? "Switch to light mode" : "Switch to dark mode"}
       aria-label={isDarkMode ? "Switch to light mode" : "Switch to dark mode"}
     >
       {isDarkMode ? (

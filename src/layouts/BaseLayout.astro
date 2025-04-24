@@ -1,6 +1,7 @@
 ---
 import InjectHydrationData from "../components/InjectHydrationData.astro";
 import ThemeToggle from "../components/standalone/ThemeToggle";
+import DownloadButton from "../components/standalone/DownloadButton";
 import "../styles/main.scss";
 
 interface Props {
@@ -26,7 +27,6 @@ const {
 
     <!-- Inject hydration data early -->
     <InjectHydrationData />
-
   </head>
   <body>
     <div class="base-layout">
@@ -281,70 +281,70 @@ const {
           <div class="base-layout__controls">
             <nav class="base-layout__nav">
               <div class="base-layout__main-nav">
-              <div class="base-layout__nav-item">
-                <a
-                  href="/"
-                  class={Astro.url.pathname.startsWith("/gaps") ||
-                  Astro.url.pathname === "/"
-                    ? "active"
-                    : ""}
-                  target="_self"
-                >
-                R&D Gaps
-                </a>
+                <div class="base-layout__nav-item">
+                  <a
+                    href="/"
+                    class={Astro.url.pathname.startsWith("/gaps") ||
+                    Astro.url.pathname === "/"
+                      ? "active"
+                      : ""}
+                    target="_self"
+                  >
+                    R&D Gaps
+                  </a>
+                </div>
+                <div class="base-layout__nav-item">
+                  <a
+                    href="/capabilities"
+                    class={Astro.url.pathname.startsWith("/capabilities")
+                      ? "active"
+                      : ""}
+                    target="_self"
+                  >
+                    Foundational Capabilities
+                  </a>
+                </div>
+                <div class="base-layout__nav-item">
+                  <a
+                    href="/resources"
+                    class={Astro.url.pathname.startsWith("/resources")
+                      ? "active"
+                      : ""}
+                    target="_self"
+                  >
+                    Resources
+                  </a>
+                </div>
               </div>
-              <div class="base-layout__nav-item">
-                <a
-                  href="/capabilities"
-                  class={Astro.url.pathname.startsWith("/capabilities")
-                    ? "active"
-                    : ""}
-                  target="_self"
-                >
-                  Foundational Capabilities
-                </a>
-              </div>
-              <div class="base-layout__nav-item">
-                <a
-                  href="/resources"
-                  class={Astro.url.pathname.startsWith("/resources")
-                    ? "active"
-                    : ""}
-                  target="_self"
-                >
-                  Resources
-                </a>
-              </div>
-            </div>
               <div class="base-layout__sub-nav">
-              <div class="base-layout__nav-item">
-                <a
-                  href="/about"
-                  class={Astro.url.pathname === "/about" ? "active" : ""}
-                  target="_self"
-                >
-                  About
-                </a>
+                <div class="base-layout__nav-item">
+                  <a
+                    href="/about"
+                    class={Astro.url.pathname === "/about" ? "active" : ""}
+                    target="_self"
+                  >
+                    About
+                  </a>
+                </div>
+                <div class="base-layout__nav-item">
+                  <a
+                    href="/contribute"
+                    class={Astro.url.pathname === "/contribute" ? "active" : ""}
+                    target="_self"
+                  >
+                    Contribute
+                  </a>
+                </div>
+                <div class="base-layout__nav-item">
+                  <DownloadButton client:load />
+                </div>
               </div>
               <div class="base-layout__nav-item">
-                <a
-                  href="/contribute"
-                  class={Astro.url.pathname === "/contribute" ? "active" : ""}
-                  target="_self"
-                >
-                  Contribute
-                </a>
+                <div><button inert class="close-nav">Close</button></div>
               </div>
-            </div>
-            <div class="base-layout__nav-item">
-              <div><button inert class="close-nav">Close</button></div>
-            </div>
             </nav>
 
-            <!-- Include ThemeToggle -->
             <ThemeToggle client:load />
-
-            <!-- Keep the slot for backward compatibility or other controls -->
             <slot name="theme-toggle" />
           </div>
         </div>
@@ -374,7 +374,7 @@ const {
                 : ""}
               target="_self"
             >
-            R&D Gaps
+              R&D Gaps
             </a>
             <a
               href="/capabilities"
@@ -386,14 +386,14 @@ const {
               Foundational Capabilities
             </a>
             <a
-            href="/resources"
-            class={Astro.url.pathname.startsWith("/resources")
-              ? "active"
-              : ""}
-            target="_self"
-          >
-            Resources
-          </a>
+              href="/resources"
+              class={Astro.url.pathname.startsWith("/resources")
+                ? "active"
+                : ""}
+              target="_self"
+            >
+              Resources
+            </a>
             <a
               href="/about"
               class={Astro.url.pathname === "/about" ? "active" : ""}
@@ -408,6 +408,7 @@ const {
             >
               Contribute
             </a>
+            <a href="/download/gapmap-data.zip" download>Download Data</a>
           </div>
         </div>
       </footer>
@@ -418,50 +419,54 @@ const {
 
       // This script runs when React is fully loaded
       document.addEventListener("astro:page-load", () => {
-  // Check if we're on a dashboard page
-  const isDashboard = 
-    window.location.pathname === "/" || 
-    window.location.pathname === "" ||
-    window.location.pathname === "/gaps" ||
-    window.location.pathname === "/capabilities";
-  
-  if (isDashboard) {
-    // Get user preferences
-    const prefs = window.userPreferences || {};
-    const viewType = prefs.viewType || 'grid';
-    
-    console.log("Dashboard page loaded - applying view type:", viewType);
-    
-    // Apply correct view type immediately
-    document.documentElement.dataset.listView = viewType === 'list' ? 'true' : 'false';
-    document.documentElement.dataset.graphView = viewType === 'graph' ? 'true' : 'false';
-    
-    // Apply to grid elements
-    document.querySelectorAll('.bottleneck-grid').forEach(grid => {
-      // Reset existing view classes
-      grid.classList.remove('bottleneck-grid--list-view');
-      grid.classList.remove('bottleneck-grid--graph-view');
-      
-      // Add appropriate class
-      if (viewType === 'list') {
-        grid.classList.add('bottleneck-grid--list-view');
-      } else if (viewType === 'graph') {
-        grid.classList.add('bottleneck-grid--graph-view');
-      }
-    });
-    
-    // Dispatch view change event for React components
-    setTimeout(() => {
-      window.dispatchEvent(new CustomEvent('view-changed', {
-        detail: {
-          viewType,
-          isListView: viewType === 'list',
-          isGraphView: viewType === 'graph'
+        // Check if we're on a dashboard page
+        const isDashboard =
+          window.location.pathname === "/" ||
+          window.location.pathname === "" ||
+          window.location.pathname === "/gaps" ||
+          window.location.pathname === "/capabilities";
+
+        if (isDashboard) {
+          // Get user preferences
+          const prefs = window.userPreferences || {};
+          const viewType = prefs.viewType || "grid";
+
+          console.log("Dashboard page loaded - applying view type:", viewType);
+
+          // Apply correct view type immediately
+          document.documentElement.dataset.listView =
+            viewType === "list" ? "true" : "false";
+          document.documentElement.dataset.graphView =
+            viewType === "graph" ? "true" : "false";
+
+          // Apply to grid elements
+          document.querySelectorAll(".bottleneck-grid").forEach((grid) => {
+            // Reset existing view classes
+            grid.classList.remove("bottleneck-grid--list-view");
+            grid.classList.remove("bottleneck-grid--graph-view");
+
+            // Add appropriate class
+            if (viewType === "list") {
+              grid.classList.add("bottleneck-grid--list-view");
+            } else if (viewType === "graph") {
+              grid.classList.add("bottleneck-grid--graph-view");
+            }
+          });
+
+          // Dispatch view change event for React components
+          setTimeout(() => {
+            window.dispatchEvent(
+              new CustomEvent("view-changed", {
+                detail: {
+                  viewType,
+                  isListView: viewType === "list",
+                  isGraphView: viewType === "graph",
+                },
+              }),
+            );
+          }, 10);
         }
-      }));
-    }, 10);
-  }
-});
+      });
     </script>
     <!-- Script to handle navigation state -->
     <script>
@@ -578,67 +583,76 @@ const {
         }
       });
       document.addEventListener("astro:before-preparation", () => {
-  // Hide all bottleneck grids before navigation to prevent flash
-  document.querySelectorAll('.bottleneck-grid').forEach(grid => {
-    grid.classList.remove('grid-view-ready', 'list-view-ready', 'graph-view-ready');
-  });
-});
+        // Hide all bottleneck grids before navigation to prevent flash
+        document.querySelectorAll(".bottleneck-grid").forEach((grid) => {
+          grid.classList.remove(
+            "grid-view-ready",
+            "list-view-ready",
+            "graph-view-ready",
+          );
+        });
+      });
 
-// After page load, prioritize applying the correct view type
-document.addEventListener("astro:page-load", () => {
-  // Check if we're on a dashboard
-  const isDashboard =
-    window.location.pathname === "/" || 
-    window.location.pathname === "" ||
-    window.location.pathname === "/gaps" ||
-    window.location.pathname === "/capabilities";
-    
-  if (isDashboard) {
-    // Get the current view preference
-    const prefs = window.userPreferences || {};
-    const viewType = prefs.viewType || 'grid';
-    
-    // Apply view type immediately to minimize flashing
-    document.documentElement.dataset.listView = viewType === 'list' ? 'true' : 'false';
-    document.documentElement.dataset.graphView = viewType === 'graph' ? 'true' : 'false';
-    
-    // Apply to grid elements
-    document.querySelectorAll('.bottleneck-grid').forEach(grid => {
-      // Reset all view classes
-      grid.classList.remove('bottleneck-grid--list-view', 'bottleneck-grid--graph-view');
-      
-      // Apply appropriate class
-      if (viewType === 'list') {
-        grid.classList.add('bottleneck-grid--list-view');
-      } else if (viewType === 'graph') {
-        grid.classList.add('bottleneck-grid--graph-view');
-      }
-    });
-    
-    // Dispatch event to ensure view is updated in React components
-    window.dispatchEvent(
-      new CustomEvent("view-changed", {
-        detail: { 
-          viewType,
-          isListView: viewType === 'list',
-          isGraphView: viewType === 'graph'
-        },
-      })
-    );
-  }
-});
+      // After page load, prioritize applying the correct view type
+      document.addEventListener("astro:page-load", () => {
+        // Check if we're on a dashboard
+        const isDashboard =
+          window.location.pathname === "/" ||
+          window.location.pathname === "" ||
+          window.location.pathname === "/gaps" ||
+          window.location.pathname === "/capabilities";
+
+        if (isDashboard) {
+          // Get the current view preference
+          const prefs = window.userPreferences || {};
+          const viewType = prefs.viewType || "grid";
+
+          // Apply view type immediately to minimize flashing
+          document.documentElement.dataset.listView =
+            viewType === "list" ? "true" : "false";
+          document.documentElement.dataset.graphView =
+            viewType === "graph" ? "true" : "false";
+
+          // Apply to grid elements
+          document.querySelectorAll(".bottleneck-grid").forEach((grid) => {
+            // Reset all view classes
+            grid.classList.remove(
+              "bottleneck-grid--list-view",
+              "bottleneck-grid--graph-view",
+            );
+
+            // Apply appropriate class
+            if (viewType === "list") {
+              grid.classList.add("bottleneck-grid--list-view");
+            } else if (viewType === "graph") {
+              grid.classList.add("bottleneck-grid--graph-view");
+            }
+          });
+
+          // Dispatch event to ensure view is updated in React components
+          window.dispatchEvent(
+            new CustomEvent("view-changed", {
+              detail: {
+                viewType,
+                isListView: viewType === "list",
+                isGraphView: viewType === "graph",
+              },
+            }),
+          );
+        }
+      });
     </script>
-<!-- Add this script to your BaseLayout.astro file, just before the closing </body> tag -->
-<script>
-  // Load resource type colors on page load - function name matches what's exported
-  document.addEventListener("astro:page-load", () => {
-    // First try to load as a global function (already defined)
-    if (typeof window.initResourceTypeColorMap === 'function') {
-      window.initResourceTypeColorMap();
-    } else {
-      // Inject simple loader script
-      const scriptEl = document.createElement('script');
-      scriptEl.textContent = `
+    <!-- Add this script to your BaseLayout.astro file, just before the closing </body> tag -->
+    <script>
+      // Load resource type colors on page load - function name matches what's exported
+      document.addEventListener("astro:page-load", () => {
+        // First try to load as a global function (already defined)
+        if (typeof window.initResourceTypeColorMap === "function") {
+          window.initResourceTypeColorMap();
+        } else {
+          // Inject simple loader script
+          const scriptEl = document.createElement("script");
+          scriptEl.textContent = `
         // Load resource type CSS
         if (!document.getElementById('resource-type-color-styles')) {
           const link = document.createElement('link');
@@ -648,9 +662,9 @@ document.addEventListener("astro:page-load", () => {
           document.head.appendChild(link);
         }
       `;
-      document.head.appendChild(scriptEl);
-    }
-  });
-</script>
+          document.head.appendChild(scriptEl);
+        }
+      });
+    </script>
   </body>
 </html>

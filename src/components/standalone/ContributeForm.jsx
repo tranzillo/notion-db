@@ -500,13 +500,13 @@ export default function ContributeForm({
               />
             </div>
             <div className="form-group">
-              <label htmlFor="resource-content">Summary</label>
+              <label htmlFor="resource-content">Description</label>
               <textarea
                 id="resource-content"
                 rows="6"
                 value={resourceData.content}
                 onChange={(e) => setResourceData({ ...resourceData, content: e.target.value })}
-                placeholder="Provide a brief summary of this resource and its relevance"
+                placeholder="Provide a brief description of this resource and its relevance"
               ></textarea>
             </div>
 

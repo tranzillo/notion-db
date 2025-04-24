@@ -1,19 +1,23 @@
 {
-  "name": "science-bottlenecks-dashboard",
+  "name": "gap-map",
   "type": "module",
-  "version": "0.1.0",
+  "version": "1.0",
   "scripts": {
     "dev": "node --import tsx scripts/prebuild.ts && astro dev",
     "dev:full": "node --import tsx scripts/prebuild.ts --full-refresh && astro dev",
     "start": "astro dev",
     "prebuild": "node --import tsx scripts/prebuild.ts",
-    "build": "node --import tsx scripts/prebuild.ts && astro build",
-    "build:full": "node --import tsx scripts/prebuild.ts --full-refresh && astro build",
-    "build:clean": "node --import tsx scripts/prebuild.ts --clear-cache --full-refresh && astro build",
+    "build": "node --import tsx scripts/prebuild.ts && node --import tsx scripts/createDataZip.js && astro build",
+    "build:full": "node --import tsx scripts/prebuild.ts --full-refresh && node --import tsx scripts/createDataZip.js && astro build",
+    "build:clean": "node --import tsx scripts/prebuild.ts --clear-cache --full-refresh && node --import tsx scripts/createDataZip.js && astro build",
     "preview": "astro preview",
     "test": "vitest run",
     "functions:dev": "netlify-lambda serve netlify/functions",
-    "cache:clear": "node --import tsx scripts/prebuild.ts --clear-cache"
+    "cache:clear": "node --import tsx scripts/prebuild.ts --clear-cache",
+    "export-data": "node --import tsx scripts/dataExport.js",
+    "create-zip": "node --import tsx scripts/createDataZip.js",
+    "export-data:debug": "node --import tsx scripts/dataExport.js > export-log.txt 2>&1",
+    "create-zip:debug": "node --import tsx scripts/createDataZip.js > zip-log.txt 2>&1"
   },
   "dependencies": {
     "@astrojs/react": "latest",
@@ -21,6 +25,7 @@
     "@pixi/events": "^7.3.2",
     "@types/react": "latest",
     "@types/react-dom": "latest",
+    "archiver": "^5.3.2",
     "astro": "latest",
     "d3": "^7.9.0",
     "d3-force-3d": "^3.0.5",
@@ -42,6 +47,7 @@
     "sass": "latest"
   },
   "devDependencies": {
+    "@types/archiver": "^5.3.2",
     "@types/node": "^22.14.0",
     "ts-node": "^10.9.2",
     "tsx": "^4.19.3",
