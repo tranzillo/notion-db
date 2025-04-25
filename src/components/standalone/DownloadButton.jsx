@@ -7,8 +7,8 @@ export default function DownloadButton() {
       href="/download/gapmap-data.zip" 
       className="download-button" 
       download
-      aria-label="Download R&D Gaps dataset"
-      title="Download R&D Gaps dataset as ZIP file"
+      aria-label="Download Gap Map dataset as ZIP file"
+      title="Download Gap Map dataset as ZIP file"
     >
       <span>Download Dataset</span>
     </a>

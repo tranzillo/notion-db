@@ -172,6 +172,29 @@ createZip()
   .then(zipPath => {
     if (zipPath) {
       log(`SUCCESS: ZIP file created at ${zipPath}`);
+      
+      // Copy the zip file to dist directory if it was created in public
+      if (zipPath.includes('/public/')) {
+        try {
+          // Generate the destination path in dist
+          const distPath = zipPath.replace('/public/', '/dist/');
+          const distDir = path.dirname(distPath);
+          
+          // Ensure dist directory exists
+          if (!fs.existsSync(distDir)) {
+            log(`Creating dist directory: ${distDir}`);
+            fs.mkdirSync(distDir, { recursive: true });
+          }
+          
+          // Copy the file
+          log(`Copying ZIP file from ${zipPath} to ${distPath}`);
+          fs.copyFileSync(zipPath, distPath);
+          log(`ZIP file copied to dist directory: ${distPath}`);
+        } catch (copyErr) {
+          log(`WARNING: Failed to copy zip to dist directory: ${copyErr.message}`);
+        }
+      }
+      
       process.exit(0);
     } else {
       log('FAILED: ZIP file was not created');
@@ -185,22 +208,3 @@ createZip()
   });
 
 export default createZip;
-
-if (zipPath && zipPath.includes('/public/')) {
-  // The zip file was created in the public directory, copy it to dist
-  const distPath = zipPath.replace('/public/', '/dist/');
-  const distDir = path.dirname(distPath);
-  
-  // Ensure dist directory exists
-  if (!fs.existsSync(distDir)) {
-    log(`Creating dist directory: ${distDir}`);
-    fs.mkdirSync(distDir, { recursive: true });
-  }
-  
-  // Copy the file
-  log(`Copying ZIP file from ${zipPath} to ${distPath}`);
-  fs.copyFileSync(zipPath, distPath);
-  log(`ZIP file copied to dist directory: ${distPath}`);
-  
-  return distPath; // Return the new path
-}
