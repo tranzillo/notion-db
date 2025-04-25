@@ -169,42 +169,66 @@ async function createZip() {
 // Run the function when this script is executed directly
 log('Script started');
 createZip()
-  .then(zipPath => {
-    if (zipPath) {
-      log(`SUCCESS: ZIP file created at ${zipPath}`);
-      
-      // Copy the zip file to dist directory if it was created in public
-      if (zipPath.includes('/public/')) {
-        try {
-          // Generate the destination path in dist
-          const distPath = zipPath.replace('/public/', '/dist/');
-          const distDir = path.dirname(distPath);
-          
-          // Ensure dist directory exists
-          if (!fs.existsSync(distDir)) {
-            log(`Creating dist directory: ${distDir}`);
-            fs.mkdirSync(distDir, { recursive: true });
+
+.then(zipPath => {
+  if (zipPath) {
+    log(`SUCCESS: ZIP file created at ${zipPath}`);
+    
+    // If the data is in public, copy ALL data files to dist
+    if (zipPath.includes('/public/')) {
+      try {
+        const rootDir = path.resolve(__dirname, '..');
+        const publicDataDir = path.resolve(rootDir, 'public/data');
+        const distDataDir = path.resolve(rootDir, 'dist/data');
+        
+        // Copy the entire data directory
+        if (fs.existsSync(publicDataDir)) {
+          // Ensure dist/data directory exists
+          if (!fs.existsSync(distDataDir)) {
+            log(`Creating directory: ${distDataDir}`);
+            fs.mkdirSync(distDataDir, { recursive: true });
           }
           
-          // Copy the file
-          log(`Copying ZIP file from ${zipPath} to ${distPath}`);
-          fs.copyFileSync(zipPath, distPath);
-          log(`ZIP file copied to dist directory: ${distPath}`);
-        } catch (copyErr) {
-          log(`WARNING: Failed to copy zip to dist directory: ${copyErr.message}`);
+          // Copy all files from public/data to dist/data
+          const dataFiles = fs.readdirSync(publicDataDir);
+          log(`Copying ${dataFiles.length} data files to dist directory...`);
+          
+          dataFiles.forEach(file => {
+            const srcPath = path.join(publicDataDir, file);
+            const destPath = path.join(distDataDir, file);
+            
+            if (fs.statSync(srcPath).isFile()) {
+              fs.copyFileSync(srcPath, destPath);
+              log(`Copied ${file} to ${destPath}`);
+            }
+          });
+          
+          log('All data files copied to dist directory successfully');
         }
+        
+        // Also copy the zip file
+        const distZipDir = path.resolve(rootDir, 'dist/download');
+        if (!fs.existsSync(distZipDir)) {
+          log(`Creating download directory: ${distZipDir}`);
+          fs.mkdirSync(distZipDir, { recursive: true });
+        }
+        
+        const publicZipPath = zipPath;
+        const distZipPath = publicZipPath.replace('/public/', '/dist/');
+        
+        log(`Copying ZIP file from ${publicZipPath} to ${distZipPath}`);
+        fs.copyFileSync(publicZipPath, distZipPath);
+        log(`ZIP file copied to dist directory: ${distZipPath}`);
+      } catch (copyErr) {
+        log(`WARNING: Failed to copy files to dist directory: ${copyErr.message}`);
       }
-      
-      process.exit(0);
-    } else {
-      log('FAILED: ZIP file was not created');
-      process.exit(1);
     }
-  })
-  .catch(err => {
-    log(`FATAL ERROR: ${err.message}`);
-    if (err.stack) log(`Stack trace: ${err.stack}`);
+    
+    process.exit(0);
+  } else {
+    log('FAILED: ZIP file was not created');
     process.exit(1);
-  });
+  }
+})
 
 export default createZip;

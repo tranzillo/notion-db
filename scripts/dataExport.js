@@ -160,11 +160,11 @@ export async function generateDataExport() {
         version: "1.0.0",
         counts: {
           fields: formattedFields.length,
-          gaps: formattedGaps.length, // Renamed from bottlenecks to gaps
+          gaps: formattedGaps.length,
           capabilities: formattedCapabilities.length,
           resources: formattedResources.length
         },
-        schema: "https://gapmap.example.com/data/schema.json"
+        schema: "https://gap-map.org/data/schema.json"
       }, null, 2)
     );
     log(`Metadata written to: ${metadataPath}`);
@@ -190,11 +190,8 @@ This export contains research gaps and foundational capabilities data from the G
 - Capabilities have: id, name, slug, description, gaps (IDs), resources (IDs), tags
 - Resources have: id, title, url, summary, types
 
-## License
-This data is available under [license information].
-
 ## Contact
-For questions or corrections, please contact [contact information].
+For questions or corrections, please contact gapmap@convergentresearch.org.
 
 ## Last Updated
 ${new Date().toISOString().split('T')[0]}
