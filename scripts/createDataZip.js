@@ -23,9 +23,10 @@ async function createZip() {
   
   // Define paths - using dist directory instead of public for Netlify
   const rootDir = path.resolve(__dirname, '..');
-  const dataDir = path.resolve(rootDir, 'dist/data');
-  const outputDir = path.resolve(rootDir, 'dist/download');
-  const outputPath = path.join(outputDir, 'gapmap-data.zip');
+  // Use let instead of const for variables that might be reassigned
+  let dataDir = path.resolve(rootDir, 'dist/data');
+  let outputDir = path.resolve(rootDir, 'dist/download');
+  let outputPath = path.join(outputDir, 'gapmap-data.zip');
   
   log(`Data directory: ${dataDir}`);
   log(`Output directory: ${outputDir}`);
@@ -145,10 +146,16 @@ async function createZip() {
     log('Adding files to archive:');
     files.forEach(file => {
       const filePath = path.join(dataDir, file);
-      const fileSize = fs.statSync(filePath).size;
-      
-      log(`- Adding ${file} (${fileSize} bytes)`);
-      archive.file(filePath, { name: file });
+      try {
+        const stats = fs.statSync(filePath);
+        const fileSize = stats.size;
+        
+        log(`- Adding ${file} (${fileSize} bytes)`);
+        archive.file(filePath, { name: file });
+      } catch (err) {
+        log(`WARNING: Error processing file ${file}: ${err.message}`);
+        // Continue with other files
+      }
     });
     
     // Finalize the archive
