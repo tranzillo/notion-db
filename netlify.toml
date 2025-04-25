@@ -7,5 +7,20 @@
   command = "npm run dev"
   functions = "functions"
   publish = "dist"
-
   conditions = {Path = {exclude = ["/.netlify/functions/*"]}}
+
+# Add CORS headers for data files
+[[headers]]
+  for = "/data/*"
+  [headers.values]
+    Access-Control-Allow-Origin = "*"
+    Access-Control-Allow-Methods = "GET, OPTIONS"
+    Access-Control-Allow-Headers = "Content-Type"
+
+# Add CORS headers for the zip download
+[[headers]]
+  for = "/download/*"
+  [headers.values]
+    Access-Control-Allow-Origin = "*"
+    Access-Control-Allow-Methods = "GET, OPTIONS"
+    Access-Control-Allow-Headers = "Content-Type"
