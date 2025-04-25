@@ -13,23 +13,6 @@ function log(message) {
   const timestamp = new Date().toISOString();
   const logMsg = `[${timestamp}] ${message}`;
   console.log(logMsg);
-  
-  // Ensure the log directory exists
-  const logDir = path.join(__dirname, '../logs');
-  if (!fs.existsSync(logDir)) {
-    try {
-      fs.mkdirSync(logDir, { recursive: true });
-    } catch (e) {
-      console.error(`Failed to create log directory: ${e.message}`);
-    }
-  }
-  
-  // Write to log file
-  try {
-    fs.appendFileSync(path.join(logDir, 'zip-creation.log'), logMsg + '\n');
-  } catch (e) {
-    console.error(`Failed to write to log file: ${e.message}`);
-  }
 }
 
 /**
@@ -38,19 +21,43 @@ function log(message) {
 async function createZip() {
   log('Starting ZIP creation process');
   
-  // Define paths
-  const dataDir = path.resolve(__dirname, '../public/data');
-  const outputDir = path.resolve(__dirname, '../public/download');
+  // Define paths - using dist directory instead of public for Netlify
+  const rootDir = path.resolve(__dirname, '..');
+  const dataDir = path.resolve(rootDir, 'dist/data');
+  const outputDir = path.resolve(rootDir, 'dist/download');
   const outputPath = path.join(outputDir, 'gapmap-data.zip');
   
   log(`Data directory: ${dataDir}`);
   log(`Output directory: ${outputDir}`);
   log(`Output file: ${outputPath}`);
   
-  // Verify data directory exists
+  // Verify data directory exists - if not, try fallback paths
   if (!fs.existsSync(dataDir)) {
-    log(`ERROR: Data directory not found: ${dataDir}`);
-    return null;
+    log(`Data directory not found at ${dataDir}, trying alternative paths...`);
+    
+    // Try alternative paths that might work in Netlify
+    const altDataDirs = [
+      path.resolve(rootDir, 'public/data'),
+      path.resolve(rootDir, 'dist/data'),
+      path.resolve(rootDir, 'out/data'),
+      path.resolve(rootDir, 'build/data')
+    ];
+    
+    // Try to find a valid data directory
+    const validDir = altDataDirs.find(dir => fs.existsSync(dir));
+    if (validDir) {
+      log(`Found alternative data directory at: ${validDir}`);
+      // Update dataDir to use the valid directory
+      dataDir = validDir;
+      // Update outputDir to be in the same parent folder as dataDir
+      const parentDir = path.dirname(validDir);
+      outputDir = path.join(parentDir, 'download');
+      outputPath = path.join(outputDir, 'gapmap-data.zip');
+      log(`Updated output path to: ${outputPath}`);
+    } else {
+      log('ERROR: Could not find data directory in any expected location');
+      return null;
+    }
   }
   
   // Create output directory if needed

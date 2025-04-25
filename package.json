@@ -7,17 +7,13 @@
     "dev:full": "node --import tsx scripts/prebuild.ts --full-refresh && astro dev",
     "start": "astro dev",
     "prebuild": "node --import tsx scripts/prebuild.ts",
-    "build": "node --import tsx scripts/prebuild.ts && node --import tsx scripts/createDataZip.js && astro build",
-    "build:full": "node --import tsx scripts/prebuild.ts --full-refresh && node --import tsx scripts/createDataZip.js && astro build",
-    "build:clean": "node --import tsx scripts/prebuild.ts --clear-cache --full-refresh && node --import tsx scripts/createDataZip.js && astro build",
+    "build": "node --import tsx scripts/prebuild.ts && astro build && node --import tsx scripts/generateData.js && node --import tsx scripts/createDataZip.js",
+    "build:full": "node --import tsx scripts/prebuild.ts --full-refresh && astro build && node --import tsx scripts/generateData.js  && node --import tsx scripts/createDataZip.js",
+    "build:clean": "node --import tsx scripts/prebuild.ts --clear-cache --full-refresh && astro build && node --import tsx scripts/generateData.js  && node --import tsx scripts/createDataZip.js",
     "preview": "astro preview",
     "test": "vitest run",
     "functions:dev": "netlify-lambda serve netlify/functions",
-    "cache:clear": "node --import tsx scripts/prebuild.ts --clear-cache",
-    "export-data": "node --import tsx scripts/dataExport.js",
-    "create-zip": "node --import tsx scripts/createDataZip.js",
-    "export-data:debug": "node --import tsx scripts/dataExport.js > export-log.txt 2>&1",
-    "create-zip:debug": "node --import tsx scripts/createDataZip.js > zip-log.txt 2>&1"
+    "cache:clear": "node --import tsx scripts/prebuild.ts --clear-cache"
   },
   "dependencies": {
     "@astrojs/react": "latest",
