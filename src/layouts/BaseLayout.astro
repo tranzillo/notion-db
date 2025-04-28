@@ -1,7 +1,6 @@
 ---
 import InjectHydrationData from "../components/InjectHydrationData.astro";
 import ThemeToggle from "../components/standalone/ThemeToggle";
-import DownloadButton from "../components/standalone/DownloadButton";
 import "../styles/main.scss";
 
 interface Props {
@@ -337,8 +336,8 @@ const {
                 </div>
                 <div class="base-layout__nav-item">
                   <a
-                    href="/data"
-                    class={Astro.url.pathname === "/data" ? "active" : ""}
+                    href="/api"
+                    class={Astro.url.pathname === "/api" ? "active" : ""}
                     target="_self"
                   >
                     API & Data
@@ -415,8 +414,8 @@ const {
               Contribute
             </a>
             <a
-              href="/data"
-              class={Astro.url.pathname === "/data" ? "active" : ""}
+              href="/api"
+              class={Astro.url.pathname === "/api" ? "active" : ""}
               target="_self"
             >
               API & Data

@@ -31,7 +31,7 @@ export async function generateDataExport() {
     log(`Retrieved data: ${bottlenecks.length} gaps, ${foundationalCapabilities.length} capabilities, ${fields.length} fields, ${resources.length} resources`);
       
     // Create the output directory if it doesn't exist
-    const outputDir = path.resolve(__dirname, '../public/api');
+    const outputDir = path.resolve(__dirname, '../public/data');
     const zipOutputDir = path.resolve(__dirname, '../public/download');
     
     log(`Output directory: ${outputDir}`);
@@ -164,7 +164,7 @@ export async function generateDataExport() {
           capabilities: formattedCapabilities.length,
           resources: formattedResources.length
         },
-        schema: "https://gap-map.org/api/schema.json"
+        schema: "https://gap-map.org/data/schema.json"
       }, null, 2)
     );
     log(`Metadata written to: ${metadataPath}`);
