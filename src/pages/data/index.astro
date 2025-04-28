@@ -1,6 +1,6 @@
 ---
-import BaseLayout from "../layouts/BaseLayout.astro";
-import { getEnhancedData } from "../lib/enhancedData";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { getEnhancedData } from "../../lib/enhancedData";
 
 // Fetch content from Notion
 const { contentAreas } = await getEnhancedData();
@@ -24,44 +24,44 @@ const dataContent = contentAreas?.data || {
   <div class="endpoints">
     <div class="endpoint">
       <h3>R&D Gaps</h3>
-      <code>GET /data/gaps.json</code>
+      <code>GET /api/gaps.json</code>
       <p>All research gaps with their descriptions, fields, and related capabilities.</p>
-      <a href="/data/gaps.json" target="_blank">View Gaps JSON</a>
+      <a href="/api/gaps.json" target="_blank">View Gaps JSON</a>
     </div>
     
     <div class="endpoint">
       <h3>Foundational Capabilities</h3>
-      <code>GET /data/capabilities.json</code>
+      <code>GET /api/capabilities.json</code>
       <p>All foundational capabilities with their descriptions, related gaps, and resources.</p>
-      <a href="/data/capabilities.json" target="_blank">View Capabilities JSON</a>
+      <a href="/api/capabilities.json" target="_blank">View Capabilities JSON</a>
     </div>
     
     <div class="endpoint">
       <h3>Fields</h3>
-      <code>GET /data/fields.json</code>
+      <code>GET /api/fields.json</code>
       <p>Research fields and disciplines referenced by the gaps.</p>
-      <a href="/data/fields.json" target="_blank">View Fields JSON</a>
+      <a href="/api/fields.json" target="_blank">View Fields JSON</a>
     </div>
     
     <div class="endpoint">
       <h3>Resources</h3>
-      <code>GET /data/resources.json</code>
+      <code>GET /api/resources.json</code>
       <p>Resources related to foundational capabilities.</p>
-      <a href="/data/resources.json" target="_blank">View Resources JSON</a>
+      <a href="/api/resources.json" target="_blank">View Resources JSON</a>
     </div>
     
     <div class="endpoint">
       <h3>Complete Dataset</h3>
-      <code>GET /data/gapmap-data.json</code>
+      <code>GET /api/gapmap-data.json</code>
       <p>The complete dataset in a single file.</p>
-      <a href="/data/gapmap-data.json" target="_blank">View Complete JSON</a>
+      <a href="/api/gapmap-data.json" target="_blank">View Complete JSON</a>
     </div>
     
     <div class="endpoint">
       <h3>Schema</h3>
-      <code>GET /data/schema.json</code>
+      <code>GET /api/schema.json</code>
       <p>JSON Schema describing the data format.</p>
-      <a href="/data/schema.json" target="_blank">View Schema</a>
+      <a href="/api/schema.json" target="_blank">View Schema</a>
     </div>
   </div>
   
@@ -70,7 +70,7 @@ const dataContent = contentAreas?.data || {
   <pre><code>
 // Fetch and display R&D gaps
 async function fetchGaps() {
-  const response = await fetch('https://notion-db-prototype.netlify.app/data/gaps.json');
+  const response = await fetch('https://notion-db-prototype.netlify.app/api/gaps.json');
   const gaps = await response.json();
   
   // Display the first 5 gaps
@@ -88,7 +88,7 @@ import requests
 import pandas as pd
 
 # Fetch capabilities data
-response = requests.get('https://notion-db-prototype.netlify.app/data/capabilities.json')
+response = requests.get('https://notion-db-prototype.netlify.app/api/capabilities.json')
 capabilities = response.json()
 
 # Convert to DataFrame for analysis
