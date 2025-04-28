@@ -102,7 +102,8 @@ export async function getAllContentAreas() {
     home: process.env.NOTION_HOME_CONTENT_ID,
     capabilities: process.env.NOTION_CAPABILITIES_CONTENT_ID,
     about: process.env.NOTION_ABOUT_CONTENT_ID,
-    resources: process.env.NOTION_RESOURCES_CONTENT_ID
+    resources: process.env.NOTION_RESOURCES_CONTENT_ID,
+    data: process.env.NOTION_DATA_CONTENT_ID
   };
 
   const result = {};

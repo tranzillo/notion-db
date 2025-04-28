@@ -336,7 +336,13 @@ const {
                   </a>
                 </div>
                 <div class="base-layout__nav-item">
-                  <DownloadButton client:load />
+                  <a
+                    href="/data"
+                    class={Astro.url.pathname === "/data" ? "active" : ""}
+                    target="_self"
+                  >
+                    API & Data
+                  </a>
                 </div>
               </div>
               <div class="base-layout__nav-item">
@@ -408,7 +414,13 @@ const {
             >
               Contribute
             </a>
-            <a href="/download/gapmap-data.zip" download>Download Data</a>
+            <a
+              href="/data"
+              class={Astro.url.pathname === "/data" ? "active" : ""}
+              target="_self"
+            >
+              API & Data
+            </a>
           </div>
         </div>
       </footer>

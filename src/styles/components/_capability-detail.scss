@@ -219,7 +219,14 @@
       grid-template-columns: 1fr 1fr 1fr;
     }
   }
+
+}
+
+.capability-detail {
   .bottleneck-card {
     padding-block-end: $spacing-md;
+    @media (max-width: $breakpoint-sm) {
+      padding-block-end: 0;
+    }
   }
 }
