@@ -76,11 +76,12 @@
   overflow-x: auto;
   margin-bottom: $spacing-lg;
   white-space: pre;
-  opacity: 0.9;
+  opacity: 1;
 }
 .dark-mode .code-example {
   background-color: var(--background-color-dark)!important;
   color: var(--text-light);
+  opacity: 0.9;
 }
 .citation {
   background-color: var(--background-color-dark);
