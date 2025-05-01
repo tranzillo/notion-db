@@ -64,10 +64,10 @@ exports.handler = async function (event, context) {
     const properties = {
       // Name as rich_text
       Name: {
-        rich_text: [
+        title: [
           {
             text: {
-              content: data.name || 'Anonymous',
+              content: data.title || 'Anonymous',
             },
           },
         ],
@@ -96,29 +96,8 @@ exports.handler = async function (event, context) {
           },
         ],
       },
-      // Title field is required by Notion
-      Title: {
-        title: [
-          {
-            text: {
-              content: 'Data Download',
-            },
-          },
-        ],
-      }
     };
 
-    // Check if Status property is expected in the database
-    try {
-      // Add Status only if it's a valid property
-      properties.Status = {
-        status: {
-          name: "Recorded",
-        },
-      };
-    } catch (err) {
-      console.log('Status property might not be available in the database schema');
-    }
 
     console.log('Using database ID:', process.env.NOTION_DOWNLOADS_DB_ID);
     console.log('Creating page with properties:', JSON.stringify(properties, null, 2));
