@@ -2,6 +2,7 @@
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import DownloadButton from "../../components/standalone/DownloadButton";
 import { getEnhancedData } from "../../lib/enhancedData";
+import { Code } from 'astro/components';
 
 // Fetch content from Notion
 const { contentAreas } = await getEnhancedData();
@@ -10,6 +11,38 @@ const { contentAreas } = await getEnhancedData();
 const dataContent = contentAreas?.data || {
   title: "Gap Map API & Data"
 };
+
+const jsExample = `async function fetchGaps() {
+
+        // Fetch gaps data from the API
+        const response = await fetch('https://gap-map.org/data/gaps.json');
+        const gaps = await response.json();
+        
+        // Display the first 5 gaps
+        const gapsList = gaps.slice(0, 5).map(gap => 
+          \`<div><h3>\${gap.name}</h3><p>\${gap.description}</p></div>\`
+        ).join('');
+        
+        document.getElementById('gaps-container').innerHTML = gapsList;
+      }`;
+const pyExample = `import requests
+        import pandas as pd
+        
+        # Fetch capabilities data
+        response = requests.get('https://gap-map.org/data/capabilities.json')
+        capabilities = response.json()
+        
+        # Convert to DataFrame for analysis
+        df = pd.DataFrame(capabilities)
+        print(f"Total capabilities: {len(df)}")
+        
+        # Count capabilities by tag
+        tag_counts = {}
+        for capability in capabilities:
+            for tag in capability.get('tags', []):
+                tag_counts[tag] = tag_counts.get(tag, 0) + 1
+        
+        print("Top tags:", sorted(tag_counts.items(), key=lambda x: x[1], reverse=True)[:5])`;
 ---
 
 <BaseLayout title={`${dataContent.title} - Gap Map`}>
@@ -23,7 +56,7 @@ const dataContent = contentAreas?.data || {
       <p>Gap Map provides structured data about R&D gaps, foundational capabilities, and related resources that you can use in your own applications and research.</p>
       
       <div class="download-section">
-        <h3>Download Complete Dataset</h3>
+        <h3>Download the Complete Dataset</h3>
         <p>Download all data files as a single ZIP package:</p>
         <DownloadButton client:load />
       </div>
@@ -78,314 +111,19 @@ const dataContent = contentAreas?.data || {
       <h2>Usage Examples</h2>
       
       <h3>JavaScript Example</h3>
-      <div class="code-example">
-
-      </div>
+      <Code class="code-example" code={jsExample} lang="js" theme="github-dark" />
       
-      <h3>Python Example</h3>
-      <div class="code-example">
 
-      </div>
+      <h3>Python Example</h3>
+      <Code class="code-example" code={pyExample} lang="py" theme="github-dark" />
       
       <h2>Citation</h2>
       <p>If you use this data in your research or applications, please cite:</p>
-      <div class="citation">Convergent Research (2025). Gap Map Database. 
-Retrieved from https://gap-map.org/
+      <div class="citation">Convergent Research (2025). Gap Map Database.<br>Retrieved from https://gap-map.org/
       </div>
       
       <h2>Terms of Use</h2>
-      <p>This data is provided under the <a href="#" target="_blank">MIT License</a>. You are free to use, share, and adapt the data for non-commercial purposes with appropriate attribution.</p>
+      <p>This data is provided under the <a href="/api/license.txt" target="_blank">MIT License</a>.</p>
     </div>
   </div>
 </BaseLayout>
-
-<style>
-.data-page {
-  display: flex;
-  flex-direction: column;
-  gap: 2rem;
-  max-width: 80ch;
-  margin: 0 auto;
-}
-
-.data-content {
-  line-height: 1.6;
-  color: var(--text-light);
-}
-
-.download-section {
-  background-color: var(--card-background);
-  border-radius: 0.5rem;
-  padding: 1.5rem;
-  margin: 1.5rem 0;
-  border-left: 4px solid var(--primary-color);
-}
-
-.endpoints {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 1.5rem;
-  margin: 1.5rem 0;
-}
-
-@media (min-width: 768px) {
-  .endpoints {
-    grid-template-columns: 1fr 1fr;
-  }
-}
-
-.endpoint {
-  background-color: var(--card-background);
-  border-radius: 0.5rem;
-  padding: 1.5rem;
-  border: 1px solid var(--border-color);
-}
-
-.endpoint h3 {
-  margin-top: 0;
-  margin-bottom: 0.75rem;
-}
-
-.code-block {
-  font-family: monospace;
-  background-color: var(--background-color-dark);
-  padding: 0.5rem;
-  border-radius: 0.25rem;
-  margin: 0.75rem 0;
-}
-
-.code-example {
-  font-family: monospace;
-  background-color: var(--background-color-dark);
-  padding: 1rem;
-  border-radius: 0.5rem;
-  overflow-x: auto;
-  margin-bottom: 1.5rem;
-  white-space: pre;
-}
-
-.citation {
-  background-color: var(--background-color-dark);
-  padding: 1rem;
-  border-radius: 0.5rem;
-  margin: 1rem 0;
-  font-family: monospace;
-  white-space: pre;
-}
-
-.download-button {
-  display: inline-block;
-  background-color: var(--primary-color);
-  color: white;
-  padding: 0.5rem 1.5rem;
-  border-radius: 0.5rem;
-  text-decoration: none;
-  font-weight: 500;
-  margin: 1rem 0;
-  transition: background-color 0.2s ease;
-  border: none;
-  cursor: pointer;
-  font-size: 1rem;
-}
-
-.download-button:hover {
-  background-color: var(--highlight-color);
-}
-
-/* Modal Styles */
-:global(.download-modal-backdrop) {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 100;
-  padding: 1.5rem;
-}
-
-:global(.download-modal) {
-  background-color: var(--card-background);
-  border-radius: 0.5rem;
-  padding: 2rem;
-  max-width: 500px;
-  width: 100%;
-  max-height: 90vh;
-  overflow-y: auto;
-  position: relative;
-  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
-}
-
-:global(.download-modal h2) {
-  margin-top: 0;
-  margin-bottom: 1rem;
-}
-
-:global(.download-modal p) {
-  margin-bottom: 1.5rem;
-}
-
-:global(.close-modal) {
-  position: absolute;
-  top: 1rem;
-  right: 1rem;
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 0.25rem;
-  color: var(--text-light);
-}
-
-:global(.close-modal:hover) {
-  color: var(--text-color);
-}
-
-:global(.form-group) {
-  margin-bottom: 1rem;
-}
-
-:global(.form-group label) {
-  display: block;
-  margin-bottom: 0.25rem;
-  font-weight: 500;
-}
-
-:global(.form-group input),
-:global(.form-group textarea) {
-  width: 100%;
-  padding: 0.5rem;
-  border-radius: 0.25rem;
-  border: 1px solid var(--border-color);
-  background-color: var(--background-color);
-  color: var(--text-color);
-}
-
-:global(.form-group input:focus),
-:global(.form-group textarea:focus) {
-  outline: none;
-  border-color: var(--primary-color);
-}
-
-:global(.form-actions) {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 1.5rem;
-}
-
-@media (max-width: 500px) {
-  :global(.form-actions) {
-    flex-direction: column;
-    gap: 0.5rem;
-  }
-}
-
-:global(.submit-button) {
-  background-color: var(--primary-color);
-  color: white;
-  padding: 0.5rem 1.5rem;
-  border-radius: 0.25rem;
-  border: none;
-  cursor: pointer;
-  font-weight: 500;
-}
-
-:global(.submit-button:hover) {
-  background-color: var(--highlight-color);
-}
-
-:global(.submit-button:disabled) {
-  opacity: 0.7;
-  cursor: not-allowed;
-}
-
-@media (max-width: 500px) {
-  :global(.submit-button) {
-    width: 100%;
-    order: 1;
-  }
-}
-
-:global(.skip-button) {
-  background-color: transparent;
-  border: 1px solid var(--border-color);
-  padding: 0.5rem 1.5rem;
-  border-radius: 0.25rem;
-  cursor: pointer;
-}
-
-:global(.skip-button:hover) {
-  background-color: var(--background-color-dark);
-}
-
-@media (max-width: 500px) {
-  :global(.skip-button) {
-    width: 100%;
-    order: 2;
-  }
-}
-
-:global(.form-error) {
-  color: #e53e3e;
-  margin-bottom: 1rem;
-}
-
-:global(.download-progress) {
-  text-align: center;
-  padding: 1.5rem 0;
-}
-
-:global(.progress-indicator) {
-  width: 50px;
-  height: 50px;
-  border: 5px solid #f3f3f3;
-  border-top: 5px solid var(--primary-color);
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-  margin: 0 auto;
-}
-
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-/* Dark mode adjustments */
-:global(.dark-mode) .code-block,
-:global(.dark-mode) .code-example,
-:global(.dark-mode) .citation {
-  background-color: var(--card-background);
-}
-
-:global(.dark-mode) .download-section,
-:global(.dark-mode) .endpoint {
-  background-color: var(--card-background-dark);
-  border-color: var(--border-dull);
-}
-
-:global(.dark-mode) .download-modal {
-  background-color: var(--card-background-dark);
-}
-
-:global(.dark-mode) .form-group input,
-:global(.dark-mode) .form-group textarea {
-  background-color: var(--card-background);
-  border-color: var(--border-dull);
-}
-
-:global(.dark-mode) .skip-button {
-  color: var(--text-color);
-  border-color: var(--border-dull);
-}
-
-:global(.dark-mode) .skip-button:hover {
-  background-color: rgba(255, 255, 255, 0.05);
-}
-
-:global(.dark-mode) .progress-indicator {
-  border-color: #444;
-  border-top-color: var(--primary-color);
-}
-</style>

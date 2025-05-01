@@ -20,6 +20,26 @@ exports.handler = async function (event, context) {
     // Log what we received
     console.log('Received data:', data);
 
+    // Check if any fields have data - if not, don't submit to Notion
+    const hasData = data && (
+      (data.name && data.name.trim() !== '') || 
+      (data.email && data.email.trim() !== '') || 
+      (data.organization && data.organization.trim() !== '') || 
+      (data.useCase && data.useCase.trim() !== '')
+    );
+
+    // If no data was provided, just allow the download without sending to Notion
+    if (!hasData) {
+      console.log('No form data provided - skipping Notion submission');
+      return {
+        statusCode: 200,
+        body: JSON.stringify({ 
+          success: true, 
+          message: 'Download allowed, no data to record' 
+        }),
+      };
+    }
+
     // Check if environment variables are properly set
     if (!process.env.NOTION_API_KEY) {
       console.error('NOTION_API_KEY environment variable is not set');
@@ -39,18 +59,6 @@ exports.handler = async function (event, context) {
         body: JSON.stringify({ 
           success: true, 
           message: 'Download allowed, but Notion database ID is not configured' 
-        }),
-      };
-    }
-
-    // Even if no data is provided, we'll consider it a success
-    // (we don't want to block downloads if the form submission fails)
-    if (!data || (!data.name && !data.email && !data.organization && !data.useCase)) {
-      return {
-        statusCode: 200,
-        body: JSON.stringify({ 
-          success: true, 
-          message: 'No information provided but download allowed' 
         }),
       };
     }
@@ -97,7 +105,6 @@ exports.handler = async function (event, context) {
         ],
       },
     };
-
 
     console.log('Using database ID:', process.env.NOTION_DOWNLOADS_DB_ID);
     console.log('Creating page with properties:', JSON.stringify(properties, null, 2));

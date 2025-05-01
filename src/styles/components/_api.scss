@@ -1,0 +1,275 @@
+.data-page {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-xl;
+  max-width: 80ch;
+  margin: 0 auto;
+  h2 {
+    margin-block: $spacing-xxl $spacing-lg;
+    color: var(--text-color);
+  }
+}
+
+.data-content {
+  color: var(--text-light);
+}
+
+.download-section {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-md;
+    align-items: flex-start;
+  background-color: var(--card-background);
+  border-radius: $border-radius-lg;
+  padding: $spacing-lg;
+  margin: $spacing-lg 0;
+  border-left: $border-radius-md solid var(--primary-color);
+}
+.license-info {
+    margin-block: 0 !important;
+    font-size: $font-size-sm;
+    font-style: italic;
+}
+.endpoints {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: $spacing-lg;
+  margin: $spacing-lg 0;
+}
+
+@media (min-width: $breakpoint-md) {
+  .endpoints {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.endpoint {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+  background-color: var(--card-background);
+  border-radius: $border-radius-lg;
+  padding: $spacing-lg;
+  border: 1px solid var(--border-dull);
+  p {
+    margin-bottom: auto;
+  }
+}
+
+.endpoint h3 {
+  margin: 0;
+}
+
+.code-block {
+  font-family: monospace;
+  background-color: var(--background-color-dark);
+  padding: $spacing-sm;
+  border-radius: $spacing-xs;
+}
+
+.code-example {
+  margin-block-start: $spacing-md;
+  font-family: monospace;
+  background-color: var(--background-color-dark)!important;
+  padding: $spacing-md;
+  border-radius: $border-radius-lg;
+  overflow-x: auto;
+  margin-bottom: $spacing-lg;
+  white-space: pre;
+}
+
+.citation {
+  background-color: var(--background-color-dark);
+  padding: $spacing-md;
+  border-radius: $border-radius-lg;
+  margin: $spacing-md 0;
+  font-family: monospace;
+}
+
+.download-button {
+  display: inline-block;
+  background-color: var(--primary-color);
+  color: var(--pure-white);
+  padding: $spacing-sm $spacing-lg;
+  border-radius: $border-radius-md;
+  text-decoration: none;
+  font-weight: 500;
+  transition: background-color $transition;
+  border: none;
+  cursor: pointer;
+  font-size: $spacing-md;
+}
+
+.download-button:hover {
+  background-color: var(--highlight-color);
+}
+
+  /* Modal Styles */
+ .download-modal-backdrop{
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 100;
+    padding: $spacing-lg;
+  }
+  
+ .download-modal {
+    background-color: var(--background-color);
+    border-radius: $border-radius-lg;
+    padding: $spacing-xl;
+    max-width: 500px;
+    width: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
+    position: relative;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+    .form-group {
+      margin-bottom: $spacing-xl;
+    }
+  }
+  
+ .download-modal h2 {
+    margin-top: 0;
+    margin-bottom: $spacing-md;
+  }
+  
+ .download-modal p {
+    margin-bottom: $spacing-lg;
+    color: var(--text-lighter);
+  }
+  
+ .close-modal {
+    position: absolute;
+    top: $spacing-xl;
+    right: $spacing-xl;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: $spacing-xs;
+    color: var(--text-light);
+  }
+  
+ .close-modal:hover {
+    color: var(--text-color);
+  }
+  
+ .form-group {
+
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-sm;
+    margin-bottom: $spacing-md;
+  }
+  
+ .form-group label {
+    display: block;
+    margin-bottom: $spacing-sm;
+    font-weight: 500;
+  }
+  
+ .form-group input,
+ .form-group textarea {
+    font-family: inherit;
+    font-size: 1rem;
+    width: 100%;
+    padding: 0.75rem;
+    border-radius: $border-radius-md;
+    border: 1px solid var(--border-dull);
+    background-color: var(--card-background);
+    color: var(--text-color);
+  }
+  
+ .form-group input:focus,
+ .form-group textarea:focus {
+    outline: none;
+    border-color: var(--primary-color);
+  }
+  
+ .form-actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: $spacing-lg;
+  }
+  
+  @media (max-width: 500px) {
+   .form-actions {
+      flex-direction: column;
+      gap: $spacing-sm;
+    }
+  }
+  
+ .submit-button {
+    background-color: var(--primary-color);
+    color: white;
+    padding: $spacing-sm $spacing-lg;
+    border-radius: $border-radius-md;
+    border: none;
+    cursor: pointer;
+    font-weight: 500;
+  }
+  
+ .submit-button:hover {
+    background-color: var(--highlight-color);
+  }
+  
+ .submit-button:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+  }
+  
+  @media (max-width: 500px) {
+   .submit-button {
+      width: 100%;
+      order: 1;
+    }
+  }
+  
+ .skip-button {
+    background-color: transparent;
+    border: 1px solid var(--border-color);
+    padding: $spacing-sm $spacing-lg;
+    border-radius: $border-radius-md;
+    cursor: pointer;
+  }
+  
+ .skip-button:hover {
+    background-color: var(--background-color-dark);
+  }
+  
+  @media (max-width: 500px) {
+   .skip-button {
+      width: 100%;
+      order: 2;
+    }
+  }
+
+ .form-error {
+    color: #e53e3e;
+    margin-bottom: $spacing-md;
+  }
+  
+ .download-progress {
+    text-align: center;
+    padding: $spacing-lg 0;
+  }
+  
+ .progress-indicator {
+    width: 50px;
+    height: 50px;
+    border: 5px solid #f3f3f3;
+    border-top: 5px solid var(--primary-color);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto;
+  }
+  
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }

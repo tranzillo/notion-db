@@ -29,6 +29,14 @@ export default function DownloadInfoForm({ onClose }) {
     onClose();
   };
 
+  // Check if the form has any data filled in
+  const hasFormData = () => {
+    return formData.name.trim() !== '' || 
+           formData.email.trim() !== '' || 
+           formData.organization.trim() !== '' || 
+           formData.useCase.trim() !== '';
+  };
+
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -36,27 +44,33 @@ export default function DownloadInfoForm({ onClose }) {
     setFormError('');
 
     try {
-      // Submit the data to Netlify function
-      const response = await fetch('/.netlify/functions/record-download', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ data: formData }),
-      });
+      // Check if there's actually any data to submit
+      if (hasFormData()) {
+        // Only submit if at least one field has data
+        const response = await fetch('/.netlify/functions/record-download', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ data: formData }),
+        });
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Failed to submit information');
+        if (!response.ok) {
+          const errorData = await response.json();
+          console.warn('Form submission had an issue:', errorData);
+          // Continue with download anyway
+        }
+      } else {
+        console.log('No form data provided, skipping submission');
       }
 
-      // Successful submission - trigger download
+      // Always trigger the download, regardless of form submission result
       initiateDownload();
       
       // Close modal
       onClose();
     } catch (error) {
-      console.error('Error submitting information:', error);
+      console.error('Error during form submission:', error);
       // Still allow download even if submission fails
       initiateDownload();
       onClose();
@@ -140,7 +154,10 @@ export default function DownloadInfoForm({ onClose }) {
                   placeholder="Tell us briefly how you plan to use this data (optional)"
                 ></textarea>
               </div>
-              
+              <div className="form-group">
+                <p class="license-info">This data is provided under the <a href="/api/license.txt" target="_blank">MIT License</a>.</p>
+              </div>
+
               {formError && (
                 <div className="form-error">
                   {formError}
@@ -148,19 +165,19 @@ export default function DownloadInfoForm({ onClose }) {
               )}
               
               <div className="form-actions">
-                <button 
+                {/* <button 
                   type="button" 
                   className="skip-button"
                   onClick={handleSkip}
                 >
                   Skip & Download
-                </button>
+                </button> */}
                 <button 
                   type="submit" 
                   className="submit-button"
                   disabled={isSubmitting}
                 >
-                  {isSubmitting ? 'Submitting...' : 'Submit & Download'}
+                  {isSubmitting ? 'Submitting...' : hasFormData() ? 'Submit & Download' : 'Download'}
                 </button>
               </div>
             </form>
