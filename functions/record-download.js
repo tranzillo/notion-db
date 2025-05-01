@@ -73,21 +73,21 @@ exports.handler = async function (event, context) {
           },
         ],
       },
-    //   // Title field is required by Notion
-    //   Title: {
-    //     title: [
-    //       {
-    //         text: {
-    //           content: 'Data Download',
-    //         },
-    //       },
-    //     ],
-    //   },
-    //   Status: {
-    //     status: {
-    //       name: "Recorded",
-    //     },
-    //   },
+      // Title field is required by Notion
+      Title: {
+        title: [
+          {
+            text: {
+              content: 'Data Download',
+            },
+          },
+        ],
+      },
+      Status: {
+        status: {
+          name: "Recorded",
+        },
+      },
     };
 
     console.log('Creating page with properties:', JSON.stringify(properties, null, 2));
