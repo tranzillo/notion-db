@@ -62,12 +62,12 @@ exports.handler = async function (event, context) {
 
     // Build the properties object for Notion
     const properties = {
-      // Name as rich_text
+      // Name as title
       Name: {
         title: [
           {
             text: {
-              content: data.title || 'Anonymous',
+              content: data.name || '',
             },
           },
         ],
