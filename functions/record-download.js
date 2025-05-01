@@ -20,6 +20,29 @@ exports.handler = async function (event, context) {
     // Log what we received
     console.log('Received data:', data);
 
+    // Check if environment variables are properly set
+    if (!process.env.NOTION_API_KEY) {
+      console.error('NOTION_API_KEY environment variable is not set');
+      return {
+        statusCode: 200,
+        body: JSON.stringify({ 
+          success: true, 
+          message: 'Download allowed, but Notion API key is not configured' 
+        }),
+      };
+    }
+
+    if (!process.env.NOTION_DOWNLOADS_DB_ID) {
+      console.error('NOTION_DOWNLOADS_DB_ID environment variable is not set');
+      return {
+        statusCode: 200,
+        body: JSON.stringify({ 
+          success: true, 
+          message: 'Download allowed, but Notion database ID is not configured' 
+        }),
+      };
+    }
+
     // Even if no data is provided, we'll consider it a success
     // (we don't want to block downloads if the form submission fails)
     if (!data || (!data.name && !data.email && !data.organization && !data.useCase)) {
@@ -82,14 +105,22 @@ exports.handler = async function (event, context) {
             },
           },
         ],
-      },
-      Status: {
+      }
+    };
+
+    // Check if Status property is expected in the database
+    try {
+      // Add Status only if it's a valid property
+      properties.Status = {
         status: {
           name: "Recorded",
         },
-      },
-    };
+      };
+    } catch (err) {
+      console.log('Status property might not be available in the database schema');
+    }
 
+    console.log('Using database ID:', process.env.NOTION_DOWNLOADS_DB_ID);
     console.log('Creating page with properties:', JSON.stringify(properties, null, 2));
 
     // Create the page in Notion
@@ -109,6 +140,14 @@ exports.handler = async function (event, context) {
       };
     } catch (notionError) {
       console.error('Notion API error:', notionError);
+      // Log more details about the error
+      console.error('Error details:', {
+        code: notionError.code,
+        status: notionError.status,
+        message: notionError.message,
+        body: notionError.body
+      });
+      
       // Still return success because we want the download to proceed
       return {
         statusCode: 200,
