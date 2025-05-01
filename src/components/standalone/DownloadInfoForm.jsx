@@ -155,7 +155,7 @@ export default function DownloadInfoForm({ onClose }) {
                 ></textarea>
               </div>
               <div className="form-group">
-                <p class="license-info">This data is provided under the <a href="/api/license.txt" target="_blank">MIT License</a>.</p>
+                <p class="license-info">This data is provided under the <a href="/license.txt" target="_blank">MIT License</a>.</p>
               </div>
 
               {formError && (
