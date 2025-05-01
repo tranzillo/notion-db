@@ -70,7 +70,7 @@
 .code-example {
   margin-block-start: $spacing-md;
   font-family: monospace;
-  background-color: var(--background-color-dark)!important;
+  background-color: #404137!important;
   padding: $spacing-md;
   border-radius: $border-radius-lg;
   overflow-x: auto;
@@ -78,7 +78,10 @@
   white-space: pre;
   opacity: 0.9;
 }
-
+.dark-mode .code-example {
+  background-color: var(--background-color-dark)!important;
+  color: var(--text-light);
+}
 .citation {
   background-color: var(--background-color-dark);
   padding: $spacing-md;
