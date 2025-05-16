@@ -399,7 +399,7 @@ async function fetchAllPages(databaseId: string, filter: any = undefined): Promi
  */
 async function queryDatabaseEfficiently<T>(
   databaseId: string,
-  processor: (page: any) => Promise<T>,
+  processor: (page: any) => Promise<T | null>,
   options: {
     fullRefresh?: boolean;
     filter?: any;
@@ -452,7 +452,7 @@ async function queryDatabaseEfficiently<T>(
       // Process the batch with throttling between each item
       const batchResults = await Promise.all(
         batch.map((page, index) =>
-          new Promise<T>(async (resolve) => {
+          new Promise<T | null>(async (resolve) => {
             // Small delay between items in batch to avoid overwhelming API
             if (index > 0) {
               await new Promise(r => setTimeout(r, 100));
@@ -463,7 +463,9 @@ async function queryDatabaseEfficiently<T>(
         )
       );
 
-      processedData.push(...batchResults);
+      // Filter out null values (empty rows)
+      const validResults = batchResults.filter((item): item is T => item !== null);
+      processedData.push(...validResults);
     }
 
     // Find the most recent last_edited_time
@@ -477,7 +479,8 @@ async function queryDatabaseEfficiently<T>(
 
     // Save to cache
     saveToCache(databaseId, processedData, latestEditTime);
-
+    
+    console.log(`Processed ${pages.length} items, kept ${processedData.length} non-empty items`);
     return processedData;
   }
 
@@ -496,7 +499,11 @@ async function queryDatabaseEfficiently<T>(
     console.log(`Processing ${updatedPages.length} updates for database ${databaseId}`);
 
     // Process updated pages
-    const updatedData = await Promise.all(updatedPages.map(processor));
+    const updatedResults = await Promise.all(updatedPages.map(processor));
+    
+    // Filter out null values (empty rows)
+    const updatedData = updatedResults.filter((item): item is T => item !== null);
+    console.log(`Processed ${updatedResults.length} items, kept ${updatedData.length} non-empty items`);
 
     // Find the most recent last_edited_time
     let latestEditTime = lastEditTime;
@@ -540,9 +547,15 @@ async function queryDatabaseEfficiently<T>(
  * Process a resource page into our Resource interface
  * This unified approach extracts content directly while processing the page
  */
-async function processResourcePage(page: any): Promise<Resource> {
+async function processResourcePage(page: any): Promise<Resource | null> {
 
-  const resource_title = concatenateRichText(page.properties.Resource_Title?.title) || 'Untitled';
+  const resource_title = concatenateRichText(page.properties.Resource_Title?.title) || '';
+  
+  // Skip empty rows (no title)
+  if (!resource_title.trim()) {
+    console.log(`Skipping empty resource row with ID: ${page.id}`);
+    return null;
+  }
 
   // Extract URL with updated field name
   let resource_url = '';
@@ -586,11 +599,17 @@ async function processResourcePage(page: any): Promise<Resource> {
  * Process a field page into our Field interface
  * This unified approach extracts description directly while processing the page
  */
-async function processFieldPage(page: any): Promise<Field> {
+async function processFieldPage(page: any): Promise<Field | null> {
   console.log(`NOTION_TS: Processing field page ${page.id}`);
 
-  const field_name = concatenateRichText(page.properties.Field_Name?.title) || 'Untitled';
+  const field_name = concatenateRichText(page.properties.Field_Name?.title) || '';
   console.log(`NOTION_TS: Field name is "${field_name}"`);
+  
+  // Skip empty rows (no field name)
+  if (!field_name.trim()) {
+    console.log(`Skipping empty field row with ID: ${page.id}`);
+    return null;
+  }
 
   // Get field description directly (no separate cache file)
   let field_description = '';
@@ -685,11 +704,17 @@ function extractRankFromPage(page: any, pageName: string = 'unknown'): number {
 async function processCapabilityPage(
   page: any,
   resources: Resource[]
-): Promise<FoundationalCapability> {
+): Promise<FoundationalCapability | null> {
   const pageId = page?.id || 'unknown';
   console.log(`Processing capability page: ${pageId}`);
 
-  const fc_name = concatenateRichText(page.properties.FC_Name?.title) || 'Untitled';
+  const fc_name = concatenateRichText(page.properties.FC_Name?.title) || '';
+  
+  // Skip empty rows (no capability name)
+  if (!fc_name.trim()) {
+    console.log(`Skipping empty capability row with ID: ${pageId}`);
+    return null;
+  }
 
   // Get resource relations
   const resourceRelations = page.properties.Resources?.relation || [];
@@ -708,7 +733,6 @@ async function processCapabilityPage(
   } else {
     // Get content directly (no separate cache file)
     try {
-
       const n2m = getN2M();
       const mdBlocks = await throttler.add(() => n2m.pageToMarkdown(page.id), `fc-description-${page.id}`);
       const mdString = n2m.toMarkdownString(mdBlocks);
@@ -735,6 +759,13 @@ async function processCapabilityPage(
     // Extract title safely
     const fc_name = extractSafeTitle(page.properties, 'FC_Name');
     console.log(`Capability title extracted: "${fc_name}"`);
+    
+    // Skip if title is empty after safe extraction
+    if (!fc_name || fc_name === 'Untitled') {
+      console.log(`Skipping empty capability row with ID: ${pageId} after safe title extraction`);
+      return null;
+    }
+    
     return {
       id: pageId,
       fc_name,
@@ -771,7 +802,7 @@ async function processBottleneckPage(
   page: any,
   fields: Field[],
   foundationalCapabilities: FoundationalCapability[]
-): Promise<Bottleneck> {
+): Promise<Bottleneck | null> {
   const pageId = page?.id || 'unknown';
   console.log(`Processing bottleneck page: ${pageId}`);
 
@@ -779,6 +810,12 @@ async function processBottleneckPage(
     // Extract title safely
     const bottleneck_name = extractSafeTitle(page.properties, 'Bottleneck_Name');
     console.log(`Bottleneck title extracted: "${bottleneck_name}"`);
+    
+    // Skip empty rows (no bottleneck name or default 'Untitled')
+    if (!bottleneck_name || bottleneck_name === 'Untitled') {
+      console.log(`Skipping empty bottleneck row with ID: ${pageId}`);
+      return null;
+    }
 
     // Get field relation safely
     let bottleneckField = null;
@@ -889,32 +926,22 @@ async function processBottleneckPage(
     // Log failure but don't throw - return a minimal valid object instead
     console.error(`Failed to process bottleneck page ${pageId}:`, error);
 
-    // Return a minimal valid object to prevent cascading failures
-    return {
-      id: pageId,
-      bottleneck_name: `Bottleneck ${pageId.slice(0, 8)}...`, // Use truncated ID as fallback title
-      bottleneck_description: '',
-      slug: `bottleneck-${pageId.slice(0, 8)}`,
-      bottleneck_rank: 0,
-      bottleneck_number: 0,
-      field: {
-        id: '',
-        field_name: 'Uncategorized',
-        field_description: ''
-      },
-      foundational_capabilities: [],
-      tags: [],
-      privateTags: [],
-      last_edited_time: page.last_edited_time || new Date().toISOString()
-    };
+    // Return null for completely failed processing
+    return null;
   }
 }
 /**
  * Process a tag page into our Tag interface
  */
-async function processTagPage(page: any): Promise<Tag> {
+async function processTagPage(page: any): Promise<Tag | null> {
 
-  const name = concatenateRichText(page.properties.Tag_Name?.title) || 'Unnamed Tag';
+  const name = concatenateRichText(page.properties.Tag_Name?.title) || '';
+  
+  // Skip empty rows (no tag name)
+  if (!name.trim()) {
+    console.log(`Skipping empty tag row with ID: ${page.id}`);
+    return null;
+  }
 
   return {
     id: page.id,
