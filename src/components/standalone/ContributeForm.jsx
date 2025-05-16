@@ -421,6 +421,7 @@ export default function ContributeForm({
                 onChange={(e) => setFcData({ ...fcData, relatedGap: e.target.value })}
                 suggestions={bottleneckNames}
                 placeholder="Enter the name of an existing R&D Gap or suggest a new one"
+                required
               />
             </div>
 
@@ -497,6 +498,7 @@ export default function ContributeForm({
                 onChange={(e) => setResourceData({ ...resourceData, relatedCapability: e.target.value })}
                 suggestions={capabilityNames}
                 placeholder="Enter the name of an existing Foundational Capability or suggest a new one"
+                required
               />
             </div>
             <div className="form-group">
