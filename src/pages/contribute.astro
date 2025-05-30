@@ -8,7 +8,8 @@ const {
   fields, 
   resourceTypeOptions, 
   bottlenecks, 
-  foundationalCapabilities: capabilities
+  foundationalCapabilities: capabilities,
+  resources
 } = await getEnhancedData();
 ---
 
@@ -29,6 +30,7 @@ const {
         resourceTypeOptions={resourceTypeOptions}
         bottlenecks={bottlenecks}
         capabilities={capabilities}
+        resources={resources}
       />
     </div>
   </div>

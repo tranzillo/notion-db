@@ -11,7 +11,9 @@ export default function AutocompleteInput({
   suggestions = [],
   maxSuggestions = 50,
   onSuggestionSelect = null,
-  className = ''
+  className = '',
+  style = {},
+  onFocus = null
 }) {
   const [inputValue, setInputValue] = useState(value || '');
   const [filteredSuggestions, setFilteredSuggestions] = useState([]);
@@ -147,6 +149,11 @@ export default function AutocompleteInput({
   const handleFocus = () => {
     setIsFocused(true);
     
+    // Call parent onFocus if provided
+    if (onFocus) {
+      onFocus();
+    }
+    
     // Check if there are suggestions to show
     if (inputValue.trim() !== "") {
       // Check if there's an exact match with the current input
@@ -232,6 +239,7 @@ export default function AutocompleteInput({
           placeholder={placeholder}
           required={required}
           autoComplete="off"
+          style={style}
         />
         
         {showSuggestions && filteredSuggestions.length > 0 && (
