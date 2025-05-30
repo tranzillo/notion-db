@@ -14,7 +14,7 @@ const RequiredTag = ({ show = true, hasError = false }) => {
         backgroundColor: 'rgba(255, 0, 0, 0.2)',
       } : {}}
     >
-      Required*
+      Required
     </span>
   );
 };
@@ -126,6 +126,10 @@ export default function ContributeForm({
     // Keep it visually required to indicate it cannot be completely emptied
     if (hasRelatedItem) return true;
 
+    // If state is null (form just added, no user input yet), require related item by default
+    // This ensures the field is required from the start for the first form in the flow
+    if (state === null) return true;
+
     // If new, always require related item
     if (state === 'new') return true;
     // If existing and only form, require related item
@@ -155,7 +159,9 @@ export default function ContributeForm({
       case 'related-capability':
         // Don't show required if field is already locked (has value)
         if (bottleneckData.relatedCapability) return false;
-        // Check if gap is first form in the flow
+        // For NEW gaps, always require related capability
+        if (showForms.gap && gapState === 'new') return true;
+        // Otherwise, check if gap is first form in the flow
         const gapIsFirst = formOrder[0] === 'gap';
         return showForms.gap && gapIsFirst && isRelatedItemRequired(gapState, isOnlyForm, false);
 
@@ -167,13 +173,17 @@ export default function ContributeForm({
       case 'fc-related-gap':
         // Don't show required if field is already locked (has value)
         if (fcData.relatedGap) return false;
-        // Check if capability is first form in the flow
+        // For NEW capabilities, always require related gap
+        if (showForms.capability && capabilityState === 'new') return true;
+        // Otherwise, check if capability is first form in the flow
         const capIsFirst = formOrder[0] === 'capability';
         return showForms.capability && capIsFirst && isRelatedItemRequired(capabilityState, isOnlyForm, false);
       case 'related-resources':
         // Special case: hide required if any resources already added
         if (fcData.relatedResources.length > 0) return false;
-        // Check if capability is first form in the flow
+        // For NEW capabilities, always require related resources
+        if (showForms.capability && capabilityState === 'new') return true;
+        // Otherwise, check if capability is first form in the flow
         const capIsFirstForResources = formOrder[0] === 'capability';
         return showForms.capability && capIsFirstForResources && isRelatedItemRequired(capabilityState, isOnlyForm, false);
 
@@ -187,7 +197,9 @@ export default function ContributeForm({
       case 'related-capability-resource':
         // Don't show required if field is already locked (has value)
         if (resourceData.relatedCapability) return false;
-        // Check if resource is first form in the flow
+        // For NEW resources, always require related capability
+        if (showForms.resource && initialResourceState === 'new') return true;
+        // Otherwise, check if resource is first form in the flow
         const resourceIsFirst = formOrder[0] === 'resource';
         return showForms.resource && resourceIsFirst && isRelatedItemRequired(initialResourceState, isOnlyForm, false);
 
@@ -1052,9 +1064,8 @@ export default function ContributeForm({
       checkField('bottleneck-content', bottleneckData.content, 'R&D Gap description');
       checkField('bottleneck-field', bottleneckData.fieldId, 'Field selection');
 
-      // Only validate related capability if gap is first form
-      const gapIsFirst = formOrder[0] === 'gap';
-      if (gapIsFirst && isRelatedItemRequired(gapState, formOrder.length === 1, false)) {
+      // Validate related capability using the same logic as display
+      if (isFieldRequired('related-capability')) {
         checkField('related-capability', bottleneckData.relatedCapability, 'Related capability');
       }
     }
@@ -1064,14 +1075,13 @@ export default function ContributeForm({
       checkField('fc-title', fcData.title, 'Foundational Capability name');
       checkField('fc-content', fcData.content, 'Foundational Capability description');
 
-      // Only validate related gap if capability is first form
-      const capIsFirst = formOrder[0] === 'capability';
-      if (capIsFirst && isRelatedItemRequired(capabilityState, formOrder.length === 1, false)) {
+      // Validate related gap using the same logic as display
+      if (isFieldRequired('fc-related-gap')) {
         checkField('fc-related-gap', fcData.relatedGap, 'Related R&D Gap');
       }
 
-      // Special handling for related resources array - only if capability is first
-      if (capIsFirst && isRelatedItemRequired(capabilityState, formOrder.length === 1, false) && fcData.relatedResources.length === 0) {
+      // Validate related resources using the same logic as display
+      if (isFieldRequired('related-resources') && fcData.relatedResources.length === 0) {
         errors.push('At least one related resource is required');
         errorFields.push('related-resources');
       }
@@ -1091,9 +1101,8 @@ export default function ContributeForm({
         checkField('resource-title', resourceData.title, 'Resource title');
         checkField('resource-url', resourceData.url, 'Resource URL');
 
-        // Only validate related capability if resource is first form
-        const resourceIsFirst = formOrder[0] === 'resource';
-        if (resourceIsFirst && isRelatedItemRequired(initialResourceState, formOrder.length === 1, false)) {
+        // Validate related capability using the same logic as display
+        if (isFieldRequired('related-capability-resource')) {
           checkField('related-capability-resource', resourceData.relatedCapability, 'Related capability');
         }
       }
@@ -1374,7 +1383,7 @@ export default function ContributeForm({
                     ×
                   </button>
                   <h3>
-                    R&D Gap Details
+                    R&D Gap
                     {gapState && (
                       <span className={`state-label state-label--${gapState}`}>
                         ({gapState})
@@ -1562,7 +1571,7 @@ export default function ContributeForm({
                     ×
                   </button>
                   <h3>
-                    Foundational Capability Details
+                    Foundational Capability
                     {capabilityState && (
                       <span className={`state-label state-label--${capabilityState}`}>
                         ({capabilityState})
@@ -1712,7 +1721,7 @@ export default function ContributeForm({
                           onChange={(e) => setPendingResource(e.target.value)}
                           onSuggestionSelect={(suggestion) => setPendingResource(suggestion)}
                           suggestions={resourceNames}
-                          placeholder="Add supporting resource"
+                          placeholder="Enter the name of an existing Resource or suggest a new one"
                           required={isFieldRequired('related-resources')}
                           style={getErrorStyle('related-resources')}
                           title="Enter resource to add"
@@ -1859,7 +1868,7 @@ export default function ContributeForm({
                     ×
                   </button>
                   <h3>
-                    Resource Details
+                    Resource
                     <span className={`state-label state-label--${resource.state}`}>
                       ({resource.state})
                     </span>
@@ -2018,7 +2027,7 @@ export default function ContributeForm({
                       ×
                     </button>
                     <h3>
-                      Resource Details
+                      Resource
                       {initialResourceState && (
                         <span className={`state-label state-label--${initialResourceState}`}>
                           ({initialResourceState})

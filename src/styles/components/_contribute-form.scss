@@ -43,7 +43,11 @@
 
 .contribute-form {
     width: 100%;
-
+    .form-group {
+        label {
+            margin: 0;
+        }
+    }
     label {
         font-weight: 500;
     }
@@ -56,7 +60,7 @@
         width: 100%;
         padding: 0.75rem;
         border: 1px solid var(--border-dull);
-        border-radius: $border-radius-md $border-radius-md $border-radius-md 0;
+        border-radius: $border-radius-md;
         font-family: inherit;
         font-size: 1rem;
         background-color: var(--card-background);
@@ -86,7 +90,7 @@
 
     &__user-info-fields {
         .form-group+.form-group {
-            margin-block-start: $spacing-xl;
+            margin-block-start: $spacing-xxl;
         }
     }
 
@@ -210,8 +214,14 @@
         padding: $spacing-xl;
         border: 1px solid var(--border-dull);
         border-radius: $border-radius-lg;
+        margin-inline: calc($spacing-xl * -1);
         transition: all $transition;
 
+        @media screen and (max-width: $breakpoint-md) {
+            margin-inline: calc($spacing-sm * -1);
+            padding-inline: $spacing-sm;
+            
+        }
         h3 {
             display: flex;
             align-items: baseline;
@@ -228,8 +238,8 @@
         .remove-section-button {
             position: absolute;
             inset: -1px -1px auto auto;
-            height: $spacing-xxl;
-            aspect-ratio: 1;
+            width: $spacing-xl;
+            height: 2.5rem;
             font-weight: 500;
             display: flex;
             align-items: center;
@@ -323,7 +333,7 @@
 
         input {
             flex: 1;
-            border-radius: $border-radius-md 0 0 $border-radius-md;
+            border-radius: $border-radius-md 0 0 0;
         }
 
         .autocomplete-input {
@@ -494,6 +504,7 @@
 }
 
 .required-tag {
+    margin-block-start: -1px;
     display: inline-block;
     padding: $spacing-xs $spacing-sm;
     background-color: var(--border-dull);
