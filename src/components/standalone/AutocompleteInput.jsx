@@ -1,7 +1,7 @@
 // src/components/standalone/AutocompleteInput.jsx
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, forwardRef, useImperativeHandle } from 'react';
 
-export default function AutocompleteInput({
+const AutocompleteInput = forwardRef(({
   id,
   label,
   value,
@@ -14,7 +14,7 @@ export default function AutocompleteInput({
   className = '',
   style = {},
   onFocus = null
-}) {
+}, ref) => {
   const [inputValue, setInputValue] = useState(value || '');
   const [filteredSuggestions, setFilteredSuggestions] = useState([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
@@ -23,11 +23,27 @@ export default function AutocompleteInput({
   const inputRef = useRef(null);
   const suggestionsRef = useRef(null);
 
+  // Expose focus method to parent component
+  useImperativeHandle(ref, () => ({
+    focus: () => {
+      if (inputRef.current) {
+        inputRef.current.focus();
+      }
+    }
+  }));
+
   // Update filteredSuggestions when inputValue or suggestions change
   useEffect(() => {
     if (inputValue.trim() === '') {
-      setFilteredSuggestions([]);
-      setShowSuggestions(false);
+      // Show all suggestions when input is empty and focused
+      if (isFocused) {
+        const allSuggestions = suggestions.slice(0, maxSuggestions);
+        setFilteredSuggestions(allSuggestions);
+        setShowSuggestions(allSuggestions.length > 0);
+      } else {
+        setFilteredSuggestions([]);
+        setShowSuggestions(false);
+      }
       return;
     }
 
@@ -67,8 +83,15 @@ export default function AutocompleteInput({
     
     // Check if we should show filtered suggestions
     if (newValue.trim() === '') {
-      setFilteredSuggestions([]);
-      setShowSuggestions(false);
+      // Show all suggestions when input becomes empty and focused
+      if (isFocused) {
+        const allSuggestions = suggestions.slice(0, maxSuggestions);
+        setFilteredSuggestions(allSuggestions);
+        setShowSuggestions(allSuggestions.length > 0);
+      } else {
+        setFilteredSuggestions([]);
+        setShowSuggestions(false);
+      }
       return;
     }
     
@@ -155,7 +178,12 @@ export default function AutocompleteInput({
     }
     
     // Check if there are suggestions to show
-    if (inputValue.trim() !== "") {
+    if (inputValue.trim() === "") {
+      // Show all suggestions when input is empty and just focused
+      const allSuggestions = suggestions.slice(0, maxSuggestions);
+      setFilteredSuggestions(allSuggestions);
+      setShowSuggestions(allSuggestions.length > 0);
+    } else {
       // Check if there's an exact match with the current input
       const hasExactMatch = filteredSuggestions.some(
         suggestion => suggestion.toLowerCase() === inputValue.trim().toLowerCase()
@@ -261,4 +289,8 @@ export default function AutocompleteInput({
       </div>
     </div>
   );
-}
+});
+
+AutocompleteInput.displayName = 'AutocompleteInput';
+
+export default AutocompleteInput;

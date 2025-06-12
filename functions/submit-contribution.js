@@ -1,7 +1,12 @@
 // functions/submit-contribution.js
 const { Client } = require('@notionhq/client');
 
-exports.handler = async function (event, context) {
+// Note: Relation fields (Related_Resources, Related_Bottlenecks, Related_Foundational_Capabilities)
+// are left empty for new submissions as they require existing Notion page IDs.
+// These relationships should be established during the manual review process
+// when accepted submissions are moved to the main databases.
+
+exports.handler = async function (event) {
   console.log('Function invoked with body:', event.body);
 
   // Only allow POST requests
@@ -73,10 +78,11 @@ exports.handler = async function (event, context) {
             content: submission.content,
             fields: submission.field ? [submission.field] : [],
             relatedCapabilities: submission.relatedCapability ? [submission.relatedCapability] : [],
+            relatedCapabilityState: submission.relatedCapabilityState || 'new',
             state: state
           };
 
-          const properties = createBottleneckProperties(userData, bottleneckData, state);
+          const properties = await createBottleneckProperties(userData, bottleneckData, state);
 
           console.log('Creating bottleneck with properties:', JSON.stringify(properties, null, 2));
 
@@ -97,11 +103,13 @@ exports.handler = async function (event, context) {
             title: submission.title,
             content: submission.content,
             relatedBottlenecks: submission.relatedGap ? [submission.relatedGap] : [],
+            relatedBottleneckState: submission.relatedGapState || 'new',
             relatedResources: submission.relatedResources || [],
+            relatedResourceStates: submission.relatedResourceStates || {},
             state: state
           };
 
-          const properties = createCapabilityProperties(userData, capabilityData, state);
+          const properties = await createCapabilityProperties(userData, capabilityData, state);
 
           console.log('Creating capability with properties:', JSON.stringify(properties, null, 2));
 
@@ -124,10 +132,11 @@ exports.handler = async function (event, context) {
             content: submission.content,
             resourceType: submission.resourceType,
             relatedCapabilities: submission.relatedCapability ? [submission.relatedCapability] : [],
+            relatedCapabilityState: submission.relatedCapabilityState || 'new',
             state: state
           };
 
-          const properties = createResourceProperties(userData, resourceData, state);
+          const properties = await createResourceProperties(userData, resourceData, state);
 
           console.log('Creating resource with properties:', JSON.stringify(properties, null, 2));
 
@@ -190,7 +199,7 @@ exports.handler = async function (event, context) {
 };
 
 // Helper function to create bottleneck properties
-function createBottleneckProperties(userData, bottleneckData, state) {
+async function createBottleneckProperties(userData, bottleneckData, state) {
   const properties = {
     // Common submitter fields
     Submitter_Name: {
@@ -217,18 +226,26 @@ function createBottleneckProperties(userData, bottleneckData, state) {
   // For existing items, only add related fields
   if (state === 'existing') {
     if (bottleneckData.relatedCapabilities?.length > 0) {
-      properties.Related_Foundational_Capabilities = {
-        rich_text: [{
-          text: { content: bottleneckData.relatedCapabilities.join(', ') }
-        }]
-      };
+      // Only populate the New_FC_Title field if the related capability is new
+      if (bottleneckData.relatedCapabilityState === 'new') {
+        properties.New_FC_Title = {
+          rich_text: [{
+            text: { content: bottleneckData.relatedCapabilities.join(', ') }
+          }]
+        };
+      } else {
+        // For existing/edited capabilities, use relation field (empty for now)
+        properties.Related_Foundational_Capabilities = {
+          relation: [] // This would need actual Notion page IDs
+        };
+      }
     }
     return properties;
   }
 
   // For new or edited items, add all fields
-  properties.Bottleneck_Name = {
-    rich_text: [{
+  properties.Bottleneck_Title = {
+    title: [{
       text: { content: bottleneckData.title || '' }
     }]
   };
@@ -242,26 +259,34 @@ function createBottleneckProperties(userData, bottleneckData, state) {
   }
 
   if (bottleneckData.fields?.length > 0) {
+    // Fields is multi_select
     properties.Fields = {
-      rich_text: [{
-        text: { content: bottleneckData.fields.join(', ') }
-      }]
+      multi_select: bottleneckData.fields.map(field => ({ name: field }))
     };
   }
 
   if (bottleneckData.relatedCapabilities?.length > 0) {
-    properties.Related_Foundational_Capabilities = {
-      rich_text: [{
-        text: { content: bottleneckData.relatedCapabilities.join(', ') }
-      }]
-    };
+    // Only populate the field that's relevant based on the related item's state
+    if (bottleneckData.relatedCapabilityState === 'new') {
+      // New capability - use New_FC_Title field
+      properties.New_FC_Title = {
+        rich_text: [{
+          text: { content: bottleneckData.relatedCapabilities.join(', ') }
+        }]
+      };
+    } else {
+      // Existing/edited capability - use relation field (empty for now)
+      properties.Related_Foundational_Capabilities = {
+        relation: [] // Empty for new submissions
+      };
+    }
   }
 
   return properties;
 }
 
 // Helper function to create capability properties
-function createCapabilityProperties(userData, capabilityData, state) {
+async function createCapabilityProperties(userData, capabilityData, state) {
   const properties = {
     // Common submitter fields
     Submitter_Name: {
@@ -288,25 +313,52 @@ function createCapabilityProperties(userData, capabilityData, state) {
   // For existing items, only add related fields
   if (state === 'existing') {
     if (capabilityData.relatedResources?.length > 0) {
-      properties.Related_Resources = {
-        rich_text: [{
-          text: { content: capabilityData.relatedResources.join(', ') }
-        }]
-      };
+      // Check if any resources are new
+      const newResources = capabilityData.relatedResources.filter((resource, index) => {
+        const resourceState = capabilityData.relatedResourceStates[resource] || 'new';
+        return resourceState === 'new';
+      });
+      
+      if (newResources.length > 0) {
+        properties.New_Resource_Title = {
+          rich_text: [{
+            text: { content: newResources.join(', ') }
+          }]
+        };
+      }
+      
+      // For existing resources, use relation field (empty)
+      const existingResources = capabilityData.relatedResources.filter((resource, index) => {
+        const resourceState = capabilityData.relatedResourceStates[resource] || 'new';
+        return resourceState !== 'new';
+      });
+      
+      if (existingResources.length > 0) {
+        properties.Related_Resources = {
+          relation: [] // This would need actual Notion page IDs
+        };
+      }
     }
+    
     if (capabilityData.relatedBottlenecks?.length > 0) {
-      properties.Related_Bottlenecks = {
-        rich_text: [{
-          text: { content: capabilityData.relatedBottlenecks.join(', ') }
-        }]
-      };
+      if (capabilityData.relatedBottleneckState === 'new') {
+        properties.New_Bottlenecks_Title = {
+          rich_text: [{
+            text: { content: capabilityData.relatedBottlenecks.join(', ') }
+          }]
+        };
+      } else {
+        properties.Related_Bottlenecks = {
+          relation: [] // This would need actual Notion page IDs
+        };
+      }
     }
     return properties;
   }
 
   // For new or edited items, add all fields
-  properties.FC_Name = {
-    rich_text: [{
+  properties.FC_Title = {
+    title: [{
       text: { content: capabilityData.title || '' }
     }]
   };
@@ -320,26 +372,53 @@ function createCapabilityProperties(userData, capabilityData, state) {
   }
 
   if (capabilityData.relatedResources?.length > 0) {
-    properties.Related_Resources = {
-      rich_text: [{
-        text: { content: capabilityData.relatedResources.join(', ') }
-      }]
-    };
+    // Separate new and existing resources
+    const newResources = capabilityData.relatedResources.filter((resource, index) => {
+      const resourceState = capabilityData.relatedResourceStates[resource] || 'new';
+      return resourceState === 'new';
+    });
+    
+    if (newResources.length > 0) {
+      properties.New_Resource_Title = {
+        rich_text: [{
+          text: { content: newResources.join(', ') }
+        }]
+      };
+    }
+    
+    // For existing resources, use relation field (empty)
+    const existingResources = capabilityData.relatedResources.filter((resource, index) => {
+      const resourceState = capabilityData.relatedResourceStates[resource] || 'new';
+      return resourceState !== 'new';
+    });
+    
+    if (existingResources.length > 0) {
+      properties.Related_Resources = {
+        relation: [] // Empty for new submissions
+      };
+    }
   }
 
   if (capabilityData.relatedBottlenecks?.length > 0) {
-    properties.Related_Bottlenecks = {
-      rich_text: [{
-        text: { content: capabilityData.relatedBottlenecks.join(', ') }
-      }]
-    };
+    // Only populate the field that's relevant based on the related item's state
+    if (capabilityData.relatedBottleneckState === 'new') {
+      properties.New_Bottlenecks_Title = {
+        rich_text: [{
+          text: { content: capabilityData.relatedBottlenecks.join(', ') }
+        }]
+      };
+    } else {
+      properties.Related_Bottlenecks = {
+        relation: [] // Empty for new submissions
+      };
+    }
   }
 
   return properties;
 }
 
 // Helper function to create resource properties
-function createResourceProperties(userData, resourceData, state) {
+async function createResourceProperties(userData, resourceData, state) {
   const properties = {
     // Common submitter fields
     Submitter_Name: {
@@ -366,42 +445,61 @@ function createResourceProperties(userData, resourceData, state) {
   // For existing items, only add related fields
   if (state === 'existing') {
     if (resourceData.relatedCapabilities?.length > 0) {
-      properties.Related_Foundational_Capabilities = {
-        rich_text: [{
-          text: { content: resourceData.relatedCapabilities.join(', ') }
-        }]
-      };
+      if (resourceData.relatedCapabilityState === 'new') {
+        properties.New_FC_Title = {
+          rich_text: [{
+            text: { content: resourceData.relatedCapabilities.join(', ') }
+          }]
+        };
+      } else {
+        properties.Related_Foundational_Capabilities = {
+          relation: [] // This would need actual Notion page IDs
+        };
+      }
     }
     return properties;
   }
 
   // For new or edited items, add all fields
   properties.Resource_Title = {
-    rich_text: [{
+    title: [{
       text: { content: resourceData.title || '' }
     }]
   };
 
   if (resourceData.url) {
     properties.Resource_URL = {
+      url: resourceData.url
+    };
+  }
+
+  if (resourceData.content) {
+    properties.Resource_Description = {
       rich_text: [{
-        text: { content: resourceData.url }
+        text: { content: resourceData.content }
       }]
     };
   }
 
   if (resourceData.resourceType) {
     properties.Resource_Type = {
-      select: { name: resourceData.resourceType }
+      multi_select: [{ name: resourceData.resourceType }]
     };
   }
 
   if (resourceData.relatedCapabilities?.length > 0) {
-    properties.Related_Foundational_Capabilities = {
-      rich_text: [{
-        text: { content: resourceData.relatedCapabilities.join(', ') }
-      }]
-    };
+    // Only populate the field that's relevant based on the related item's state
+    if (resourceData.relatedCapabilityState === 'new') {
+      properties.New_FC_Title = {
+        rich_text: [{
+          text: { content: resourceData.relatedCapabilities.join(', ') }
+        }]
+      };
+    } else {
+      properties.Related_Foundational_Capabilities = {
+        relation: [] // Empty for new submissions
+      };
+    }
   }
 
   return properties;

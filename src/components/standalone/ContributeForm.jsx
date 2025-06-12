@@ -1,5 +1,5 @@
 // src/components/standalone/ContributeForm.jsx
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import AutocompleteInput from './AutocompleteInput';
 
 // Component for displaying required field indicator
@@ -72,7 +72,7 @@ export default function ContributeForm({
   const [bottleneckData, setBottleneckData] = useState({
     title: '',
     content: '',
-    fieldId: '',
+    fieldName: '',
     rank: 3,
     relatedCapability: '',
     isAddedViaAssociation: false
@@ -236,12 +236,17 @@ export default function ContributeForm({
   const [pendingResource, setPendingResource] = useState('');
   const [pendingGap, setPendingGap] = useState('');
 
+  // Refs for autocomplete inputs
+  const capabilityInputRef = useRef(null);
+  const resourceInputRef = useRef(null);
+  const gapInputRef = useRef(null);
+
   // Function to reset all form data
   const resetAllForms = () => {
     setBottleneckData({
       title: '',
       content: '',
-      fieldId: '',
+      fieldName: '',
       rank: 3,
       relatedCapability: '',
       isAddedViaAssociation: false
@@ -486,7 +491,14 @@ export default function ContributeForm({
 
   // Add a capability to the gap
   const addCapabilityToGap = () => {
-    if (!pendingCapability.trim() || bottleneckData.relatedCapability) return;
+    if (!pendingCapability.trim()) {
+      // Focus the input if empty
+      if (capabilityInputRef.current) {
+        capabilityInputRef.current.focus();
+      }
+      return;
+    }
+    if (bottleneckData.relatedCapability) return;
 
     setBottleneckData({ ...bottleneckData, relatedCapability: pendingCapability });
 
@@ -700,7 +712,13 @@ export default function ContributeForm({
 
   // Add a resource to the capability
   const addResourceToCapability = () => {
-    if (!pendingResource.trim()) return;
+    if (!pendingResource.trim()) {
+      // Focus the input if empty
+      if (resourceInputRef.current) {
+        resourceInputRef.current.focus();
+      }
+      return;
+    }
 
     // Add resource to the capability's relatedResources array
     setFcData({ ...fcData, relatedResources: [...fcData.relatedResources, pendingResource] });
@@ -779,7 +797,13 @@ export default function ContributeForm({
 
   // Add a capability to resource (for when starting with resource)
   const addCapabilityToResource = () => {
-    if (!pendingCapability.trim()) return;
+    if (!pendingCapability.trim()) {
+      // Focus the input if empty
+      if (capabilityInputRef.current) {
+        capabilityInputRef.current.focus();
+      }
+      return;
+    }
 
     setResourceData({ ...resourceData, relatedCapability: pendingCapability });
 
@@ -836,7 +860,13 @@ export default function ContributeForm({
 
   // Add a gap to capability
   const addGapToCapability = () => {
-    if (!pendingGap.trim()) return;
+    if (!pendingGap.trim()) {
+      // Focus the input if empty
+      if (gapInputRef.current) {
+        gapInputRef.current.focus();
+      }
+      return;
+    }
 
     setFcData({ ...fcData, relatedGap: pendingGap });
 
@@ -941,7 +971,7 @@ export default function ContributeForm({
     if (selectedContentType === 'gap' || showForms.gap) {
       updateGapState();
     }
-  }, [bottleneckData.title, bottleneckData.content, bottleneckData.fieldId, bottleneckData.rank]);
+  }, [bottleneckData.title, bottleneckData.content, bottleneckData.fieldName, bottleneckData.rank]);
 
   // Monitor capability data changes and update state
   useEffect(() => {
@@ -978,7 +1008,7 @@ export default function ContributeForm({
           setBottleneckData({
             title: decodedData.contentTitle || '',
             content: description,
-            fieldId: decodedData.contentField || '',
+            fieldName: decodedData.contentField || '',
             rank: 3,
             relatedCapability: ''
           });
@@ -1062,7 +1092,7 @@ export default function ContributeForm({
     if (showForms.gap) {
       checkField('bottleneck-title', bottleneckData.title, 'R&D Gap name');
       checkField('bottleneck-content', bottleneckData.content, 'R&D Gap description');
-      checkField('bottleneck-field', bottleneckData.fieldId, 'Field selection');
+      checkField('bottleneck-field', bottleneckData.fieldName, 'Field selection');
 
       // Validate related capability using the same logic as display
       if (isFieldRequired('related-capability')) {
@@ -1157,7 +1187,7 @@ export default function ContributeForm({
           email: userData.email,
           title: bottleneckData.title,
           contentType: 'Bottleneck',
-          field: bottleneckData.fieldId,
+          field: bottleneckData.fieldName,
           rank: bottleneckData.rank,
           content: bottleneckData.content,
           relatedCapability: bottleneckData.relatedCapability,
@@ -1237,7 +1267,7 @@ export default function ContributeForm({
       window.location.href = '/success';
     } catch (error) {
       console.error('Error submitting contribution:', error);
-      setFormError(error.message || 'An error occurred. Please try again.');
+      setFormError([error.message || 'An error occurred. Please try again.']);
       setIsSubmitting(false);
     }
   };
@@ -1247,7 +1277,7 @@ export default function ContributeForm({
       {/* Error message display - above all form elements */}
       {selectedContentType && formError && formError.length > 0 && (
         <div className="contribute-form__error" role="alert" id="form-error-message">
-          <h3>Please complete the following required fields:</h3>
+          <h3>{errorFields.length > 0 ? 'Please complete the following required fields:' : 'Submission Error'}</h3>
           <ul>
             {formError.map((error, index) => (
               <li key={index}>{error}</li>
@@ -1437,9 +1467,9 @@ export default function ContributeForm({
                     <InputWrapper required={isFieldRequired('bottleneck-field')} hasError={hasError('bottleneck-field')}>
                       <select
                         id="bottleneck-field"
-                        value={bottleneckData.fieldId}
+                        value={bottleneckData.fieldName}
                         onChange={(e) => {
-                          setBottleneckData({ ...bottleneckData, fieldId: e.target.value });
+                          setBottleneckData({ ...bottleneckData, fieldName: e.target.value });
                         }}
                         onFocus={() => clearFieldError('bottleneck-field')}
                         style={getErrorStyle('bottleneck-field')}
@@ -1450,7 +1480,7 @@ export default function ContributeForm({
                       >
                         <option value="">Select a field</option>
                         {fields.map((field) => (
-                          <option key={field.id} value={field.id}>
+                          <option key={field.id} value={field.field_name}>
                             {field.field_name}
                           </option>
                         ))}
@@ -1498,6 +1528,7 @@ export default function ContributeForm({
                           />
                         ) : (
                           <AutocompleteInput
+                            ref={capabilityInputRef}
                             id="related-capability"
                             value={pendingCapability}
                             onChange={(e) => setPendingCapability(e.target.value)}
@@ -1516,7 +1547,6 @@ export default function ContributeForm({
                             type="button"
                             onClick={addCapabilityToGap}
                             className="add-button"
-                            disabled={!pendingCapability.trim()}
                             title="Add capability"
                             aria-label="Add related capability"
                           >
@@ -1639,6 +1669,7 @@ export default function ContributeForm({
                           />
                         ) : (
                           <AutocompleteInput
+                            ref={gapInputRef}
                             id="fc-related-gap"
                             value={pendingGap}
                             onChange={(e) => setPendingGap(e.target.value)}
@@ -1657,8 +1688,7 @@ export default function ContributeForm({
                             type="button"
                             onClick={addGapToCapability}
                             className="add-button"
-                            disabled={!pendingGap.trim()}
-                            title="Add R&D Gap"
+                              title="Add R&D Gap"
                             aria-label="Add related R&D Gap"
                           >
                             +
@@ -1716,6 +1746,7 @@ export default function ContributeForm({
                       {/* Input for adding new resources */}
                       <InputWithButtonWrapper required={isFieldRequired('related-resources')} hasError={hasError('related-resources')}>
                         <AutocompleteInput
+                          ref={resourceInputRef}
                           id="related-resources"
                           value={pendingResource}
                           onChange={(e) => setPendingResource(e.target.value)}
@@ -1732,7 +1763,6 @@ export default function ContributeForm({
                           type="button"
                           onClick={addResourceToCapability}
                           className="add-button"
-                          disabled={!pendingResource.trim()}
                           title="Add resource"
                           aria-label="Add related resource"
                         >
@@ -2158,8 +2188,7 @@ export default function ContributeForm({
                               type="button"
                               onClick={addCapabilityToResource}
                               className="add-button"
-                              disabled={!pendingCapability.trim()}
-                              title="Add capability"
+                                title="Add capability"
                               aria-label="Add related capability"
                             >
                               +
