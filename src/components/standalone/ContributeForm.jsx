@@ -70,27 +70,34 @@ export default function ContributeForm({
 
   // Form data state for all content types
   const [bottleneckData, setBottleneckData] = useState({
+    id: null,
     title: '',
     content: '',
     fieldName: '',
     rank: 3,
     relatedCapability: '',
+    relatedCapabilityId: null,
     isAddedViaAssociation: false
   });
 
   const [fcData, setFcData] = useState({
+    id: null,
     title: '',
     content: '',
     relatedGap: '',
+    relatedGapId: null,
     relatedResources: [], // Array for multiple resources
+    relatedResourceIds: {}, // Map of resource title to ID
     isAddedViaAssociation: false
   });
 
   const [resourceData, setResourceData] = useState({
+    id: null,
     title: '',
     url: '',
     content: '',
     relatedCapability: '',
+    relatedCapabilityId: null,
     resourceType: resourceTypeOptions.length > 0 ? resourceTypeOptions[0] : 'Publication',
     isExistingResource: false
   });
@@ -244,25 +251,32 @@ export default function ContributeForm({
   // Function to reset all form data
   const resetAllForms = () => {
     setBottleneckData({
+      id: null,
       title: '',
       content: '',
       fieldName: '',
       rank: 3,
       relatedCapability: '',
+      relatedCapabilityId: null,
       isAddedViaAssociation: false
     });
     setFcData({
+      id: null,
       title: '',
       content: '',
       relatedGap: '',
+      relatedGapId: null,
       relatedResources: [],
+      relatedResourceIds: {},
       isAddedViaAssociation: false
     });
     setResourceData({
+      id: null,
       title: '',
       url: '',
       content: '',
       relatedCapability: '',
+      relatedCapabilityId: null,
       resourceType: resourceTypeOptions.length > 0 ? resourceTypeOptions[0] : 'Publication',
       isExistingResource: false
     });
@@ -320,11 +334,13 @@ export default function ContributeForm({
     if (formType === 'gap') {
       const gapTitle = bottleneckData.title;
       setBottleneckData({
+        id: null,
         title: '',
         content: '',
         fieldName: '',
         rank: 3,
         relatedCapability: '',
+        relatedCapabilityId: null,
         isAddedViaAssociation: false
       });
       setGapState(null);
@@ -348,10 +364,13 @@ export default function ContributeForm({
     } else if (formType === 'capability') {
       const capabilityTitle = fcData.title;
       setFcData({
+        id: null,
         title: '',
         content: '',
         relatedGap: '',
+        relatedGapId: null,
         relatedResources: [],
+        relatedResourceIds: {},
         isAddedViaAssociation: false
       });
       setCapabilityState(null);
@@ -373,11 +392,13 @@ export default function ContributeForm({
         if (bottleneckData.isAddedViaAssociation) {
           // Cascade remove the gap
           setBottleneckData({
+            id: null,
             title: '',
             content: '',
             fieldName: '',
             rank: 3,
             relatedCapability: '',
+            relatedCapabilityId: null,
             isAddedViaAssociation: false
           });
           setGapState(null);
@@ -419,10 +440,12 @@ export default function ContributeForm({
 
     } else if (formType === 'resource') {
       setResourceData({
+        id: null,
         title: '',
         url: '',
         content: '',
         relatedCapability: '',
+        relatedCapabilityId: null,
         resourceType: resourceTypeOptions.length > 0 ? resourceTypeOptions[0] : 'Publication',
         isExistingResource: false
       });
@@ -468,21 +491,23 @@ export default function ContributeForm({
   const handleGapChange = (e) => {
     const gapName = e.target.value;
 
-    // If selecting existing gap, populate all data including field
+    // If selecting existing gap, populate all data including field and ID
     if (bottleneckNames.includes(gapName)) {
       const gap = bottlenecks.find(b => b.bottleneck_name === gapName);
       if (gap) {
         setBottleneckData({
+          id: gap.id,
           title: gap.bottleneck_name,
           content: gap.bottleneck_description || '',
           fieldName: gap.field?.field_name || '',
           rank: gap.bottleneck_rank || 3,
-          relatedCapability: bottleneckData.relatedCapability
+          relatedCapability: bottleneckData.relatedCapability,
+          relatedCapabilityId: bottleneckData.relatedCapabilityId
         });
       }
     } else {
-      // Just update title for new gaps
-      setBottleneckData({ ...bottleneckData, title: gapName });
+      // Just update title for new gaps, clear ID
+      setBottleneckData({ ...bottleneckData, id: null, title: gapName });
     }
 
     // Update state will happen via useEffect
@@ -500,10 +525,15 @@ export default function ContributeForm({
     }
     if (bottleneckData.relatedCapability) return;
 
-    setBottleneckData({ ...bottleneckData, relatedCapability: pendingCapability });
-
     // Check if this is an existing capability
-    const existingCapability = capabilityNames.includes(pendingCapability);
+    const existingCapability = capabilities.find(c => c.fc_name === pendingCapability);
+    const capabilityId = existingCapability ? existingCapability.id : null;
+
+    setBottleneckData({ 
+      ...bottleneckData, 
+      relatedCapability: pendingCapability,
+      relatedCapabilityId: capabilityId
+    });
 
     // Show the capability form and add to form order
     setShowForms(prev => ({ ...prev, capability: true }));
@@ -515,23 +545,32 @@ export default function ContributeForm({
     });
 
     if (existingCapability) {
-      // Populate existing capability data
-      const capability = capabilities.find(c => c.fc_name === pendingCapability);
-      if (capability) {
-        const capabilityData = {
-          title: capability.fc_name,
-          content: capability.fc_description || '',
-          relatedGap: bottleneckData.title,
-          relatedResources: [],
-          isAddedViaAssociation: true
-        };
-        setFcData(capabilityData);
-        setOriginalCapabilityData(capabilityData);
-        setCapabilityState('existing');
-      }
+      // Populate existing capability data with ID
+      const capabilityData = {
+        id: existingCapability.id,
+        title: existingCapability.fc_name,
+        content: existingCapability.fc_description || '',
+        relatedGap: bottleneckData.title,
+        relatedGapId: bottleneckData.id,
+        relatedResources: [],
+        relatedResourceIds: {},
+        isAddedViaAssociation: true
+      };
+      setFcData(capabilityData);
+      setOriginalCapabilityData(capabilityData);
+      setCapabilityState('existing');
     } else {
       // New capability
-      setFcData({ ...fcData, title: pendingCapability, relatedGap: bottleneckData.title, relatedResources: [], isAddedViaAssociation: true });
+      setFcData({ 
+        ...fcData, 
+        id: null,
+        title: pendingCapability, 
+        relatedGap: bottleneckData.title, 
+        relatedGapId: bottleneckData.id,
+        relatedResources: [], 
+        relatedResourceIds: {},
+        isAddedViaAssociation: true 
+      });
       setCapabilityState('new');
     }
 
@@ -542,25 +581,30 @@ export default function ContributeForm({
   const handleCapabilityChange = (e) => {
     const capabilityName = e.target.value;
 
-    // If selecting existing capability, populate all data
+    // If selecting existing capability, populate all data including ID
     if (capabilityNames.includes(capabilityName)) {
       const capability = capabilities.find(c => c.fc_name === capabilityName);
       if (capability) {
         let relatedGapName = '';
+        let relatedGapId = null;
         if (capability.bottlenecks && capability.bottlenecks.length > 0) {
           relatedGapName = capability.bottlenecks[0].name || '';
+          relatedGapId = capability.bottlenecks[0].id || null;
         }
 
         setFcData({
+          id: capability.id,
           title: capability.fc_name,
           content: capability.fc_description || '',
           relatedGap: relatedGapName,
-          relatedResources: fcData.relatedResources
+          relatedGapId: relatedGapId,
+          relatedResources: fcData.relatedResources,
+          relatedResourceIds: fcData.relatedResourceIds
         });
       }
     } else {
-      // Just update title for new capabilities
-      setFcData({ ...fcData, title: capabilityName });
+      // Just update title for new capabilities, clear ID
+      setFcData({ ...fcData, id: null, title: capabilityName });
     }
 
     // Update state will happen via useEffect
@@ -720,21 +764,32 @@ export default function ContributeForm({
       return;
     }
 
-    // Add resource to the capability's relatedResources array
-    setFcData({ ...fcData, relatedResources: [...fcData.relatedResources, pendingResource] });
-
     // Check if this is an existing resource
     const existingResource = resources.find(r => r.resource_title === pendingResource);
+    
+    // Add resource to the capability's relatedResources array and store ID
+    const updatedResourceIds = { ...fcData.relatedResourceIds };
+    if (existingResource) {
+      updatedResourceIds[pendingResource] = existingResource.id;
+    }
+    
+    setFcData({ 
+      ...fcData, 
+      relatedResources: [...fcData.relatedResources, pendingResource],
+      relatedResourceIds: updatedResourceIds
+    });
 
     let newResource;
     if (existingResource) {
-      // Use existing resource data
+      // Use existing resource data with actual Notion ID
       newResource = {
-        id: Date.now(), // Temporary ID for tracking
+        id: Date.now(), // Temporary ID for form tracking
+        notionId: existingResource.id, // Actual Notion ID
         title: existingResource.resource_title,
         url: existingResource.resource_url || '',
         content: existingResource.resource_description || '',
         relatedCapability: fcData.title,
+        relatedCapabilityId: fcData.id,
         resourceType: existingResource.resource_type || (resourceTypeOptions.length > 0 ? resourceTypeOptions[0] : 'Publication'),
         state: 'existing',
         isExistingResource: true, // Flag to disable title editing
@@ -744,6 +799,7 @@ export default function ContributeForm({
       setOriginalFormResources(prev => ({
         ...prev,
         [newResource.id]: {
+          notionId: existingResource.id,
           url: newResource.url,
           content: newResource.content,
           resourceType: newResource.resourceType
@@ -753,10 +809,12 @@ export default function ContributeForm({
       // Create new resource object
       newResource = {
         id: Date.now(), // Temporary ID for tracking
+        notionId: null, // No Notion ID for new resources
         title: pendingResource,
         url: '',
         content: '',
         relatedCapability: fcData.title,
+        relatedCapabilityId: fcData.id,
         resourceType: resourceTypeOptions.length > 0 ? resourceTypeOptions[0] : 'Publication',
         state: 'new',
         isExistingResource: false,
@@ -805,10 +863,15 @@ export default function ContributeForm({
       return;
     }
 
-    setResourceData({ ...resourceData, relatedCapability: pendingCapability });
-
     // Check if this is an existing capability
-    const existingCapability = capabilityNames.includes(pendingCapability);
+    const existingCapability = capabilities.find(c => c.fc_name === pendingCapability);
+    const capabilityId = existingCapability ? existingCapability.id : null;
+
+    setResourceData({ 
+      ...resourceData, 
+      relatedCapability: pendingCapability,
+      relatedCapabilityId: capabilityId
+    });
 
     // Show the capability form and add to form order
     setShowForms(prev => ({ ...prev, capability: true }));
@@ -820,36 +883,53 @@ export default function ContributeForm({
     });
 
     if (existingCapability) {
-      // Populate existing capability data
-      const capability = capabilities.find(c => c.fc_name === pendingCapability);
-      if (capability) {
-        let relatedGapName = '';
-        if (capability.bottlenecks && capability.bottlenecks.length > 0) {
-          relatedGapName = capability.bottlenecks[0].name || '';
-        }
-
-        const capabilityData = {
-          title: capability.fc_name,
-          content: capability.fc_description || '',
-          relatedGap: relatedGapName,
-          relatedResources: [resourceData.title],
-          isAddedViaAssociation: true
-        };
-        setFcData(capabilityData);
-        setOriginalCapabilityData({
-          title: capability.fc_name,
-          content: capability.fc_description || '',
-          relatedGap: relatedGapName
-        });
-        setCapabilityState('existing');
+      // Populate existing capability data with ID
+      let relatedGapName = '';
+      let relatedGapId = null;
+      if (existingCapability.bottlenecks && existingCapability.bottlenecks.length > 0) {
+        relatedGapName = existingCapability.bottlenecks[0].name || '';
+        relatedGapId = existingCapability.bottlenecks[0].id || null;
       }
+
+      const resourceIds = {};
+      if (resourceData.id) {
+        resourceIds[resourceData.title] = resourceData.id;
+      }
+
+      const capabilityData = {
+        id: existingCapability.id,
+        title: existingCapability.fc_name,
+        content: existingCapability.fc_description || '',
+        relatedGap: relatedGapName,
+        relatedGapId: relatedGapId,
+        relatedResources: [resourceData.title],
+        relatedResourceIds: resourceIds,
+        isAddedViaAssociation: true
+      };
+      setFcData(capabilityData);
+      setOriginalCapabilityData({
+        id: existingCapability.id,
+        title: existingCapability.fc_name,
+        content: existingCapability.fc_description || '',
+        relatedGap: relatedGapName,
+        relatedGapId: relatedGapId
+      });
+      setCapabilityState('existing');
     } else {
       // New capability
+      const resourceIds = {};
+      if (resourceData.id) {
+        resourceIds[resourceData.title] = resourceData.id;
+      }
+      
       setFcData({
+        id: null,
         title: pendingCapability,
         relatedGap: '',
+        relatedGapId: null,
         content: '',
         relatedResources: [resourceData.title],
+        relatedResourceIds: resourceIds,
         isAddedViaAssociation: true
       });
       setCapabilityState('new');
@@ -868,9 +948,15 @@ export default function ContributeForm({
       return;
     }
 
-    setFcData({ ...fcData, relatedGap: pendingGap });
+    // Check if this is an existing gap
+    const existingGap = bottlenecks.find(b => b.bottleneck_name === pendingGap);
+    const gapId = existingGap ? existingGap.id : null;
 
-    const existingGap = bottleneckNames.includes(pendingGap);
+    setFcData({ 
+      ...fcData, 
+      relatedGap: pendingGap,
+      relatedGapId: gapId
+    });
 
     // Show the gap form and add directly after capability in form order
     setShowForms(prev => ({ ...prev, gap: true }));
@@ -897,29 +983,30 @@ export default function ContributeForm({
     });
 
     if (existingGap) {
-      // Populate existing gap data
-      const gap = bottlenecks.find(b => b.bottleneck_name === pendingGap);
-      if (gap) {
-        const gapData = {
-          title: gap.bottleneck_name,
-          content: gap.bottleneck_description || '',
-          fieldName: gap.field?.field_name || '',
-          rank: gap.bottleneck_rank || 3,
-          relatedCapability: fcData.title,
-          isAddedViaAssociation: true
-        };
-        setBottleneckData(gapData);
-        setOriginalGapData(gapData);
-        setGapState('existing');
-      }
+      // Populate existing gap data with ID
+      const gapData = {
+        id: existingGap.id,
+        title: existingGap.bottleneck_name,
+        content: existingGap.bottleneck_description || '',
+        fieldName: existingGap.field?.field_name || '',
+        rank: existingGap.bottleneck_rank || 3,
+        relatedCapability: fcData.title,
+        relatedCapabilityId: fcData.id,
+        isAddedViaAssociation: true
+      };
+      setBottleneckData(gapData);
+      setOriginalGapData(gapData);
+      setGapState('existing');
     } else {
       // New gap
       setBottleneckData({
+        id: null,
         title: pendingGap,
         content: '',
         fieldName: '',
         rank: 3,
         relatedCapability: fcData.title,
+        relatedCapabilityId: fcData.id,
         isAddedViaAssociation: true
       });
       setGapState('new');
@@ -936,28 +1023,33 @@ export default function ContributeForm({
     const existingResource = resources.find(r => r.resource_title === resourceTitle);
 
     if (existingResource) {
-      // Populate all resource data from existing resource
+      // Populate all resource data from existing resource including ID
       const newResourceData = {
+        id: existingResource.id,
         title: existingResource.resource_title,
         url: existingResource.resource_url || '',
         content: existingResource.resource_description || '',
         relatedCapability: resourceData.relatedCapability, // Keep existing related capability
+        relatedCapabilityId: resourceData.relatedCapabilityId, // Keep existing related capability ID
         resourceType: existingResource.resource_type || (resourceTypeOptions.length > 0 ? resourceTypeOptions[0] : 'Publication'),
         isExistingResource: true // Flag to disable title editing
       };
       setResourceData(newResourceData);
       // Set original data for tracking edits
       setOriginalResourceData({
+        id: existingResource.id,
         title: existingResource.resource_title,
         url: existingResource.resource_url || '',
         content: existingResource.resource_description || '',
         resourceType: existingResource.resource_type || (resourceTypeOptions.length > 0 ? resourceTypeOptions[0] : 'Publication'),
-        relatedCapability: resourceData.relatedCapability
+        relatedCapability: resourceData.relatedCapability,
+        relatedCapabilityId: resourceData.relatedCapabilityId
       });
     } else {
-      // New resource
+      // New resource, clear ID
       setResourceData({
         ...resourceData,
+        id: null,
         title: resourceTitle,
         isExistingResource: false
       });
@@ -1185,12 +1277,14 @@ export default function ContributeForm({
         submissions.push({
           name: userData.name,
           email: userData.email,
+          itemId: bottleneckData.id, // Notion page ID for existing items
           title: bottleneckData.title,
           contentType: 'Bottleneck',
           field: bottleneckData.fieldName,
           rank: bottleneckData.rank,
           content: bottleneckData.content,
           relatedCapability: bottleneckData.relatedCapability,
+          relatedCapabilityId: bottleneckData.relatedCapabilityId,
           relatedCapabilityState: capabilityState,
           comment: userData.comment,
           state: gapState
@@ -1199,23 +1293,33 @@ export default function ContributeForm({
 
       // Add capability data if shown
       if (showForms.capability && (capabilityState || selectedContentType === 'capability')) {
-        // Build resource states map
+        // Build resource states and IDs map
         const relatedResourceStates = {};
+        const relatedResourceIds = {};
         fcData.relatedResources.forEach(resourceTitle => {
           // Find the resource in formResources to get its state
           const resourceObj = formResources.find(r => r.title === resourceTitle);
           relatedResourceStates[resourceTitle] = resourceObj ? resourceObj.state : 'new';
+          // Get the Notion ID if available
+          if (resourceObj && resourceObj.notionId) {
+            relatedResourceIds[resourceTitle] = resourceObj.notionId;
+          } else if (fcData.relatedResourceIds[resourceTitle]) {
+            relatedResourceIds[resourceTitle] = fcData.relatedResourceIds[resourceTitle];
+          }
         });
 
         submissions.push({
           name: userData.name,
           email: userData.email,
+          itemId: fcData.id, // Notion page ID for existing items
           title: fcData.title,
           contentType: 'Foundational Capability',
           content: fcData.content,
           relatedGap: fcData.relatedGap || bottleneckData.title,
+          relatedGapId: fcData.relatedGapId || bottleneckData.id,
           relatedGapState: gapState,
           relatedResources: fcData.relatedResources,
+          relatedResourceIds: relatedResourceIds,
           relatedResourceStates: relatedResourceStates,
           comment: userData.comment,
           state: capabilityState
@@ -1230,12 +1334,14 @@ export default function ContributeForm({
             submissions.push({
               name: userData.name,
               email: userData.email,
+              itemId: resource.notionId, // Notion page ID for existing items
               title: resource.title,
               contentType: 'Resource',
               resourceType: resource.resourceType,
               resource: resource.url,
               content: resource.content,
               relatedCapability: resource.relatedCapability || fcData.title,
+              relatedCapabilityId: resource.relatedCapabilityId || fcData.id,
               relatedCapabilityState: capabilityState,
               comment: userData.comment,
               state: resource.state
@@ -1246,12 +1352,14 @@ export default function ContributeForm({
           submissions.push({
             name: userData.name,
             email: userData.email,
+            itemId: resourceData.id, // Notion page ID for existing items
             title: resourceData.title,
             contentType: 'Resource',
             resourceType: resourceData.resourceType,
             resource: resourceData.url,
             content: resourceData.content,
             relatedCapability: resourceData.relatedCapability || fcData.title,
+            relatedCapabilityId: resourceData.relatedCapabilityId || fcData.id,
             relatedCapabilityState: capabilityState,
             comment: userData.comment,
             state: initialResourceState || 'new'
@@ -1557,7 +1665,7 @@ export default function ContributeForm({
                           <button
                             type="button"
                             onClick={addCapabilityToGap}
-                            className="add-button"
+                            className={`add-button ${!pendingCapability.trim() ? 'add-button--empty' : ''}`}
                             title="Add capability"
                             aria-label="Add related capability"
                           >
@@ -1696,7 +1804,7 @@ export default function ContributeForm({
                           <button
                             type="button"
                             onClick={addGapToCapability}
-                            className="add-button"
+                            className={`add-button ${!pendingGap.trim() ? 'add-button--empty' : ''}`}
                               title="Add R&D Gap"
                             aria-label="Add related R&D Gap"
                           >
@@ -1771,7 +1879,7 @@ export default function ContributeForm({
                         <button
                           type="button"
                           onClick={addResourceToCapability}
-                          className="add-button"
+                          className={`add-button ${!pendingResource.trim() ? 'add-button--empty' : ''}`}
                           title="Add resource"
                           aria-label="Add related resource"
                         >
@@ -2192,7 +2300,7 @@ export default function ContributeForm({
                             <button
                               type="button"
                               onClick={addCapabilityToResource}
-                              className="add-button"
+                              className={`add-button ${!pendingCapability.trim() ? 'add-button--empty' : ''}`}
                                 title="Add capability"
                               aria-label="Add related capability"
                             >

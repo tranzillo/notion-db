@@ -72,12 +72,13 @@ exports.handler = async function (event) {
 
       try {
         if (contentType === 'Bottleneck' && process.env.NOTION_USER_SUBMITTED_BOTTLENECKS_DB_ID) {
-          // Prepare bottleneck data
+          // Prepare bottleneck data with IDs for relations
           const bottleneckData = {
             title: submission.title,
             content: submission.content,
             fields: submission.field ? [submission.field] : [],
             relatedCapabilities: submission.relatedCapability ? [submission.relatedCapability] : [],
+            relatedCapabilityId: submission.relatedCapabilityId,
             relatedCapabilityState: submission.relatedCapabilityState || 'new',
             state: state
           };
@@ -98,13 +99,15 @@ exports.handler = async function (event) {
             title: submission.title
           });
         } else if (contentType === 'Foundational Capability' && process.env.NOTION_USER_SUBMITTED_CAPABILITIES_DB_ID) {
-          // Prepare capability data
+          // Prepare capability data with IDs for relations
           const capabilityData = {
             title: submission.title,
             content: submission.content,
             relatedBottlenecks: submission.relatedGap ? [submission.relatedGap] : [],
+            relatedBottleneckId: submission.relatedGapId,
             relatedBottleneckState: submission.relatedGapState || 'new',
             relatedResources: submission.relatedResources || [],
+            relatedResourceIds: submission.relatedResourceIds || {},
             relatedResourceStates: submission.relatedResourceStates || {},
             state: state
           };
@@ -125,13 +128,14 @@ exports.handler = async function (event) {
             title: submission.title
           });
         } else if (contentType === 'Resource' && process.env.NOTION_USER_SUBMITTED_RESOURCES_DB_ID) {
-          // Prepare resource data
+          // Prepare resource data with IDs for relations
           const resourceData = {
             title: submission.title,
             url: submission.resource || submission.url,
             content: submission.content,
             resourceType: submission.resourceType,
             relatedCapabilities: submission.relatedCapability ? [submission.relatedCapability] : [],
+            relatedCapabilityId: submission.relatedCapabilityId,
             relatedCapabilityState: submission.relatedCapabilityState || 'new',
             state: state
           };
@@ -233,18 +237,24 @@ async function createBottleneckProperties(userData, bottleneckData, state) {
   // For existing items, also add related fields
   if (state === 'existing') {
     if (bottleneckData.relatedCapabilities?.length > 0) {
-      // Only populate the New_FC_Title field if the related capability is new
       if (bottleneckData.relatedCapabilityState === 'new') {
+        // New capability - use text field
         properties.New_FC_Title = {
           rich_text: [{
             text: { content: bottleneckData.relatedCapabilities.join(', ') }
           }]
         };
-      } else {
-        // For existing/edited capabilities, use relation field
-        // Note: This should be populated with actual page IDs during manual review
+      } else if (bottleneckData.relatedCapabilityId) {
+        // Existing capability with ID - use relation field
         properties.Related_Foundational_Capabilities = {
-          relation: [] // Empty for user submissions - to be filled during review
+          relation: [{ id: bottleneckData.relatedCapabilityId }]
+        };
+      } else {
+        // Existing capability without ID - fallback to text field
+        properties.New_FC_Title = {
+          rich_text: [{
+            text: { content: `[Existing] ${bottleneckData.relatedCapabilities.join(', ')}` }
+          }]
         };
       }
     }
@@ -269,19 +279,24 @@ async function createBottleneckProperties(userData, bottleneckData, state) {
   }
 
   if (bottleneckData.relatedCapabilities?.length > 0) {
-    // Populate the appropriate field based on the related item's state
     if (bottleneckData.relatedCapabilityState === 'new') {
-      // New capability - use New_FC_Title field
+      // New capability - use text field
       properties.New_FC_Title = {
         rich_text: [{
           text: { content: bottleneckData.relatedCapabilities.join(', ') }
         }]
       };
-    } else {
-      // Existing/edited capability - use relation field
-      // Note: This should be populated with actual page IDs during manual review
+    } else if (bottleneckData.relatedCapabilityId) {
+      // Existing capability with ID - use relation field
       properties.Related_Foundational_Capabilities = {
-        relation: [] // Empty for user submissions - to be filled during review
+        relation: [{ id: bottleneckData.relatedCapabilityId }]
+      };
+    } else {
+      // Existing capability without ID - fallback to text field
+      properties.New_FC_Title = {
+        rich_text: [{
+          text: { content: `[Existing] ${bottleneckData.relatedCapabilities.join(', ')}` }
+        }]
       };
     }
   }
@@ -324,10 +339,20 @@ async function createCapabilityProperties(userData, capabilityData, state) {
   // For existing items, also add related fields
   if (state === 'existing') {
     if (capabilityData.relatedResources?.length > 0) {
-      // Check if any resources are new
-      const newResources = capabilityData.relatedResources.filter((resource, index) => {
+      // Separate new and existing resources, use appropriate fields
+      const newResources = [];
+      const existingResourceIds = [];
+      
+      capabilityData.relatedResources.forEach(resource => {
         const resourceState = capabilityData.relatedResourceStates[resource] || 'new';
-        return resourceState === 'new';
+        if (resourceState === 'new') {
+          newResources.push(resource);
+        } else if (capabilityData.relatedResourceIds[resource]) {
+          existingResourceIds.push({ id: capabilityData.relatedResourceIds[resource] });
+        } else {
+          // Fallback to text field for existing resources without IDs
+          newResources.push(`[Existing] ${resource}`);
+        }
       });
       
       if (newResources.length > 0) {
@@ -338,17 +363,9 @@ async function createCapabilityProperties(userData, capabilityData, state) {
         };
       }
       
-      // For existing resources, use relation field (empty)
-      const existingResources = capabilityData.relatedResources.filter((resource, index) => {
-        const resourceState = capabilityData.relatedResourceStates[resource] || 'new';
-        return resourceState !== 'new';
-      });
-      
-      if (existingResources.length > 0) {
-        // For existing/edited resources, use relation field
-        // Note: This should be populated with actual page IDs during manual review
+      if (existingResourceIds.length > 0) {
         properties.Related_Resources = {
-          relation: [] // Empty for user submissions - to be filled during review
+          relation: existingResourceIds
         };
       }
     }
@@ -360,11 +377,16 @@ async function createCapabilityProperties(userData, capabilityData, state) {
             text: { content: capabilityData.relatedBottlenecks.join(', ') }
           }]
         };
-      } else {
-        // For existing/edited bottlenecks, use relation field
-        // Note: This should be populated with actual page IDs during manual review
+      } else if (capabilityData.relatedBottleneckId) {
         properties.Related_Bottlenecks = {
-          relation: [] // Empty for user submissions - to be filled during review
+          relation: [{ id: capabilityData.relatedBottleneckId }]
+        };
+      } else {
+        // Fallback to text field
+        properties.New_Bottlenecks_Title = {
+          rich_text: [{
+            text: { content: `[Existing] ${capabilityData.relatedBottlenecks.join(', ')}` }
+          }]
         };
       }
     }
@@ -382,10 +404,20 @@ async function createCapabilityProperties(userData, capabilityData, state) {
   }
 
   if (capabilityData.relatedResources?.length > 0) {
-    // Separate new and existing resources
-    const newResources = capabilityData.relatedResources.filter((resource, index) => {
+    // Separate new and existing resources, use appropriate fields
+    const newResources = [];
+    const existingResourceIds = [];
+    
+    capabilityData.relatedResources.forEach(resource => {
       const resourceState = capabilityData.relatedResourceStates[resource] || 'new';
-      return resourceState === 'new';
+      if (resourceState === 'new') {
+        newResources.push(resource);
+      } else if (capabilityData.relatedResourceIds[resource]) {
+        existingResourceIds.push({ id: capabilityData.relatedResourceIds[resource] });
+      } else {
+        // Fallback to text field for existing resources without IDs
+        newResources.push(`[Existing] ${resource}`);
+      }
     });
     
     if (newResources.length > 0) {
@@ -396,34 +428,30 @@ async function createCapabilityProperties(userData, capabilityData, state) {
       };
     }
     
-    // For existing resources, use relation field (empty)
-    const existingResources = capabilityData.relatedResources.filter((resource, index) => {
-      const resourceState = capabilityData.relatedResourceStates[resource] || 'new';
-      return resourceState !== 'new';
-    });
-    
-    if (existingResources.length > 0) {
-      // For existing/edited resources, use relation field
-      // Note: This should be populated with actual page IDs during manual review
+    if (existingResourceIds.length > 0) {
       properties.Related_Resources = {
-        relation: [] // Empty for user submissions - to be filled during review
+        relation: existingResourceIds
       };
     }
   }
 
   if (capabilityData.relatedBottlenecks?.length > 0) {
-    // Populate the appropriate field based on the related item's state
     if (capabilityData.relatedBottleneckState === 'new') {
       properties.New_Bottlenecks_Title = {
         rich_text: [{
           text: { content: capabilityData.relatedBottlenecks.join(', ') }
         }]
       };
-    } else {
-      // For existing/edited bottlenecks, use relation field
-      // Note: This should be populated with actual page IDs during manual review
+    } else if (capabilityData.relatedBottleneckId) {
       properties.Related_Bottlenecks = {
-        relation: [] // Empty for user submissions - to be filled during review
+        relation: [{ id: capabilityData.relatedBottleneckId }]
+      };
+    } else {
+      // Fallback to text field
+      properties.New_Bottlenecks_Title = {
+        rich_text: [{
+          text: { content: `[Existing] ${capabilityData.relatedBottlenecks.join(', ')}` }
+        }]
       };
     }
   }
@@ -472,11 +500,16 @@ async function createResourceProperties(userData, resourceData, state) {
             text: { content: resourceData.relatedCapabilities.join(', ') }
           }]
         };
-      } else {
-        // For existing/edited capabilities, use relation field
-        // Note: This should be populated with actual page IDs during manual review
+      } else if (resourceData.relatedCapabilityId) {
         properties.Related_Foundational_Capabilities = {
-          relation: [] // Empty for user submissions - to be filled during review
+          relation: [{ id: resourceData.relatedCapabilityId }]
+        };
+      } else {
+        // Fallback to text field
+        properties.New_FC_Title = {
+          rich_text: [{
+            text: { content: `[Existing] ${resourceData.relatedCapabilities.join(', ')}` }
+          }]
         };
       }
     }
@@ -506,18 +539,22 @@ async function createResourceProperties(userData, resourceData, state) {
   }
 
   if (resourceData.relatedCapabilities?.length > 0) {
-    // Only populate the field that's relevant based on the related item's state
     if (resourceData.relatedCapabilityState === 'new') {
       properties.New_FC_Title = {
         rich_text: [{
           text: { content: resourceData.relatedCapabilities.join(', ') }
         }]
       };
-    } else {
-      // For existing/edited capabilities, use relation field
-      // Note: This should be populated with actual page IDs during manual review
+    } else if (resourceData.relatedCapabilityId) {
       properties.Related_Foundational_Capabilities = {
-        relation: [] // Empty for user submissions - to be filled during review
+        relation: [{ id: resourceData.relatedCapabilityId }]
+      };
+    } else {
+      // Fallback to text field
+      properties.New_FC_Title = {
+        rich_text: [{
+          text: { content: `[Existing] ${resourceData.relatedCapabilities.join(', ')}` }
+        }]
       };
     }
   }

@@ -72,7 +72,7 @@
             border-color: var(--primary-color);
         }
 
-        &:read-only, &:disabled {
+        &:disabled {
             background-color: var(--border-dull);
             cursor: not-allowed;
             color: var(--text-lighter);
@@ -80,7 +80,12 @@
     }
 
     input[type="text"] {
-        padding-inline-end: $spacing-md
+        padding-inline-end: $spacing-md;
+        &:read-only {
+            background-color: var(--border-dull);
+            cursor: not-allowed;
+            color: var(--text-lighter);
+        }
     }
 
     input[type="range"] {
@@ -148,9 +153,15 @@
     &__error {
         background-color: rgba(255, 0, 0, 0.1);
         color: #d32f2f;
-        padding: $spacing-xl $spacing-md;
-        border-radius: $border-radius-md;
+        border: 1px solid #d32f2f;
+        padding: $spacing-xl;
+        border-radius: $border-radius-lg;
         margin-bottom: $spacing-lg;
+        margin-inline: calc($spacing-xl * -1);
+        @media (max-width: $breakpoint-sm) {
+            margin-inline: calc($spacing-sm * -1);
+            padding-inline: $spacing-sm;
+        }
 
         ul {
             margin: $spacing-md $spacing-xxl 0;
@@ -342,12 +353,12 @@
         }
 
         .add-button {
-            background-color: var(--primary-color);
+            background-color: var(--highlight-color);
             color: var(--pure-white);
             width: $spacing-xxl;
             font-weight: 500;
             font-size: $font-size-lg;
-            border: 1px solid var(--primary-color);
+            border: 1px solid var(--highlight-color);
             border-inline-start: none;
             border-radius: 0 $border-radius-md $border-radius-md 0;
             font-weight: 500;
@@ -355,15 +366,26 @@
             transition: all $transition;
             white-space: nowrap;
 
-            &:hover:not(:read-only) {
-                background-color: var(--highlight-color);
+            &:hover {
+                background-color: var(--primary-color);
             }
 
-            &:read-only, &:disabled {
+            &:disabled {
                 background-color: var(--card-background);
                 border-color: var(--border-dull);
                 color: var(--text-lighter);
                 cursor: not-allowed;
+            }
+
+            // When input is empty, match input background
+            &.add-button--empty {
+                background-color: var(--card-background);
+                border-color: transparent;
+                color: var(--text-color);
+
+                &:hover:not(:disabled) {
+                    background-color: var(--highlight-color);
+                }
             }
         }
 
@@ -449,7 +471,7 @@
                 background-color: var(--highlight-color);
             }
 
-            &:read-only, &:disabled {
+            &:disabled {
                 background-color: var(--border-dull);
                 cursor: not-allowed;
             }
@@ -504,7 +526,6 @@
 }
 
 .required-tag {
-    margin-block-start: -1px;
     display: inline-block;
     padding: $spacing-xs $spacing-sm;
     background-color: var(--border-dull);
