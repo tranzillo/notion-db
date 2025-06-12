@@ -1430,7 +1430,6 @@ export default function ContributeForm({
                             type="text"
                             id="bottleneck-title"
                             value={bottleneckData.title}
-                            disabled
                             readOnly
                             required={isFieldRequired('bottleneck-title')}
                             title="R&D Gap name"
@@ -1521,7 +1520,6 @@ export default function ContributeForm({
                             type="text"
                             id="related-capability"
                             value={bottleneckData.relatedCapability}
-                            disabled
                             readOnly
                             title="Related capability"
                             aria-label="Related foundational capability"
@@ -1618,7 +1616,6 @@ export default function ContributeForm({
                             type="text"
                             id="fc-title"
                             value={fcData.title}
-                            disabled
                             readOnly
                             required={isFieldRequired('fc-title')}
                             title="Foundational Capability name"
@@ -1662,7 +1659,6 @@ export default function ContributeForm({
                             type="text"
                             id="fc-related-gap"
                             value={fcData.relatedGap}
-                            disabled
                             readOnly
                             title="Related R&D Gap"
                             aria-label="Related R&D Gap"
@@ -1782,7 +1778,6 @@ export default function ContributeForm({
                                   name={`capability_resource_${actualIdx}`}
                                   value={resourceTitle}
                                   readOnly
-                                  disabled
                                 />
                                 <button
                                   type="button"
@@ -1913,7 +1908,6 @@ export default function ContributeForm({
                           type="text"
                           id={`resource-title-${index}`}
                           value={resource.title}
-                          disabled
                           readOnly
                           required={isFieldRequired(`resource-title-${index}`)}
                           title="Resource title"
@@ -2075,7 +2069,6 @@ export default function ContributeForm({
                               type="text"
                               id="resource-title"
                               value={resourceData.title}
-                              disabled
                               readOnly
                               required={isFieldRequired('resource-title')}
                               title="Resource title"
@@ -2163,7 +2156,6 @@ export default function ContributeForm({
                               type="text"
                               id="related-capability"
                               value={resourceData.relatedCapability}
-                              disabled
                               readOnly
                               title="Related capability"
                               aria-label="Related foundational capability"

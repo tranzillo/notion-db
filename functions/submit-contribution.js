@@ -223,7 +223,14 @@ async function createBottleneckProperties(userData, bottleneckData, state) {
     };
   }
 
-  // For existing items, only add related fields
+  // Always add the title field regardless of state
+  properties.Bottleneck_Title = {
+    title: [{
+      text: { content: bottleneckData.title || '' }
+    }]
+  };
+
+  // For existing items, also add related fields
   if (state === 'existing') {
     if (bottleneckData.relatedCapabilities?.length > 0) {
       // Only populate the New_FC_Title field if the related capability is new
@@ -243,12 +250,7 @@ async function createBottleneckProperties(userData, bottleneckData, state) {
     return properties;
   }
 
-  // For new or edited items, add all fields
-  properties.Bottleneck_Title = {
-    title: [{
-      text: { content: bottleneckData.title || '' }
-    }]
-  };
+  // For new or edited items, add all other fields
 
   if (bottleneckData.content) {
     properties.Bottleneck_Description = {
@@ -310,7 +312,14 @@ async function createCapabilityProperties(userData, capabilityData, state) {
     };
   }
 
-  // For existing items, only add related fields
+  // Always add the title field regardless of state
+  properties.FC_Title = {
+    title: [{
+      text: { content: capabilityData.title || '' }
+    }]
+  };
+
+  // For existing items, also add related fields
   if (state === 'existing') {
     if (capabilityData.relatedResources?.length > 0) {
       // Check if any resources are new
@@ -356,12 +365,7 @@ async function createCapabilityProperties(userData, capabilityData, state) {
     return properties;
   }
 
-  // For new or edited items, add all fields
-  properties.FC_Title = {
-    title: [{
-      text: { content: capabilityData.title || '' }
-    }]
-  };
+  // For new or edited items, add all other fields
 
   if (capabilityData.content) {
     properties.FC_Description = {
@@ -442,7 +446,14 @@ async function createResourceProperties(userData, resourceData, state) {
     };
   }
 
-  // For existing items, only add related fields
+  // Always add the title field regardless of state
+  properties.Resource_Title = {
+    title: [{
+      text: { content: resourceData.title || '' }
+    }]
+  };
+
+  // For existing items, also add related fields
   if (state === 'existing') {
     if (resourceData.relatedCapabilities?.length > 0) {
       if (resourceData.relatedCapabilityState === 'new') {
@@ -460,12 +471,7 @@ async function createResourceProperties(userData, resourceData, state) {
     return properties;
   }
 
-  // For new or edited items, add all fields
-  properties.Resource_Title = {
-    title: [{
-      text: { content: resourceData.title || '' }
-    }]
-  };
+  // For new or edited items, add all other fields
 
   if (resourceData.url) {
     properties.Resource_URL = {

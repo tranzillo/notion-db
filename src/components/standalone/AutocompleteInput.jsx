@@ -28,6 +28,13 @@ const AutocompleteInput = forwardRef(({
     focus: () => {
       if (inputRef.current) {
         inputRef.current.focus();
+        // Trigger the same logic as manual focus for empty inputs
+        if (inputValue.trim() === '') {
+          setIsFocused(true);
+          const allSuggestions = suggestions.slice(0, maxSuggestions);
+          setFilteredSuggestions(allSuggestions);
+          setShowSuggestions(allSuggestions.length > 0);
+        }
       }
     }
   }));
