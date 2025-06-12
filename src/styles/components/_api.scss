@@ -223,7 +223,8 @@
     background-color: var(--highlight-color);
   }
   
- .submit-button:disabled {
+ .submit-button
+  &:read-only, &:disabled {
     opacity: 0.7;
     cursor: not-allowed;
   }

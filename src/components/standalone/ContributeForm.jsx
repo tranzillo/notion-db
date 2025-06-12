@@ -322,7 +322,7 @@ export default function ContributeForm({
       setBottleneckData({
         title: '',
         content: '',
-        fieldId: '',
+        fieldName: '',
         rank: 3,
         relatedCapability: '',
         isAddedViaAssociation: false
@@ -375,7 +375,7 @@ export default function ContributeForm({
           setBottleneckData({
             title: '',
             content: '',
-            fieldId: '',
+            fieldName: '',
             rank: 3,
             relatedCapability: '',
             isAddedViaAssociation: false
@@ -468,14 +468,14 @@ export default function ContributeForm({
   const handleGapChange = (e) => {
     const gapName = e.target.value;
 
-    // If selecting existing gap, populate all data
+    // If selecting existing gap, populate all data including field
     if (bottleneckNames.includes(gapName)) {
       const gap = bottlenecks.find(b => b.bottleneck_name === gapName);
       if (gap) {
         setBottleneckData({
           title: gap.bottleneck_name,
           content: gap.bottleneck_description || '',
-          fieldId: gap.field?.id || '',
+          fieldName: gap.field?.field_name || '',
           rank: gap.bottleneck_rank || 3,
           relatedCapability: bottleneckData.relatedCapability
         });
@@ -492,7 +492,7 @@ export default function ContributeForm({
   // Add a capability to the gap
   const addCapabilityToGap = () => {
     if (!pendingCapability.trim()) {
-      // Focus the input if empty
+      // Focus the input and trigger autocomplete if empty
       if (capabilityInputRef.current) {
         capabilityInputRef.current.focus();
       }
@@ -589,7 +589,7 @@ export default function ContributeForm({
       const originalData = {
         title: gap.bottleneck_name,
         content: gap.bottleneck_description || '',
-        fieldId: gap.field?.id || '',
+        fieldName: gap.field?.field_name || '',
         rank: gap.bottleneck_rank || 3
       };
 
@@ -603,7 +603,7 @@ export default function ContributeForm({
       // Compare current data with stored original data
       const isEdited =
         bottleneckData.content !== originalGapData.content ||
-        bottleneckData.fieldId !== originalGapData.fieldId ||
+        bottleneckData.fieldName !== originalGapData.fieldName ||
         bottleneckData.rank !== originalGapData.rank;
 
       setGapState(isEdited ? 'edited' : 'existing');
@@ -713,7 +713,7 @@ export default function ContributeForm({
   // Add a resource to the capability
   const addResourceToCapability = () => {
     if (!pendingResource.trim()) {
-      // Focus the input if empty
+      // Focus the input and trigger autocomplete if empty
       if (resourceInputRef.current) {
         resourceInputRef.current.focus();
       }
@@ -798,7 +798,7 @@ export default function ContributeForm({
   // Add a capability to resource (for when starting with resource)
   const addCapabilityToResource = () => {
     if (!pendingCapability.trim()) {
-      // Focus the input if empty
+      // Focus the input and trigger autocomplete if empty
       if (capabilityInputRef.current) {
         capabilityInputRef.current.focus();
       }
@@ -861,7 +861,7 @@ export default function ContributeForm({
   // Add a gap to capability
   const addGapToCapability = () => {
     if (!pendingGap.trim()) {
-      // Focus the input if empty
+      // Focus the input and trigger autocomplete if empty
       if (gapInputRef.current) {
         gapInputRef.current.focus();
       }
@@ -903,7 +903,7 @@ export default function ContributeForm({
         const gapData = {
           title: gap.bottleneck_name,
           content: gap.bottleneck_description || '',
-          fieldId: gap.field?.id || '',
+          fieldName: gap.field?.field_name || '',
           rank: gap.bottleneck_rank || 3,
           relatedCapability: fcData.title,
           isAddedViaAssociation: true
@@ -917,7 +917,7 @@ export default function ContributeForm({
       setBottleneckData({
         title: pendingGap,
         content: '',
-        fieldId: '',
+        fieldName: '',
         rank: 3,
         relatedCapability: fcData.title,
         isAddedViaAssociation: true
@@ -1191,6 +1191,7 @@ export default function ContributeForm({
           rank: bottleneckData.rank,
           content: bottleneckData.content,
           relatedCapability: bottleneckData.relatedCapability,
+          relatedCapabilityState: capabilityState,
           comment: userData.comment,
           state: gapState
         });
@@ -1198,6 +1199,14 @@ export default function ContributeForm({
 
       // Add capability data if shown
       if (showForms.capability && (capabilityState || selectedContentType === 'capability')) {
+        // Build resource states map
+        const relatedResourceStates = {};
+        fcData.relatedResources.forEach(resourceTitle => {
+          // Find the resource in formResources to get its state
+          const resourceObj = formResources.find(r => r.title === resourceTitle);
+          relatedResourceStates[resourceTitle] = resourceObj ? resourceObj.state : 'new';
+        });
+
         submissions.push({
           name: userData.name,
           email: userData.email,
@@ -1205,7 +1214,9 @@ export default function ContributeForm({
           contentType: 'Foundational Capability',
           content: fcData.content,
           relatedGap: fcData.relatedGap || bottleneckData.title,
+          relatedGapState: gapState,
           relatedResources: fcData.relatedResources,
+          relatedResourceStates: relatedResourceStates,
           comment: userData.comment,
           state: capabilityState
         });
@@ -1225,6 +1236,7 @@ export default function ContributeForm({
               resource: resource.url,
               content: resource.content,
               relatedCapability: resource.relatedCapability || fcData.title,
+              relatedCapabilityState: capabilityState,
               comment: userData.comment,
               state: resource.state
             });
@@ -1240,6 +1252,7 @@ export default function ContributeForm({
             resource: resourceData.url,
             content: resourceData.content,
             relatedCapability: resourceData.relatedCapability || fcData.title,
+            relatedCapabilityState: capabilityState,
             comment: userData.comment,
             state: initialResourceState || 'new'
           });

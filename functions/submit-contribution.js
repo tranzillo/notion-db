@@ -241,9 +241,10 @@ async function createBottleneckProperties(userData, bottleneckData, state) {
           }]
         };
       } else {
-        // For existing/edited capabilities, use relation field (empty for now)
+        // For existing/edited capabilities, use relation field
+        // Note: This should be populated with actual page IDs during manual review
         properties.Related_Foundational_Capabilities = {
-          relation: [] // This would need actual Notion page IDs
+          relation: [] // Empty for user submissions - to be filled during review
         };
       }
     }
@@ -268,7 +269,7 @@ async function createBottleneckProperties(userData, bottleneckData, state) {
   }
 
   if (bottleneckData.relatedCapabilities?.length > 0) {
-    // Only populate the field that's relevant based on the related item's state
+    // Populate the appropriate field based on the related item's state
     if (bottleneckData.relatedCapabilityState === 'new') {
       // New capability - use New_FC_Title field
       properties.New_FC_Title = {
@@ -277,9 +278,10 @@ async function createBottleneckProperties(userData, bottleneckData, state) {
         }]
       };
     } else {
-      // Existing/edited capability - use relation field (empty for now)
+      // Existing/edited capability - use relation field
+      // Note: This should be populated with actual page IDs during manual review
       properties.Related_Foundational_Capabilities = {
-        relation: [] // Empty for new submissions
+        relation: [] // Empty for user submissions - to be filled during review
       };
     }
   }
@@ -343,8 +345,10 @@ async function createCapabilityProperties(userData, capabilityData, state) {
       });
       
       if (existingResources.length > 0) {
+        // For existing/edited resources, use relation field
+        // Note: This should be populated with actual page IDs during manual review
         properties.Related_Resources = {
-          relation: [] // This would need actual Notion page IDs
+          relation: [] // Empty for user submissions - to be filled during review
         };
       }
     }
@@ -357,8 +361,10 @@ async function createCapabilityProperties(userData, capabilityData, state) {
           }]
         };
       } else {
+        // For existing/edited bottlenecks, use relation field
+        // Note: This should be populated with actual page IDs during manual review
         properties.Related_Bottlenecks = {
-          relation: [] // This would need actual Notion page IDs
+          relation: [] // Empty for user submissions - to be filled during review
         };
       }
     }
@@ -397,14 +403,16 @@ async function createCapabilityProperties(userData, capabilityData, state) {
     });
     
     if (existingResources.length > 0) {
+      // For existing/edited resources, use relation field
+      // Note: This should be populated with actual page IDs during manual review
       properties.Related_Resources = {
-        relation: [] // Empty for new submissions
+        relation: [] // Empty for user submissions - to be filled during review
       };
     }
   }
 
   if (capabilityData.relatedBottlenecks?.length > 0) {
-    // Only populate the field that's relevant based on the related item's state
+    // Populate the appropriate field based on the related item's state
     if (capabilityData.relatedBottleneckState === 'new') {
       properties.New_Bottlenecks_Title = {
         rich_text: [{
@@ -412,8 +420,10 @@ async function createCapabilityProperties(userData, capabilityData, state) {
         }]
       };
     } else {
+      // For existing/edited bottlenecks, use relation field
+      // Note: This should be populated with actual page IDs during manual review
       properties.Related_Bottlenecks = {
-        relation: [] // Empty for new submissions
+        relation: [] // Empty for user submissions - to be filled during review
       };
     }
   }
@@ -463,8 +473,10 @@ async function createResourceProperties(userData, resourceData, state) {
           }]
         };
       } else {
+        // For existing/edited capabilities, use relation field
+        // Note: This should be populated with actual page IDs during manual review
         properties.Related_Foundational_Capabilities = {
-          relation: [] // This would need actual Notion page IDs
+          relation: [] // Empty for user submissions - to be filled during review
         };
       }
     }
@@ -502,8 +514,10 @@ async function createResourceProperties(userData, resourceData, state) {
         }]
       };
     } else {
+      // For existing/edited capabilities, use relation field
+      // Note: This should be populated with actual page IDs during manual review
       properties.Related_Foundational_Capabilities = {
-        relation: [] // Empty for new submissions
+        relation: [] // Empty for user submissions - to be filled during review
       };
     }
   }
