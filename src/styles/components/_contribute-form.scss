@@ -66,7 +66,9 @@
         background-color: var(--card-background);
         color: var(--text-color);
         transition: border-color $transition, background-color $transition;
-
+        &:-internal-autofill-selected {
+            background-color: var(--secondary-color);
+        }
         &:focus {
             outline: none;
             border-color: var(--primary-color);
@@ -270,12 +272,15 @@
         }
 
         .state-label {
-            font-size: $font-size-xs;
+            font-size: $font-size-xxs;
             font-weight: normal;
+            letter-spacing: 0.03em;
             margin-left: $spacing-sm;
             padding: $spacing-xs $spacing-sm;
             border-radius: $border-radius-sm;
             display: inline-block;
+            text-transform: uppercase;
+
 
             &--new {
                 background-color: rgba(76, 175, 80, 0.1);
@@ -337,7 +342,9 @@
         align-items: flex-start;
         width: 100%;
     }
-
+    .form-input-wrapper:has(.required-tag) input, .form-input-wrapper:has(.required-tag) textarea {
+        border-radius: $border-radius-md $border-radius-md $border-radius-md 0;
+    }
     .input-with-button {
         display: flex;
         align-items: stretch;
@@ -353,12 +360,12 @@
         }
 
         .add-button {
-            background-color: var(--highlight-color);
+            background-color: var(--primary-color);
             color: var(--pure-white);
             width: $spacing-xxl;
             font-weight: 500;
             font-size: $font-size-lg;
-            border: 1px solid var(--highlight-color);
+            border: 1px solid var(--primary-color);
             border-inline-start: none;
             border-radius: 0 $border-radius-md $border-radius-md 0;
             font-weight: 500;
@@ -367,7 +374,7 @@
             white-space: nowrap;
 
             &:hover {
-                background-color: var(--primary-color);
+                background-color: var(--highlight-color);
             }
 
             &:disabled {
@@ -380,11 +387,13 @@
             // When input is empty, match input background
             &.add-button--empty {
                 background-color: var(--card-background);
-                border-color: transparent;
+                border-color: var(--border-dull);
                 color: var(--text-color);
 
                 &:hover:not(:disabled) {
                     background-color: var(--highlight-color);
+                    border-color: var(--primary-color);
+                    color: var(--pure-white);
                 }
             }
         }

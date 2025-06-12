@@ -1537,7 +1537,7 @@ export default function ContributeForm({
                     R&D Gap
                     {gapState && (
                       <span className={`state-label state-label--${gapState}`}>
-                        ({gapState})
+                        {gapState}
                       </span>
                     )}
                   </h3>
@@ -1723,7 +1723,7 @@ export default function ContributeForm({
                     Foundational Capability
                     {capabilityState && (
                       <span className={`state-label state-label--${capabilityState}`}>
-                        ({capabilityState})
+                        {capabilityState}
                       </span>
                     )}
                   </h3>
@@ -2016,7 +2016,7 @@ export default function ContributeForm({
                   <h3>
                     Resource
                     <span className={`state-label state-label--${resource.state}`}>
-                      ({resource.state})
+                      {resource.state}
                     </span>
                   </h3>
                   <input type="hidden" name={`resourceState_${index}`} value={resource.state} />
@@ -2175,7 +2175,7 @@ export default function ContributeForm({
                       Resource
                       {initialResourceState && (
                         <span className={`state-label state-label--${initialResourceState}`}>
-                          ({initialResourceState})
+                          {initialResourceState}
                         </span>
                       )}
                     </h3>
