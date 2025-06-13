@@ -13,7 +13,8 @@ const AutocompleteInput = forwardRef(({
   onSuggestionSelect = null,
   className = '',
   style = {},
-  onFocus = null
+  onFocus = null,
+  onKeyDown = null
 }, ref) => {
   const [inputValue, setInputValue] = useState(value || '');
   const [filteredSuggestions, setFilteredSuggestions] = useState([]);
@@ -126,33 +127,54 @@ const AutocompleteInput = forwardRef(({
 
   // Handle keyboard navigation
   const handleKeyDown = (e) => {
-    // If no suggestions are showing, do nothing special
-    if (!showSuggestions || filteredSuggestions.length === 0) {
-      return;
-    }
-
-    // Arrow down
-    if (e.key === 'ArrowDown') {
-      e.preventDefault();
-      setActiveSuggestionIndex(prev => 
-        prev < filteredSuggestions.length - 1 ? prev + 1 : prev);
-    }
-    // Arrow up
-    else if (e.key === 'ArrowUp') {
-      e.preventDefault();
-      setActiveSuggestionIndex(prev => 
-        prev > 0 ? prev - 1 : 0);
-    }
-    // Enter - select the active suggestion
-    else if (e.key === 'Enter') {
-      e.preventDefault();
-      if (filteredSuggestions[activeSuggestionIndex]) {
-        handleSuggestionClick(filteredSuggestions[activeSuggestionIndex]);
+    // If suggestions are showing, handle navigation
+    if (showSuggestions && filteredSuggestions.length > 0) {
+      // Arrow down
+      if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        setActiveSuggestionIndex(prev => 
+          prev < filteredSuggestions.length - 1 ? prev + 1 : prev);
+        return;
+      }
+      // Arrow up
+      else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        setActiveSuggestionIndex(prev => 
+          prev > 0 ? prev - 1 : 0);
+        return;
+      }
+      // Enter - check for exact match, otherwise treat as add button
+      else if (e.key === 'Enter') {
+        e.preventDefault();
+        
+        // Check if current input exactly matches any suggestion
+        const exactMatch = filteredSuggestions.find(
+          suggestion => suggestion.toLowerCase() === inputValue.toLowerCase()
+        );
+        
+        if (exactMatch) {
+          // If exact match exists, select it
+          handleSuggestionClick(exactMatch);
+        } else {
+          // No exact match - treat as add button click
+          if (onKeyDown) {
+            onKeyDown(e);
+          }
+        }
+        return;
+      }
+      // Escape - close the suggestions
+      else if (e.key === 'Escape') {
+        setShowSuggestions(false);
+        return;
       }
     }
-    // Escape - close the suggestions
-    else if (e.key === 'Escape') {
-      setShowSuggestions(false);
+    
+    // If no suggestions are showing and Enter is pressed, call custom handler
+    if (e.key === 'Enter' && (!showSuggestions || filteredSuggestions.length === 0)) {
+      if (onKeyDown) {
+        onKeyDown(e);
+      }
     }
   };
 

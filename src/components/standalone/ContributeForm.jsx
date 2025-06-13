@@ -365,6 +365,32 @@ export default function ContributeForm({
   const resourceInputRef = useRef(null);
   const gapInputRef = useRef(null);
 
+  // Handle Enter key press for related inputs
+  const handleCapabilityKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      if (selectedContentType === 'resource') {
+        addCapabilityToResource();
+      } else {
+        addCapabilityToGap();
+      }
+    }
+  };
+
+  const handleResourceKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      addResourceToCapability();
+    }
+  };
+
+  const handleGapKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      addGapToCapability();
+    }
+  };
+
   // Function to reset all form data
   const resetAllForms = () => {
     setBottleneckData({
@@ -638,9 +664,8 @@ export default function ContributeForm({
   // Add a capability to the gap
   const addCapabilityToGap = () => {
     if (!pendingCapability.trim()) {
-      // Focus the input and trigger autocomplete if empty
+      // Only trigger autocomplete if empty - focus the input
       if (capabilityInputRef.current) {
-        // Small delay to ensure focus works properly
         setTimeout(() => {
           capabilityInputRef.current.focus();
         }, 0);
@@ -702,7 +727,10 @@ export default function ContributeForm({
       setExpandedSections(prev => ({ ...prev, capability: true }));
     }
 
-    setPendingCapability('');
+    // Clear the input after a delay to prevent autocomplete triggering
+    setTimeout(() => {
+      setPendingCapability('');
+    }, 100);
   };
 
   // Handle when user enters a capability name (for initial capability form)
@@ -987,7 +1015,10 @@ export default function ContributeForm({
       [resourceKey]: newResource.state === 'new' 
     }));
 
-    setPendingResource('');
+    // Clear the input after a delay to prevent autocomplete triggering
+    setTimeout(() => {
+      setPendingResource('');
+    }, 100);
   };
 
   // Add a capability to resource (for when starting with resource)
@@ -1075,7 +1106,10 @@ export default function ContributeForm({
       setCapabilityState('new');
     }
 
-    setPendingCapability('');
+    // Clear the input after a delay to prevent autocomplete triggering
+    setTimeout(() => {
+      setPendingCapability('');
+    }, 100);
   };
 
   // Add a gap to capability
@@ -1159,7 +1193,10 @@ export default function ContributeForm({
       setExpandedSections(prev => ({ ...prev, gap: true }));
     }
 
-    setPendingGap('');
+    // Clear the input after a delay to prevent autocomplete triggering
+    setTimeout(() => {
+      setPendingGap('');
+    }, 100);
   };
 
   // Handle when user enters a resource (for initial resource form)
@@ -1809,6 +1846,7 @@ export default function ContributeForm({
                             value={pendingCapability}
                             onChange={(e) => setPendingCapability(e.target.value)}
                             onSuggestionSelect={(suggestion) => setPendingCapability(suggestion)}
+                            onKeyDown={handleCapabilityKeyDown}
                             suggestions={capabilityNames}
                             placeholder="Enter existing capability or suggest new one"
                             required={isFieldRequired('related-capability')}
@@ -1947,6 +1985,7 @@ export default function ContributeForm({
                             value={pendingGap}
                             onChange={(e) => setPendingGap(e.target.value)}
                             onSuggestionSelect={(suggestion) => setPendingGap(suggestion)}
+                            onKeyDown={handleGapKeyDown}
                             suggestions={bottleneckNames}
                             placeholder="Enter the name of an existing R&D Gap or suggest a new one"
                             required={isFieldRequired('fc-related-gap')}
@@ -2024,6 +2063,7 @@ export default function ContributeForm({
                           value={pendingResource}
                           onChange={(e) => setPendingResource(e.target.value)}
                           onSuggestionSelect={(suggestion) => setPendingResource(suggestion)}
+                          onKeyDown={handleResourceKeyDown}
                           suggestions={resourceNames}
                           placeholder="Enter the name of an existing Resource or suggest a new one"
                           required={isFieldRequired('related-resources')}
@@ -2451,6 +2491,7 @@ export default function ContributeForm({
                               value={pendingCapability}
                               onChange={(e) => setPendingCapability(e.target.value)}
                               onSuggestionSelect={(suggestion) => setPendingCapability(suggestion)}
+                              onKeyDown={handleCapabilityKeyDown}
                               suggestions={capabilityNames}
                               placeholder="Enter the name of an existing Foundational Capability or suggest a new one"
                               required={isFieldRequired('related-capability-resource')}
