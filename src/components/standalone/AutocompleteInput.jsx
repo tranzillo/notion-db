@@ -28,13 +28,8 @@ const AutocompleteInput = forwardRef(({
     focus: () => {
       if (inputRef.current) {
         inputRef.current.focus();
-        // Trigger the same logic as manual focus for empty inputs
-        if (inputValue.trim() === '') {
-          setIsFocused(true);
-          const allSuggestions = suggestions.slice(0, maxSuggestions);
-          setFilteredSuggestions(allSuggestions);
-          setShowSuggestions(allSuggestions.length > 0);
-        }
+        // The focus handler and useEffect will take care of showing suggestions
+        // This prevents duplicate logic and race conditions
       }
     }
   }));
@@ -42,15 +37,10 @@ const AutocompleteInput = forwardRef(({
   // Update filteredSuggestions when inputValue or suggestions change
   useEffect(() => {
     if (inputValue.trim() === '') {
-      // Show all suggestions when input is empty and focused
-      if (isFocused) {
-        const allSuggestions = suggestions.slice(0, maxSuggestions);
-        setFilteredSuggestions(allSuggestions);
-        setShowSuggestions(allSuggestions.length > 0);
-      } else {
-        setFilteredSuggestions([]);
-        setShowSuggestions(false);
-      }
+      // For empty input, just set filtered suggestions but don't show/hide them
+      // The focus effect will handle visibility
+      const allSuggestions = suggestions.slice(0, maxSuggestions);
+      setFilteredSuggestions(allSuggestions);
       return;
     }
 
@@ -62,14 +52,32 @@ const AutocompleteInput = forwardRef(({
     
     setFilteredSuggestions(filtered);
     
-    // Check if there's an exact match with the input value
-    const hasExactMatch = filtered.some(
-      suggestion => suggestion.toLowerCase() === inputValue.toLowerCase()
-    );
-    
-    // Show suggestions if we have any matches AND there's no exact match AND the input is focused
-    setShowSuggestions(filtered.length > 0 && !hasExactMatch && isFocused);
+    // For non-empty input, only update visibility if focused
+    if (isFocused) {
+      const hasExactMatch = filtered.some(
+        suggestion => suggestion.toLowerCase() === inputValue.toLowerCase()
+      );
+      setShowSuggestions(filtered.length > 0 && !hasExactMatch);
+    }
   }, [inputValue, suggestions, maxSuggestions, isFocused]);
+
+  // Handle focus state changes - show/hide suggestions based on focus
+  useEffect(() => {
+    if (isFocused) {
+      // When focused, show suggestions if we have them and they're appropriate
+      if (inputValue.trim() === '') {
+        setShowSuggestions(filteredSuggestions.length > 0);
+      } else {
+        const hasExactMatch = filteredSuggestions.some(
+          suggestion => suggestion.toLowerCase() === inputValue.toLowerCase()
+        );
+        setShowSuggestions(filteredSuggestions.length > 0 && !hasExactMatch);
+      }
+    } else {
+      // When not focused, hide suggestions
+      setShowSuggestions(false);
+    }
+  }, [isFocused, filteredSuggestions, inputValue]);
 
   // Update local state when value prop changes
   useEffect(() => {
@@ -88,35 +96,8 @@ const AutocompleteInput = forwardRef(({
       onChange(e);
     }
     
-    // Check if we should show filtered suggestions
-    if (newValue.trim() === '') {
-      // Show all suggestions when input becomes empty and focused
-      if (isFocused) {
-        const allSuggestions = suggestions.slice(0, maxSuggestions);
-        setFilteredSuggestions(allSuggestions);
-        setShowSuggestions(allSuggestions.length > 0);
-      } else {
-        setFilteredSuggestions([]);
-        setShowSuggestions(false);
-      }
-      return;
-    }
-    
-    // Filter suggestions that include the input value (case insensitive)
-    const filtered = suggestions
-      .filter(suggestion => 
-        suggestion.toLowerCase().includes(newValue.toLowerCase()))
-      .slice(0, maxSuggestions);
-    
-    setFilteredSuggestions(filtered);
-    
-    // Check if there's an exact match with the input value
-    const hasExactMatch = filtered.some(
-      suggestion => suggestion.toLowerCase() === newValue.toLowerCase()
-    );
-    
-    // Show suggestions if we have any matches AND there's no exact match
-    setShowSuggestions(filtered.length > 0 && !hasExactMatch && isFocused);
+    // The useEffect for inputValue will handle updating suggestions
+    // This prevents duplicate logic and race conditions
   };
 
   // Handle suggestion selection
@@ -184,29 +165,19 @@ const AutocompleteInput = forwardRef(({
       onFocus();
     }
     
-    // Check if there are suggestions to show
-    if (inputValue.trim() === "") {
-      // Show all suggestions when input is empty and just focused
-      const allSuggestions = suggestions.slice(0, maxSuggestions);
-      setFilteredSuggestions(allSuggestions);
-      setShowSuggestions(allSuggestions.length > 0);
-    } else {
-      // Check if there's an exact match with the current input
-      const hasExactMatch = filteredSuggestions.some(
-        suggestion => suggestion.toLowerCase() === inputValue.trim().toLowerCase()
-      );
-      
-      // Only show suggestions if we have matches AND there's no exact match
-      if (filteredSuggestions.length > 0 && !hasExactMatch) {
-        setShowSuggestions(true);
-      }
-    }
+    // The actual suggestion display logic is handled by the useEffect for isFocused
+    // This keeps the logic centralized and prevents race conditions
   };
 
   // Handle blur state
   const handleBlur = (e) => {
-    // Don't immediately blur if clicking on suggestions list
+    // Don't immediately blur if clicking on suggestions list or add button
     if (suggestionsRef.current && suggestionsRef.current.contains(e.relatedTarget)) {
+      return;
+    }
+    
+    // Don't blur if clicking on an add button (to prevent interference with add button clicks)
+    if (e.relatedTarget && e.relatedTarget.classList && e.relatedTarget.classList.contains('add-button')) {
       return;
     }
     
@@ -214,26 +185,28 @@ const AutocompleteInput = forwardRef(({
     setTimeout(() => {
       setIsFocused(false);
       
-      // Check if there's now an exact match after input blur
-      const currentValue = inputValue.trim().toLowerCase();
-      const exactMatch = filteredSuggestions.find(
-        suggestion => suggestion.toLowerCase() === currentValue
-      );
-      
-      if (exactMatch && exactMatch.toLowerCase() !== inputValue.toLowerCase()) {
-        // Update with the properly cased version of the match
-        setInputValue(exactMatch);
-        if (onChange) {
-          // Create a synthetic event to pass to parent onChange
-          const syntheticEvent = {
-            target: { value: exactMatch }
-          };
-          onChange(syntheticEvent);
+      // Only auto-correct if the input has content and we're not showing suggestions
+      if (inputValue.trim() && !showSuggestions) {
+        const currentValue = inputValue.trim().toLowerCase();
+        const exactMatch = suggestions.find(
+          suggestion => suggestion.toLowerCase() === currentValue
+        );
+        
+        if (exactMatch && exactMatch !== inputValue) {
+          // Update with the properly cased version of the match
+          setInputValue(exactMatch);
+          if (onChange) {
+            // Create a synthetic event to pass to parent onChange
+            const syntheticEvent = {
+              target: { value: exactMatch }
+            };
+            onChange(syntheticEvent);
+          }
         }
       }
       
       setShowSuggestions(false);
-    }, 100);
+    }, 150); // Increased timeout to ensure add button clicks complete
   };
 
   // Handle click outside to close suggestions

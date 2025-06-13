@@ -1,6 +1,7 @@
 // src/components/standalone/ContributeForm.jsx
 import React, { useState, useEffect, useRef } from 'react';
 import AutocompleteInput from './AutocompleteInput';
+import { createSlug } from '../../lib/slugUtils';
 
 // Component for displaying required field indicator
 const RequiredTag = ({ show = true, hasError = false }) => {
@@ -37,6 +38,84 @@ const InputWithButtonWrapper = ({ children, required = false, hasError = false }
         {children}
       </div>
       <RequiredTag show={required} hasError={hasError} />
+    </div>
+  );
+};
+
+// Component for accordion section header
+const SectionHeader = ({ title, state, isExpanded, onToggle, onRemove, isRoot, itemType, itemSlug }) => {
+  // Create URL for existing/edited items
+  const createItemUrl = (type, slug) => {
+    if (!type || !slug) return null;
+    const baseUrl = window.location.origin;
+    const typeMap = {
+      'gap': 'gaps',
+      'capability': 'foundational-capabilities', 
+      'resource': 'resources'
+    };
+    const urlType = typeMap[type] || type;
+    return `${baseUrl}/${urlType}/${slug}`;
+  };
+
+  const renderStateLabel = () => {
+    if (!state) return null;
+    
+    const displayState = state === 'existing' ? 'linked' : state;
+    const url = (state === 'existing' || state === 'edited') ? createItemUrl(itemType, itemSlug) : null;
+    
+    if (url) {
+      return (
+        <a 
+          href={url} 
+          target="_blank" 
+          rel="noopener noreferrer"
+          className={`state-label state-label--${state}`}
+          onClick={(e) => e.stopPropagation()} // Prevent accordion toggle
+        >
+          <span className='bigger'>{displayState}:</span> {url}
+        </a>
+      );
+    }
+    
+    return (
+      <span className={`state-label state-label--${state}`}>
+        <span className='bigger'>{displayState}</span>
+      </span>
+    );
+  };
+
+  return (
+    <div className="section-header">
+      <h3>
+        {title}
+        {renderStateLabel()}
+      </h3>
+      <div className="section-controls">
+        <button
+          type="button"
+          className="remove-section-button"
+          onClick={onRemove}
+          aria-label={isRoot ? "Start over" : "Remove section"}
+        >
+          ×
+        </button>
+      </div>
+        <button 
+          type="button"
+          className="accordion-toggle-wrapper"
+          onClick={onToggle}
+          aria-expanded={isExpanded}
+          aria-label={isExpanded ? 'Collapse section' : 'Expand section'}
+        >
+          <span className="accordion-toggle-label">
+            {isExpanded ? 'Hide' : 'Suggest an Edit'}
+          </span>
+          <span 
+            className={`accordion-toggle ${isExpanded ? 'expanded' : 'collapsed'}`}
+          >
+            {isExpanded ? '▲' : '▼'}
+          </span>
+        </button>
     </div>
   );
 };
@@ -127,6 +206,9 @@ export default function ContributeForm({
   // Track which form is the root dependency (cannot be removed, only reset)
   const [rootForm, setRootForm] = useState(null);
 
+  // Track expanded/collapsed state of form sections
+  const [expandedSections, setExpandedSections] = useState({});
+
   // Helper function to determine if a related item is required
   const isRelatedItemRequired = (state, isOnlyForm, hasRelatedItem = false) => {
     // If the field already has a related item, it was required at some point
@@ -148,7 +230,6 @@ export default function ContributeForm({
   // Unified function to determine if a field is required (for both validation and display)
   const isFieldRequired = (fieldType) => {
     const isOnlyForm = formOrder.length === 1;
-    const isFirstInFlow = formOrder[0] === fieldType.split('-')[0]; // Check if this form type is first
 
     switch (fieldType) {
       // User data fields - always required
@@ -223,7 +304,7 @@ export default function ContributeForm({
   const hasError = (fieldId) => errorFields.includes(fieldId);
 
   // Helper to get error styling - removed as we now style the required tag
-  const getErrorStyle = (fieldId) => {
+  const getErrorStyle = () => {
     return {};
   };
 
@@ -236,6 +317,42 @@ export default function ContributeForm({
         setFormError('');
       }
     }
+  };
+
+  // Toggle accordion expansion state
+  const toggleSection = (sectionKey) => {
+    setExpandedSections(prev => ({
+      ...prev,
+      [sectionKey]: !prev[sectionKey]
+    }));
+  };
+
+  // Check if a section has validation errors
+  const sectionHasErrors = (sectionType) => {
+    if (sectionType === 'gap') {
+      return errorFields.some(field => 
+        field.includes('bottleneck') || field === 'related-capability'
+      );
+    } else if (sectionType === 'capability') {
+      return errorFields.some(field => 
+        field.includes('fc-') || field === 'related-resources'
+      );
+    } else if (sectionType.startsWith('resource-')) {
+      const index = formResources.findIndex(r => `resource-${r.id}` === sectionType);
+      return errorFields.some(field => 
+        field.includes(`resource-title-${index}`) ||
+        field.includes(`resource-url-${index}`) ||
+        field.includes(`resource-type-${index}`)
+      );
+    } else if (sectionType === 'resource') {
+      return errorFields.some(field => 
+        field === 'resource-title' || 
+        field === 'resource-url' || 
+        field === 'resource-type' ||
+        field === 'related-capability-resource'
+      );
+    }
+    return false;
   };
 
   // Track input values for related content
@@ -295,6 +412,7 @@ export default function ContributeForm({
     setFormOrder([]);
     setRootForm(null);
     setErrorFields([]);
+    setExpandedSections({});
   };
 
   // Function to handle content type selection
@@ -314,14 +432,17 @@ export default function ContributeForm({
       setShowForms({ gap: true, capability: false, resource: false });
       setFormOrder(['gap']);
       setRootForm('gap');
+      setExpandedSections({ gap: true }); // New forms start expanded
     } else if (contentType === 'capability') {
       setShowForms({ gap: false, capability: true, resource: false });
       setFormOrder(['capability']);
       setRootForm('capability');
+      setExpandedSections({ capability: true }); // New forms start expanded
     } else if (contentType === 'resource') {
       setShowForms({ gap: false, capability: false, resource: true });
       setFormOrder(['resource']);
       setRootForm('resource');
+      setExpandedSections({ resource: true }); // New forms start expanded
     }
   };
 
@@ -519,7 +640,10 @@ export default function ContributeForm({
     if (!pendingCapability.trim()) {
       // Focus the input and trigger autocomplete if empty
       if (capabilityInputRef.current) {
-        capabilityInputRef.current.focus();
+        // Small delay to ensure focus works properly
+        setTimeout(() => {
+          capabilityInputRef.current.focus();
+        }, 0);
       }
       return;
     }
@@ -559,6 +683,8 @@ export default function ContributeForm({
       setFcData(capabilityData);
       setOriginalCapabilityData(capabilityData);
       setCapabilityState('existing');
+      // Existing items start collapsed
+      setExpandedSections(prev => ({ ...prev, capability: false }));
     } else {
       // New capability
       setFcData({ 
@@ -572,6 +698,8 @@ export default function ContributeForm({
         isAddedViaAssociation: true 
       });
       setCapabilityState('new');
+      // New items start expanded
+      setExpandedSections(prev => ({ ...prev, capability: true }));
     }
 
     setPendingCapability('');
@@ -759,7 +887,10 @@ export default function ContributeForm({
     if (!pendingResource.trim()) {
       // Focus the input and trigger autocomplete if empty
       if (resourceInputRef.current) {
-        resourceInputRef.current.focus();
+        // Small delay to ensure focus works properly
+        setTimeout(() => {
+          resourceInputRef.current.focus();
+        }, 0);
       }
       return;
     }
@@ -850,6 +981,12 @@ export default function ContributeForm({
       return [...prev, resourceKey];
     });
 
+    // Set expansion state based on whether resource is new or existing
+    setExpandedSections(prev => ({ 
+      ...prev, 
+      [resourceKey]: newResource.state === 'new' 
+    }));
+
     setPendingResource('');
   };
 
@@ -858,7 +995,10 @@ export default function ContributeForm({
     if (!pendingCapability.trim()) {
       // Focus the input and trigger autocomplete if empty
       if (capabilityInputRef.current) {
-        capabilityInputRef.current.focus();
+        // Small delay to ensure focus works properly
+        setTimeout(() => {
+          capabilityInputRef.current.focus();
+        }, 0);
       }
       return;
     }
@@ -943,7 +1083,10 @@ export default function ContributeForm({
     if (!pendingGap.trim()) {
       // Focus the input and trigger autocomplete if empty
       if (gapInputRef.current) {
-        gapInputRef.current.focus();
+        // Small delay to ensure focus works properly
+        setTimeout(() => {
+          gapInputRef.current.focus();
+        }, 0);
       }
       return;
     }
@@ -997,6 +1140,8 @@ export default function ContributeForm({
       setBottleneckData(gapData);
       setOriginalGapData(gapData);
       setGapState('existing');
+      // Existing items start collapsed
+      setExpandedSections(prev => ({ ...prev, gap: false }));
     } else {
       // New gap
       setBottleneckData({
@@ -1010,6 +1155,8 @@ export default function ContributeForm({
         isAddedViaAssociation: true
       });
       setGapState('new');
+      // New items start expanded
+      setExpandedSections(prev => ({ ...prev, gap: true }));
     }
 
     setPendingGap('');
@@ -1250,6 +1397,18 @@ export default function ContributeForm({
       setFormError(validation.errors);
       setErrorFields(validation.errorFields);
 
+      // Expand any collapsed sections that have errors
+      const sectionsToExpand = {};
+      formOrder.forEach(formType => {
+        if (sectionHasErrors(formType)) {
+          sectionsToExpand[formType] = true;
+        }
+      });
+      
+      if (Object.keys(sectionsToExpand).length > 0) {
+        setExpandedSections(prev => ({ ...prev, ...sectionsToExpand }));
+      }
+
       // Force update to ensure error styles are applied
       await new Promise(resolve => setTimeout(resolve, 0));
 
@@ -1420,7 +1579,7 @@ export default function ContributeForm({
                 value={userData.name}
                 onChange={handleUserDataChange}
                 onFocus={() => clearFieldError('contributor-name')}
-                style={getErrorStyle('contributor-name')}
+                style={getErrorStyle()}
                 required={isFieldRequired('contributor-name')}
                 title="Your full name"
                 aria-label="Your name"
@@ -1439,7 +1598,7 @@ export default function ContributeForm({
                 value={userData.email}
                 onChange={handleUserDataChange}
                 onFocus={() => clearFieldError('contributor-email')}
-                style={getErrorStyle('contributor-email')}
+                style={getErrorStyle()}
                 required={isFieldRequired('contributor-email')}
                 title="Your email address"
                 aria-label="Your email"
@@ -1514,34 +1673,30 @@ export default function ContributeForm({
             if (formType === 'gap' && showForms.gap) {
               return (
                 <div key="gap-form" className="contribute-form__section">
-                  <button
-                    type="button"
-                    className="remove-section-button"
-                    onClick={() => {
+                  <SectionHeader
+                    title="R&D Gap"
+                    state={gapState}
+                    isExpanded={expandedSections.gap !== false}
+                    onToggle={() => toggleSection('gap')}
+                    itemType="gap"
+                    itemSlug={bottleneckData.title ? createSlug(bottleneckData.title) : null}
+                    onRemove={() => {
                       if (formType === rootForm) {
                         // Start over if this is the root form
                         resetAllForms();
                         setSelectedContentType(null);
                         setShowForms({ gap: false, capability: false, resource: false });
                         setFormError('');
+                        setExpandedSections({});
                       } else {
                         // Remove just this form if it's not the root
                         removeFormGroup('gap');
                       }
                     }}
-                    aria-label={formType === rootForm ? "Start over" : "Remove gap section"}
-                  >
-                    ×
-                  </button>
-                  <h3>
-                    R&D Gap
-                    {gapState && (
-                      <span className={`state-label state-label--${gapState}`}>
-                        {gapState}
-                      </span>
-                    )}
-                  </h3>
+                    isRoot={formType === rootForm}
+                  />
                   <input type="hidden" name="gapState" value={gapState || ''} />
+                  <div className={`section-content ${expandedSections.gap === false ? 'collapsed' : 'expanded'}`}>
                   <div className="form-group">
                     {bottleneckData.isAddedViaAssociation ? (
                       <>
@@ -1552,6 +1707,7 @@ export default function ContributeForm({
                             id="bottleneck-title"
                             value={bottleneckData.title}
                             readOnly
+                            tabIndex={-1}
                             required={isFieldRequired('bottleneck-title')}
                             title="R&D Gap name"
                             aria-label="R&D Gap name"
@@ -1572,7 +1728,7 @@ export default function ContributeForm({
                             }}
                             suggestions={bottleneckNames}
                             required={isFieldRequired('bottleneck-title')}
-                            style={getErrorStyle('bottleneck-title')}
+                            style={getErrorStyle()}
                             title="Enter R&D Gap name"
                             aria-label="R&D Gap name"
                             aria-invalid={hasError('bottleneck-title')}
@@ -1592,7 +1748,7 @@ export default function ContributeForm({
                           setBottleneckData({ ...bottleneckData, fieldName: e.target.value });
                         }}
                         onFocus={() => clearFieldError('bottleneck-field')}
-                        style={getErrorStyle('bottleneck-field')}
+                        style={getErrorStyle()}
                         required={isFieldRequired('bottleneck-field')}
                         title="Select field for R&D Gap"
                         aria-label="Field selection"
@@ -1620,7 +1776,7 @@ export default function ContributeForm({
                         }}
                         onFocus={() => clearFieldError('bottleneck-content')}
                         placeholder="Describe the R&D Gap in detail. What makes it significant? What are the implications?"
-                        style={getErrorStyle('bottleneck-content')}
+                        style={getErrorStyle()}
                         required={isFieldRequired('bottleneck-content')}
                         title="Describe the R&D Gap"
                         aria-label="R&D Gap description"
@@ -1642,6 +1798,7 @@ export default function ContributeForm({
                             id="related-capability"
                             value={bottleneckData.relatedCapability}
                             readOnly
+                            tabIndex={-1}
                             title="Related capability"
                             aria-label="Related foundational capability"
                           />
@@ -1655,7 +1812,7 @@ export default function ContributeForm({
                             suggestions={capabilityNames}
                             placeholder="Enter existing capability or suggest new one"
                             required={isFieldRequired('related-capability')}
-                            style={getErrorStyle('related-capability')}
+                            style={getErrorStyle()}
                             title="Enter related capability"
                             aria-label="Related foundational capability"
                             aria-invalid={hasError('related-capability')}
@@ -1693,6 +1850,7 @@ export default function ContributeForm({
                       </InputWithButtonWrapper>
                     </div>
                   )}
+                  </div> {/* End section-content */}
                 </div>
               );
             }
@@ -1700,34 +1858,30 @@ export default function ContributeForm({
             if (formType === 'capability' && showForms.capability) {
               return (
                 <div key="capability-form" className="contribute-form__section">
-                  <button
-                    type="button"
-                    className="remove-section-button"
-                    onClick={() => {
+                  <SectionHeader
+                    title="Foundational Capability"
+                    state={capabilityState}
+                    isExpanded={expandedSections.capability !== false}
+                    onToggle={() => toggleSection('capability')}
+                    itemType="capability"
+                    itemSlug={fcData.title ? createSlug(fcData.title) : null}
+                    onRemove={() => {
                       if (formType === rootForm) {
                         // Start over if this is the root form
                         resetAllForms();
                         setSelectedContentType(null);
                         setShowForms({ gap: false, capability: false, resource: false });
                         setFormError('');
+                        setExpandedSections({});
                       } else {
                         // Remove just this form if it's not the root
                         removeFormGroup('capability');
                       }
                     }}
-                    aria-label={formType === rootForm ? "Start over" : "Remove capability section"}
-                  >
-                    ×
-                  </button>
-                  <h3>
-                    Foundational Capability
-                    {capabilityState && (
-                      <span className={`state-label state-label--${capabilityState}`}>
-                        {capabilityState}
-                      </span>
-                    )}
-                  </h3>
+                    isRoot={formType === rootForm}
+                  />
                   <input type="hidden" name="capabilityState" value={capabilityState || ''} />
+                  <div className={`section-content ${expandedSections.capability === false ? 'collapsed' : 'expanded'}`}>
                   <div className="form-group">
                     {fcData.isAddedViaAssociation ? (
                       <>
@@ -1738,6 +1892,7 @@ export default function ContributeForm({
                             id="fc-title"
                             value={fcData.title}
                             readOnly
+                            tabIndex={-1}
                             required={isFieldRequired('fc-title')}
                             title="Foundational Capability name"
                             aria-label="Foundational Capability name"
@@ -1758,7 +1913,7 @@ export default function ContributeForm({
                             }}
                             suggestions={capabilityNames}
                             required={isFieldRequired('fc-title')}
-                            style={getErrorStyle('fc-title')}
+                            style={getErrorStyle()}
                             title="Enter Foundational Capability name"
                             aria-label="Foundational Capability name"
                             aria-invalid={hasError('fc-title')}
@@ -1781,6 +1936,7 @@ export default function ContributeForm({
                             id="fc-related-gap"
                             value={fcData.relatedGap}
                             readOnly
+                            tabIndex={-1}
                             title="Related R&D Gap"
                             aria-label="Related R&D Gap"
                           />
@@ -1794,7 +1950,7 @@ export default function ContributeForm({
                             suggestions={bottleneckNames}
                             placeholder="Enter the name of an existing R&D Gap or suggest a new one"
                             required={isFieldRequired('fc-related-gap')}
-                            style={getErrorStyle('fc-related-gap')}
+                            style={getErrorStyle()}
                             title="Enter related R&D Gap"
                             aria-label="Related R&D Gap"
                             aria-invalid={hasError('fc-related-gap')}
@@ -1844,7 +2000,7 @@ export default function ContributeForm({
                           setFcData({ ...fcData, content: e.target.value });
                         }}
                         placeholder="Describe the proposed Foundational Capability. How would it address the R&D Gap?"
-                        style={getErrorStyle('fc-content')}
+                        style={getErrorStyle()}
                         required={isFieldRequired('fc-content')}
                         title="Describe the Foundational Capability"
                         aria-label="Foundational Capability description"
@@ -1871,7 +2027,7 @@ export default function ContributeForm({
                           suggestions={resourceNames}
                           placeholder="Enter the name of an existing Resource or suggest a new one"
                           required={isFieldRequired('related-resources')}
-                          style={getErrorStyle('related-resources')}
+                          style={getErrorStyle()}
                           title="Enter resource to add"
                           aria-label="Related resources"
                           aria-invalid={hasError('related-resources')}
@@ -1899,6 +2055,7 @@ export default function ContributeForm({
                                   name={`capability_resource_${actualIdx}`}
                                   value={resourceTitle}
                                   readOnly
+                                  tabIndex={-1}
                                 />
                                 <button
                                   type="button"
@@ -1954,6 +2111,7 @@ export default function ContributeForm({
                       )}
                     </div>
                   )}
+                  </div> {/* End section-content */}
                 </div>
               );
             }
@@ -1966,12 +2124,17 @@ export default function ContributeForm({
               if (!resource) return null;
 
               const index = formResources.indexOf(resource);
+              const sectionKey = `resource-${resource.id}`;
               return (
                 <div key={resource.id} className="contribute-form__section">
-                  <button
-                    type="button"
-                    className="remove-section-button"
-                    onClick={() => {
+                  <SectionHeader
+                    title="Resource"
+                    state={resource.state}
+                    isExpanded={expandedSections[sectionKey] !== false}
+                    onToggle={() => toggleSection(sectionKey)}
+                    itemType="resource"
+                    itemSlug={resource.title ? createSlug(resource.title) : null}
+                    onRemove={() => {
                       // Resources added from capability are never the selectedContentType
                       // Remove this specific resource
                       setFormResources(prev => prev.filter(r => r.id !== resource.id));
@@ -2004,22 +2167,23 @@ export default function ContributeForm({
                       // Remove this specific resource from form order
                       setFormOrder(prev => prev.filter(type => type !== formType));
 
+                      // Remove from expanded sections
+                      setExpandedSections(prev => {
+                        const updated = { ...prev };
+                        delete updated[sectionKey];
+                        return updated;
+                      });
+
                       // Hide resource form if no resources left at all
                       const allRemainingResources = formResources.filter(r => r.id !== resource.id);
                       if (allRemainingResources.length === 0) {
                         setShowForms(prev => ({ ...prev, resource: false }));
                       }
                     }}
-                    aria-label="Remove resource section">
-                    ×
-                  </button>
-                  <h3>
-                    Resource
-                    <span className={`state-label state-label--${resource.state}`}>
-                      {resource.state}
-                    </span>
-                  </h3>
+                    isRoot={false}
+                  />
                   <input type="hidden" name={`resourceState_${index}`} value={resource.state} />
+                  <div className={`section-content ${expandedSections[sectionKey] === false ? 'collapsed' : 'expanded'}`}>
 
                   <div className="form-group">
                     <label htmlFor={`resource-title-${index}`}>Resource Title</label>
@@ -2030,6 +2194,7 @@ export default function ContributeForm({
                           id={`resource-title-${index}`}
                           value={resource.title}
                           readOnly
+                          tabIndex={-1}
                           required={isFieldRequired(`resource-title-${index}`)}
                           title="Resource title"
                           aria-label="Resource title"
@@ -2048,7 +2213,7 @@ export default function ContributeForm({
                               updatedResources[index].state = 'edited';
                             }
                           }}
-                          style={getErrorStyle(`resource-title-${index}`)}
+                          style={getErrorStyle()}
                           required={isFieldRequired(`resource-title-${index}`)}
                           title="Enter resource title"
                           aria-label="Resource title"
@@ -2077,7 +2242,7 @@ export default function ContributeForm({
                           }
                         }}
                         required={isFieldRequired(`resource-type-${index}`)}
-                        style={getErrorStyle(`resource-type-${index}`)}
+                        style={getErrorStyle()}
                         title="Select resource type"
                         aria-label="Resource type"
                         aria-invalid={hasError(`resource-type-${index}`)}
@@ -2111,7 +2276,7 @@ export default function ContributeForm({
                           }
                         }}
                         placeholder="https://example.com/article"
-                        style={getErrorStyle(`resource-url-${index}`)}
+                        style={getErrorStyle()}
                         required={isFieldRequired(`resource-url-${index}`)}
                         title="Enter resource URL"
                         aria-label="Resource URL"
@@ -2143,6 +2308,7 @@ export default function ContributeForm({
                       aria-label="Resource description"
                     ></textarea>
                   </div>
+                  </div> {/* End section-content */}
                 </div>
               );
             }
@@ -2152,34 +2318,30 @@ export default function ContributeForm({
               return (
                 <React.Fragment key="standalone-resource">
                   <div className="contribute-form__section">
-                    <button
-                      type="button"
-                      className="remove-section-button"
-                      onClick={() => {
+                    <SectionHeader
+                      title="Resource"
+                      state={initialResourceState}
+                      isExpanded={expandedSections.resource !== false}
+                      onToggle={() => toggleSection('resource')}
+                      itemType="resource"
+                      itemSlug={resourceData.title ? createSlug(resourceData.title) : null}
+                      onRemove={() => {
                         if (formType === rootForm) {
                           // Start over if this is the root form
                           resetAllForms();
                           setSelectedContentType(null);
                           setShowForms({ gap: false, capability: false, resource: false });
                           setFormError('');
+                          setExpandedSections({});
                         } else {
                           // Remove just this form if it's not the root
                           removeFormGroup('resource');
                         }
                       }}
-                      aria-label={formType === rootForm ? "Start over" : "Remove resource section"}
-                    >
-                      ×
-                    </button>
-                    <h3>
-                      Resource
-                      {initialResourceState && (
-                        <span className={`state-label state-label--${initialResourceState}`}>
-                          {initialResourceState}
-                        </span>
-                      )}
-                    </h3>
+                      isRoot={formType === rootForm}
+                    />
                     <input type="hidden" name="resourceState_0" value={initialResourceState || ''} />
+                    <div className={`section-content ${expandedSections.resource === false ? 'collapsed' : 'expanded'}`}>
 
                     <div className="form-group">
                       {resourceData.isExistingResource ? (
@@ -2191,6 +2353,7 @@ export default function ContributeForm({
                               id="resource-title"
                               value={resourceData.title}
                               readOnly
+                              tabIndex={-1}
                               required={isFieldRequired('resource-title')}
                               title="Resource title"
                               aria-label="Resource title"
@@ -2211,7 +2374,7 @@ export default function ContributeForm({
                               }}
                               suggestions={resourceNames}
                               required={isFieldRequired('resource-title')}
-                              style={getErrorStyle('resource-title')}
+                              style={getErrorStyle()}
                               title="Enter resource title"
                               aria-label="Resource title"
                               aria-invalid={hasError('resource-title')}
@@ -2231,7 +2394,7 @@ export default function ContributeForm({
                             setResourceData({ ...resourceData, resourceType: e.target.value });
                           }}
                           required={isFieldRequired('resource-type')}
-                          style={getErrorStyle('resource-type')}
+                          style={getErrorStyle()}
                           title="Select resource type"
                           aria-label="Resource type"
                           aria-invalid={hasError('resource-type')}
@@ -2256,7 +2419,7 @@ export default function ContributeForm({
                             setResourceData({ ...resourceData, url: e.target.value });
                           }}
                           placeholder="https://example.com/article"
-                          style={getErrorStyle('resource-url')}
+                          style={getErrorStyle()}
                           required={isFieldRequired('resource-url')}
                           title="Enter resource URL"
                           aria-label="Resource URL"
@@ -2278,6 +2441,7 @@ export default function ContributeForm({
                               id="related-capability"
                               value={resourceData.relatedCapability}
                               readOnly
+                              tabIndex={-1}
                               title="Related capability"
                               aria-label="Related foundational capability"
                             />
@@ -2290,7 +2454,7 @@ export default function ContributeForm({
                               suggestions={capabilityNames}
                               placeholder="Enter the name of an existing Foundational Capability or suggest a new one"
                               required={isFieldRequired('related-capability-resource')}
-                              style={getErrorStyle('related-capability-resource')}
+                              style={getErrorStyle()}
                               title="Enter related capability"
                               aria-label="Related foundational capability"
                               aria-invalid={hasError('related-capability-resource')}
@@ -2343,6 +2507,7 @@ export default function ContributeForm({
                         aria-label="Resource description"
                       ></textarea>
                     </div>
+                    </div> {/* End section-content */}
                   </div>
                 </React.Fragment>
               );

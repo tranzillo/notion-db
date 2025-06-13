@@ -1,5 +1,5 @@
 :root {
-  /* Light mode variables */
+  /* Base colors */
   --primary-color: #41a0df;
   --secondary-color: #c8c9b7;
   --tertiary-color: #e9e1d0;
@@ -13,14 +13,26 @@
   --card-background: #eeece4;
   --header-background: #f3f2eb;
   --footer-background: #f3f2eb;
-  --shadow-color: rgba(0, 0, 0, 0.08);
-  --highlight-bg: rgba(52, 152, 219, 0.2);
+  --shadow-color: #00000014;
+  --highlight-bg: #3498db33;
   --highlight-color: #2980b9;
   --pure-white: #f3f2eb;
   --background-color-tint: #f3f2eb86;
+  --blue: #2196f3;
+  --blue-border: #2196f3;
+  --blue-bg: #2196f31a;
+  --green: #4caf50;
+  --green-border: #4caf50;
+  --green-bg: #4caf501a;
+  --red: #d32f2f;
+  --red-border: #d32f2f;
+  --red-bg: #d32f2f1a;
+  --gold-border: #ff9800;
+  --gold: #ff9800;
+  --gold-bg: #ff98001a;
 }
 
-/* Dark mode variables */
+/* Dark mode alternatives */
 html[data-theme="dark"],
 .dark-mode {
   --primary-color: #3699db;
@@ -36,8 +48,8 @@ html[data-theme="dark"],
   --card-background: #292d3e;
   --header-background: #24283a;
   --footer-background: #24283a;
-  --shadow-color: rgba(0, 0, 0, 0.2);
-  --highlight-bg: rgba(104, 179, 223, 0.2);
+  --shadow-color: #00000033;
+  --highlight-bg: #68b3df33;
   --highlight-color: #2980b9;
   --pure-white: #e0e0e0;
   --background-color-tint: #24283a69;

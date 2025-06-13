@@ -43,13 +43,29 @@
 
 .contribute-form {
     width: 100%;
+
     .form-group {
         label {
             margin: 0;
         }
     }
+
     label {
         font-weight: 500;
+    }
+
+    input {
+        &:read-only {
+            background-color: var(--border-dull);
+            cursor: not-allowed;
+            color: var(--text-lighter);
+            pointer-events: none; // Prevent any interaction
+
+            &:focus {
+                outline: none;
+                border-color: var(--border-dull);
+            }
+        }
     }
 
     input[type="text"],
@@ -66,9 +82,7 @@
         background-color: var(--card-background);
         color: var(--text-color);
         transition: border-color $transition, background-color $transition;
-        &:-internal-autofill-selected {
-            background-color: var(--secondary-color);
-        }
+
         &:focus {
             outline: none;
             border-color: var(--primary-color);
@@ -79,10 +93,12 @@
             cursor: not-allowed;
             color: var(--text-lighter);
         }
+
     }
 
     input[type="text"] {
         padding-inline-end: $spacing-md;
+
         &:read-only {
             background-color: var(--border-dull);
             cursor: not-allowed;
@@ -154,12 +170,13 @@
 
     &__error {
         background-color: rgba(255, 0, 0, 0.1);
-        color: #d32f2f;
-        border: 1px solid #d32f2f;
+        color: var(--red);
+        border: 1px solid var(--red);
         padding: $spacing-xl;
         border-radius: $border-radius-lg;
-        margin-bottom: $spacing-lg;
+        margin-bottom: $spacing-xxl;
         margin-inline: calc($spacing-xl * -1);
+
         @media (max-width: $breakpoint-sm) {
             margin-inline: calc($spacing-sm * -1);
             padding-inline: $spacing-sm;
@@ -209,9 +226,8 @@
         }
 
         &:hover {
-            border-color: var(--primary-color);
             background-color: var(--card-background-hover);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 $spacing-xs $spacing-xs #00000010;
         }
     }
 
@@ -219,12 +235,12 @@
         display: flex;
         flex-direction: column;
         gap: $spacing-xl;
-        margin-top: $spacing-xl;
+        margin-top: $spacing-xxl;
     }
 
     &__section {
         position: relative;
-        padding: $spacing-xl;
+        padding: 0;
         border: 1px solid var(--border-dull);
         border-radius: $border-radius-lg;
         margin-inline: calc($spacing-xl * -1);
@@ -232,72 +248,165 @@
 
         @media screen and (max-width: $breakpoint-md) {
             margin-inline: calc($spacing-sm * -1);
-            padding-inline: $spacing-sm;
-            
         }
+
+        .section-header {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            padding: $spacing-xl 0 0 0;
+            background-color: var(--card-background);
+            border-radius: $border-radius-lg $border-radius-lg 0 0;
+            transition: background-color $transition;
+
+            h3 {
+                display: flex;
+                flex-direction: column;
+                padding: 0 $spacing-xl $spacing-md $spacing-xl;
+                gap: $spacing-sm;
+                align-items: baseline;
+                margin: 0;
+                color: var(--text-color);
+                font-size: $font-size-lg;
+                transition: color $transition;
+                flex: 1;
+                user-select: none;
+            }
+
+            .section-controls {
+                position: absolute;
+                inset: 0 0 auto auto;
+                display: flex;
+                gap: $spacing-xl;
+            }
+
+            .accordion-toggle-wrapper {
+                display: flex;
+                align-items: center;
+                padding: $spacing-sm;
+                gap: $spacing-sm;
+                justify-content: flex-end;
+                font-size: $font-size-xs;
+                color: var(--text-lighter);
+                width: 100%;
+                background-color: var(--background-color-dark);
+                cursor: pointer;
+
+                &:hover {
+                    background-color: #00000010;
+                }
+                .accordion-toggle-label {
+                    cursor: pointer;
+                    transition: color $transition;
+                }
+            }
+
+            .accordion-toggle {
+                font-size: 0.65rem;
+                background: transparent;
+                border: none;
+                color: var(--text-light);
+                transition: transform $transition, color $transition;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+        }
+
+        .section-content {
+            padding: 0 $spacing-xl $spacing-xl $spacing-xl;
+            overflow: hidden;
+            transition: max-height $transition ease-out;
+
+            &.collapsed {
+                max-height: 0;
+                padding-block-end: 0;
+            }
+
+            &.expanded {
+                max-height: 2000px; // Arbitrary large value
+                overflow: visible;
+                padding-block-start: $spacing-xxl;
+            }
+
+            @media screen and (max-width: $breakpoint-md) {
+                padding-inline: $spacing-sm;
+            }
+        }
+
         h3 {
             display: flex;
             align-items: baseline;
-            margin: 0 0 $spacing-lg 0;
+            margin: 0 0 $spacing-xxl 0;
             color: var(--text-color);
             font-size: $font-size-lg;
             transition: color $transition;
         }
 
         .form-group+.form-group {
-            margin-top: $spacing-lg;
+            margin-top: $spacing-xxl;
         }
 
         .remove-section-button {
-            position: absolute;
-            inset: -1px -1px auto auto;
             width: $spacing-xl;
-            height: 2.5rem;
-            font-weight: 500;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border: 1px solid var(--border-dull);
+            height: $spacing-xl;
+            padding: 0 0 $spacing-xs 0;
+            background: transparent;
+            border: none;
             border-radius: 0 $border-radius-lg 0 $border-radius-lg;
+            cursor: pointer;
             color: var(--text-light);
             font-size: $font-size-lg;
             line-height: 1;
-            cursor: pointer;
-            transition: all $transition;
+            transition: color $transition, background-color $transition;
+            display: flex;
+            align-items: center;
+            justify-content: center;
 
             &:hover {
-                background-color: var(--card-background);
-                color: var(--text-color);
+                background-color: var(--red-bg);
+                color: var(--red);
             }
         }
 
         .state-label {
             font-size: $font-size-xxs;
             font-weight: normal;
-            letter-spacing: 0.03em;
-            margin-left: $spacing-sm;
             padding: $spacing-xs $spacing-sm;
             border-radius: $border-radius-sm;
             display: inline-block;
-            text-transform: uppercase;
+            text-decoration: none;
+            opacity: 0.85;
+            transition: all $transition;
+
+            &:hover {
+                text-decoration: none;
+                opacity: 1;
+            }
 
 
             &--new {
-                background-color: rgba(76, 175, 80, 0.1);
-                color: #4caf50;
-                border: 1px solid #4caf50;
+                background-color: var(--green-bg);
+                color: var(--green);
+                border: 1px solid var(--green-border);
             }
 
             &--existing {
-                background-color: rgba(33, 150, 243, 0.1);
-                color: #2196f3;
-                border: 1px solid #2196f3;
+                background-color: var(--blue-bg);
+                color: var(--blue);
+                border: 1px solid var(--blue-border);
             }
 
             &--edited {
-                background-color: rgba(255, 152, 0, 0.1);
-                color: #ff9800;
-                border: 1px solid #ff9800;
+                background-color: var(--gold-bg);
+                color: var(--gold);
+                border: 1px solid var(--gold-border);
+            }
+
+            .bigger {
+                text-transform: uppercase;
+                letter-spacing: 0.05em;
+                font-weight: 600;
             }
         }
     }
@@ -342,9 +451,12 @@
         align-items: flex-start;
         width: 100%;
     }
-    .form-input-wrapper:has(.required-tag) input, .form-input-wrapper:has(.required-tag) textarea {
+
+    .form-input-wrapper:has(.required-tag) input,
+    .form-input-wrapper:has(.required-tag) textarea {
         border-radius: $border-radius-md $border-radius-md $border-radius-md 0;
     }
+
     .input-with-button {
         display: flex;
         align-items: stretch;
