@@ -5,6 +5,7 @@ import BottleneckCard from "../../components/standalone/BottleneckCard";
 import EnhancedBackButton from "../../components/standalone/EnhancedBackButton";
 import FieldLabel from "../../components/standalone/FieldLabel";
 import SuggestEditButton from "../../components/standalone/SuggestEditButton";
+import SurveyGraph from "../../components/standalone/SurveyGraph";
 import { getEnhancedData } from "../../lib/enhancedData";
 import { createCapabilitySlug } from "../../lib/slugUtils";
 
@@ -58,10 +59,27 @@ if (capability.bottlenecks && Array.isArray(capability.bottlenecks)) {
 
   uniqueFields.push(...Array.from(fieldMap.values()));
 }
+
+// Check if we have Metaculus data to display survey graph
+const hasMetaculusData =
+  capability.metaculus_id &&
+  capability.metaculus_title &&
+  capability.metaculus_id.trim() !== "" &&
+  capability.metaculus_title.trim() !== "";
 ---
 
 <BaseLayout title={`${capability.fc_name} - Gap Map`}>
-  <EnhancedBackButton client:load path="/capabilities" />
+  <div class="bottleneck-detail__nav">
+    <EnhancedBackButton client:load />
+    <SuggestEditButton
+      contentType="Foundational Capability"
+      contentId={capability.id}
+      contentTitle={capability.fc_name}
+      contentDescription={capability.fc_description}
+      relatedGaps={relatedGaps}
+      client:load
+    />
+  </div>
 
   <div class="capability-detail">
     <div class="capability-detail__header">
@@ -75,14 +93,6 @@ if (capability.bottlenecks && Array.isArray(capability.bottlenecks)) {
             </div>
           )
         }
-        <SuggestEditButton
-          contentType="Foundational Capability"
-          contentId={capability.id}
-          contentTitle={capability.fc_name}
-          contentDescription={capability.fc_description}
-          relatedGaps={relatedGaps}
-          client:load
-        />
       </div>
 
       <h1 class="capability-detail__title">{capability.fc_name}</h1>
@@ -218,6 +228,18 @@ if (capability.bottlenecks && Array.isArray(capability.bottlenecks)) {
               <BottleneckCard bottleneck={bottleneck} client:load />
             ))}
           </div>
+        </div>
+      )
+    }
+
+    {
+      hasMetaculusData && (
+        <div class="capability-detail__survey">
+          <SurveyGraph
+            metaculus_id={capability.metaculus_id}
+            metaculus_title={capability.metaculus_title}
+            client:load
+          />
         </div>
       )
     }

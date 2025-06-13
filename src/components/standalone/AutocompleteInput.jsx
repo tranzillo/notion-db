@@ -14,7 +14,10 @@ const AutocompleteInput = forwardRef(({
   className = '',
   style = {},
   onFocus = null,
-  onKeyDown = null
+  onKeyDown = null,
+  onAddClick = null, // New prop for handling add functionality
+  onBlur = null,
+  refocusAfterSelection = true // New prop to control refocus behavior
 }, ref) => {
   const [inputValue, setInputValue] = useState(value || '');
   const [filteredSuggestions, setFilteredSuggestions] = useState([]);
@@ -23,6 +26,7 @@ const AutocompleteInput = forwardRef(({
   const [isFocused, setIsFocused] = useState(false); // Track focus state
   const inputRef = useRef(null);
   const suggestionsRef = useRef(null);
+  const blurTimeoutRef = useRef(null);
 
   // Expose focus method to parent component
   useImperativeHandle(ref, () => ({
@@ -119,8 +123,16 @@ const AutocompleteInput = forwardRef(({
       onChange(syntheticEvent);
     }
     
-    // Focus back on the input
-    if (inputRef.current) {
+    // Trigger add functionality if provided
+    if (onAddClick) {
+      // Small delay to ensure state updates are processed
+      setTimeout(() => {
+        onAddClick(suggestion);
+      }, 10);
+    }
+    
+    // Focus back on the input only if refocusAfterSelection is true
+    if (refocusAfterSelection && inputRef.current) {
       inputRef.current.focus();
     }
   };
@@ -180,7 +192,15 @@ const AutocompleteInput = forwardRef(({
 
   // Handle focus state
   const handleFocus = () => {
+    // Clear any pending blur timeout
+    if (blurTimeoutRef.current) {
+      clearTimeout(blurTimeoutRef.current);
+      blurTimeoutRef.current = null;
+    }
+    
     setIsFocused(true);
+    // Reset active suggestion index when focusing
+    setActiveSuggestionIndex(0);
     
     // Call parent onFocus if provided
     if (onFocus) {
@@ -203,8 +223,13 @@ const AutocompleteInput = forwardRef(({
       return;
     }
     
+    // Clear any existing blur timeout
+    if (blurTimeoutRef.current) {
+      clearTimeout(blurTimeoutRef.current);
+    }
+    
     // Wait a bit before hiding suggestions to allow click events to complete
-    setTimeout(() => {
+    blurTimeoutRef.current = setTimeout(() => {
       setIsFocused(false);
       
       // Only auto-correct if the input has content and we're not showing suggestions
@@ -228,6 +253,14 @@ const AutocompleteInput = forwardRef(({
       }
       
       setShowSuggestions(false);
+      
+      // Call parent onBlur if provided
+      if (onBlur) {
+        onBlur(e);
+      }
+      
+      // Clear the timeout ref
+      blurTimeoutRef.current = null;
     }, 150); // Increased timeout to ensure add button clicks complete
   };
 
@@ -247,6 +280,15 @@ const AutocompleteInput = forwardRef(({
     document.addEventListener('click', handleClickOutside);
     return () => {
       document.removeEventListener('click', handleClickOutside);
+    };
+  }, []);
+
+  // Cleanup blur timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (blurTimeoutRef.current) {
+        clearTimeout(blurTimeoutRef.current);
+      }
     };
   }, []);
 

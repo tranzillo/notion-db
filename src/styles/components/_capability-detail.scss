@@ -13,6 +13,7 @@
   border: 1px solid var(--border-dull);
   border-radius: $border-radius-lg;
   padding: $spacing-xl;
+  overflow: hidden;
   transition: background-color $transition,
     border $transition;
     @media (max-width: $breakpoint-sm) {
@@ -203,6 +204,28 @@
         padding-inline: $spacing-xs;
         padding-block-end: $spacing-xs;
       }
+  }
+
+  // Survey graph specific styling
+  &__survey {
+    margin-top: $spacing-xxl;
+
+    .survey-graph-container {
+      margin: -1rem calc($spacing-xl * (-1) + (-1rem)) calc($spacing-xl * (-1)) calc($spacing-xl * (-1));
+      opacity: 0.9;
+      @media screen and (max-width: $breakpoint-sm) {
+             margin: -1rem calc($spacing-lg * (-1) + (-1rem)) calc($spacing-xl * (-1)) calc($spacing-lg * (-1));
+
+      }
+
+      .survey-graph-loading, .survey-graph-error {
+        background-color: var(--card-background);
+        border: 1px solid var(--border-dull);
+        color: var(--text-light);
+        border-radius: $border-radius-lg;
+        transition: background-color $transition, border-color $transition;
+      }
+    }
   }
 
   &__bottlenecks-grid, .fields-grid {

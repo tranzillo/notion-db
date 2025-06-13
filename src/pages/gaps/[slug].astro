@@ -5,6 +5,7 @@ import RankIndicator from "../../components/standalone/RankIndicator";
 import EnhancedBackButton from "../../components/standalone/EnhancedBackButton";
 import FieldLabel from "../../components/standalone/FieldLabel";
 import SuggestEditButton from "../../components/standalone/SuggestEditButton";
+import SurveyGraph from "../../components/standalone/SurveyGraph";
 import { getEnhancedData } from "../../lib/enhancedData";
 import { createCapabilitySlug } from "../../lib/slugUtils";
 
@@ -42,10 +43,27 @@ const hasRank =
   bottleneck.bottleneck_rank !== undefined &&
   bottleneck.bottleneck_rank !== null &&
   bottleneck.bottleneck_rank > 0;
+
+// Check if we have Metaculus data to display survey graph
+const hasMetaculusData =
+  bottleneck.metaculus_id &&
+  bottleneck.metaculus_title &&
+  bottleneck.metaculus_id.trim() !== "" &&
+  bottleneck.metaculus_title.trim() !== "";
 ---
 
 <BaseLayout title={`${bottleneck.bottleneck_name} | Gap Map`}>
-  <EnhancedBackButton client:load path="/gaps" />
+  <div class="bottleneck-detail__nav">
+    <EnhancedBackButton client:load />
+    <SuggestEditButton
+      contentType="Bottleneck"
+      contentId={bottleneck.id}
+      contentTitle={bottleneck.bottleneck_name}
+      contentDescription={bottleneck.bottleneck_description}
+      contentField={bottleneck.field?.id}
+      client:load
+    />
+  </div>
 
   <div class="bottleneck-detail">
     <div class="bottleneck-detail__header">
@@ -82,25 +100,7 @@ const hasRank =
             </div>
           )
         }
-
-        <!-- Display bottleneck number if available and greater than 0
-        {
-          bottleneck.bottleneck_number !== undefined &&
-            bottleneck.bottleneck_number > 0 && (
-              <div class="bottleneck-detail__index">
-                <span>Index: #{bottleneck.bottleneck_number}</span>
-              </div>
-            )
-        } -->
-          <SuggestEditButton
-          contentType="Bottleneck"
-          contentId={bottleneck.id}
-          contentTitle={bottleneck.bottleneck_name}
-          contentDescription={bottleneck.bottleneck_description}
-          contentField={bottleneck.field?.id}
-          client:load
-        />  
-    </div>
+      </div>
 
       <h1 class="bottleneck-detail__title">{bottleneck.bottleneck_name}</h1>
 
@@ -275,6 +275,18 @@ const hasRank =
             </div>
           </div>
         )
+    }
+
+    {
+      hasMetaculusData && (
+        <div class="bottleneck-detail__survey">
+          <SurveyGraph
+            metaculus_id={bottleneck.metaculus_id}
+            metaculus_title={bottleneck.metaculus_title}
+            client:load
+          />
+        </div>
+      )
     }
   </div>
 </BaseLayout>

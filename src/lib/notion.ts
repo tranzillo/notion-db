@@ -34,6 +34,8 @@ export interface FoundationalCapability {
   resources: Resource[];
   tags: string[];
   privateTags: string[];
+  metaculus_id?: string;
+  metaculus_title?: string;
   last_edited_time?: string;
 }
 
@@ -48,6 +50,8 @@ export interface Bottleneck {
   foundational_capabilities: FoundationalCapability[];
   tags: string[];
   privateTags: string[];
+  metaculus_id?: string;
+  metaculus_title?: string;
   last_edited_time?: string;
 }
 
@@ -752,6 +756,10 @@ async function processCapabilityPage(
   // Get private tags
   const privateTags = page.properties.PrivateTags?.multi_select?.map((tag: any) => tag.name) || [];
 
+  // Extract Metaculus fields
+  const metaculus_id = concatenateRichText(page.properties.Metaculus_ID?.rich_text) || '';
+  const metaculus_title = concatenateRichText(page.properties.Metaculus_Title?.rich_text) || '';
+
   // Generate slug
   const slug = createCapabilitySlug(fc_name);
 
@@ -775,6 +783,8 @@ async function processCapabilityPage(
       resources: fcResources,
       tags,
       privateTags,
+      metaculus_id: metaculus_id || undefined,
+      metaculus_title: metaculus_title || undefined,
       last_edited_time: page.last_edited_time
     };
   } catch (error) {
@@ -790,6 +800,8 @@ async function processCapabilityPage(
       resources: [],
       tags: [],
       privateTags: [],
+      metaculus_id: undefined,
+      metaculus_title: undefined,
       last_edited_time: page.last_edited_time || new Date().toISOString()
     };
   }
@@ -901,6 +913,16 @@ async function processBottleneckPage(
       console.error(`Error extracting private tags for bottleneck ${pageId}:`, privateTagError);
     }
 
+    // Extract Metaculus fields safely
+    let metaculus_id = '';
+    let metaculus_title = '';
+    try {
+      metaculus_id = concatenateRichText(page.properties.Metaculus_ID?.rich_text) || '';
+      metaculus_title = concatenateRichText(page.properties.Metaculus_Title?.rich_text) || '';
+    } catch (metaculusError) {
+      console.error(`Error extracting Metaculus fields for bottleneck ${pageId}:`, metaculusError);
+    }
+
     // Generate slug safely
     const slug = createBottleneckSlug(bottleneck_name);
 
@@ -920,6 +942,8 @@ async function processBottleneckPage(
       foundational_capabilities: bottleneckFCs,
       tags,
       privateTags,
+      metaculus_id: metaculus_id || undefined,
+      metaculus_title: metaculus_title || undefined,
       last_edited_time: page.last_edited_time || new Date().toISOString()
     };
   } catch (error) {

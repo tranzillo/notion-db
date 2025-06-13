@@ -169,9 +169,9 @@
     }
 
     &__error {
-        background-color: rgba(255, 0, 0, 0.1);
+        background-color: #d42e2e07;
         color: var(--red);
-        border: 1px solid var(--red);
+        border: 1px solid #d42e2e69;
         padding: $spacing-xl;
         border-radius: $border-radius-lg;
         margin-bottom: $spacing-xxl;
@@ -250,6 +250,33 @@
             margin-inline: calc($spacing-sm * -1);
         }
 
+        &:has(.required-tag--error) {
+            border-color: #d42e2e69!important;
+            .section-header {
+                background-color: #d42e2e07!important;
+            }
+        }
+        &:has(.state-label--existing) {
+            border-color: #2196f369;
+            .section-header {
+                background-color: #2196f307;
+            }
+        }
+
+        &:has(.state-label--edited) {
+            border-color: #ff980069;
+            .section-header {
+                background-color: #ff980007;
+            }
+        }
+
+        &:has(.state-label--new) {
+            border-color: #4caf5069;
+            .section-header {
+                background-color: #4caf5007;
+            }
+        }
+
         .section-header {
             display: flex;
             flex-direction: column;
@@ -258,6 +285,12 @@
             background-color: var(--card-background);
             border-radius: $border-radius-lg $border-radius-lg 0 0;
             transition: background-color $transition;
+
+            &:has(.expanded) {
+                .accordion-toggle-wrapper {
+                    border-radius: 0;
+                }
+            }
 
             h3 {
                 display: flex;
@@ -286,6 +319,7 @@
                 padding: $spacing-sm;
                 gap: $spacing-sm;
                 justify-content: flex-end;
+                border-radius: 0 0 $border-radius-lg $border-radius-lg;
                 font-size: $font-size-xs;
                 color: var(--text-lighter);
                 width: 100%;
@@ -295,6 +329,7 @@
                 &:hover {
                     background-color: #00000010;
                 }
+
                 .accordion-toggle-label {
                     cursor: pointer;
                     transition: color $transition;
@@ -314,19 +349,18 @@
         }
 
         .section-content {
-            padding: 0 $spacing-xl $spacing-xl $spacing-xl;
+            padding: $spacing-xl;
             overflow: hidden;
-            transition: max-height $transition ease-out;
+            transition: max-height $transition;
 
             &.collapsed {
                 max-height: 0;
-                padding-block-end: 0;
+                padding: 0;
             }
 
             &.expanded {
                 max-height: 2000px; // Arbitrary large value
                 overflow: visible;
-                padding-block-start: $spacing-xxl;
             }
 
             @media screen and (max-width: $breakpoint-md) {
@@ -344,7 +378,7 @@
         }
 
         .form-group+.form-group {
-            margin-top: $spacing-xxl;
+            margin-block: $spacing-xxl 0;
         }
 
         .remove-section-button {
@@ -673,7 +707,7 @@
         }
 
         &__error {
-            background-color: rgba(255, 0, 0, 0.2);
+            background-color: #d42e2e10;
         }
     }
 

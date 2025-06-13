@@ -43,7 +43,7 @@ const InputWithButtonWrapper = ({ children, required = false, hasError = false }
 };
 
 // Component for accordion section header
-const SectionHeader = ({ title, state, isExpanded, onToggle, onRemove, isRoot, itemType, itemSlug }) => {
+const SectionHeader = ({ title, state, isExpanded, onToggle, onRemove, isRoot, itemType, itemSlug, itemTitle }) => {
   // Create URL for existing/edited items
   const createItemUrl = (type, slug) => {
     if (!type || !slug) return null;
@@ -74,6 +74,15 @@ const SectionHeader = ({ title, state, isExpanded, onToggle, onRemove, isRoot, i
         >
           <span className='bigger'>{displayState}:</span> {url}
         </a>
+      );
+    }
+    
+    // For new items, display the title if available
+    if (state === 'new' && itemTitle) {
+      return (
+        <span className={`state-label state-label--${state}`}>
+          <span className='bigger'>{displayState}:</span> {itemTitle}
+        </span>
       );
     }
     
@@ -194,6 +203,11 @@ export default function ContributeForm({
   // Track content states: 'new', 'existing', 'edited', or null
   const [gapState, setGapState] = useState(null);
   const [capabilityState, setCapabilityState] = useState(null);
+
+  // Track display titles for form headers (only updated on blur)
+  const [gapDisplayTitle, setGapDisplayTitle] = useState('');
+  const [capabilityDisplayTitle, setCapabilityDisplayTitle] = useState('');
+  const [resourceDisplayTitles, setResourceDisplayTitles] = useState({});
 
   // Track original content for edit detection
   const [originalGapData, setOriginalGapData] = useState(null);
@@ -328,24 +342,24 @@ export default function ContributeForm({
   };
 
   // Check if a section has validation errors
-  const sectionHasErrors = (sectionType) => {
+  const sectionHasErrors = (sectionType, fieldsToCheck = errorFields) => {
     if (sectionType === 'gap') {
-      return errorFields.some(field => 
+      return fieldsToCheck.some(field => 
         field.includes('bottleneck') || field === 'related-capability'
       );
     } else if (sectionType === 'capability') {
-      return errorFields.some(field => 
+      return fieldsToCheck.some(field => 
         field.includes('fc-') || field === 'related-resources'
       );
     } else if (sectionType.startsWith('resource-')) {
       const index = formResources.findIndex(r => `resource-${r.id}` === sectionType);
-      return errorFields.some(field => 
+      return fieldsToCheck.some(field => 
         field.includes(`resource-title-${index}`) ||
         field.includes(`resource-url-${index}`) ||
         field.includes(`resource-type-${index}`)
       );
     } else if (sectionType === 'resource') {
-      return errorFields.some(field => 
+      return fieldsToCheck.some(field => 
         field === 'resource-title' || 
         field === 'resource-url' || 
         field === 'resource-type' ||
@@ -662,8 +676,12 @@ export default function ContributeForm({
 
 
   // Add a capability to the gap
-  const addCapabilityToGap = () => {
-    if (!pendingCapability.trim()) {
+  const addCapabilityToGap = (suggestionValue) => {
+    // Use the passed suggestion value if provided, otherwise use the state value
+    // Ensure we always have a string value
+    const capabilityValue = suggestionValue || pendingCapability || '';
+    
+    if (!capabilityValue.trim()) {
       // Only trigger autocomplete if empty - focus the input
       if (capabilityInputRef.current) {
         setTimeout(() => {
@@ -675,12 +693,12 @@ export default function ContributeForm({
     if (bottleneckData.relatedCapability) return;
 
     // Check if this is an existing capability
-    const existingCapability = capabilities.find(c => c.fc_name === pendingCapability);
+    const existingCapability = capabilities.find(c => c.fc_name === capabilityValue);
     const capabilityId = existingCapability ? existingCapability.id : null;
 
     setBottleneckData({ 
       ...bottleneckData, 
-      relatedCapability: pendingCapability,
+      relatedCapability: capabilityValue,
       relatedCapabilityId: capabilityId
     });
 
@@ -708,6 +726,8 @@ export default function ContributeForm({
       setFcData(capabilityData);
       setOriginalCapabilityData(capabilityData);
       setCapabilityState('existing');
+      // Initialize display title for existing capability
+      setCapabilityDisplayTitle(existingCapability.fc_name);
       // Existing items start collapsed
       setExpandedSections(prev => ({ ...prev, capability: false }));
     } else {
@@ -715,7 +735,7 @@ export default function ContributeForm({
       setFcData({ 
         ...fcData, 
         id: null,
-        title: pendingCapability, 
+        title: capabilityValue, 
         relatedGap: bottleneckData.title, 
         relatedGapId: bottleneckData.id,
         relatedResources: [], 
@@ -723,6 +743,8 @@ export default function ContributeForm({
         isAddedViaAssociation: true 
       });
       setCapabilityState('new');
+      // Initialize display title for new capability
+      setCapabilityDisplayTitle(capabilityValue);
       // New items start expanded
       setExpandedSections(prev => ({ ...prev, capability: true }));
     }
@@ -911,8 +933,12 @@ export default function ContributeForm({
   };
 
   // Add a resource to the capability
-  const addResourceToCapability = () => {
-    if (!pendingResource.trim()) {
+  const addResourceToCapability = (suggestionValue) => {
+    // Use the passed suggestion value if provided, otherwise use the state value
+    // Ensure we always have a string value
+    const resourceValue = suggestionValue || pendingResource || '';
+    
+    if (!resourceValue.trim()) {
       // Focus the input and trigger autocomplete if empty
       if (resourceInputRef.current) {
         // Small delay to ensure focus works properly
@@ -924,17 +950,17 @@ export default function ContributeForm({
     }
 
     // Check if this is an existing resource
-    const existingResource = resources.find(r => r.resource_title === pendingResource);
+    const existingResource = resources.find(r => r.resource_title === resourceValue);
     
     // Add resource to the capability's relatedResources array and store ID
     const updatedResourceIds = { ...fcData.relatedResourceIds };
     if (existingResource) {
-      updatedResourceIds[pendingResource] = existingResource.id;
+      updatedResourceIds[resourceValue] = existingResource.id;
     }
     
     setFcData({ 
       ...fcData, 
-      relatedResources: [...fcData.relatedResources, pendingResource],
+      relatedResources: [...fcData.relatedResources, resourceValue],
       relatedResourceIds: updatedResourceIds
     });
 
@@ -964,12 +990,17 @@ export default function ContributeForm({
           resourceType: newResource.resourceType
         }
       }));
+      // Initialize display title for existing resource
+      setResourceDisplayTitles(prev => ({
+        ...prev,
+        [newResource.id]: existingResource.resource_title
+      }));
     } else {
       // Create new resource object
       newResource = {
         id: Date.now(), // Temporary ID for tracking
         notionId: null, // No Notion ID for new resources
-        title: pendingResource,
+        title: resourceValue,
         url: '',
         content: '',
         relatedCapability: fcData.title,
@@ -979,6 +1010,11 @@ export default function ContributeForm({
         isExistingResource: false,
         isAddedViaAssociation: true // Flag to indicate this was added via related field
       };
+      // Initialize display title for new resource
+      setResourceDisplayTitles(prev => ({
+        ...prev,
+        [newResource.id]: resourceValue
+      }));
     }
 
     // Track which capability added this resource
@@ -1022,8 +1058,12 @@ export default function ContributeForm({
   };
 
   // Add a capability to resource (for when starting with resource)
-  const addCapabilityToResource = () => {
-    if (!pendingCapability.trim()) {
+  const addCapabilityToResource = (suggestionValue) => {
+    // Use the passed suggestion value if provided, otherwise use the state value
+    // Ensure we always have a string value
+    const capabilityValue = suggestionValue || pendingCapability || '';
+    
+    if (!capabilityValue.trim()) {
       // Focus the input and trigger autocomplete if empty
       if (capabilityInputRef.current) {
         // Small delay to ensure focus works properly
@@ -1035,12 +1075,12 @@ export default function ContributeForm({
     }
 
     // Check if this is an existing capability
-    const existingCapability = capabilities.find(c => c.fc_name === pendingCapability);
+    const existingCapability = capabilities.find(c => c.fc_name === capabilityValue);
     const capabilityId = existingCapability ? existingCapability.id : null;
 
     setResourceData({ 
       ...resourceData, 
-      relatedCapability: pendingCapability,
+      relatedCapability: capabilityValue,
       relatedCapabilityId: capabilityId
     });
 
@@ -1086,6 +1126,8 @@ export default function ContributeForm({
         relatedGapId: relatedGapId
       });
       setCapabilityState('existing');
+      // Initialize display title for existing capability
+      setCapabilityDisplayTitle(existingCapability.fc_name);
     } else {
       // New capability
       const resourceIds = {};
@@ -1095,7 +1137,7 @@ export default function ContributeForm({
       
       setFcData({
         id: null,
-        title: pendingCapability,
+        title: capabilityValue,
         relatedGap: '',
         relatedGapId: null,
         content: '',
@@ -1104,6 +1146,8 @@ export default function ContributeForm({
         isAddedViaAssociation: true
       });
       setCapabilityState('new');
+      // Initialize display title for new capability
+      setCapabilityDisplayTitle(capabilityValue);
     }
 
     // Clear the input after a delay to prevent autocomplete triggering
@@ -1113,8 +1157,12 @@ export default function ContributeForm({
   };
 
   // Add a gap to capability
-  const addGapToCapability = () => {
-    if (!pendingGap.trim()) {
+  const addGapToCapability = (suggestionValue) => {
+    // Use the passed suggestion value if provided, otherwise use the state value
+    // Ensure we always have a string value
+    const gapValue = suggestionValue || pendingGap || '';
+    
+    if (!gapValue.trim()) {
       // Focus the input and trigger autocomplete if empty
       if (gapInputRef.current) {
         // Small delay to ensure focus works properly
@@ -1126,12 +1174,12 @@ export default function ContributeForm({
     }
 
     // Check if this is an existing gap
-    const existingGap = bottlenecks.find(b => b.bottleneck_name === pendingGap);
+    const existingGap = bottlenecks.find(b => b.bottleneck_name === gapValue);
     const gapId = existingGap ? existingGap.id : null;
 
     setFcData({ 
       ...fcData, 
-      relatedGap: pendingGap,
+      relatedGap: gapValue,
       relatedGapId: gapId
     });
 
@@ -1174,13 +1222,15 @@ export default function ContributeForm({
       setBottleneckData(gapData);
       setOriginalGapData(gapData);
       setGapState('existing');
+      // Initialize display title for existing gap
+      setGapDisplayTitle(existingGap.bottleneck_name);
       // Existing items start collapsed
       setExpandedSections(prev => ({ ...prev, gap: false }));
     } else {
       // New gap
       setBottleneckData({
         id: null,
-        title: pendingGap,
+        title: gapValue,
         content: '',
         fieldName: '',
         rank: 3,
@@ -1189,6 +1239,8 @@ export default function ContributeForm({
         isAddedViaAssociation: true
       });
       setGapState('new');
+      // Initialize display title for new gap
+      setGapDisplayTitle(gapValue);
       // New items start expanded
       setExpandedSections(prev => ({ ...prev, gap: true }));
     }
@@ -1437,8 +1489,16 @@ export default function ContributeForm({
       // Expand any collapsed sections that have errors
       const sectionsToExpand = {};
       formOrder.forEach(formType => {
-        if (sectionHasErrors(formType)) {
+        if (sectionHasErrors(formType, validation.errorFields)) {
           sectionsToExpand[formType] = true;
+        }
+      });
+      
+      // Also check individual resource forms
+      formResources.forEach(resource => {
+        const sectionKey = `resource-${resource.id}`;
+        if (sectionHasErrors(sectionKey, validation.errorFields)) {
+          sectionsToExpand[sectionKey] = true;
         }
       });
       
@@ -1717,6 +1777,7 @@ export default function ContributeForm({
                     onToggle={() => toggleSection('gap')}
                     itemType="gap"
                     itemSlug={bottleneckData.title ? createSlug(bottleneckData.title) : null}
+                    itemTitle={gapDisplayTitle}
                     onRemove={() => {
                       if (formType === rootForm) {
                         // Start over if this is the root form
@@ -1763,6 +1824,7 @@ export default function ContributeForm({
                               // Trigger change handler with suggestion
                               handleGapChange({ target: { value: suggestion } });
                             }}
+                            onBlur={() => setGapDisplayTitle(bottleneckData.title)}
                             suggestions={bottleneckNames}
                             required={isFieldRequired('bottleneck-title')}
                             style={getErrorStyle()}
@@ -1847,6 +1909,7 @@ export default function ContributeForm({
                             onChange={(e) => setPendingCapability(e.target.value)}
                             onSuggestionSelect={(suggestion) => setPendingCapability(suggestion)}
                             onKeyDown={handleCapabilityKeyDown}
+                            onAddClick={addCapabilityToGap}
                             suggestions={capabilityNames}
                             placeholder="Enter existing capability or suggest new one"
                             required={isFieldRequired('related-capability')}
@@ -1903,6 +1966,7 @@ export default function ContributeForm({
                     onToggle={() => toggleSection('capability')}
                     itemType="capability"
                     itemSlug={fcData.title ? createSlug(fcData.title) : null}
+                    itemTitle={capabilityDisplayTitle}
                     onRemove={() => {
                       if (formType === rootForm) {
                         // Start over if this is the root form
@@ -1949,6 +2013,7 @@ export default function ContributeForm({
                               // Trigger change handler with suggestion
                               handleCapabilityChange({ target: { value: suggestion } });
                             }}
+                            onBlur={() => setCapabilityDisplayTitle(fcData.title)}
                             suggestions={capabilityNames}
                             required={isFieldRequired('fc-title')}
                             style={getErrorStyle()}
@@ -1986,6 +2051,7 @@ export default function ContributeForm({
                             onChange={(e) => setPendingGap(e.target.value)}
                             onSuggestionSelect={(suggestion) => setPendingGap(suggestion)}
                             onKeyDown={handleGapKeyDown}
+                            onAddClick={addGapToCapability}
                             suggestions={bottleneckNames}
                             placeholder="Enter the name of an existing R&D Gap or suggest a new one"
                             required={isFieldRequired('fc-related-gap')}
@@ -2064,6 +2130,7 @@ export default function ContributeForm({
                           onChange={(e) => setPendingResource(e.target.value)}
                           onSuggestionSelect={(suggestion) => setPendingResource(suggestion)}
                           onKeyDown={handleResourceKeyDown}
+                          onAddClick={addResourceToCapability}
                           suggestions={resourceNames}
                           placeholder="Enter the name of an existing Resource or suggest a new one"
                           required={isFieldRequired('related-resources')}
@@ -2071,6 +2138,7 @@ export default function ContributeForm({
                           title="Enter resource to add"
                           aria-label="Related resources"
                           aria-invalid={hasError('related-resources')}
+                          refocusAfterSelection={false}
                         />
                         <button
                           type="button"
@@ -2174,6 +2242,7 @@ export default function ContributeForm({
                     onToggle={() => toggleSection(sectionKey)}
                     itemType="resource"
                     itemSlug={resource.title ? createSlug(resource.title) : null}
+                    itemTitle={resourceDisplayTitles[resource.id] || ''}
                     onRemove={() => {
                       // Resources added from capability are never the selectedContentType
                       // Remove this specific resource
@@ -2226,7 +2295,7 @@ export default function ContributeForm({
                   <div className={`section-content ${expandedSections[sectionKey] === false ? 'collapsed' : 'expanded'}`}>
 
                   <div className="form-group">
-                    <label htmlFor={`resource-title-${index}`}>Resource Title</label>
+                    <label htmlFor={`resource-title-${index}`}>Resource Name</label>
                     <InputWrapper required={isFieldRequired(`resource-title-${index}`)} hasError={hasError(`resource-title-${index}`)}>
                       {(resource.isExistingResource || resource.isAddedViaAssociation) ? (
                         <input
@@ -2252,6 +2321,12 @@ export default function ContributeForm({
                             if (resource.isExistingResource && originalFormResources[resource.id]) {
                               updatedResources[index].state = 'edited';
                             }
+                          }}
+                          onBlur={() => {
+                            setResourceDisplayTitles(prev => ({
+                              ...prev,
+                              [resource.id]: resource.title
+                            }));
                           }}
                           style={getErrorStyle()}
                           required={isFieldRequired(`resource-title-${index}`)}
@@ -2365,6 +2440,7 @@ export default function ContributeForm({
                       onToggle={() => toggleSection('resource')}
                       itemType="resource"
                       itemSlug={resourceData.title ? createSlug(resourceData.title) : null}
+                      itemTitle={resourceDisplayTitles.standalone || ''}
                       onRemove={() => {
                         if (formType === rootForm) {
                           // Start over if this is the root form
@@ -2411,6 +2487,13 @@ export default function ContributeForm({
                               onSuggestionSelect={(suggestion) => {
                                 // Trigger change handler with suggestion
                                 handleResourceChange({ target: { value: suggestion } });
+                              }}
+                              onBlur={() => {
+                                // For standalone resource, update in resourceData
+                                setResourceDisplayTitles(prev => ({
+                                  ...prev,
+                                  standalone: resourceData.title
+                                }));
                               }}
                               suggestions={resourceNames}
                               required={isFieldRequired('resource-title')}
@@ -2492,6 +2575,7 @@ export default function ContributeForm({
                               onChange={(e) => setPendingCapability(e.target.value)}
                               onSuggestionSelect={(suggestion) => setPendingCapability(suggestion)}
                               onKeyDown={handleCapabilityKeyDown}
+                              onAddClick={addCapabilityToResource}
                               suggestions={capabilityNames}
                               placeholder="Enter the name of an existing Foundational Capability or suggest a new one"
                               required={isFieldRequired('related-capability-resource')}
