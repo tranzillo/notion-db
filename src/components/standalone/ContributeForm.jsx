@@ -679,9 +679,9 @@ export default function ContributeForm({
   const addCapabilityToGap = (suggestionValue) => {
     // Use the passed suggestion value if provided, otherwise use the state value
     // Ensure we always have a string value
-    const capabilityValue = suggestionValue || pendingCapability || '';
+    const capabilityValue = (suggestionValue && typeof suggestionValue === 'string' ? suggestionValue : pendingCapability) || '';
     
-    if (!capabilityValue.trim()) {
+    if (!capabilityValue || !capabilityValue.trim()) {
       // Only trigger autocomplete if empty - focus the input
       if (capabilityInputRef.current) {
         setTimeout(() => {
@@ -936,9 +936,9 @@ export default function ContributeForm({
   const addResourceToCapability = (suggestionValue) => {
     // Use the passed suggestion value if provided, otherwise use the state value
     // Ensure we always have a string value
-    const resourceValue = suggestionValue || pendingResource || '';
+    const resourceValue = (suggestionValue && typeof suggestionValue === 'string' ? suggestionValue : pendingResource) || '';
     
-    if (!resourceValue.trim()) {
+    if (!resourceValue || !resourceValue.trim()) {
       // Focus the input and trigger autocomplete if empty
       if (resourceInputRef.current) {
         // Small delay to ensure focus works properly
@@ -1061,9 +1061,9 @@ export default function ContributeForm({
   const addCapabilityToResource = (suggestionValue) => {
     // Use the passed suggestion value if provided, otherwise use the state value
     // Ensure we always have a string value
-    const capabilityValue = suggestionValue || pendingCapability || '';
+    const capabilityValue = (suggestionValue && typeof suggestionValue === 'string' ? suggestionValue : pendingCapability) || '';
     
-    if (!capabilityValue.trim()) {
+    if (!capabilityValue || !capabilityValue.trim()) {
       // Focus the input and trigger autocomplete if empty
       if (capabilityInputRef.current) {
         // Small delay to ensure focus works properly
@@ -1160,9 +1160,9 @@ export default function ContributeForm({
   const addGapToCapability = (suggestionValue) => {
     // Use the passed suggestion value if provided, otherwise use the state value
     // Ensure we always have a string value
-    const gapValue = suggestionValue || pendingGap || '';
+    const gapValue = (suggestionValue && typeof suggestionValue === 'string' ? suggestionValue : pendingGap) || '';
     
-    if (!gapValue.trim()) {
+    if (!gapValue || !gapValue.trim()) {
       // Focus the input and trigger autocomplete if empty
       if (gapInputRef.current) {
         // Small delay to ensure focus works properly
@@ -1406,7 +1406,7 @@ export default function ContributeForm({
 
     // Helper function to check and add validation error
     const checkField = (fieldId, value, displayName) => {
-      if (isFieldRequired(fieldId) && (!value || !value.toString().trim())) {
+      if (isFieldRequired(fieldId) && (!value || !(value && value.toString && value.toString().trim()))) {
         errors.push(`${displayName} is required`);
         errorFields.push(fieldId);
       }
@@ -1923,7 +1923,7 @@ export default function ContributeForm({
                           <button
                             type="button"
                             onClick={addCapabilityToGap}
-                            className={`add-button ${!pendingCapability.trim() ? 'add-button--empty' : ''}`}
+                            className={`add-button ${!pendingCapability || !pendingCapability.trim() ? 'add-button--empty' : ''}`}
                             title="Add capability"
                             aria-label="Add related capability"
                           >
@@ -2065,7 +2065,7 @@ export default function ContributeForm({
                           <button
                             type="button"
                             onClick={addGapToCapability}
-                            className={`add-button ${!pendingGap.trim() ? 'add-button--empty' : ''}`}
+                            className={`add-button ${!pendingGap || !pendingGap.trim() ? 'add-button--empty' : ''}`}
                               title="Add R&D Gap"
                             aria-label="Add related R&D Gap"
                           >
@@ -2143,7 +2143,7 @@ export default function ContributeForm({
                         <button
                           type="button"
                           onClick={addResourceToCapability}
-                          className={`add-button ${!pendingResource.trim() ? 'add-button--empty' : ''}`}
+                          className={`add-button ${!pendingResource || !pendingResource.trim() ? 'add-button--empty' : ''}`}
                           title="Add resource"
                           aria-label="Add related resource"
                         >
@@ -2589,7 +2589,7 @@ export default function ContributeForm({
                             <button
                               type="button"
                               onClick={addCapabilityToResource}
-                              className={`add-button ${!pendingCapability.trim() ? 'add-button--empty' : ''}`}
+                              className={`add-button ${!pendingCapability || !pendingCapability.trim() ? 'add-button--empty' : ''}`}
                                 title="Add capability"
                               aria-label="Add related capability"
                             >

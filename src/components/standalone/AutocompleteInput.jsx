@@ -127,7 +127,8 @@ const AutocompleteInput = forwardRef(({
     if (onAddClick) {
       // Small delay to ensure state updates are processed
       setTimeout(() => {
-        onAddClick(suggestion);
+        // Ensure we pass a string value
+        onAddClick(typeof suggestion === 'string' ? suggestion : String(suggestion || ''));
       }, 10);
     }
     
