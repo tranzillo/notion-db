@@ -117,7 +117,7 @@ const SectionHeader = ({ title, state, isExpanded, onToggle, onRemove, isRoot, i
           aria-label={isExpanded ? 'Collapse section' : 'Expand section'}
         >
           <span className="accordion-toggle-label">
-            {isExpanded ? 'Hide' : 'Suggest an Edit'}
+            {isExpanded ? 'Hide' : 'Suggest an Update'}
           </span>
           <span 
             className={`accordion-toggle ${isExpanded ? 'expanded' : 'collapsed'}`}
