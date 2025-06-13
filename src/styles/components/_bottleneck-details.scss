@@ -135,16 +135,17 @@
     .survey-graph-container {
       margin: -1rem calc($spacing-xl * (-1) + (-1rem)) calc($spacing-xl * (-1)) calc($spacing-xl * (-1));
       opacity: 0.9;
+      position: relative;
       @media screen and (max-width: $breakpoint-sm) {
-             margin: -1rem calc($spacing-lg * (-1) + (-1rem)) calc($spacing-xl * (-1)) calc($spacing-lg * (-1));
+        margin: -1rem calc($spacing-lg * (-1) + (-1rem)) calc($spacing-xl * (-1)) calc($spacing-lg * (-1));
 
       }
 
       .survey-graph-loading, .survey-graph-error {
-        background-color: var(--card-background);
-        border: 1px solid var(--border-dull);
+        z-index: 2;
+        position: absolute;
+        inset: 35% 0;
         color: var(--text-light);
-        border-radius: $border-radius-lg;
         transition: background-color $transition, border-color $transition;
       }
     }

@@ -29,6 +29,7 @@ export default function SurveyGraph({ metaculus_id, metaculus_title, zoom = 'all
   const [errorMessage, setErrorMessage] = useState('');
   const [currentTheme, setCurrentTheme] = useState('dark');
   const [isThemeChanging, setIsThemeChanging] = useState(false);
+  const themeChangeTimeoutRef = useRef(null);
 
   // Function to detect current theme
   const detectCurrentTheme = () => {
@@ -78,13 +79,35 @@ export default function SurveyGraph({ metaculus_id, metaculus_title, zoom = 'all
     // Set initial theme
     const initialTheme = detectCurrentTheme();
     setCurrentTheme(initialTheme);
-
+    
+    // Use a ref to track the current theme value in callbacks
+    const currentThemeRef = { current: initialTheme };
+    
     // Listen for theme changes
     const handleThemeChange = (event) => {
-      const newTheme = event.detail?.isDarkMode ? 'dark' : 'light';
-      if (newTheme !== currentTheme) {
-        setIsThemeChanging(true);
-        setCurrentTheme(newTheme);
+      let newTheme;
+      
+      // Handle different event types
+      if (event.detail && typeof event.detail.isDarkMode === 'boolean') {
+        newTheme = event.detail.isDarkMode ? 'dark' : 'light';
+      } else {
+        // Fallback: re-detect theme from DOM/preferences
+        newTheme = detectCurrentTheme();
+      }
+      
+      if (newTheme !== currentThemeRef.current) {
+        currentThemeRef.current = newTheme;
+        
+        // Clear any existing timeout
+        if (themeChangeTimeoutRef.current) {
+          clearTimeout(themeChangeTimeoutRef.current);
+        }
+        
+        // Debounce theme changes to prevent rapid reloading
+        themeChangeTimeoutRef.current = setTimeout(() => {
+          setIsThemeChanging(true);
+          setCurrentTheme(newTheme);
+        }, 150); // Small delay to debounce
       }
     };
 
@@ -93,9 +116,19 @@ export default function SurveyGraph({ metaculus_id, metaculus_title, zoom = 'all
       if (!window.userPreferences || window.userPreferences.darkMode === undefined) {
         // Only respond to system changes if no explicit preference is set
         const newTheme = e.matches ? 'dark' : 'light';
-        if (newTheme !== currentTheme) {
-          setIsThemeChanging(true);
-          setCurrentTheme(newTheme);
+        if (newTheme !== currentThemeRef.current) {
+          currentThemeRef.current = newTheme;
+          
+          // Clear any existing timeout
+          if (themeChangeTimeoutRef.current) {
+            clearTimeout(themeChangeTimeoutRef.current);
+          }
+          
+          // Debounce theme changes
+          themeChangeTimeoutRef.current = setTimeout(() => {
+            setIsThemeChanging(true);
+            setCurrentTheme(newTheme);
+          }, 150);
         }
       }
     };
@@ -113,6 +146,12 @@ export default function SurveyGraph({ metaculus_id, metaculus_title, zoom = 'all
         window.removeEventListener('theme-changed', handleThemeChange);
         window.removeEventListener('darkMode-changed', handleThemeChange);
         mediaQuery.removeEventListener('change', handleSystemThemeChange);
+        clearInterval(themeCheckInterval);
+        
+        // Clean up timeout
+        if (themeChangeTimeoutRef.current) {
+          clearTimeout(themeChangeTimeoutRef.current);
+        }
       };
     }
   }, []);
@@ -139,40 +178,54 @@ export default function SurveyGraph({ metaculus_id, metaculus_title, zoom = 'all
     // Construct the embed URL using the current theme
     const embedUrl = `https://www.metaculus.com/questions/embed/${metaculus_id}?theme=${currentTheme}&embedTitle=${formattedTitle}&zoom=${zoom}`;
     
-    // Handle iframe load event
-    function onIframeLoad() {
-      // Give the iframe content a moment to render
-      setTimeout(() => {
+    
+    // Clear iframe first to prevent sizing issues
+    iframe.src = 'about:blank';
+    
+    // Small delay to ensure the iframe is cleared before loading new content
+    const loadDelay = setTimeout(() => {
+      // Handle iframe load event
+      function onIframeLoad() {
+        // Give the iframe content more time to render properly
+        setTimeout(() => {
+          setIsLoading(false);
+          setIsThemeChanging(false);
+        }, 1500); // Increased timeout for better stability
+      }
+
+      // Handle iframe error
+      function onIframeError() {
+        setHasError(true);
+        setErrorMessage('Failed to load Metaculus embed');
         setIsLoading(false);
         setIsThemeChanging(false);
-      }, 1000);
-    }
+      }
 
-    // Handle iframe error
-    function onIframeError() {
-      setHasError(true);
-      setErrorMessage('Failed to load Metaculus embed');
-      setIsLoading(false);
-    }
+      // Set timeout fallback in case load event doesn't fire
+      const timeoutId = setTimeout(() => {
+        setIsLoading(false);
+        setIsThemeChanging(false);
+      }, 8000); // Increased timeout
 
-    // Set timeout fallback in case load event doesn't fire
-    const timeoutId = setTimeout(() => {
-      setIsLoading(false);
-      setIsThemeChanging(false);
-    }, 5000);
-
-    iframe.addEventListener('load', onIframeLoad);
-    iframe.addEventListener('error', onIframeError);
-    
-    // Set the iframe source to start loading
-    iframe.src = embedUrl;
+      iframe.addEventListener('load', onIframeLoad);
+      iframe.addEventListener('error', onIframeError);
+      
+      // Set the iframe source to start loading
+      iframe.src = embedUrl;
+      
+      // Store cleanup functions for this specific load
+      iframe._currentCleanup = () => {
+        clearTimeout(timeoutId);
+        clearTimeout(loadDelay);
+        iframe.removeEventListener('load', onIframeLoad);
+        iframe.removeEventListener('error', onIframeError);
+      };
+    }, 100); // Small delay before loading new content
 
     // Cleanup function
     return function cleanup() {
-      clearTimeout(timeoutId);
-      if (iframe) {
-        iframe.removeEventListener('load', onIframeLoad);
-        iframe.removeEventListener('error', onIframeError);
+      if (iframe && iframe._currentCleanup) {
+        iframe._currentCleanup();
       }
     };
   }, [metaculus_id, metaculus_title, currentTheme, zoom]);
@@ -212,9 +265,6 @@ export default function SurveyGraph({ metaculus_id, metaculus_title, zoom = 'all
           style={{
             padding: '3rem',
             textAlign: 'center',
-            background: 'var(--card-background, #f8f9fa)',
-            borderRadius: '8px',
-            border: '1px solid var(--border-dull, #ddd)'
           }}
         >
           <div 
@@ -238,17 +288,30 @@ export default function SurveyGraph({ metaculus_id, metaculus_title, zoom = 'all
         </div>
       )}
       
-      <iframe
-        ref={iframeRef}
-        title={`Metaculus Survey: ${metaculus_title}`}
-        style={{
-          width: '100%',
-          height: '600px',
-          border: 'none',
-          display: isLoading ? 'none' : 'block',
-        }}
-        loading="lazy"
-      />
+      <div style={{
+        width: '100%',
+        height: '600px',
+        minHeight: '600px',
+        position: 'relative',
+        overflow: 'hidden',
+        borderRadius: '8px',
+        background: 'var(--card-background, #f8f9fa)'
+      }}>
+        <iframe
+          ref={iframeRef}
+          title={`Metaculus Survey: ${metaculus_title}`}
+          style={{
+            width: '100%',
+            height: '100%',
+            minHeight: '600px',
+            border: 'none',
+            borderRadius: '8px',
+            display: isLoading ? 'none' : 'block',
+            background: 'transparent'
+          }}
+          loading="lazy"
+        />
+      </div>
     </div>
   );
 }
